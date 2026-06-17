@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FarmaSub Ecuador — Tu farmacia por membresía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --green:       #1A6B4A;
+  --green-light: #EAF4EE;
+  --green-mid:   #2E8A62;
+  --gold:        #C8903A;
+  --gold-light:  #FDF4E7;
+  --ink:         #12201A;
+  --ink-60:      #5A7065;
+  --ink-30:      #B0C4BB;
+  --white:       #FFFFFF;
+  --bg:          #F7FAF8;
+  --card:        #FFFFFF;
+  --danger:      #C84040;
+  --r:           14px;
+  --r-lg:        20px;
+  --shadow:      0 2px 16px rgba(26,107,74,.10);
+  --shadow-lg:   0 8px 40px rgba(26,107,74,.14);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
+
+/* ── TYPOGRAPHY ─────────────────────────────────────────── */
+.serif { font-family: 'DM Serif Display', serif; }
+h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.1; }
+h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); line-height: 1.2; }
+h3 { font-size: 1.1rem; font-weight: 600; }
+p  { color: var(--ink-60); }
+
+/* ── LAYOUT ─────────────────────────────────────────────── */
+.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+section { padding: 80px 0; }
+
+/* ── NAV ────────────────────────────────────────────────── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(247,250,248,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(26,107,74,.10);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.logo-mark {
+  width: 36px; height: 36px; background: var(--green); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 20px; height: 20px; }
+.logo-text { font-family: 'DM Serif Display', serif; font-size: 1.25rem; color: var(--ink); }
+.logo-text span { color: var(--green); }
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { text-decoration: none; color: var(--ink-60); font-size: .9rem; font-weight: 500; transition: color .2s; }
+.nav-links a:hover { color: var(--green); }
+.nav-cta { background: var(--green); color: var(--white); border: none; padding: 9px 20px; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+.nav-cta:hover { background: var(--green-mid); }
+
+/* ── HERO ───────────────────────────────────────────────── */
+#hero {
+  background: linear-gradient(135deg, #0E3D29 0%, #1A6B4A 60%, #2E8A62 100%);
+  padding: 100px 0 80px; position: relative; overflow: hidden;
+}
+#hero::before {
+  content: '';
+  position: absolute; top: -40%; right: -10%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(200,144,58,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+  padding: 5px 12px; border-radius: 20px; margin-bottom: 20px;
+}
+.hero-eyebrow span { font-size: .78rem; color: rgba(255,255,255,.85); font-weight: 500; }
+.hero-dot { width: 7px; height: 7px; background: #5EE8A0; border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+#hero h1 { color: var(--white); margin-bottom: 20px; }
+#hero h1 em { font-style: italic; color: #8EF5C0; }
+.hero-sub { font-size: 1.05rem; color: rgba(255,255,255,.75); margin-bottom: 36px; max-width: 440px; }
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--gold); color: var(--white); border: none;
+  padding: 14px 28px; border-radius: var(--r); font-size: .95rem; font-weight: 600;
+  cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
+}
+.btn-primary:hover { background: #D49840; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(200,144,58,.4); }
+.btn-ghost {
+  background: transparent; color: var(--white);
+  border: 1.5px solid rgba(255,255,255,.35);
+  padding: 14px 28px; border-radius: var(--r); font-size: .95rem; font-weight: 500;
+  cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,.7); background: rgba(255,255,255,.07); }
+.hero-stats { display: flex; gap: 28px; margin-top: 44px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.12); }
+.stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--white); }
+.stat-label { font-size: .78rem; color: rgba(255,255,255,.6); margin-top: 2px; }
+
+/* Hero calculator card */
+.hero-card {
+  background: var(--white); border-radius: var(--r-lg); padding: 28px;
+  box-shadow: var(--shadow-lg);
+}
+.hcard-title { font-size: .82rem; font-weight: 600; color: var(--ink-60); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; }
+.hcard-med { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.med-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 8px; background: var(--bg);
+  cursor: pointer; transition: background .15s; user-select: none;
+}
+.med-row.active { background: var(--green-light); }
+.med-row-left { display: flex; align-items: center; gap: 10px; }
+.med-check {
+  width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--ink-30);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s;
+}
+.med-row.active .med-check { background: var(--green); border-color: var(--green); }
+.med-check svg { display: none; }
+.med-row.active .med-check svg { display: block; }
+.med-name { font-size: .88rem; color: var(--ink); font-weight: 500; }
+.med-prices { display: flex; align-items: center; gap: 8px; }
+.med-old { font-size: .8rem; color: var(--ink-30); text-decoration: line-through; }
+.med-new { font-size: .88rem; font-weight: 600; color: var(--green); }
+.hcard-sep { height: 1px; background: var(--bg); margin: 4px 0 16px; }
+.hcard-result { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.result-box { border-radius: 10px; padding: 12px 14px; }
+.result-box.normal { background: #FFF0F0; }
+.result-box.sub { background: var(--green-light); }
+.rb-label { font-size: .72rem; color: var(--ink-60); margin-bottom: 3px; }
+.rb-val { font-size: 1.4rem; font-weight: 600; font-family: 'DM Serif Display', serif; }
+.result-box.normal .rb-val { color: var(--danger); }
+.result-box.sub .rb-val { color: var(--green); }
+.rb-sub { font-size: .7rem; color: var(--ink-60); margin-top: 2px; }
+.saving-banner {
+  margin-top: 12px; background: var(--gold-light); border: 1px solid #F0D5A0;
+  border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+}
+.sb-text { font-size: .82rem; color: var(--gold); font-weight: 600; }
+.sb-val { font-size: 1.1rem; font-weight: 700; color: var(--gold); }
+
+/* ── HOW IT WORKS ───────────────────────────────────────── */
+#como { background: var(--white); }
+#como .section-label { font-size: .78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+#como h2 { margin-bottom: 14px; }
+#como .section-sub { font-size: 1.05rem; max-width: 520px; margin-bottom: 56px; }
+.steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; }
+.step-card { position: relative; }
+.step-num {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--green-light); color: var(--green);
+  font-family: 'DM Serif Display', serif; font-size: 1.3rem;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.step-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.step-desc { font-size: .88rem; color: var(--ink-60); line-height: 1.6; }
+.step-connector {
+  position: absolute; top: 22px; left: 44px; right: -28px; height: 1px;
+  background: repeating-linear-gradient(to right, var(--ink-30) 0, var(--ink-30) 4px, transparent 4px, transparent 10px);
+}
+.step-card:last-child .step-connector { display: none; }
+
+/* ── PLANS ──────────────────────────────────────────────── */
+#planes { background: var(--bg); }
+.plans-header { text-align: center; margin-bottom: 48px; }
+.plans-header .section-label { font-size: .78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+.plans-toggle {
+  display: inline-flex; background: var(--white); border: 1px solid var(--ink-30);
+  border-radius: 10px; padding: 4px; margin-top: 24px; gap: 4px;
+}
+.toggle-btn {
+  padding: 8px 20px; border-radius: 7px; border: none; background: transparent;
+  font-size: .88rem; font-weight: 500; color: var(--ink-60); cursor: pointer; transition: all .2s;
+}
+.toggle-btn.active { background: var(--green); color: var(--white); }
+.plans-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.plan-card {
+  background: var(--card); border: 1.5px solid transparent;
+  border-radius: var(--r-lg); padding: 28px;
+  transition: all .2s; box-shadow: var(--shadow);
+}
+.plan-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.plan-card.featured {
+  background: var(--green); border-color: var(--green);
+}
+.plan-badge {
+  display: inline-block; font-size: .72rem; font-weight: 600; padding: 3px 10px;
+  border-radius: 20px; background: var(--gold-light); color: var(--gold);
+  margin-bottom: 12px;
+}
+.plan-card.featured .plan-badge { background: rgba(255,255,255,.2); color: var(--white); }
+.plan-name { font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.plan-card.featured .plan-name { color: var(--white); }
+.plan-price { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--ink); line-height: 1; margin: 10px 0 4px; }
+.plan-card.featured .plan-price { color: var(--white); }
+.plan-period { font-size: .8rem; color: var(--ink-60); margin-bottom: 20px; }
+.plan-card.featured .plan-period { color: rgba(255,255,255,.65); }
+.plan-sep { height: 1px; background: var(--bg); margin-bottom: 18px; }
+.plan-card.featured .plan-sep { background: rgba(255,255,255,.15); }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; }
+.plan-features li { display: flex; align-items: flex-start; gap: 8px; font-size: .88rem; color: var(--ink-60); }
+.plan-card.featured .plan-features li { color: rgba(255,255,255,.8); }
+.feat-icon { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
+.plan-btn {
+  width: 100%; padding: 12px; border-radius: var(--r); border: 1.5px solid var(--green);
+  background: transparent; color: var(--green); font-size: .9rem; font-weight: 600;
+  cursor: pointer; transition: all .2s;
+}
+.plan-btn:hover { background: var(--green); color: var(--white); }
+.plan-card.featured .plan-btn { background: var(--white); color: var(--green); border-color: var(--white); }
+.plan-card.featured .plan-btn:hover { background: var(--green-light); }
+
+/* ── CALCULATOR ─────────────────────────────────────────── */
+#calculadora { background: var(--white); }
+.calc-wrapper {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+}
+.calc-left h2 { margin-bottom: 12px; }
+.calc-left p { margin-bottom: 28px; }
+.calc-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.pill {
+  padding: 7px 14px; border-radius: 20px; font-size: .83rem; font-weight: 500;
+  border: 1.5px solid var(--ink-30); background: var(--white);
+  cursor: pointer; transition: all .15s; color: var(--ink-60);
+}
+.pill.active { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.calc-personas { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.calc-personas label { font-size: .88rem; font-weight: 500; color: var(--ink); }
+.counter { display: flex; align-items: center; gap: 10px; }
+.counter-btn {
+  width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-30);
+  background: var(--white); font-size: 1.1rem; color: var(--ink-60);
+  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s;
+}
+.counter-btn:hover { border-color: var(--green); color: var(--green); }
+.counter-val { font-size: 1.1rem; font-weight: 600; min-width: 20px; text-align: center; color: var(--ink); }
+.calc-right {
+  background: var(--bg); border-radius: var(--r-lg); padding: 24px; position: sticky; top: 80px;
+}
+.calc-empty { text-align: center; padding: 40px 0; color: var(--ink-30); font-size: .9rem; }
+.calc-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,.05); font-size: .85rem;
+}
+.calc-row:last-of-type { border: none; }
+.cr-name { color: var(--ink-60); }
+.cr-prices { display: flex; gap: 10px; align-items: center; }
+.cr-old { color: var(--ink-30); text-decoration: line-through; font-size: .8rem; }
+.cr-new { color: var(--green); font-weight: 600; }
+.calc-sep { height: 1px; background: var(--ink-30); margin: 12px 0; opacity: .3; }
+.calc-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.ct-box { border-radius: 10px; padding: 12px; }
+.ct-box.normal { background: #FFF0F0; }
+.ct-box.sub { background: var(--green-light); }
+.ct-label { font-size: .72rem; color: var(--ink-60); margin-bottom: 3px; }
+.ct-val { font-size: 1.4rem; font-weight: 600; font-family: 'DM Serif Display', serif; }
+.ct-box.normal .ct-val { color: var(--danger); }
+.ct-box.sub .ct-val { color: var(--green); }
+.calc-saving {
+  background: var(--gold-light); border: 1px solid #F0D5A0;
+  border-radius: 10px; padding: 12px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cs-label { font-size: .83rem; color: var(--gold); font-weight: 600; }
+.cs-val { font-size: 1.2rem; font-weight: 700; color: var(--gold); }
+.calc-annual {
+  margin-top: 10px; text-align: center;
+  font-size: .82rem; color: var(--ink-60); padding: 8px;
+}
+.calc-annual strong { color: var(--green); }
+
+/* ── TRUST ──────────────────────────────────────────────── */
+#confianza { background: var(--bg); }
+.trust-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.trust-card {
+  background: var(--white); border-radius: var(--r-lg); padding: 28px;
+  box-shadow: var(--shadow);
+}
+.trust-icon {
+  width: 48px; height: 48px; border-radius: 14px; background: var(--green-light);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.trust-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+.trust-desc { font-size: .88rem; color: var(--ink-60); line-height: 1.65; }
+
+/* ── CTA BAND ───────────────────────────────────────────── */
+#cta-band {
+  background: linear-gradient(135deg, #0E3D29, #1A6B4A);
+  padding: 80px 0; text-align: center;
+}
+#cta-band h2 { color: var(--white); margin-bottom: 14px; }
+#cta-band p { color: rgba(255,255,255,.7); font-size: 1.05rem; margin-bottom: 32px; }
+.cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer {
+  background: var(--ink); padding: 48px 0 28px;
+}
+.footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.footer-brand p { font-size: .85rem; color: var(--ink-60); margin-top: 12px; max-width: 240px; }
+.footer-col h4 { font-size: .85rem; font-weight: 600; color: var(--white); margin-bottom: 14px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.footer-col ul li a { font-size: .83rem; color: var(--ink-60); text-decoration: none; transition: color .2s; }
+.footer-col ul li a:hover { color: var(--ink-30); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,.07); padding-top: 24px; display: flex; justify-content: space-between; }
+.footer-bottom p { font-size: .78rem; color: var(--ink-60); }
+.footer-logo-text { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--white); }
+.footer-logo-text span { color: #5EE8A0; }
+
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-grid, .calc-wrapper, .steps-grid, .plans-grid, .trust-grid { grid-template-columns: 1fr; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+  .hero-stats { gap: 20px; }
+  .plans-grid { gap: 14px; }
+  .nav-links { display: none; }
+  .step-connector { display: none; }
+  section { padding: 56px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="container nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#como">Cómo funciona</a></li>
+      <li><a href="#planes">Planes</a></li>
+      <li><a href="#calculadora">Calculadora</a></li>
+      <li><a href="#confianza">Confianza</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('planes').scrollIntoView({behavior:'smooth'})">Comenzar ahora</button>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow">
+          <div class="hero-dot"></div>
+          <span>Disponible en Ecuador — Quito y Guayaquil</span>
+        </div>
+        <h1>Tu farmacia familiar por <em>lo que realmente cuesta</em></h1>
+        <p class="hero-sub">Paga una membresía mensual y accede a medicamentos al costo para toda tu familia. Sin sorpresas, con entrega a domicilio o a tu trabajo.</p>
+        <div class="hero-actions">
+          <a href="#planes" class="btn-primary">Ver planes desde $14/mes</a>
+          <a href="#calculadora" class="btn-ghost">Calcular mi ahorro</a>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="stat-num">40%</div>
+            <div class="stat-label">Ahorro promedio<br>por familia</div>
+          </div>
+          <div>
+            <div class="stat-num">400+</div>
+            <div class="stat-label">Medicamentos<br>disponibles</div>
+          </div>
+          <div>
+            <div class="stat-num">6</div>
+            <div class="stat-label">Personas cubiertas<br>con un plan</div>
+          </div>
+        </div>
+      </div>
+      <!-- Mini calculadora hero -->
+      <div class="hero-card">
+        <div class="hcard-title">Selecciona tus medicamentos</div>
+        <div class="hcard-med" id="hero-meds">
+          <div class="med-row" data-farmacia="22" data-costo="18" onclick="toggleHeroMed(this)">
+            <div class="med-row-left">
+              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="med-name">Losartán 50mg ×30</span>
+            </div>
+            <div class="med-prices"><span class="med-old">$22</span><span class="med-new">$18</span></div>
+          </div>
+          <div class="med-row" data-farmacia="13" data-costo="8" onclick="toggleHeroMed(this)">
+            <div class="med-row-left">
+              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="med-name">Metformina 850mg ×30</span>
+            </div>
+            <div class="med-prices"><span class="med-old">$13</span><span class="med-new">$8</span></div>
+          </div>
+          <div class="med-row" data-farmacia="18" data-costo="12" onclick="toggleHeroMed(this)">
+            <div class="med-row-left">
+              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="med-name">Atorvastatina 20mg ×30</span>
+            </div>
+            <div class="med-prices"><span class="med-old">$18</span><span class="med-new">$12</span></div>
+          </div>
+          <div class="med-row" data-farmacia="15" data-costo="9" onclick="toggleHeroMed(this)">
+            <div class="med-row-left">
+              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="med-name">Levotiroxina 100mcg ×30</span>
+            </div>
+            <div class="med-prices"><span class="med-old">$15</span><span class="med-new">$9</span></div>
+          </div>
+          <div class="med-row" data-farmacia="17" data-costo="9" onclick="toggleHeroMed(this)">
+            <div class="med-row-left">
+              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span class="med-name">Omega 3 ×60 cápsulas</span>
+            </div>
+            <div class="med-prices"><span class="med-old">$17</span><span class="med-new">$9</span></div>
+          </div>
+        </div>
+        <div class="hcard-sep"></div>
+        <div class="hcard-result">
+          <div class="result-box normal">
+            <div class="rb-label">Farmacia normal</div>
+            <div class="rb-val" id="hero-farmacia">$0</div>
+            <div class="rb-sub">sin membresía</div>
+          </div>
+          <div class="result-box sub">
+            <div class="rb-label">Con FarmaSub</div>
+            <div class="rb-val" id="hero-total">$14</div>
+            <div class="rb-sub">medicamentos + suscripción</div>
+          </div>
+        </div>
+        <div class="saving-banner" id="hero-saving" style="display:none">
+          <span class="sb-text">💚 Ahorras este mes</span>
+          <span class="sb-val" id="hero-saving-val">$0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CÓMO FUNCIONA ── -->
+<section id="como">
+  <div class="container">
+    <div class="section-label">Proceso</div>
+    <h2>Así de simple</h2>
+    <p class="section-sub">En menos de 5 minutos activas tu membresía y tu familia empieza a ahorrar.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-connector"></div>
+        <div class="step-num">1</div>
+        <div class="step-title">Elige tu plan</div>
+        <p class="step-desc">Personal o empresarial. Cubre hasta 6 personas de tu grupo familiar con un solo pago mensual.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-connector"></div>
+        <div class="step-num">2</div>
+        <div class="step-title">Crea tu cuenta</div>
+        <p class="step-desc">Registra a los miembros de tu familia. Cada uno recibe su carnet digital con acceso al catálogo.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-connector"></div>
+        <div class="step-num">3</div>
+        <div class="step-title">Pide tus medicamentos</div>
+        <p class="step-desc">Selecciona desde el catálogo, adjunta tu receta si aplica y confirma tu pedido en segundos.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-title">Recíbelos en casa</div>
+        <p class="step-desc">Entrega a domicilio o en tu lugar de trabajo en Quito y Guayaquil. Sin costo de envío adicional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PLANES ── -->
+<section id="planes">
+  <div class="container">
+    <div class="plans-header">
+      <div class="section-label">Planes</div>
+      <h2>Elige el plan de tu familia</h2>
+      <p style="color:var(--ink-60); margin-top:8px">Sin letra pequeña. Cancela cuando quieras.</p>
+      <div class="plans-toggle">
+        <button class="toggle-btn active" id="toggle-personal" onclick="showPlan('personal')">Persona / Familia</button>
+        <button class="toggle-btn" id="toggle-empresa" onclick="showPlan('empresa')">Empresa</button>
+      </div>
+    </div>
+
+    <!-- Planes personales -->
+    <div class="plans-grid" id="grid-personal">
+      <div class="plan-card">
+        <div class="plan-name">Esencial</div>
+        <div class="plan-price">$9</div>
+        <div class="plan-period">USD / mes · 1 persona</div>
+        <div class="plan-sep"></div>
+        <ul class="plan-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Medicamentos al costo
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Catálogo de 400+ productos
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Entrega a domicilio
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#B0C4BB" stroke-width="1.5"/><path d="M5.5 10.5l5-5M10.5 10.5l-5-5" stroke="#B0C4BB" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span style="color:var(--ink-30)">Cobertura familiar</span>
+          </li>
+        </ul>
+        <button class="plan-btn">Comenzar</button>
+      </div>
+      <div class="plan-card featured">
+        <span class="plan-badge">⭐ Más popular</span>
+        <div class="plan-name">Familiar</div>
+        <div class="plan-price">$14</div>
+        <div class="plan-period">USD / mes · hasta 4 personas</div>
+        <div class="plan-sep"></div>
+        <ul class="plan-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Medicamentos al costo
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Hasta 4 miembros de familia
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Entrega gratis a domicilio
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Vitaminas y suplementos
+          </li>
+        </ul>
+        <button class="plan-btn">Comenzar</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Familiar Plus</div>
+        <div class="plan-price">$22</div>
+        <div class="plan-period">USD / mes · hasta 6 personas</div>
+        <div class="plan-sep"></div>
+        <ul class="plan-features">
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Todo lo del plan Familiar
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Hasta 6 miembros
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Exámenes de laboratorio
+          </li>
+          <li>
+            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Coordinación con tu seguro
+          </li>
+        </ul>
+        <button class="plan-btn">Comenzar</button>
+      </div>
+    </div>
+
+    <!-- Planes empresa -->
+    <div class="plans-grid" id="grid-empresa" style="display:none">
+      <div class="plan-card">
+        <div class="plan-name">Empresa Básico</div>
+        <div class="plan-price">$12</div>
+        <div class="plan-period">USD / colaborador / mes</div>
+        <div class="plan-sep"></div>
+        <ul class="plan-features">
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Farmacia al costo para colaboradores</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Entrega en lugar de trabajo</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Panel de administración</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cobertura familiar (hasta 4)</li>
+        </ul>
+        <button class="plan-btn">Solicitar cotización</button>
+      </div>
+      <div class="plan-card featured">
+        <span class="plan-badge">⭐ Recomendado</span>
+        <div class="plan-name">Empresa Premium</div>
+        <div class="plan-price">$18</div>
+        <div class="plan-period">USD / colaborador / mes</div>
+        <div class="plan-sep"></div>
+        <ul class="plan-features">
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Todo lo del plan básico</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Exámenes preventivos incluidos</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cobertura familiar (hasta 6)</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Reportes de salud corporativos</li>
+        </ul>
+        <button class="plan-btn">Solicitar cotización</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Empresa Enterprise</div>
+        <div class="plan-price" style="font-size:1.6rem">A medida</div>
+        <div class="plan-period">+500 colaboradores</div>
+        <div class="plan-sep"></div>
+        <ul class="plan-features">
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Todo lo de Premium</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Integración con nómina</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Account manager dedicado</li>
+          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>SLA garantizado</li>
+        </ul>
+        <button class="plan-btn">Hablar con ventas</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CALCULADORA ── -->
+<section id="calculadora">
+  <div class="container">
+    <div class="calc-wrapper">
+      <div class="calc-left">
+        <div class="section-label">Calculadora</div>
+        <h2>Calcula tu ahorro real</h2>
+        <p>Selecciona los medicamentos de tu familia y ve exactamente cuánto ahorras con FarmaSub cada mes.</p>
+        <div class="calc-pills" id="calc-pills">
+          <div class="pill active" data-farmacia="22" data-costo="18" data-name="Losartán 50mg" onclick="togglePill(this)">Losartán 50mg</div>
+          <div class="pill" data-farmacia="13" data-costo="8" data-name="Metformina 850mg" onclick="togglePill(this)">Metformina</div>
+          <div class="pill" data-farmacia="18" data-costo="12" data-name="Atorvastatina 20mg" onclick="togglePill(this)">Atorvastatina</div>
+          <div class="pill" data-farmacia="10" data-costo="6" data-name="Omeprazol 20mg" onclick="togglePill(this)">Omeprazol</div>
+          <div class="pill" data-farmacia="15" data-costo="9" data-name="Levotiroxina" onclick="togglePill(this)">Levotiroxina</div>
+          <div class="pill" data-farmacia="9" data-costo="5" data-name="Amoxicilina" onclick="togglePill(this)">Amoxicilina</div>
+          <div class="pill" data-farmacia="5.5" data-costo="3" data-name="Ibuprofeno" onclick="togglePill(this)">Ibuprofeno</div>
+          <div class="pill" data-farmacia="13" data-costo="7" data-name="Vitamina D3" onclick="togglePill(this)">Vitamina D3</div>
+          <div class="pill" data-farmacia="17" data-costo="9" data-name="Omega 3" onclick="togglePill(this)">Omega 3</div>
+          <div class="pill" data-farmacia="11" data-costo="6" data-name="Anticonceptivo" onclick="togglePill(this)">Anticonceptivo</div>
+          <div class="pill" data-farmacia="13" data-costo="8" data-name="Salbutamol" onclick="togglePill(this)">Salbutamol</div>
+          <div class="pill" data-farmacia="3" data-costo="1.5" data-name="Paracetamol" onclick="togglePill(this)">Paracetamol</div>
+        </div>
+        <div class="calc-personas">
+          <label>Personas en tu familia:</label>
+          <div class="counter">
+            <button class="counter-btn" onclick="changePersonas(-1)">−</button>
+            <span class="counter-val" id="personas-val">1</span>
+            <button class="counter-btn" onclick="changePersonas(1)">+</button>
+          </div>
+        </div>
+      </div>
+      <div class="calc-right">
+        <div id="calc-display">
+          <div class="calc-empty">← Selecciona medicamentos para ver tu ahorro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONFIANZA ── -->
+<section id="confianza">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:48px">
+      <div class="section-label" style="text-align:center">Por qué FarmaSub</div>
+      <h2>Construido con responsabilidad</h2>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="trust-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6.5 7 1-5 5 1.2 7L12 18l-6.2 3.5L7 14.5 2 9.5l7-1L12 2z" stroke="#1A6B4A" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="trust-title">Operamos bajo regulación ARCSA</div>
+        <p class="trust-desc">Trabajamos con farmacias habilitadas y un Químico Farmacéutico responsable técnico. Tu salud no es un experimento.</p>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#1A6B4A" stroke-width="1.8"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="trust-title">Precios transparentes, sin letra pequeña</div>
+        <p class="trust-desc">Lo que ves en el catálogo es lo que pagas. Sin cargos ocultos, sin "precio especial solo hoy". El ahorro es real y verificable.</p>
+      </div>
+      <div class="trust-card">
+        <div class="trust-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="#1A6B4A" stroke-width="1.8"/><path d="M9 22V12h6v10" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="trust-title">Tu familia cubierta, no solo tú</div>
+        <p class="trust-desc">Un solo plan cubre a toda tu familia. Mientras más personas usen la membresía, más recuperas cada mes. Así funciona el ahorro real.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section id="cta-band">
+  <div class="container">
+    <h2>¿Listo para empezar a ahorrar?</h2>
+    <p>Activa tu membresía hoy. El primer mes lo pruebas sin compromiso.</p>
+    <div class="cta-actions">
+      <a href="#planes" class="btn-primary">Ver planes</a>
+      <a href="https://wa.me/593XXXXXXXXX" class="btn-ghost">💬 Hablar por WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo-text">Farma<span>Sub</span></div>
+        <p>La farmacia por membresía para familias y empresas ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="#como">Cómo funciona</a></li>
+          <li><a href="#planes">Planes y precios</a></li>
+          <li><a href="#calculadora">Calculadora de ahorro</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Empresa</h4>
+        <ul>
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Blog de salud</a></li>
+          <li><a href="#">Trabaja con nosotros</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Fuerza mayor</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 FarmaSub Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p>Quito · Guayaquil · Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── HERO CALCULATOR ──────────────────────────────────────
+const SUSCRIPCION = 14;
+
+function toggleHeroMed(el) {
+  el.classList.toggle('active');
+  updateHeroCalc();
+}
+
+function updateHeroCalc() {
+  const rows = document.querySelectorAll('#hero-meds .med-row.active');
+  let farmacia = 0, costo = 0;
+  rows.forEach(r => {
+    farmacia += parseFloat(r.dataset.farmacia);
+    costo    += parseFloat(r.dataset.costo);
+  });
+  const total = costo + SUSCRIPCION;
+  const ahorro = farmacia - total;
+
+  document.getElementById('hero-farmacia').textContent = '$' + farmacia.toFixed(0);
+  document.getElementById('hero-total').textContent    = '$' + total.toFixed(0);
+
+  const banner = document.getElementById('hero-saving');
+  if (ahorro > 0) {
+    banner.style.display = 'flex';
+    document.getElementById('hero-saving-val').textContent = '$' + ahorro.toFixed(0);
+  } else {
+    banner.style.display = 'none';
+  }
+}
+updateHeroCalc();
+
+// ── PLANS TOGGLE ─────────────────────────────────────────
+function showPlan(type) {
+  document.getElementById('grid-personal').style.display = type === 'personal' ? 'grid' : 'none';
+  document.getElementById('grid-empresa').style.display  = type === 'empresa'  ? 'grid' : 'none';
+  document.getElementById('toggle-personal').classList.toggle('active', type === 'personal');
+  document.getElementById('toggle-empresa').classList.toggle('active',  type === 'empresa');
+}
+
+// ── FULL CALCULATOR ──────────────────────────────────────
+let personas = 1;
+const PLAN_PRICE = 14;
+
+function changePersonas(delta) {
+  personas = Math.max(1, Math.min(6, personas + delta));
+  document.getElementById('personas-val').textContent = personas;
+  renderCalc();
+}
+
+function togglePill(el) {
+  el.classList.toggle('active');
+  renderCalc();
+}
+
+function renderCalc() {
+  const active = document.querySelectorAll('#calc-pills .pill.active');
+  const display = document.getElementById('calc-display');
+
+  if (active.length === 0) {
+    display.innerHTML = '<div class="calc-empty">← Selecciona medicamentos para ver tu ahorro</div>';
+    return;
+  }
+
+  let rows = '', totalF = 0, totalC = 0;
+  active.forEach(p => {
+    const f = parseFloat(p.dataset.farmacia) * personas;
+    const c = parseFloat(p.dataset.costo)    * personas;
+    totalF += f; totalC += c;
+    rows += `<div class="calc-row">
+      <span class="cr-name">${p.dataset.name}${personas > 1 ? ' ×'+personas : ''}</span>
+      <div class="cr-prices">
+        <span class="cr-old">$${f.toFixed(0)}</span>
+        <span class="cr-new">$${c.toFixed(0)}</span>
+      </div>
+    </div>`;
+  });
+
+  const sub      = PLAN_PRICE * personas;
+  const conMem   = totalC + sub;
+  const ahorro   = totalF - conMem;
+  const pct      = totalF > 0 ? Math.round((ahorro / totalF) * 100) : 0;
+  const annual   = ahorro * 12;
+
+  const ahorroColor = ahorro > 0 ? 'var(--color-text-success, #1A6B4A)' : 'var(--danger)';
+
+  display.innerHTML = `
+    ${rows}
+    <div class="calc-sep"></div>
+    <div class="calc-row" style="font-size:.8rem">
+      <span class="cr-name">Suscripción (${personas} persona${personas>1?'s':''})</span>
+      <span style="font-weight:600;color:var(--ink)">+$${sub}</span>
+    </div>
+    <div class="calc-sep"></div>
+    <div class="calc-totals">
+      <div class="ct-box normal">
+        <div class="ct-label">Farmacia normal</div>
+        <div class="ct-val">$${totalF.toFixed(0)}</div>
+        <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">sin membresía</div>
+      </div>
+      <div class="ct-box sub">
+        <div class="ct-label">Con FarmaSub</div>
+        <div class="ct-val">$${conMem.toFixed(0)}</div>
+        <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">todo incluido</div>
+      </div>
+    </div>
+    ${ahorro > 0 ? `
+    <div class="calc-saving">
+      <span class="cs-label">💚 Ahorras este mes</span>
+      <span class="cs-val">$${ahorro.toFixed(0)} (${pct}%)</span>
+    </div>
+    <div class="calc-annual">En 12 meses ahorras <strong>$${annual.toFixed(0)} USD</strong></div>
+    ` : `
+    <div style="background:#FFF0F0;border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--danger);margin-top:8px">
+      Con esta selección la membresía aún no genera ahorro neto. Agrega más medicamentos o incluye a tu familia.
+    </div>
+    `}
+  `;
+}
+renderCalc();
+</script>
+</body>
+</html>
