@@ -684,10 +684,7 @@ updateHeroCalc();
 
 // ── FULL CALCULATOR ──────────────────────────────────────
 let personas = 1;
-const PLAN_PRICE  = 8;    // suscripción fija por grupo familiar
-const COSTO_BODEGA   = 1.00; // absorbido por FarmaSub
-const COSTO_DELIVERY = 1.50; // absorbido por FarmaSub
-const UTILIDAD_FARMASUB = PLAN_PRICE - COSTO_BODEGA - COSTO_DELIVERY; // $5.50
+const PLAN_PRICE = 8; // suscripción fija por grupo familiar
 
 function changePersonas(delta) {
   personas = Math.max(1, Math.min(4, personas + delta));
@@ -764,21 +761,6 @@ function renderCalc() {
       Con esta selección la membresía aún no genera ahorro neto. Agrega más medicamentos o incluye a más personas.
     </div>
     `}
-    <div style="margin-top:14px; background:#EAF4EE; border:1px solid #B8DEC8; border-radius:10px; padding:12px 14px; font-size:.8rem;">
-      <div style="font-weight:600; color:var(--green); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;">Economía FarmaSub / mes</div>
-      <div style="display:flex; justify-content:space-between; color:var(--ink-60); margin-bottom:4px;">
-        <span>Ingreso membresía</span><span style="color:var(--ink); font-weight:500;">+$8.00</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; color:var(--ink-60); margin-bottom:4px;">
-        <span>Costo bodega</span><span style="color:var(--danger);">−$1.00</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; color:var(--ink-60); margin-bottom:8px;">
-        <span>Costo delivery</span><span style="color:var(--danger);">−$1.50</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; border-top:1px solid #B8DEC8; padding-top:8px; font-weight:600; color:var(--green);">
-        <span>Utilidad neta FarmaSub</span><span>$${UTILIDAD_FARMASUB.toFixed(2)}/mes</span>
-      </div>
-    </div>
   `;
 }
 renderCalc();
