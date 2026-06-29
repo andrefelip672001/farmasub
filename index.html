@@ -366,7 +366,7 @@ footer {
         <h1>Tu farmacia familiar por <em>lo que realmente cuesta</em></h1>
         <p class="hero-sub">Paga una membresía mensual y accede a medicamentos al costo para toda tu familia. Sin sorpresas, con entrega a domicilio o a tu trabajo.</p>
         <div class="hero-actions">
-          <a href="#planes" class="btn-primary">Ver planes desde $14/mes</a>
+          <a href="#planes" class="btn-primary">Comenzar desde $8/mes</a>
           <a href="#calculadora" class="btn-ghost">Calcular mi ahorro</a>
         </div>
         <div class="hero-stats">
@@ -379,8 +379,8 @@ footer {
             <div class="stat-label">Medicamentos<br>disponibles</div>
           </div>
           <div>
-            <div class="stat-num">6</div>
-            <div class="stat-label">Personas cubiertas<br>con un plan</div>
+            <div class="stat-num">4</div>
+            <div class="stat-label">Personas cubiertas<br>por $8/mes</div>
           </div>
         </div>
       </div>
@@ -433,7 +433,7 @@ footer {
           </div>
           <div class="result-box sub">
             <div class="rb-label">Con FarmaSub</div>
-            <div class="rb-val" id="hero-total">$14</div>
+            <div class="rb-val" id="hero-total">$8</div>
             <div class="rb-sub">medicamentos + suscripción</div>
           </div>
         </div>
@@ -457,7 +457,7 @@ footer {
         <div class="step-connector"></div>
         <div class="step-num">1</div>
         <div class="step-title">Elige tu plan</div>
-        <p class="step-desc">Personal o empresarial. Cubre hasta 6 personas de tu grupo familiar con un solo pago mensual.</p>
+        <p class="step-desc">Un solo plan de $8/mes cubre hasta 4 personas de tu grupo familiar. Medicamentos al costo exacto, sin márgenes.</p>
       </div>
       <div class="step-card">
         <div class="step-connector"></div>
@@ -487,133 +487,39 @@ footer {
       <div class="section-label">Planes</div>
       <h2>Elige el plan de tu familia</h2>
       <p style="color:var(--ink-60); margin-top:8px">Sin letra pequeña. Cancela cuando quieras.</p>
-      <div class="plans-toggle">
-        <button class="toggle-btn active" id="toggle-personal" onclick="showPlan('personal')">Persona / Familia</button>
-        <button class="toggle-btn" id="toggle-empresa" onclick="showPlan('empresa')">Empresa</button>
-      </div>
     </div>
 
-    <!-- Planes personales -->
-    <div class="plans-grid" id="grid-personal">
-      <div class="plan-card">
-        <div class="plan-name">Esencial</div>
-        <div class="plan-price">$9</div>
-        <div class="plan-period">USD / mes · 1 persona</div>
-        <div class="plan-sep"></div>
-        <ul class="plan-features">
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Medicamentos al costo
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Catálogo de 400+ productos
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Entrega a domicilio
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#B0C4BB" stroke-width="1.5"/><path d="M5.5 10.5l5-5M10.5 10.5l-5-5" stroke="#B0C4BB" stroke-width="1.5" stroke-linecap="round"/></svg>
-            <span style="color:var(--ink-30)">Cobertura familiar</span>
-          </li>
-        </ul>
-        <button class="plan-btn">Comenzar</button>
-      </div>
-      <div class="plan-card featured">
-        <span class="plan-badge">⭐ Más popular</span>
+    <!-- Plan único -->
+    <div style="display:flex; justify-content:center;">
+      <div class="plan-card featured" style="max-width:420px; width:100%;">
+        <span class="plan-badge">Plan único</span>
         <div class="plan-name">Familiar</div>
-        <div class="plan-price">$14</div>
+        <div class="plan-price">$8</div>
         <div class="plan-period">USD / mes · hasta 4 personas</div>
         <div class="plan-sep"></div>
         <ul class="plan-features">
           <li>
             <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Medicamentos al costo
+            Medicamentos al precio de costo exacto
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Hasta 4 miembros de familia
+            Hasta 4 miembros del grupo familiar
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Entrega gratis a domicilio
+            1 entrega mensual a domicilio incluida
           </li>
           <li>
             <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Vitaminas y suplementos
+            Catálogo de 400+ medicamentos y suplementos
           </li>
         </ul>
+        <div style="font-size:.75rem; color:rgba(255,255,255,.65); background:rgba(0,0,0,.12); border-radius:8px; padding:10px 12px; margin-bottom:16px; line-height:1.6;">
+          <strong style="color:rgba(255,255,255,.85); display:block; margin-bottom:4px;">Términos del plan:</strong>
+          Máx. 2 dosis diarias por medicamento por persona registrada. Con receta médica validada: hasta 3 dosis diarias. Miembros pre-registrados con cédula. Cupo mensual no acumulable.
+        </div>
         <button class="plan-btn">Comenzar</button>
-      </div>
-      <div class="plan-card">
-        <div class="plan-name">Familiar Plus</div>
-        <div class="plan-price">$22</div>
-        <div class="plan-period">USD / mes · hasta 6 personas</div>
-        <div class="plan-sep"></div>
-        <ul class="plan-features">
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Todo lo del plan Familiar
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Hasta 6 miembros
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Exámenes de laboratorio
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Coordinación con tu seguro
-          </li>
-        </ul>
-        <button class="plan-btn">Comenzar</button>
-      </div>
-    </div>
-
-    <!-- Planes empresa -->
-    <div class="plans-grid" id="grid-empresa" style="display:none">
-      <div class="plan-card">
-        <div class="plan-name">Empresa Básico</div>
-        <div class="plan-price">$12</div>
-        <div class="plan-period">USD / colaborador / mes</div>
-        <div class="plan-sep"></div>
-        <ul class="plan-features">
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Farmacia al costo para colaboradores</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Entrega en lugar de trabajo</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Panel de administración</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cobertura familiar (hasta 4)</li>
-        </ul>
-        <button class="plan-btn">Solicitar cotización</button>
-      </div>
-      <div class="plan-card featured">
-        <span class="plan-badge">⭐ Recomendado</span>
-        <div class="plan-name">Empresa Premium</div>
-        <div class="plan-price">$18</div>
-        <div class="plan-period">USD / colaborador / mes</div>
-        <div class="plan-sep"></div>
-        <ul class="plan-features">
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Todo lo del plan básico</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Exámenes preventivos incluidos</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cobertura familiar (hasta 6)</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Reportes de salud corporativos</li>
-        </ul>
-        <button class="plan-btn">Solicitar cotización</button>
-      </div>
-      <div class="plan-card">
-        <div class="plan-name">Empresa Enterprise</div>
-        <div class="plan-price" style="font-size:1.6rem">A medida</div>
-        <div class="plan-period">+500 colaboradores</div>
-        <div class="plan-sep"></div>
-        <ul class="plan-features">
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Todo lo de Premium</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Integración con nómina</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Account manager dedicado</li>
-          <li><svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#1A6B4A" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="#1A6B4A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>SLA garantizado</li>
-        </ul>
-        <button class="plan-btn">Hablar con ventas</button>
       </div>
     </div>
   </div>
@@ -642,7 +548,7 @@ footer {
           <div class="pill" data-farmacia="3" data-costo="1.5" data-name="Paracetamol" onclick="togglePill(this)">Paracetamol</div>
         </div>
         <div class="calc-personas">
-          <label>Personas en tu familia:</label>
+          <label>Personas en el grupo (máx. 4):</label>
           <div class="counter">
             <button class="counter-btn" onclick="changePersonas(-1)">−</button>
             <span class="counter-val" id="personas-val">1</span>
@@ -746,7 +652,7 @@ footer {
 
 <script>
 // ── HERO CALCULATOR ──────────────────────────────────────
-const SUSCRIPCION = 14;
+const SUSCRIPCION = 8;
 
 function toggleHeroMed(el) {
   el.classList.toggle('active');
@@ -776,20 +682,15 @@ function updateHeroCalc() {
 }
 updateHeroCalc();
 
-// ── PLANS TOGGLE ─────────────────────────────────────────
-function showPlan(type) {
-  document.getElementById('grid-personal').style.display = type === 'personal' ? 'grid' : 'none';
-  document.getElementById('grid-empresa').style.display  = type === 'empresa'  ? 'grid' : 'none';
-  document.getElementById('toggle-personal').classList.toggle('active', type === 'personal');
-  document.getElementById('toggle-empresa').classList.toggle('active',  type === 'empresa');
-}
-
 // ── FULL CALCULATOR ──────────────────────────────────────
 let personas = 1;
-const PLAN_PRICE = 14;
+const PLAN_PRICE  = 8;    // suscripción fija por grupo familiar
+const COSTO_BODEGA   = 1.00; // absorbido por FarmaSub
+const COSTO_DELIVERY = 1.50; // absorbido por FarmaSub
+const UTILIDAD_FARMASUB = PLAN_PRICE - COSTO_BODEGA - COSTO_DELIVERY; // $5.50
 
 function changePersonas(delta) {
-  personas = Math.max(1, Math.min(6, personas + delta));
+  personas = Math.max(1, Math.min(4, personas + delta));
   document.getElementById('personas-val').textContent = personas;
   renderCalc();
 }
@@ -822,20 +723,22 @@ function renderCalc() {
     </div>`;
   });
 
-  const sub      = PLAN_PRICE * personas;
-  const conMem   = totalC + sub;
-  const ahorro   = totalF - conMem;
-  const pct      = totalF > 0 ? Math.round((ahorro / totalF) * 100) : 0;
-  const annual   = ahorro * 12;
-
-  const ahorroColor = ahorro > 0 ? 'var(--color-text-success, #1A6B4A)' : 'var(--danger)';
+  // suscripción fija por grupo, delivery incluido (lo absorbe FarmaSub)
+  const conMem = totalC + PLAN_PRICE;
+  const ahorro = totalF - conMem;
+  const pct    = totalF > 0 ? Math.round((ahorro / totalF) * 100) : 0;
+  const annual = ahorro * 12;
 
   display.innerHTML = `
     ${rows}
     <div class="calc-sep"></div>
     <div class="calc-row" style="font-size:.8rem">
-      <span class="cr-name">Suscripción (${personas} persona${personas>1?'s':''})</span>
-      <span style="font-weight:600;color:var(--ink)">+$${sub}</span>
+      <span class="cr-name">Suscripción (grupo de ${personas} persona${personas>1?'s':''})</span>
+      <span style="font-weight:600;color:var(--ink)">+$${PLAN_PRICE.toFixed(2)}</span>
+    </div>
+    <div class="calc-row" style="font-size:.78rem; opacity:.7">
+      <span class="cr-name">Delivery incluido (FarmaSub lo absorbe)</span>
+      <span style="color:var(--green)">$0 para ti</span>
     </div>
     <div class="calc-sep"></div>
     <div class="calc-totals">
@@ -847,7 +750,7 @@ function renderCalc() {
       <div class="ct-box sub">
         <div class="ct-label">Con FarmaSub</div>
         <div class="ct-val">$${conMem.toFixed(0)}</div>
-        <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">todo incluido</div>
+        <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">medicamentos + $8 membresía</div>
       </div>
     </div>
     ${ahorro > 0 ? `
@@ -858,9 +761,24 @@ function renderCalc() {
     <div class="calc-annual">En 12 meses ahorras <strong>$${annual.toFixed(0)} USD</strong></div>
     ` : `
     <div style="background:#FFF0F0;border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--danger);margin-top:8px">
-      Con esta selección la membresía aún no genera ahorro neto. Agrega más medicamentos o incluye a tu familia.
+      Con esta selección la membresía aún no genera ahorro neto. Agrega más medicamentos o incluye a más personas.
     </div>
     `}
+    <div style="margin-top:14px; background:#EAF4EE; border:1px solid #B8DEC8; border-radius:10px; padding:12px 14px; font-size:.8rem;">
+      <div style="font-weight:600; color:var(--green); font-size:.72rem; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px;">Economía FarmaSub / mes</div>
+      <div style="display:flex; justify-content:space-between; color:var(--ink-60); margin-bottom:4px;">
+        <span>Ingreso membresía</span><span style="color:var(--ink); font-weight:500;">+$8.00</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; color:var(--ink-60); margin-bottom:4px;">
+        <span>Costo bodega</span><span style="color:var(--danger);">−$1.00</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; color:var(--ink-60); margin-bottom:8px;">
+        <span>Costo delivery</span><span style="color:var(--danger);">−$1.50</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; border-top:1px solid #B8DEC8; padding-top:8px; font-weight:600; color:var(--green);">
+        <span>Utilidad neta FarmaSub</span><span>$${UTILIDAD_FARMASUB.toFixed(2)}/mes</span>
+      </div>
+    </div>
   `;
 }
 renderCalc();
