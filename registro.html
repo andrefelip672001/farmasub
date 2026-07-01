@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Registrarse — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;--gold-light:#FDF4E7;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--danger:#C84040;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);--shadow-lg:0 8px 40px rgba(26,107,74,.14);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(1.7rem,3.5vw,2.4rem);line-height:1.15;}
+h2{font-family:'DM Serif Display',serif;font-size:1.2rem;}
+p{color:var(--ink-60);}
+
+/* ── NAV ── */
+nav{background:var(--white);border-bottom:1px solid var(--green-light);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1080px;margin:0 auto;padding:0 24px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-back{font-size:.88rem;color:var(--ink-60);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .2s;}
+.nav-back:hover{color:var(--green);}
+
+/* ── PROGRESS BAR ── */
+.wizard-bar{background:var(--white);border-bottom:1px solid var(--green-light);padding:20px 0 16px;}
+.progress-track{display:flex;align-items:flex-start;max-width:560px;margin:0 auto;padding:0 24px;position:relative;}
+.progress-track::before{content:'';position:absolute;top:17px;left:calc(24px + 18px);right:calc(24px + 18px);height:2px;background:var(--ink-30);}
+.fill-line{position:absolute;top:17px;left:calc(24px + 18px);height:2px;background:var(--green);transition:width .4s ease;z-index:1;width:0;}
+.ps{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2;}
+.ps-circle{width:36px;height:36px;border-radius:50%;border:2px solid var(--ink-30);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:var(--ink-30);transition:all .3s;}
+.ps.ps-active .ps-circle{border-color:var(--green);background:var(--green);color:#fff;}
+.ps.ps-done .ps-circle{border-color:var(--green);background:var(--green);color:#fff;}
+.ps-label{font-size:.68rem;color:var(--ink-30);margin-top:7px;text-align:center;font-weight:500;white-space:nowrap;}
+.ps.ps-active .ps-label,.ps.ps-done .ps-label{color:var(--green);}
+
+/* ── WIZARD MAIN ── */
+.wizard-main{padding:40px 24px 120px;min-height:60vh;}
+.wizard-container{max-width:680px;margin:0 auto;}
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+.step-head{margin-bottom:32px;}
+.step-head h1{margin-bottom:6px;}
+.step-head p{font-size:.95rem;}
+
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1 / -1;}
+label{font-size:.85rem;font-weight:500;color:var(--ink);}
+label .req{color:var(--danger);margin-left:2px;}
+input[type=text],input[type=email],input[type=tel],input[type=date],select,textarea{
+  width:100%;padding:10px 14px;border:1.5px solid var(--ink-30);border-radius:var(--r);
+  font-size:.9rem;font-family:'Inter',sans-serif;color:var(--ink);background:var(--white);
+  transition:border-color .2s;appearance:none;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(26,107,74,.08);}
+input.invalid,select.invalid,textarea.invalid{border-color:var(--danger)!important;}
+input::placeholder,textarea::placeholder{color:var(--ink-30);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7065' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+.field-error{font-size:.78rem;color:var(--danger);min-height:16px;display:block;margin-top:2px;}
+.field-note{font-size:.75rem;color:var(--ink-30);margin-top:3px;}
+
+/* ── MEMBER CARDS ── */
+.member-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.member-card{background:var(--white);border:1.5px solid var(--green-light);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:14px;}
+.mc-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;flex-shrink:0;color:#fff;}
+.mc-avatar.gold{background:var(--gold);}
+.mc-avatar.green{background:var(--green);}
+.mc-info{flex:1;}
+.mc-name{font-size:.92rem;font-weight:600;color:var(--ink);}
+.mc-detail{font-size:.78rem;color:var(--ink-60);margin-top:1px;}
+.badge-titular{background:var(--gold-light);color:var(--gold);font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px;}
+.mc-del{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink-30);background:transparent;color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .15s;flex-shrink:0;}
+.mc-del:hover{border-color:var(--danger);color:var(--danger);background:#FFF5F5;}
+.btn-add-member{display:flex;align-items:center;gap:8px;background:transparent;border:1.5px dashed var(--green-mid);color:var(--green);padding:11px 20px;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;width:100%;justify-content:center;transition:all .2s;}
+.btn-add-member:hover{background:var(--green-light);}
+.add-member-form{background:var(--bg);border:1.5px solid var(--green-light);border-radius:var(--r-lg);padding:24px;margin-top:12px;display:none;}
+.amf-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:16px;}
+.amf-actions{display:flex;gap:10px;margin-top:16px;}
+.btn-amf-save{background:var(--green);color:#fff;border:none;padding:10px 20px;border-radius:var(--r);font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-amf-save:hover{background:var(--green-mid);}
+.btn-amf-cancel{background:transparent;color:var(--ink-60);border:1.5px solid var(--ink-30);padding:10px 20px;border-radius:var(--r);font-size:.88rem;cursor:pointer;transition:all .2s;}
+.btn-amf-cancel:hover{border-color:var(--ink-60);}
+.members-limit{font-size:.8rem;color:var(--ink-30);text-align:center;padding:10px;display:none;}
+.step2-note{background:var(--green-light);border-radius:var(--r);padding:12px 16px;font-size:.83rem;color:var(--ink-60);margin-bottom:20px;}
+.step2-note strong{color:var(--green);}
+
+/* ── PAYMENT ── */
+.payment-summary{background:var(--green-light);border:1.5px solid #A8DCC0;border-radius:var(--r-lg);padding:24px;margin-bottom:24px;}
+.ps-title{font-size:.75rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;}
+.ps-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(26,107,74,.1);}
+.ps-row:last-child{border-bottom:none;}
+.ps-key{font-size:.88rem;color:var(--ink-60);}
+.ps-val{font-size:.9rem;font-weight:600;color:var(--ink);}
+.ps-val.green{color:var(--green);}
+.bank-box{background:var(--white);border:1.5px solid var(--green-light);border-radius:var(--r-lg);padding:20px 24px;margin-bottom:24px;}
+.bank-box h3{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.bank-icon{width:28px;height:28px;background:var(--green-light);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.bank-icon svg{width:14px;height:14px;}
+.bank-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:.88rem;}
+.bank-row:last-child{border-bottom:none;}
+.bank-key{color:var(--ink-60);}
+.bank-val{font-weight:600;color:var(--ink);}
+.bank-concept{background:var(--gold-light);border:1px solid #F0D5A0;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:.83rem;color:var(--ink-60);}
+.bank-concept strong{color:var(--gold);}
+.upload-zone{border:2px dashed var(--ink-30);border-radius:var(--r-lg);padding:36px 24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:8px;}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--green);background:var(--green-light);}
+.upload-icon{font-size:2rem;margin-bottom:10px;}
+.upload-text{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.upload-hint{font-size:.78rem;color:var(--ink-30);}
+.upload-preview{display:none;align-items:center;gap:10px;background:var(--green-light);border-radius:var(--r);padding:10px 14px;margin-bottom:8px;}
+.upload-filename{font-size:.85rem;color:var(--green);font-weight:500;flex:1;}
+.btn-clear-file{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1.1rem;padding:0 4px;}
+.confirm-check{display:flex;align-items:flex-start;gap:10px;margin-top:16px;}
+.confirm-check input{width:18px;height:18px;accent-color:var(--green);flex-shrink:0;margin-top:2px;}
+.confirm-check label{font-size:.88rem;color:var(--ink-60);cursor:pointer;}
+.payment-note{font-size:.78rem;color:var(--ink-30);margin-top:14px;}
+
+/* ── HEALTH STEP ── */
+.health-person{background:var(--white);border:1.5px solid var(--green-light);border-radius:var(--r-lg);margin-bottom:16px;overflow:hidden;}
+.hp-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--green-light);}
+.hp-person{display:flex;align-items:center;gap:12px;}
+.hp-avatar{width:40px;height:40px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;flex-shrink:0;}
+.hp-avatar.gold{background:var(--gold);}
+.hp-name{font-size:.95rem;font-weight:600;color:var(--ink);}
+.hp-role{font-size:.75rem;color:var(--ink-60);margin-top:1px;}
+.hp-body{padding:20px;}
+.hs-sec{margin-bottom:24px;}
+.hs-sec:last-child{margin-bottom:0;}
+.hs-sec-label{font-size:.78rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:block;}
+.cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.cond-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border-radius:8px;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none;}
+.cond-item:has(input:checked){border-color:var(--green);background:var(--green-light);}
+.cond-item input{width:16px;height:16px;accent-color:var(--green);flex-shrink:0;}
+.cond-item span{font-size:.83rem;color:var(--ink-60);}
+.no-meds-label{display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;}
+.no-meds-label input{width:16px;height:16px;accent-color:var(--green);}
+.no-meds-label span{font-size:.85rem;color:var(--ink-60);}
+.med-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.med-row{display:grid;grid-template-columns:1fr .6fr .8fr auto;gap:8px;align-items:center;}
+.med-row input,.med-row select{padding:8px 10px;font-size:.82rem;}
+.med-del{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ink-30);background:transparent;color:var(--ink-30);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:all .15s;}
+.med-del:hover{border-color:var(--danger);color:var(--danger);}
+.btn-add-med{background:transparent;border:1.5px dashed var(--ink-30);color:var(--ink-60);padding:8px 16px;border-radius:var(--r);font-size:.82rem;cursor:pointer;transition:all .2s;}
+.btn-add-med:hover{border-color:var(--green);color:var(--green);}
+.hs-q-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bg);}
+.hs-q-row:last-of-type{border-bottom:none;}
+.hs-q{font-size:.88rem;color:var(--ink-60);}
+.radio-grp{display:flex;gap:16px;}
+.radio-grp label{display:flex;align-items:center;gap:5px;font-size:.88rem;color:var(--ink-60);cursor:pointer;}
+.radio-grp input{accent-color:var(--green);}
+.toggle-wrap{display:flex;align-items:center;gap:10px;}
+.toggle-lbl{font-size:.82rem;color:var(--ink-60);}
+.toggle{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-sl{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--ink-30);border-radius:24px;transition:.3s;}
+.toggle-sl::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-sl{background:var(--green);}
+.toggle input:checked+.toggle-sl::before{transform:translateX(20px);}
+.health-note{background:var(--gold-light);border-left:3px solid var(--gold);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:var(--ink-60);}
+
+/* ── CONFIRMATION ── */
+.confirm-hero{text-align:center;padding:40px 0 32px;}
+.check-anim{width:80px;height:80px;margin:0 auto 20px;}
+.check-anim circle{stroke:var(--green);stroke-width:3;fill:none;stroke-dasharray:220;stroke-dashoffset:220;animation:draw-circle .6s ease forwards;}
+.check-anim path{stroke:var(--green);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:80;stroke-dashoffset:80;animation:draw-check .4s ease .5s forwards;}
+@keyframes draw-circle{to{stroke-dashoffset:0;}}
+@keyframes draw-check{to{stroke-dashoffset:0;}}
+.conf-title{font-family:'DM Serif Display',serif;font-size:1.8rem;color:var(--ink);margin-bottom:6px;}
+.conf-sub{font-size:.95rem;color:var(--ink-60);}
+.conf-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+.conf-card{background:var(--white);border:1.5px solid var(--green-light);border-radius:var(--r-lg);padding:20px;}
+.cc-label{font-size:.72rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+.cc-val{font-size:.88rem;color:var(--ink);line-height:1.6;}
+.cc-val ul{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.cc-val li{display:flex;align-items:center;gap:6px;}
+.cc-badge{font-size:.65rem;font-weight:600;padding:1px 6px;border-radius:8px;}
+.cc-badge.gold{background:var(--gold-light);color:var(--gold);}
+.cc-badge.green{background:var(--green-light);color:var(--green);}
+.status-card{background:var(--bg);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:10px;}
+.status-dot-anim{width:10px;height:10px;background:#F5A623;border-radius:50%;animation:pulse-orange 2s infinite;flex-shrink:0;}
+@keyframes pulse-orange{0%,100%{opacity:1;}50%{opacity:.4;}}
+.status-text{font-size:.85rem;color:var(--ink-60);}
+.status-text strong{color:var(--ink);}
+.whatsapp-banner{background:var(--green-light);border-left:4px solid var(--green);border-radius:0 var(--r-lg) var(--r-lg) 0;padding:16px 20px;margin:20px 0;}
+.wb-text{font-size:.9rem;color:var(--green);font-weight:600;}
+.wb-sub{font-size:.82rem;color:var(--ink-60);margin-top:2px;}
+.btn-home{display:inline-block;background:var(--green);color:#fff;padding:13px 32px;border-radius:var(--r);font-size:.95rem;font-weight:600;text-decoration:none;transition:all .2s;margin-top:8px;}
+.btn-home:hover{background:var(--green-mid);transform:translateY(-1px);}
+
+/* ── WIZARD NAV ── */
+.wizard-nav-bar{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--green-light);padding:14px 24px;z-index:50;}
+.wizard-nav-inner{max-width:680px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.btn-prev{background:transparent;color:var(--ink-60);border:1.5px solid var(--ink-30);padding:11px 24px;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-prev:hover{border-color:var(--ink-60);color:var(--ink);}
+.btn-next{background:var(--green);color:#fff;border:none;padding:11px 28px;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;margin-left:auto;}
+.btn-next:hover{background:var(--green-mid);}
+.step-counter{font-size:.78rem;color:var(--ink-30);}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);padding:28px 0;}
+.footer-mini{display:flex;justify-content:space-between;align-items:center;max-width:1080px;margin:0 auto;padding:0 24px;}
+.footer-logo-text{font-family:'DM Serif Display',serif;font-size:1rem;color:#fff;}
+.footer-logo-text span{color:#5EE8A0;}
+.footer-mini p{font-size:.75rem;color:var(--ink-60);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .form-grid{grid-template-columns:1fr;}
+  .form-group.full{grid-column:1;}
+  .cond-grid{grid-template-columns:1fr;}
+  .med-row{grid-template-columns:1fr auto;}
+  .med-row .med-dose,.med-row .med-freq{grid-column:1;}
+  .conf-cards{grid-template-columns:1fr;}
+  .progress-track::before{display:none;}
+  .fill-line{display:none;}
+  .ps-label{display:none;}
+  .wizard-main{padding:28px 16px 110px;}
+  .footer-mini{flex-direction:column;gap:6px;text-align:center;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Volver al inicio
+    </a>
+  </div>
+</nav>
+
+<!-- PROGRESS BAR -->
+<div class="wizard-bar">
+  <div class="progress-track" id="progress-track">
+    <div class="fill-line" id="fill-line"></div>
+    <div class="ps ps-active" id="ps-1"><div class="ps-circle" id="pc-1">1</div><div class="ps-label">Titular</div></div>
+    <div class="ps" id="ps-2"><div class="ps-circle" id="pc-2">2</div><div class="ps-label">Familia</div></div>
+    <div class="ps" id="ps-3"><div class="ps-circle" id="pc-3">3</div><div class="ps-label">Pago</div></div>
+    <div class="ps" id="ps-4"><div class="ps-circle" id="pc-4">4</div><div class="ps-label">Salud</div></div>
+    <div class="ps" id="ps-5"><div class="ps-circle" id="pc-5">5</div><div class="ps-label">¡Listo!</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="wizard-main">
+  <div class="wizard-container">
+
+    <!-- ══ PASO 1 — TITULAR ══ -->
+    <div class="step-panel active" id="panel-1">
+      <div class="step-head">
+        <h1>Cuéntanos sobre ti</h1>
+        <p>El titular es el responsable de la membresía familiar</p>
+      </div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="s1-nombre">Nombre completo<span class="req">*</span></label>
+          <input type="text" id="s1-nombre" placeholder="Ej: María García López" autocomplete="name"/>
+          <span class="field-error" id="err-s1-nombre"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-cedula">Número de cédula<span class="req">*</span></label>
+          <input type="text" id="s1-cedula" placeholder="0000000000" maxlength="10" inputmode="numeric"/>
+          <span class="field-error" id="err-s1-cedula"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-fechaNac">Fecha de nacimiento<span class="req">*</span></label>
+          <input type="date" id="s1-fechaNac"/>
+          <span class="field-error" id="err-s1-fechaNac"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-telefono">Teléfono celular<span class="req">*</span></label>
+          <input type="tel" id="s1-telefono" placeholder="09XXXXXXXX" maxlength="10" inputmode="numeric"/>
+          <span class="field-error" id="err-s1-telefono"></span>
+          <span class="field-note">Formato ecuatoriano: 09XXXXXXXX</span>
+        </div>
+        <div class="form-group">
+          <label for="s1-email">Correo electrónico<span class="req">*</span></label>
+          <input type="email" id="s1-email" placeholder="ejemplo@correo.com" autocomplete="email"/>
+          <span class="field-error" id="err-s1-email"></span>
+        </div>
+        <div class="form-group full">
+          <label for="s1-direccion">Dirección completa de entrega en Santo Domingo<span class="req">*</span></label>
+          <input type="text" id="s1-direccion" placeholder="Calle, número, intersección, referencia..." autocomplete="street-address"/>
+          <span class="field-error" id="err-s1-direccion"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-barrio">Barrio o sector<span class="req">*</span></label>
+          <input type="text" id="s1-barrio" placeholder="Ej: Ciudadela Ibarra"/>
+          <span class="field-error" id="err-s1-barrio"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PASO 2 — FAMILIA ══ -->
+    <div class="step-panel" id="panel-2">
+      <div class="step-head">
+        <h1>¿Quién más se beneficia?</h1>
+        <p>Puedes agregar hasta 3 personas adicionales a tu membresía. Cada una necesita su cédula para hacer pedidos.</p>
+      </div>
+      <div class="step2-note"><strong>Este paso es opcional.</strong> Si solo vas a usarlo tú, puedes avanzar sin agregar miembros.</div>
+      <div class="member-list" id="member-list">
+        <!-- Titular card insertado por JS -->
+      </div>
+      <div id="add-member-form" class="add-member-form">
+        <div class="amf-title">Nuevo miembro del grupo familiar</div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label for="m-nombre">Nombre completo<span class="req">*</span></label>
+            <input type="text" id="m-nombre" placeholder="Ej: Juan García"/>
+            <span class="field-error" id="err-m-nombre"></span>
+          </div>
+          <div class="form-group">
+            <label for="m-cedula">Número de cédula<span class="req">*</span></label>
+            <input type="text" id="m-cedula" placeholder="0000000000" maxlength="10" inputmode="numeric"/>
+            <span class="field-error" id="err-m-cedula"></span>
+          </div>
+          <div class="form-group">
+            <label for="m-fechaNac">Fecha de nacimiento<span class="req">*</span></label>
+            <input type="date" id="m-fechaNac"/>
+            <span class="field-error" id="err-m-fechaNac"></span>
+          </div>
+          <div class="form-group full">
+            <label for="m-relacion">Relación con el titular<span class="req">*</span></label>
+            <select id="m-relacion">
+              <option value="">Seleccione...</option>
+              <option>Cónyuge</option>
+              <option>Hijo/a</option>
+              <option>Padre/Madre</option>
+              <option>Hermano/a</option>
+              <option>Otro</option>
+            </select>
+            <span class="field-error" id="err-m-relacion"></span>
+          </div>
+        </div>
+        <div class="amf-actions">
+          <button class="btn-amf-save" onclick="confirmAddMember()">Guardar miembro</button>
+          <button class="btn-amf-cancel" onclick="cancelAddMember()">Cancelar</button>
+        </div>
+      </div>
+      <button class="btn-add-member" id="btn-add-member" onclick="showAddMemberForm()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Agregar miembro
+      </button>
+      <div class="members-limit" id="members-limit">Has alcanzado el máximo de 4 personas por membresía</div>
+    </div>
+
+    <!-- ══ PASO 3 — PAGO ══ -->
+    <div class="step-panel" id="panel-3">
+      <div class="step-head">
+        <h1>Activa tu membresía</h1>
+        <p>Tu membresía cuesta <strong style="color:var(--ink)">$8.00 USD al mes</strong> e incluye a todos los miembros registrados</p>
+      </div>
+
+      <div class="payment-summary">
+        <div class="ps-title">Resumen de tu membresía</div>
+        <div class="ps-row"><span class="ps-key">Plan</span><span class="ps-val">Familiar FarmaSub</span></div>
+        <div class="ps-row"><span class="ps-key">Miembros registrados</span><span class="ps-val" id="s3-members">1 persona</span></div>
+        <div class="ps-row"><span class="ps-key">Valor mensual</span><span class="ps-val green">$8.00 USD</span></div>
+        <div class="ps-row"><span class="ps-key">Próxima entrega</span><span class="ps-val" id="s3-proxima">—</span></div>
+      </div>
+
+      <div class="bank-box">
+        <h3>
+          <div class="bank-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4"/></svg>
+          </div>
+          Datos para la transferencia bancaria
+        </h3>
+        <div class="bank-row"><span class="bank-key">Banco</span><span class="bank-val">[BANCO PENDIENTE]</span></div>
+        <div class="bank-row"><span class="bank-key">Tipo de cuenta</span><span class="bank-val">[PENDIENTE]</span></div>
+        <div class="bank-row"><span class="bank-key">Número de cuenta</span><span class="bank-val">[PENDIENTE]</span></div>
+        <div class="bank-row"><span class="bank-key">Titular de la cuenta</span><span class="bank-val">FarmaSub Ecuador</span></div>
+        <div class="bank-row"><span class="bank-key">Monto exacto</span><span class="bank-val" style="color:var(--green)">$8.00 USD</span></div>
+        <div class="bank-concept">
+          <strong>Concepto obligatorio:</strong> Escribe en el concepto de la transferencia "Membresía " seguido del <strong>número de cédula del titular</strong>. Ej: <em>Membresía 1234567890</em>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:8px;">
+        <label>Comprobante de pago<span class="req">*</span></label>
+        <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+          <input type="file" id="file-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleFile(this)"/>
+          <div class="upload-icon">📎</div>
+          <div class="upload-text">Haz clic o arrastra aquí tu comprobante</div>
+          <div class="upload-hint">JPG, PNG o PDF · Máximo 5 MB</div>
+        </div>
+        <div class="upload-preview" id="upload-preview">
+          <span class="upload-filename" id="upload-filename"></span>
+          <button class="btn-clear-file" onclick="clearFile(event)" title="Quitar archivo">×</button>
+        </div>
+        <span class="field-error" id="err-upload"></span>
+      </div>
+
+      <div class="confirm-check">
+        <input type="checkbox" id="s3-confirm"/>
+        <label for="s3-confirm">Confirmo que he realizado la transferencia de <strong>$8.00 USD</strong> a la cuenta indicada y que el comprobante adjunto corresponde a este pago.</label>
+      </div>
+      <span class="field-error" id="err-s3-confirm"></span>
+      <p class="payment-note">Tu membresía será activada dentro de las <strong>24 horas hábiles</strong> siguientes a la verificación del pago. Recibirás confirmación por WhatsApp.</p>
+    </div>
+
+    <!-- ══ PASO 4 — SALUD ══ -->
+    <div class="step-panel" id="panel-4">
+      <div class="step-head">
+        <h1>Personaliza tu experiencia</h1>
+        <p>Esta información nos ayuda a anticipar tus medicamentos y garantizar que siempre estén disponibles para ti. Es confidencial y solo la usa nuestro equipo de salud.</p>
+      </div>
+      <div class="health-note">El cuestionario del titular es <strong>obligatorio</strong>. Para los demás miembros es opcional: activa el interruptor si deseas completarlo.</div>
+      <div id="health-persons"></div>
+    </div>
+
+    <!-- ══ PASO 5 — CONFIRMACIÓN ══ -->
+    <div class="step-panel" id="panel-5">
+      <div class="confirm-hero">
+        <svg class="check-anim" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="35"/>
+          <path d="M24 40l11 11 21-22" class="check-anim path"/>
+        </svg>
+        <div class="conf-title" id="conf-title">¡Bienvenido a FarmaSub!</div>
+        <p class="conf-sub">Tu registro está completo. Estamos verificando tu pago.</p>
+      </div>
+      <div class="conf-cards">
+        <div class="conf-card">
+          <div class="cc-label">Miembros registrados</div>
+          <div class="cc-val"><ul id="conf-members"></ul></div>
+        </div>
+        <div class="conf-card">
+          <div class="cc-label">Dirección de entrega</div>
+          <div class="cc-val" id="conf-direccion">—</div>
+        </div>
+      </div>
+      <div class="status-card" style="margin-bottom:16px;">
+        <div class="status-dot-anim"></div>
+        <div class="status-text"><strong>Estado de membresía:</strong> En verificación — máximo 24 horas hábiles</div>
+      </div>
+      <div class="whatsapp-banner">
+        <div class="wb-text">Recibirás una confirmación por WhatsApp al número <span id="conf-telefono">registrado</span></div>
+        <div class="wb-sub">una vez que tu pago sea verificado por nuestro equipo</div>
+      </div>
+      <div style="text-align:center;margin-top:24px;">
+        <a href="index.html" class="btn-home">Volver al inicio</a>
+        <p style="margin-top:16px;font-size:.8rem;">¿Tienes dudas? <a href="https://wa.me/593XXXXXXXXX" style="color:var(--green);font-weight:500;">Escríbenos por WhatsApp</a></p>
+      </div>
+    </div>
+
+  </div><!-- /wizard-container -->
+</main>
+
+<!-- NAV BAR INFERIOR -->
+<div class="wizard-nav-bar" id="wizard-nav-bar">
+  <div class="wizard-nav-inner">
+    <button class="btn-prev" id="btn-prev" onclick="navigate(-1)" style="display:none">← Anterior</button>
+    <span class="step-counter" id="step-counter">Paso 1 de 5</span>
+    <button class="btn-next" id="btn-next" onclick="navigate(1)">Siguiente →</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-mini">
+    <div class="footer-logo-text">Farma<span>Sub</span></div>
+    <p>© 2025 FarmaSub Ecuador · Santo Domingo de los Tsáchilas</p>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════════════════════
+const S = {
+  step: 1,
+  titular: { nombre:'', cedula:'', fechaNac:'', telefono:'', email:'', direccion:'', barrio:'' },
+  members: [],
+  payment: { file: null },
+  healthBuilt: false
+};
+
+const CHECK_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M1 6l5 5L15 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// ═══════════════════════════════════════════════════════
+// INICIALIZACIÓN
+// ═══════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  renderTitularCard();
+  setProximaEntrega();
+});
+
+function setProximaEntrega() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  // Saltar fin de semana
+  while (next.getDay() === 0 || next.getDay() === 6) next.setDate(next.getDate() + 1);
+  const opts = { day: 'numeric', month: 'long', year: 'numeric' };
+  document.getElementById('s3-proxima').textContent = next.toLocaleDateString('es-EC', opts);
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════════
+function navigate(dir) {
+  if (dir === 1) {
+    if (!validateStep(S.step)) return;
+    if (S.step === 1) saveTitular();
+  }
+  if (dir === -1 && S.step === 1) return;
+
+  S.step += dir;
+  if (S.step < 1) S.step = 1;
+  if (S.step > 5) return;
+
+  if (S.step === 3) updatePaymentSummary();
+  if (S.step === 4 && !S.healthBuilt) { buildHealthStep(); S.healthBuilt = true; }
+  if (S.step === 5) buildConfirmation();
+
+  renderUI();
+}
+
+function renderUI() {
+  // Panels
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + S.step).classList.add('active');
+
+  // Progress bar
+  const pct = ((S.step - 1) / 4) * 100;
+  document.getElementById('fill-line').style.width = pct + '%';
+  for (let i = 1; i <= 5; i++) {
+    const ps = document.getElementById('ps-' + i);
+    const pc = document.getElementById('pc-' + i);
+    ps.classList.toggle('ps-active', i === S.step);
+    ps.classList.toggle('ps-done', i < S.step);
+    pc.innerHTML = i < S.step ? CHECK_SVG : i;
+  }
+
+  // Bottom nav
+  document.getElementById('btn-prev').style.display = S.step === 1 || S.step === 5 ? 'none' : '';
+  document.getElementById('step-counter').textContent = S.step < 5 ? `Paso ${S.step} de 5` : '';
+  const btnNext = document.getElementById('btn-next');
+  if (S.step === 5) {
+    document.getElementById('wizard-nav-bar').style.display = 'none';
+  } else {
+    document.getElementById('wizard-nav-bar').style.display = '';
+    btnNext.textContent = S.step === 4 ? 'Finalizar →' : 'Siguiente →';
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════
+// VALIDACIÓN
+// ═══════════════════════════════════════════════════════
+function validateStep(step) {
+  clearErrors();
+  if (step === 1) return validateStep1();
+  if (step === 2) return true;
+  if (step === 3) return validateStep3();
+  if (step === 4) return validateStep4();
+  return true;
+}
+
+function validateStep1() {
+  let ok = true;
+  const required = [
+    ['s1-nombre', 'Ingrese su nombre completo'],
+    ['s1-cedula', 'Ingrese su número de cédula'],
+    ['s1-fechaNac', 'Ingrese su fecha de nacimiento'],
+    ['s1-telefono', 'Ingrese su teléfono celular'],
+    ['s1-email', 'Ingrese su correo electrónico'],
+    ['s1-direccion', 'Ingrese su dirección de entrega'],
+    ['s1-barrio', 'Ingrese su barrio o sector']
+  ];
+  required.forEach(([id, msg]) => {
+    if (!document.getElementById(id).value.trim()) { showErr(id, msg); ok = false; }
+  });
+  const cedula = document.getElementById('s1-cedula').value.trim();
+  if (cedula && !/^\d{10}$/.test(cedula)) { showErr('s1-cedula', 'La cédula debe tener exactamente 10 dígitos numéricos'); ok = false; }
+  const tel = document.getElementById('s1-telefono').value.trim();
+  if (tel && !/^09\d{8}$/.test(tel)) { showErr('s1-telefono', 'El teléfono debe empezar con 09 y tener 10 dígitos'); ok = false; }
+  const email = document.getElementById('s1-email').value.trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('s1-email', 'Ingrese un correo electrónico válido'); ok = false; }
+  return ok;
+}
+
+function validateStep3() {
+  let ok = true;
+  if (!S.payment.file) { showErr('err-upload', 'Debe subir el comprobante de pago'); ok = false; }
+  if (!document.getElementById('s3-confirm').checked) { showErr('err-s3-confirm', 'Debe confirmar que realizó la transferencia'); ok = false; }
+  return ok;
+}
+
+function validateStep4() {
+  const conds = document.querySelectorAll('[name="cond-0"]:checked');
+  if (conds.length === 0) {
+    const el = document.getElementById('err-cond-0');
+    if (el) el.textContent = 'Seleccione al menos una condición de salud para el titular';
+    document.getElementById('hp-body-0').scrollIntoView({ behavior: 'smooth' });
+    return false;
+  }
+  return true;
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id) || document.getElementById('err-' + id);
+  if (!el) return;
+  if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+    el.classList.add('invalid');
+    const errEl = document.getElementById('err-' + id);
+    if (errEl) errEl.textContent = msg;
+  } else {
+    el.textContent = msg;
+  }
+}
+
+function clearErrors() {
+  document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+  document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+}
+
+// ═══════════════════════════════════════════════════════
+// PASO 1 — GUARDAR TITULAR
+// ═══════════════════════════════════════════════════════
+function saveTitular() {
+  S.titular = {
+    nombre: document.getElementById('s1-nombre').value.trim(),
+    cedula: document.getElementById('s1-cedula').value.trim(),
+    fechaNac: document.getElementById('s1-fechaNac').value,
+    telefono: document.getElementById('s1-telefono').value.trim(),
+    email: document.getElementById('s1-email').value.trim(),
+    direccion: document.getElementById('s1-direccion').value.trim(),
+    barrio: document.getElementById('s1-barrio').value.trim()
+  };
+  renderTitularCard();
+}
+
+// ═══════════════════════════════════════════════════════
+// PASO 2 — MIEMBROS
+// ═══════════════════════════════════════════════════════
+function renderTitularCard() {
+  const list = document.getElementById('member-list');
+  if (!list) return;
+  const nombre = S.titular.nombre || document.getElementById('s1-nombre').value.trim() || 'Tú (titular)';
+  const cedula = S.titular.cedula || '—';
+  list.innerHTML = `
+    <div class="member-card">
+      <div class="mc-avatar gold">${nombre.charAt(0).toUpperCase()}</div>
+      <div class="mc-info">
+        <div class="mc-name">${nombre} <span class="badge-titular">Titular</span></div>
+        <div class="mc-detail">${cedula}</div>
+      </div>
+    </div>`;
+  renderMemberCards();
+}
+
+function renderMemberCards() {
+  const list = document.getElementById('member-list');
+  const existing = list.querySelectorAll('.member-card:not(:first-child)');
+  existing.forEach(c => c.remove());
+  S.members.forEach((m, i) => {
+    const card = document.createElement('div');
+    card.className = 'member-card';
+    card.innerHTML = `
+      <div class="mc-avatar green">${m.nombre.charAt(0).toUpperCase()}</div>
+      <div class="mc-info">
+        <div class="mc-name">${m.nombre}</div>
+        <div class="mc-detail">${m.cedula} · ${m.relacion}</div>
+      </div>
+      <button class="mc-del" onclick="removeMember(${i})" title="Eliminar miembro">×</button>`;
+    list.appendChild(card);
+  });
+  const canAdd = S.members.length < 3;
+  document.getElementById('btn-add-member').style.display = canAdd ? 'flex' : 'none';
+  const lim = document.getElementById('members-limit');
+  lim.style.display = canAdd ? 'none' : 'block';
+}
+
+function showAddMemberForm() {
+  if (S.members.length >= 3) return;
+  document.getElementById('add-member-form').style.display = 'block';
+  document.getElementById('btn-add-member').style.display = 'none';
+  document.getElementById('m-nombre').focus();
+}
+
+function cancelAddMember() {
+  document.getElementById('add-member-form').style.display = 'none';
+  ['m-nombre','m-cedula','m-fechaNac','m-relacion'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('invalid'); }
+  });
+  document.querySelectorAll('#add-member-form .field-error').forEach(e => e.textContent = '');
+  renderMemberCards();
+}
+
+function confirmAddMember() {
+  clearErrors();
+  const nombre = document.getElementById('m-nombre').value.trim();
+  const cedula = document.getElementById('m-cedula').value.trim();
+  const fechaNac = document.getElementById('m-fechaNac').value;
+  const relacion = document.getElementById('m-relacion').value;
+  let ok = true;
+  if (!nombre) { showErr('m-nombre', 'Ingrese el nombre'); ok = false; }
+  if (!cedula) { showErr('m-cedula', 'Ingrese el número de cédula'); ok = false; }
+  else if (!/^\d{10}$/.test(cedula)) { showErr('m-cedula', 'Deben ser exactamente 10 dígitos'); ok = false; }
+  else if (cedula === S.titular.cedula || S.members.some(m => m.cedula === cedula)) {
+    showErr('m-cedula', 'Esta cédula ya está registrada en la membresía'); ok = false;
+  }
+  if (!fechaNac) { showErr('m-fechaNac', 'Ingrese la fecha de nacimiento'); ok = false; }
+  if (!relacion) { showErr('m-relacion', 'Seleccione la relación con el titular'); ok = false; }
+  if (!ok) return;
+  S.members.push({ nombre, cedula, fechaNac, relacion });
+  cancelAddMember();
+}
+
+function removeMember(idx) {
+  S.members.splice(idx, 1);
+  renderMemberCards();
+  S.healthBuilt = false;
+}
+
+// ═══════════════════════════════════════════════════════
+// PASO 3 — PAGO
+// ═══════════════════════════════════════════════════════
+function updatePaymentSummary() {
+  const total = 1 + S.members.length;
+  document.getElementById('s3-members').textContent = total === 1 ? '1 persona' : `${total} personas`;
+}
+
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showErr('err-upload', 'El archivo no puede superar 5 MB');
+    input.value = '';
+    return;
+  }
+  S.payment.file = file;
+  document.getElementById('upload-filename').textContent = file.name;
+  document.getElementById('upload-preview').style.display = 'flex';
+  document.getElementById('upload-zone').style.display = 'none';
+  document.getElementById('err-upload').textContent = '';
+}
+
+function clearFile(e) {
+  e.stopPropagation();
+  S.payment.file = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-zone').style.display = 'block';
+}
+
+function dragOver(e) { e.preventDefault(); document.getElementById('upload-zone').classList.add('dragover'); }
+function dragLeave(e) { document.getElementById('upload-zone').classList.remove('dragover'); }
+function dropFile(e) {
+  e.preventDefault();
+  dragLeave(e);
+  const dt = e.dataTransfer;
+  if (dt.files.length) {
+    document.getElementById('file-input').files = dt.files;
+    handleFile(document.getElementById('file-input'));
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// PASO 4 — SALUD
+// ═══════════════════════════════════════════════════════
+const CONDITIONS = [
+  'Diabetes tipo 1','Diabetes tipo 2','Hipertensión arterial',
+  'Colesterol alto / Dislipidemia','Hipotiroidismo / Hipertiroidismo',
+  'Asma / EPOC','Embarazo o lactancia','Enfermedad cardiovascular',
+  'Enfermedad renal','Artritis / Osteoporosis','Depresión / Ansiedad',
+  'Ninguna condición crónica','Otra'
+];
+
+function buildHealthStep() {
+  const container = document.getElementById('health-persons');
+  container.innerHTML = '';
+  const persons = [
+    { ...S.titular, relacion: 'Titular', idx: 0 },
+    ...S.members.map((m, i) => ({ ...m, idx: i + 1 }))
+  ];
+  persons.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'health-person';
+    const isTitular = i === 0;
+    const condHtml = CONDITIONS.map(c =>
+      `<label class="cond-item"><input type="checkbox" name="cond-${p.idx}" value="${c}" onchange="handleCondChange(${p.idx}, this)"/><span>${c}</span></label>`
+    ).join('');
+    const formHtml = `
+      <div class="hp-body" id="hp-body-${p.idx}">
+        <div class="hs-sec">
+          <span class="hs-sec-label">A — Condiciones de salud</span>
+          <div class="cond-grid">${condHtml}</div>
+          <div style="display:none;margin-top:10px;" id="otra-wrap-${p.idx}">
+            <input type="text" id="otra-text-${p.idx}" placeholder="Especifique su condición de salud..."/>
+          </div>
+          <span class="field-error" id="err-cond-${p.idx}"></span>
+        </div>
+        <div class="hs-sec">
+          <span class="hs-sec-label">B — Medicamentos actuales</span>
+          <label class="no-meds-label"><input type="checkbox" id="no-meds-${p.idx}" onchange="toggleNoMeds(${p.idx},this)"/><span>No tomo medicamentos regularmente</span></label>
+          <div id="meds-wrap-${p.idx}">
+            <div class="med-rows" id="med-rows-${p.idx}">
+              <div class="med-row" id="mrow-${p.idx}-0">
+                <input type="text" placeholder="Medicamento" class="med-name"/>
+                <input type="text" placeholder="Dosis (ej: 500mg)" class="med-dose"/>
+                <select class="med-freq"><option value="">Frecuencia</option><option>1 vez al día</option><option>2 veces al día</option><option>3 veces al día</option><option>Según necesidad</option></select>
+                <button class="med-del" type="button" onclick="removeMedRow(${p.idx},0)">×</button>
+              </div>
+            </div>
+            <button class="btn-add-med" id="btn-add-med-${p.idx}" type="button" onclick="addMedRow(${p.idx})">+ Agregar medicamento</button>
+          </div>
+        </div>
+        <div class="hs-sec">
+          <span class="hs-sec-label">C — Información adicional</span>
+          <div class="hs-q-row">
+            <span class="hs-q">¿Tienes recetas médicas vigentes?</span>
+            <div class="radio-grp">
+              <label><input type="radio" name="receta-${p.idx}" value="si"/> Sí</label>
+              <label><input type="radio" name="receta-${p.idx}" value="no"/> No</label>
+            </div>
+          </div>
+          <div class="hs-q-row">
+            <span class="hs-q">¿Eres alérgico/a a algún medicamento?</span>
+            <div class="radio-grp">
+              <label><input type="radio" name="alergia-${p.idx}" value="si" onchange="toggleAlergia(${p.idx})"/> Sí</label>
+              <label><input type="radio" name="alergia-${p.idx}" value="no" onchange="toggleAlergia(${p.idx})"/> No</label>
+            </div>
+          </div>
+          <div style="display:none;margin-top:8px;" id="alergia-wrap-${p.idx}">
+            <input type="text" id="alergia-text-${p.idx}" placeholder="¿A cuál medicamento?"/>
+          </div>
+          <div style="margin-top:16px;">
+            <label style="font-size:.85rem;font-weight:500;color:var(--ink);display:block;margin-bottom:6px;">Observación para nuestro Químico Farmacéutico (opcional)</label>
+            <textarea id="qf-notes-${p.idx}" placeholder="Escribe aquí cualquier información relevante..." style="width:100%;min-height:80px;padding:10px 14px;border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:inherit;font-size:.88rem;resize:vertical;"></textarea>
+          </div>
+        </div>
+      </div>`;
+    if (isTitular) {
+      div.innerHTML = `<div class="hp-header"><div class="hp-person"><div class="hp-avatar gold">${p.nombre.charAt(0).toUpperCase()}</div><div><div class="hp-name">${p.nombre}</div><div class="hp-role">Titular — Sección obligatoria</div></div></div></div>${formHtml}`;
+    } else {
+      div.innerHTML = `<div class="hp-header"><div class="hp-person"><div class="hp-avatar">${p.nombre.charAt(0).toUpperCase()}</div><div><div class="hp-name">${p.nombre}</div><div class="hp-role">${p.relacion} — Opcional</div></div></div><div class="toggle-wrap"><span class="toggle-lbl">Completar información de salud</span><label class="toggle"><input type="checkbox" onchange="toggleHealthForm(${p.idx},this)"/><span class="toggle-sl"></span></label></div></div><div id="hp-body-${p.idx}" style="display:none;">${formHtml.replace(`<div class="hp-body" id="hp-body-${p.idx}">`,`<div style="padding:20px;">`)}</div>`;
+    }
+    container.appendChild(div);
+  });
+}
+
+function toggleHealthForm(idx, chk) {
+  document.getElementById('hp-body-' + idx).style.display = chk.checked ? 'block' : 'none';
+}
+
+function handleCondChange(personIdx, chk) {
+  if (chk.value === 'Ninguna condición crónica' && chk.checked) {
+    document.querySelectorAll(`[name="cond-${personIdx}"]`).forEach(cb => {
+      if (cb.value !== 'Ninguna condición crónica') cb.checked = false;
+    });
+  } else if (chk.value !== 'Ninguna condición crónica' && chk.checked) {
+    const ninguna = document.querySelector(`[name="cond-${personIdx}"][value="Ninguna condición crónica"]`);
+    if (ninguna) ninguna.checked = false;
+  }
+  const otraWrap = document.getElementById('otra-wrap-' + personIdx);
+  const otraChecked = document.querySelector(`[name="cond-${personIdx}"][value="Otra"]:checked`);
+  if (otraWrap) otraWrap.style.display = otraChecked ? 'block' : 'none';
+}
+
+function toggleNoMeds(personIdx, chk) {
+  document.getElementById('meds-wrap-' + personIdx).style.display = chk.checked ? 'none' : 'block';
+}
+
+function toggleAlergia(personIdx) {
+  const si = document.querySelector(`[name="alergia-${personIdx}"][value="si"]:checked`);
+  document.getElementById('alergia-wrap-' + personIdx).style.display = si ? 'block' : 'none';
+}
+
+let medRowCounts = {};
+function addMedRow(personIdx) {
+  const rows = document.getElementById('med-rows-' + personIdx);
+  const count = rows.querySelectorAll('.med-row').length;
+  if (count >= 5) return;
+  const rowIdx = count;
+  const row = document.createElement('div');
+  row.className = 'med-row';
+  row.id = `mrow-${personIdx}-${rowIdx}`;
+  row.innerHTML = `<input type="text" placeholder="Medicamento" class="med-name"/><input type="text" placeholder="Dosis (ej: 500mg)" class="med-dose"/><select class="med-freq"><option value="">Frecuencia</option><option>1 vez al día</option><option>2 veces al día</option><option>3 veces al día</option><option>Según necesidad</option></select><button class="med-del" type="button" onclick="removeMedRow(${personIdx},${rowIdx})">×</button>`;
+  rows.appendChild(row);
+  if (rows.querySelectorAll('.med-row').length >= 5) {
+    document.getElementById('btn-add-med-' + personIdx).style.display = 'none';
+  }
+}
+
+function removeMedRow(personIdx, rowIdx) {
+  const row = document.getElementById(`mrow-${personIdx}-${rowIdx}`);
+  if (row) row.remove();
+  const btn = document.getElementById('btn-add-med-' + personIdx);
+  if (btn) btn.style.display = '';
+}
+
+// ═══════════════════════════════════════════════════════
+// PASO 5 — CONFIRMACIÓN
+// ═══════════════════════════════════════════════════════
+function buildConfirmation() {
+  const nombre = S.titular.nombre || '—';
+  document.getElementById('conf-title').textContent = `¡Bienvenido/a a FarmaSub, ${nombre.split(' ')[0]}!`;
+  document.getElementById('conf-telefono').textContent = S.titular.telefono || 'registrado';
+  document.getElementById('conf-direccion').textContent = [S.titular.direccion, S.titular.barrio].filter(Boolean).join(', ') || '—';
+  const list = document.getElementById('conf-members');
+  list.innerHTML = `<li><span>${S.titular.nombre || '—'}</span><span class="cc-badge gold" style="margin-left:6px;">Titular</span></li>`;
+  S.members.forEach(m => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${m.nombre}</span><span class="cc-badge green" style="margin-left:6px;">${m.relacion}</span>`;
+    list.appendChild(li);
+  });
+}
+</script>
+</body>
+</html>
