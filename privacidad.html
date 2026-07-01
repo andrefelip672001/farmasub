@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Política de Privacidad — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--ink);line-height:1.6;}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,2.5vw,1.9rem);line-height:1.2;}
+p{color:var(--ink-60);}
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:72px 0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(247,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(26,107,74,.10);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--ink-60);font-size:.9rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-cta{background:var(--green);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.nav-cta:hover{background:var(--green-mid);}
+.page-header{background:var(--white);padding:60px 0 48px;border-bottom:2px solid var(--green-light);}
+.ph-label{font-size:.78rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:block;}
+.page-header h1{margin-bottom:12px;}
+.ph-sub{font-size:.95rem;color:var(--ink-60);max-width:620px;}
+.ph-meta{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;}
+.ph-tag{display:inline-flex;align-items:center;gap:6px;background:var(--green-light);color:var(--green);font-size:.8rem;font-weight:500;padding:4px 12px;border-radius:20px;}
+.content-wrap{max-width:800px;}
+.priv-block{padding:40px 0;border-bottom:1px solid var(--green-light);}
+.priv-block:last-of-type{border-bottom:none;}
+.pb-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:18px;}
+.pb-icon{width:44px;height:44px;background:var(--green-light);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pb-icon svg{width:22px;height:22px;}
+.pb-title{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);padding-top:6px;}
+.pb-body{font-size:.92rem;color:var(--ink-60);line-height:1.75;padding-left:60px;}
+.pb-body p{margin-bottom:10px;}
+.pb-body p:last-child{margin-bottom:0;}
+.pb-body ul{padding-left:20px;margin:8px 0;}
+.pb-body ul li{margin-bottom:7px;}
+.pb-body strong{color:var(--ink);}
+.data-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:.88rem;}
+.data-table th{text-align:left;padding:10px 14px;background:var(--green);color:#fff;font-weight:600;font-size:.82rem;}
+.data-table th:first-child{border-radius:8px 0 0 0;}
+.data-table th:last-child{border-radius:0 8px 0 0;}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--green-light);color:var(--ink-60);}
+.data-table tr:last-child td{border-bottom:none;}
+.data-table tr:nth-child(even) td{background:var(--bg);}
+.rights-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+.right-card{background:var(--bg);border-radius:var(--r);padding:16px 18px;border-left:3px solid var(--green);}
+.right-card h4{font-size:.9rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.right-card p{font-size:.83rem;color:var(--ink-60);line-height:1.55;}
+.contact-box{background:var(--green-light);border-radius:var(--r-lg);padding:24px 28px;margin-top:16px;}
+.contact-box h4{font-size:1rem;font-weight:600;color:var(--green);margin-bottom:10px;}
+.contact-box p{font-size:.88rem;color:var(--ink-60);}
+.contact-box a{color:var(--green);font-weight:500;}
+footer{background:var(--ink);padding:48px 0 28px;}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{font-size:.85rem;color:var(--ink-60);margin-top:12px;max-width:240px;}
+.footer-col h4{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col ul li a{font-size:.83rem;color:var(--ink-60);text-decoration:none;transition:color .2s;}
+.footer-col ul li a:hover{color:var(--ink-30);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;}
+.footer-bottom p{font-size:.78rem;color:var(--ink-60);}
+.footer-logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;}
+.footer-logo-text span{color:#5EE8A0;}
+@media(max-width:768px){.footer-inner{grid-template-columns:1fr 1fr;}.nav-links{display:none;}.pb-body{padding-left:0;}.rights-grid{grid-template-columns:1fr;}section{padding:52px 0;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#como">Cómo funciona</a></li>
+      <li><a href="index.html#planes">Planes</a></li>
+      <li><a href="index.html#calculadora">Calculadora</a></li>
+      <li><a href="index.html#confianza">Confianza</a></li>
+    </ul>
+    <button class="nav-cta" onclick="window.location='index.html#planes'">Comenzar ahora</button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <span class="ph-label">Legal</span>
+    <h1>Política de Privacidad</h1>
+    <p class="ph-sub">En FarmaSub tratamos sus datos personales con responsabilidad, en cumplimiento de la Ley Orgánica de Protección de Datos Personales del Ecuador (LOPDP).</p>
+    <div class="ph-meta">
+      <span class="ph-tag">LOPDP Ecuador</span>
+      <span class="ph-tag">Vigencia: julio 2025</span>
+    </div>
+  </div>
+</div>
+
+<section style="padding:56px 0 0;">
+  <div class="container">
+    <div class="content-wrap">
+
+      <div class="priv-block">
+        <div class="pb-header">
+          <div class="pb-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M9 11l3 3 5-5"/><path d="M12 2a7 7 0 017 7v4a7 7 0 01-7 7 7 7 0 01-7-7V9a7 7 0 017-7z"/></svg>
+          </div>
+          <div class="pb-title">1. Datos que recopilamos</div>
+        </div>
+        <div class="pb-body">
+          <p>FarmaSub recopila únicamente los datos necesarios para la prestación del servicio. La información que tratamos incluye:</p>
+          <table class="data-table">
+            <thead>
+              <tr><th>Categoría</th><th>Datos específicos</th><th>Finalidad principal</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Identificación</td><td>Nombre completo, cédula de ciudadanía</td><td>Registro y verificación de miembros</td></tr>
+              <tr><td>Contacto</td><td>Dirección domiciliaria, teléfono, correo electrónico</td><td>Comunicaciones y entrega de pedidos</td></tr>
+              <tr><td>Salud</td><td>Historial de pedidos, medicamentos solicitados, recetas médicas</td><td>Gestión del servicio y cumplimiento ARCSA</td></tr>
+              <tr><td>Pago</td><td>Comprobantes de transferencia (no almacenamos datos de tarjetas)</td><td>Facturación y registro contable</td></tr>
+            </tbody>
+          </table>
+          <p style="margin-top:14px;">Los datos de salud reciben protección reforzada conforme al artículo 26 de la LOPDP, al constituir datos sensibles.</p>
+        </div>
+      </div>
+
+      <div class="priv-block">
+        <div class="pb-header">
+          <div class="pb-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </div>
+          <div class="pb-title">2. Uso de sus datos</div>
+        </div>
+        <div class="pb-body">
+          <p>Sus datos personales se utilizan <strong>exclusivamente</strong> para las siguientes finalidades:</p>
+          <ul>
+            <li>Gestión de la membresía y los pedidos de medicamentos.</li>
+            <li>Verificación de la identidad de los miembros registrados.</li>
+            <li>Cumplimiento de la normativa regulatoria ARCSA sobre dispensación de medicamentos.</li>
+            <li>Comunicación relacionada con pedidos, alertas de desabastecimiento y actualizaciones del servicio.</li>
+            <li>Emisión de facturas y registros contables obligatorios.</li>
+            <li>Respuesta a consultas, reclamos y sugerencias.</li>
+          </ul>
+          <p>FarmaSub <strong>no utiliza</strong> sus datos para fines de marketing de terceros, venta de bases de datos ni creación de perfiles de consumo con fines comerciales ajenos al servicio.</p>
+        </div>
+      </div>
+
+      <div class="priv-block">
+        <div class="pb-header">
+          <div class="pb-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="pb-title">3. Compartición de datos con terceros</div>
+        </div>
+        <div class="pb-body">
+          <p>FarmaSub <strong>no comparte, vende ni cede</strong> sus datos personales a terceros con fines comerciales. La información podrá ser comunicada a terceros únicamente en los siguientes casos:</p>
+          <ul>
+            <li><strong>Obligación legal:</strong> cuando la normativa ecuatoriana o una autoridad competente (Ministerio de Salud Pública, ARCSA, autoridades judiciales) lo exija expresamente.</li>
+            <li><strong>Proveedores de servicio esenciales:</strong> empresas de logística o procesadores de pago que actúen como encargados del tratamiento bajo un contrato de confidencialidad, procesando datos únicamente según las instrucciones de FarmaSub.</li>
+          </ul>
+          <p>En ningún caso los datos de salud serán cedidos a aseguradoras, laboratorios farmacéuticos ni entidades de marketing sin el consentimiento expreso del titular.</p>
+        </div>
+      </div>
+
+      <div class="priv-block">
+        <div class="pb-header">
+          <div class="pb-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="pb-title">4. Seguridad de sus datos</div>
+        </div>
+        <div class="pb-body">
+          <p>FarmaSub implementa medidas técnicas y organizativas proporcionales al riesgo para proteger sus datos personales:</p>
+          <ul>
+            <li>Cifrado en tránsito (TLS) para todas las comunicaciones de datos.</li>
+            <li>Acceso restringido a los datos de salud, limitado al Químico Farmacéutico Responsable Técnico y al personal administrativo autorizado.</li>
+            <li>Copias de respaldo periódicas con control de acceso.</li>
+            <li>Eliminación segura de datos cuando ya no son necesarios para la prestación del servicio.</li>
+          </ul>
+          <p>En caso de incidente de seguridad que afecte sus datos, FarmaSub le notificará en el plazo establecido por la LOPDP y a la Superintendencia de Protección de Datos Personales cuando corresponda.</p>
+        </div>
+      </div>
+
+      <div class="priv-block">
+        <div class="pb-header">
+          <div class="pb-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 7v5l4 2"/></svg>
+          </div>
+          <div class="pb-title">5. Derechos del titular de los datos</div>
+        </div>
+        <div class="pb-body">
+          <p>De conformidad con la <strong>Ley Orgánica de Protección de Datos Personales (LOPDP)</strong>, usted tiene derecho a:</p>
+          <div class="rights-grid">
+            <div class="right-card">
+              <h4>Acceso</h4>
+              <p>Conocer qué datos suyos tenemos, cómo los usamos y con quién los compartimos.</p>
+            </div>
+            <div class="right-card">
+              <h4>Rectificación</h4>
+              <p>Solicitar la corrección de datos inexactos o incompletos.</p>
+            </div>
+            <div class="right-card">
+              <h4>Eliminación</h4>
+              <p>Pedir la supresión de sus datos cuando ya no sean necesarios o retire su consentimiento.</p>
+            </div>
+            <div class="right-card">
+              <h4>Portabilidad</h4>
+              <p>Recibir sus datos en formato estructurado para transferirlos a otro responsable.</p>
+            </div>
+          </div>
+          <p style="margin-top:16px;">Para ejercer cualquiera de estos derechos, contáctenos por los canales indicados a continuación. Responderemos en el plazo máximo establecido por la LOPDP.</p>
+        </div>
+      </div>
+
+      <div class="priv-block">
+        <div class="pb-header">
+          <div class="pb-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="pb-title">6. Contacto para ejercer derechos</div>
+        </div>
+        <div class="pb-body">
+          <div class="contact-box">
+            <h4>Encargado de Protección de Datos — FarmaSub Ecuador</h4>
+            <p>Para solicitudes relacionadas con sus datos personales, escríbanos a:<br>
+            <strong>Correo electrónico:</strong> <a href="mailto:privacidad@farmasub.ec">privacidad@farmasub.ec</a><br>
+            <strong>WhatsApp:</strong> disponible en nuestra página principal<br>
+            <strong>Horario de atención:</strong> lunes a viernes, 08h00 – 17h00<br><br>
+            Responderemos su solicitud en un plazo máximo de <strong>15 días hábiles</strong> a partir de la recepción.</p>
+          </div>
+          <p style="margin-top:14px;">Si considera que el tratamiento de sus datos no se ajusta a la normativa, tiene derecho a presentar una reclamación ante la <strong>Superintendencia de Protección de Datos Personales del Ecuador</strong>.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div style="height:56px;"></div>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo-text">Farma<span>Sub</span></div>
+        <p>La farmacia por membresía para familias ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="index.html#como">Cómo funciona</a></li>
+          <li><a href="index.html#planes">Planes y precios</a></li>
+          <li><a href="index.html#calculadora">Calculadora de ahorro</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Nuestra empresa</h4>
+        <ul>
+          <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+          <li><a href="terminos.html">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html">Política de Devolución</a></li>
+          <li><a href="faq.html">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Información regulatoria</h4>
+        <ul>
+          <li><a href="uso-racional.html">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 FarmaSub Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p>Santo Domingo de los Tsáchilas · Ecuador</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Términos y Condiciones — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;--gold-light:#FDF4E7;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--card:#FFFFFF;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);--shadow-lg:0 8px 40px rgba(26,107,74,.14);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--ink);line-height:1.6;}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,2.5vw,1.9rem);line-height:1.2;}
+h3{font-size:1.05rem;font-weight:600;color:var(--ink);}
+p{color:var(--ink-60);}
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:72px 0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(247,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(26,107,74,.10);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--ink-60);font-size:.9rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-cta{background:var(--green);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.nav-cta:hover{background:var(--green-mid);}
+.page-header{background:var(--white);padding:60px 0 48px;border-bottom:2px solid var(--green-light);}
+.ph-label{font-size:.78rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:block;}
+.page-header h1{margin-bottom:12px;}
+.ph-sub{font-size:.95rem;color:var(--ink-60);max-width:600px;}
+.ph-meta{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
+.ph-tag{display:inline-flex;align-items:center;gap:6px;background:var(--green-light);color:var(--green);font-size:.8rem;font-weight:500;padding:4px 12px;border-radius:20px;}
+.content-wrap{max-width:800px;padding:0 24px;}
+.terms-section{padding:40px 0;border-bottom:1px solid var(--green-light);}
+.terms-section:last-of-type{border-bottom:none;}
+.ts-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
+.ts-num{min-width:36px;height:36px;background:var(--green);color:#fff;border-radius:10px;font-family:'DM Serif Display',serif;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ts-title{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);line-height:1.3;padding-top:4px;}
+.ts-body{font-size:.92rem;color:var(--ink-60);line-height:1.75;padding-left:50px;}
+.ts-body p{margin-bottom:10px;}
+.ts-body p:last-child{margin-bottom:0;}
+.ts-body ul{padding-left:20px;margin:8px 0;}
+.ts-body ul li{margin-bottom:6px;}
+.ts-body strong{color:var(--ink);}
+.ts-body .highlight{background:var(--green-light);border-left:3px solid var(--green);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.88rem;}
+.toc-card{background:var(--bg);border-radius:var(--r-lg);padding:28px;margin-bottom:48px;border:1px solid var(--green-light);}
+.toc-card h3{margin-bottom:16px;color:var(--ink);font-size:.95rem;text-transform:uppercase;letter-spacing:.05em;}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.toc-list a{font-size:.88rem;color:var(--green);text-decoration:none;font-weight:500;}
+.toc-list a:hover{text-decoration:underline;}
+.toc-list span{color:var(--ink-30);margin-right:8px;font-size:.82rem;}
+footer{background:var(--ink);padding:48px 0 28px;}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{font-size:.85rem;color:var(--ink-60);margin-top:12px;max-width:240px;}
+.footer-col h4{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col ul li a{font-size:.83rem;color:var(--ink-60);text-decoration:none;transition:color .2s;}
+.footer-col ul li a:hover{color:var(--ink-30);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;}
+.footer-bottom p{font-size:.78rem;color:var(--ink-60);}
+.footer-logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;}
+.footer-logo-text span{color:#5EE8A0;}
+@media(max-width:768px){.footer-inner{grid-template-columns:1fr 1fr;}.nav-links{display:none;}.content-wrap{padding:0 20px;}.ts-body{padding-left:0;}.ph-meta{gap:12px;}section{padding:52px 0;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#como">Cómo funciona</a></li>
+      <li><a href="index.html#planes">Planes</a></li>
+      <li><a href="index.html#calculadora">Calculadora</a></li>
+      <li><a href="index.html#confianza">Confianza</a></li>
+    </ul>
+    <button class="nav-cta" onclick="window.location='index.html#planes'">Comenzar ahora</button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <span class="ph-label">Legal</span>
+    <h1>Términos y Condiciones</h1>
+    <p class="ph-sub">Condiciones de uso del servicio FarmaSub para residentes de Ecuador. Léalos antes de suscribirse.</p>
+    <div class="ph-meta">
+      <span class="ph-tag">Vigencia: julio 2025</span>
+      <span class="ph-tag">Ley ecuatoriana</span>
+      <span class="ph-tag">Santo Domingo de los Tsáchilas</span>
+    </div>
+  </div>
+</div>
+
+<section style="padding:56px 0 0;">
+  <div class="container">
+    <div class="content-wrap">
+
+      <div class="toc-card">
+        <h3>Índice de secciones</h3>
+        <ol class="toc-list">
+          <li><span>01</span><a href="#s1">Descripción del servicio</a></li>
+          <li><span>02</span><a href="#s2">Requisitos de membresía</a></li>
+          <li><span>03</span><a href="#s3">Registro de miembros del grupo familiar</a></li>
+          <li><span>04</span><a href="#s4">Venta de medicamentos bajo receta</a></li>
+          <li><span>05</span><a href="#s5">Control de dosis</a></li>
+          <li><span>06</span><a href="#s6">Cupo mensual</a></li>
+          <li><span>07</span><a href="#s7">Precio y métodos de pago</a></li>
+          <li><span>08</span><a href="#s8">Entrega de medicamentos</a></li>
+          <li><span>09</span><a href="#s9">Cancelación y devoluciones</a></li>
+          <li><span>10</span><a href="#s10">Fuerza mayor y desabastecimiento</a></li>
+          <li><span>11</span><a href="#s11">Prohibiciones</a></li>
+          <li><span>12</span><a href="#s12">Ley aplicable y jurisdicción</a></li>
+        </ol>
+      </div>
+
+      <div class="terms-section" id="s1">
+        <div class="ts-header">
+          <div class="ts-num">1</div>
+          <div class="ts-title">Descripción del servicio</div>
+        </div>
+        <div class="ts-body">
+          <p>FarmaSub es un servicio de membresía farmacéutica que permite a sus suscriptores acceder a medicamentos al precio de costo exacto del distribuidor, sin márgenes comerciales. El servicio opera exclusivamente en la ciudad de <strong>Santo Domingo de los Tsáchilas, Ecuador</strong>.</p>
+          <p>La membresía tiene un valor de <strong>$8,00 USD mensuales</strong> por grupo familiar y cubre a hasta <strong>cuatro (4) personas</strong> registradas en la misma cuenta. Este valor corresponde exclusivamente a la suscripción; los medicamentos se facturan de forma adicional al costo exacto del distribuidor.</p>
+          <div class="highlight">El acceso a medicamentos al costo está condicionado a la vigencia de la membresía mensual. Una membresía vencida no habilita pedidos adicionales hasta su renovación.</div>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s2">
+        <div class="ts-header">
+          <div class="ts-num">2</div>
+          <div class="ts-title">Requisitos de membresía</div>
+        </div>
+        <div class="ts-body">
+          <p>Para contratar el servicio FarmaSub, el titular de la cuenta debe cumplir con los siguientes requisitos:</p>
+          <ul>
+            <li>Ser mayor de <strong>18 años de edad</strong> al momento del registro.</li>
+            <li>Poseer una <strong>cédula de ciudadanía ecuatoriana vigente</strong>.</li>
+            <li>Residir o trabajar en <strong>Santo Domingo de los Tsáchilas</strong> para efectos de entrega.</li>
+            <li>Proporcionar un número de teléfono activo y una dirección de correo electrónico válida.</li>
+          </ul>
+          <p>El titular es responsable de la veracidad de los datos proporcionados durante el registro y de mantenerlos actualizados.</p>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s3">
+        <div class="ts-header">
+          <div class="ts-num">3</div>
+          <div class="ts-title">Registro de miembros del grupo familiar</div>
+        </div>
+        <div class="ts-body">
+          <p>La membresía cubre a un grupo familiar compuesto por un máximo de <strong>cuatro (4) personas</strong>, incluyendo al titular. Para registrar a los miembros adicionales se deberá proporcionar:</p>
+          <ul>
+            <li>Nombre completo del miembro.</li>
+            <li>Número de cédula de ciudadanía ecuatoriana.</li>
+          </ul>
+          <p>La membresía es <strong>intransferible</strong>: solo los miembros registrados en la cuenta pueden recibir medicamentos bajo sus condiciones. No se permite el registro de una cédula ya vinculada a otra cuenta activa en FarmaSub. FarmaSub se reserva el derecho de verificar la unicidad de las cédulas registradas.</p>
+          <div class="highlight">Registrar cédulas de personas no existentes o que no hayan dado su consentimiento constituye una violación de estos términos y de la normativa vigente.</div>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s4">
+        <div class="ts-header">
+          <div class="ts-num">4</div>
+          <div class="ts-title">Venta de medicamentos bajo receta</div>
+        </div>
+        <div class="ts-body">
+          <p>FarmaSub opera bajo los lineamientos del <strong>Código Orgánico de la Salud del Ecuador</strong> y la normativa emitida por la <strong>Agencia Nacional de Regulación, Control y Vigilancia Sanitaria (ARCSA)</strong>. Los medicamentos que requieren receta médica serán dispensados únicamente previa presentación y validación de la misma.</p>
+          <p>El proceso de validación de recetas es responsabilidad del <strong>Químico Farmacéutico (QF) Responsable Técnico</strong> de FarmaSub, quien verificará:</p>
+          <ul>
+            <li>La autenticidad y vigencia de la receta médica.</li>
+            <li>La identidad del paciente frente al miembro registrado.</li>
+            <li>Las interacciones medicamentosas y contraindicaciones relevantes.</li>
+            <li>El cumplimiento de las dosis prescritas respecto a los límites establecidos.</li>
+          </ul>
+          <p>FarmaSub no dispensará medicamentos controlados o de venta exclusiva bajo prescripción sin el correspondiente documento médico habilitante.</p>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s5">
+        <div class="ts-header">
+          <div class="ts-num">5</div>
+          <div class="ts-title">Control de dosis</div>
+        </div>
+        <div class="ts-body">
+          <p>Con el objetivo de promover el uso racional de medicamentos según las directrices de la Organización Mundial de la Salud (OMS), FarmaSub establece los siguientes límites de dispensación:</p>
+          <ul>
+            <li><strong>Máximo 2 dosis diarias</strong> por medicamento por persona registrada, sin receta médica.</li>
+            <li><strong>Hasta 3 dosis diarias</strong> por medicamento por persona, cuando se presente receta médica válida y el QF la apruebe.</li>
+          </ul>
+          <p>Estos límites se aplican individualmente a cada miembro del grupo familiar y por medicamento específico. FarmaSub no está obligado a dispensar cantidades que superen los límites establecidos, aun cuando exista receta médica, si el QF responsable considera que la dispensación no es apropiada.</p>
+          <div class="highlight">El control de dosis es una medida de seguridad sanitaria, no una restricción arbitraria. Consulte a nuestro QF si requiere orientación sobre su tratamiento.</div>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s6">
+        <div class="ts-header">
+          <div class="ts-num">6</div>
+          <div class="ts-title">Cupo mensual</div>
+        </div>
+        <div class="ts-body">
+          <p>El cupo de medicamentos habilitado por la membresía corresponde al mes calendario en curso. El cupo <strong>no es acumulable</strong>: los medicamentos no solicitados durante un mes no se trasladan al mes siguiente ni generan crédito alguno.</p>
+          <p>El cupo se renueva automáticamente con cada pago mensual exitoso de la suscripción. Si el pago no se efectúa, el acceso al cupo queda suspendido hasta que se regularice la suscripción.</p>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s7">
+        <div class="ts-header">
+          <div class="ts-num">7</div>
+          <div class="ts-title">Precio y métodos de pago</div>
+        </div>
+        <div class="ts-body">
+          <p>Los precios de los medicamentos corresponden al <strong>costo exacto del distribuidor</strong>, sin ningún margen comercial adicional. FarmaSub se compromete a mantener la transparencia en la facturación y a poner a disposición del suscriptor los documentos de compra al distribuidor cuando se lo solicite.</p>
+          <p><strong>Métodos de pago aceptados:</strong></p>
+          <ul>
+            <li>Transferencia bancaria a cuentas registradas en Ecuador.</li>
+            <li>Tarjeta de débito emitida por institución financiera ecuatoriana.</li>
+            <li>Tarjeta de crédito emitida por institución financiera ecuatoriana.</li>
+          </ul>
+          <p>Todos los valores se expresan en <strong>dólares de los Estados Unidos de América (USD)</strong>, moneda de curso legal en Ecuador. No se aceptan pagos en efectivo ni transferencias del exterior.</p>
+          <p>La suscripción mensual de $8,00 USD se cobra por adelantado al inicio de cada período. Los medicamentos se facturan por separado al momento de confirmar el pedido.</p>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s8">
+        <div class="ts-header">
+          <div class="ts-num">8</div>
+          <div class="ts-title">Entrega de medicamentos</div>
+        </div>
+        <div class="ts-body">
+          <p>FarmaSub contempla <strong>una (1) entrega mensual programada</strong> por grupo familiar. Las condiciones de entrega son:</p>
+          <ul>
+            <li>El costo de envío de <strong>$1,50 USD es absorbido íntegramente por FarmaSub</strong>; el suscriptor no paga por el delivery.</li>
+            <li>Las entregas se realizan únicamente dentro de los límites del cantón de <strong>Santo Domingo de los Tsáchilas</strong>.</li>
+            <li>El suscriptor debe confirmar la dirección de entrega al momento de realizar el pedido.</li>
+            <li>La entrega se realizará en la dirección registrada, a la persona registrada o a quien esta designe expresamente.</li>
+          </ul>
+          <p>FarmaSub coordinará el día y hora de entrega con el suscriptor mediante los canales de comunicación registrados. En caso de ausencia en el domicilio al momento de la entrega, se coordinará una segunda visita sin costo adicional dentro del mismo período mensual.</p>
+          <div class="highlight">Si el suscriptor detecta alguna anomalía en el producto al momento de la entrega (empaque dañado, temperatura incorrecta, producto incorrecto), puede rechazar la entrega en ese instante. Consulte la Política de Devoluciones para más detalle.</div>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s9">
+        <div class="ts-header">
+          <div class="ts-num">9</div>
+          <div class="ts-title">Cancelación y devoluciones</div>
+        </div>
+        <div class="ts-body">
+          <p>El suscriptor puede cancelar su membresía en cualquier momento. No obstante, las condiciones para devolución del valor pagado son las siguientes:</p>
+          <ul>
+            <li>Se podrá solicitar la devolución de la suscripción mensual de $8,00 USD únicamente si la solicitud se realiza dentro de las <strong>primeras 48 horas</strong> desde el pago y siempre que no se haya realizado ningún pedido de medicamentos durante ese período.</li>
+            <li>La devolución se procesará mediante <strong>transferencia bancaria</strong> al titular de la cuenta en un plazo máximo de <strong>72 horas hábiles</strong> desde la aprobación de la solicitud.</li>
+            <li>Los medicamentos ya entregados no son objeto de devolución económica, salvo error comprobado de FarmaSub en el pedido.</li>
+          </ul>
+          <p>Para más detalles, consulte la <a href="devoluciones.html" style="color:var(--green)">Política de Devoluciones</a> completa.</p>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s10">
+        <div class="ts-header">
+          <div class="ts-num">10</div>
+          <div class="ts-title">Fuerza mayor y desabastecimiento</div>
+        </div>
+        <div class="ts-body">
+          <p>FarmaSub no será responsable por el incumplimiento parcial o total de sus obligaciones cuando este derive de situaciones de <strong>fuerza mayor</strong>, caso fortuito, o desabastecimiento nacional o regional de medicamentos, incluyendo restricciones de importación, contingencias sanitarias declaradas por el Ministerio de Salud Pública del Ecuador, o problemas en la cadena de distribución fuera del control de FarmaSub.</p>
+          <p>Sin perjuicio de lo anterior, FarmaSub se compromete a:</p>
+          <ul>
+            <li>Comunicar al suscriptor de forma <strong>proactiva y oportuna</strong> cuando un medicamento no esté disponible.</li>
+            <li>Buscar una <strong>alternativa terapéutica equivalente</strong> en un plazo máximo de 2 horas hábiles.</li>
+            <li>Derivar al suscriptor a una farmacia aliada en caso de que no exista alternativa disponible.</li>
+            <li>Publicar las alertas de desabastecimiento activas en la sección <a href="desabastecimiento.html" style="color:var(--green)">Cartas de Desabastecimiento</a> del sitio web.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s11">
+        <div class="ts-header">
+          <div class="ts-num">11</div>
+          <div class="ts-title">Prohibiciones</div>
+        </div>
+        <div class="ts-body">
+          <p>Quedan expresamente prohibidas las siguientes conductas, bajo pena de cancelación inmediata de la membresía sin derecho a devolución y posibles acciones legales:</p>
+          <ul>
+            <li><strong>Reventa</strong> de medicamentos adquiridos a través de FarmaSub a terceros, con o sin fin de lucro.</li>
+            <li><strong>Registrar cédulas falsas, alteradas o de terceros sin su consentimiento</strong>.</li>
+            <li><strong>Superar el tope de dosis establecido</strong> sin justificación médica válida y aprobada por el QF responsable.</li>
+            <li>Proporcionar recetas médicas falsificadas o adulteradas para acceder a medicamentos controlados.</li>
+            <li>Utilizar la membresía para beneficiar a personas no registradas en la cuenta.</li>
+          </ul>
+          <p>FarmaSub cooperará con las autoridades sanitarias y judiciales en caso de detectarse cualquiera de las conductas antes descritas, en cumplimiento de la normativa ecuatoriana vigente.</p>
+        </div>
+      </div>
+
+      <div class="terms-section" id="s12">
+        <div class="ts-header">
+          <div class="ts-num">12</div>
+          <div class="ts-title">Ley aplicable y jurisdicción</div>
+        </div>
+        <div class="ts-body">
+          <p>Estos Términos y Condiciones se rigen íntegramente por la <strong>legislación de la República del Ecuador</strong>, incluyendo, de manera enunciativa y no limitativa:</p>
+          <ul>
+            <li>Código Orgánico de la Salud.</li>
+            <li>Normativa ARCSA sobre dispensación de medicamentos.</li>
+            <li>Ley Orgánica de Protección de Datos Personales (LOPDP).</li>
+            <li>Código de Comercio y Código Civil ecuatorianos.</li>
+          </ul>
+          <p>Para la resolución de cualquier controversia derivada de la relación contractual entre FarmaSub y el suscriptor, las partes se someten a la jurisdicción de los <strong>juzgados y tribunales competentes del cantón Santo Domingo de los Tsáchilas</strong>, con renuncia expresa a cualquier otro fuero que pudiere corresponderles.</p>
+          <div class="highlight">Ante cualquier duda sobre estos términos, contáctenos antes de suscribirse. Estamos disponibles por WhatsApp o correo electrónico.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div style="height:56px;"></div>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo-text">Farma<span>Sub</span></div>
+        <p>La farmacia por membresía para familias ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="index.html#como">Cómo funciona</a></li>
+          <li><a href="index.html#planes">Planes y precios</a></li>
+          <li><a href="index.html#calculadora">Calculadora de ahorro</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Nuestra empresa</h4>
+        <ul>
+          <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+          <li><a href="terminos.html">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html">Política de Devolución</a></li>
+          <li><a href="faq.html">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Información regulatoria</h4>
+        <ul>
+          <li><a href="uso-racional.html">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 FarmaSub Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p>Santo Domingo de los Tsáchilas · Ecuador</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

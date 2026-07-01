@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Preguntas Frecuentes — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--ink);line-height:1.6;}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,2.5vw,1.9rem);line-height:1.2;}
+p{color:var(--ink-60);}
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:72px 0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(247,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(26,107,74,.10);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--ink-60);font-size:.9rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-cta{background:var(--green);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.nav-cta:hover{background:var(--green-mid);}
+.page-header{background:var(--white);padding:60px 0 48px;border-bottom:2px solid var(--green-light);}
+.ph-label{font-size:.78rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:block;}
+.page-header h1{margin-bottom:12px;}
+.ph-sub{font-size:.95rem;color:var(--ink-60);max-width:620px;}
+.ph-meta{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;}
+.ph-tag{background:var(--green-light);color:var(--green);font-size:.8rem;font-weight:500;padding:4px 12px;border-radius:20px;}
+.faq-layout{display:grid;grid-template-columns:220px 1fr;gap:48px;align-items:start;}
+.faq-sidebar{position:sticky;top:80px;}
+.sidebar-title{font-size:.78rem;font-weight:600;color:var(--ink);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
+.sidebar-links{display:flex;flex-direction:column;gap:4px;}
+.sidebar-links a{font-size:.85rem;color:var(--ink-60);text-decoration:none;padding:6px 10px;border-radius:8px;transition:all .2s;}
+.sidebar-links a:hover{background:var(--green-light);color:var(--green);}
+.faq-list{display:flex;flex-direction:column;gap:0;}
+.faq-cat{font-size:.75rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-top:40px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--green-light);}
+.faq-cat:first-child{margin-top:0;}
+.faq-item{border-bottom:1px solid var(--green-light);padding:20px 0;cursor:pointer;}
+.faq-item:last-of-type{border-bottom:none;}
+.faq-q{display:flex;align-items:flex-start;gap:12px;}
+.faq-num{min-width:28px;height:28px;background:var(--green-light);color:var(--green);border-radius:8px;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.faq-q-text{font-size:.97rem;font-weight:600;color:var(--ink);flex:1;line-height:1.4;}
+.faq-arrow{margin-left:auto;color:var(--ink-30);font-size:1rem;transition:transform .25s;flex-shrink:0;padding-top:2px;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);color:var(--green);}
+.faq-a{font-size:.9rem;color:var(--ink-60);line-height:1.7;padding:14px 0 4px 40px;display:none;}
+.faq-item.open .faq-a{display:block;}
+.faq-a strong{color:var(--ink);}
+.faq-a ul{padding-left:18px;margin:8px 0;}
+.faq-a ul li{margin-bottom:5px;}
+.faq-a a{color:var(--green);}
+.cta-faq{background:var(--green-light);border-radius:var(--r-lg);padding:32px 36px;margin-top:48px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+.cta-faq h3{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--ink);margin-bottom:4px;}
+.cta-faq p{font-size:.88rem;color:var(--ink-60);}
+.cta-faq-btn{background:var(--green);color:#fff;border:none;padding:11px 24px;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block;transition:background .2s;}
+.cta-faq-btn:hover{background:var(--green-mid);}
+footer{background:var(--ink);padding:48px 0 28px;}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{font-size:.85rem;color:var(--ink-60);margin-top:12px;max-width:240px;}
+.footer-col h4{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col ul li a{font-size:.83rem;color:var(--ink-60);text-decoration:none;transition:color .2s;}
+.footer-col ul li a:hover{color:var(--ink-30);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;}
+.footer-bottom p{font-size:.78rem;color:var(--ink-60);}
+.footer-logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;}
+.footer-logo-text span{color:#5EE8A0;}
+@media(max-width:768px){.footer-inner{grid-template-columns:1fr 1fr;}.nav-links{display:none;}.faq-layout{grid-template-columns:1fr;}.faq-sidebar{display:none;}.faq-a{padding-left:0;}section{padding:52px 0;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#como">Cómo funciona</a></li>
+      <li><a href="index.html#planes">Planes</a></li>
+      <li><a href="index.html#calculadora">Calculadora</a></li>
+      <li><a href="index.html#confianza">Confianza</a></li>
+    </ul>
+    <button class="nav-cta" onclick="window.location='index.html#planes'">Comenzar ahora</button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <span class="ph-label">Ayuda</span>
+    <h1>Preguntas Frecuentes</h1>
+    <p class="ph-sub">Respuestas claras y directas sobre cómo funciona FarmaSub. Si no encuentra lo que busca, escríbanos.</p>
+    <div class="ph-meta">
+      <span class="ph-tag">14 preguntas</span>
+      <span class="ph-tag">Santo Domingo · Ecuador</span>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+    <div class="faq-layout">
+
+      <div class="faq-sidebar">
+        <div class="sidebar-title">Temas</div>
+        <div class="sidebar-links">
+          <a href="#general">El servicio</a>
+          <a href="#membresia">Membresía y registro</a>
+          <a href="#medicamentos">Medicamentos</a>
+          <a href="#entregas">Pedidos y entregas</a>
+          <a href="#precios">Precios y confianza</a>
+        </div>
+      </div>
+
+      <div class="faq-list">
+
+        <div class="faq-cat" id="general">El servicio</div>
+
+        <div class="faq-item open" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">1</div>
+            <div class="faq-q-text">¿Qué es FarmaSub?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            FarmaSub es una farmacia por membresía que le permite acceder a medicamentos al <strong>precio de costo exacto del distribuidor</strong>, sin los márgenes de las farmacias tradicionales. Paga una suscripción mensual y su familia obtiene medicamentos al precio que FarmaSub los compra. Sin ganancia sobre los medicamentos, sin letra pequeña. Operamos en <strong>Santo Domingo de los Tsáchilas, Ecuador</strong>.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">2</div>
+            <div class="faq-q-text">¿Cuánto cuesta la membresía?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            La membresía tiene un valor de <strong>$8,00 USD al mes</strong>. Este valor cubre a todo el grupo familiar (hasta 4 personas). Los medicamentos se cobran aparte, al costo exacto del distribuidor, sin ningún margen adicional.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">3</div>
+            <div class="faq-q-text">¿Solo operan en Santo Domingo?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Sí. Actualmente FarmaSub opera exclusivamente en <strong>Santo Domingo de los Tsáchilas, Ecuador</strong>. Las entregas se realizan dentro del cantón. Si usted vive fuera de esta área, le pedimos estar atento a futuras expansiones.
+          </div>
+        </div>
+
+        <div class="faq-cat" id="membresia">Membresía y registro</div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">4</div>
+            <div class="faq-q-text">¿Cuántas personas cubre la membresía?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Una membresía cubre a <strong>hasta 4 personas</strong> del mismo grupo familiar. El costo es siempre $8,00 USD al mes, independientemente de si registra 1 o 4 personas. Mientras más miembros use la membresía, mayor es el ahorro por persona.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">5</div>
+            <div class="faq-q-text">¿Cómo registro a los miembros de mi familia?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Después de activar su membresía, puede agregar hasta 3 personas adicionales proporcionando el <strong>nombre completo y número de cédula de ciudadanía ecuatoriana</strong> de cada miembro. Cada cédula solo puede estar vinculada a una cuenta activa en FarmaSub. Los miembros deben ser personas reales y haber dado su consentimiento para el registro.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">6</div>
+            <div class="faq-q-text">¿Puedo cancelar cuando quiera?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Sí. Puede cancelar su membresía en cualquier momento sin penalidad. Si cancela dentro de las primeras <strong>48 horas</strong> desde el pago y no ha realizado pedidos, le devolvemos los $8,00 USD por transferencia bancaria en máximo 72 horas hábiles. Si ya realizó pedidos o pasaron las 48 horas, la membresía permanece activa hasta el fin del período pagado y no se renueva.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">7</div>
+            <div class="faq-q-text">¿El cupo se acumula si no lo uso este mes?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            No. El cupo mensual <strong>no es acumulable</strong>. Si en un mes no realiza pedidos, ese cupo no se traslada al mes siguiente ni genera crédito alguno. La membresía se renueva cada mes con su cupo completo desde cero.
+          </div>
+        </div>
+
+        <div class="faq-cat" id="medicamentos">Medicamentos</div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">8</div>
+            <div class="faq-q-text">¿Los medicamentos son exactamente al costo o tienen algún margen?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Son al <strong>costo exacto del distribuidor</strong>, sin ningún margen. FarmaSub gana únicamente con la suscripción mensual de $8,00 USD. Si lo solicita, podemos mostrarle los documentos de compra al distribuidor para verificar el precio. La transparencia es parte central de nuestro modelo.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">9</div>
+            <div class="faq-q-text">¿Puedo pedir cualquier medicamento?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Contamos con un catálogo de <strong>400+ medicamentos y suplementos</strong>. Los medicamentos de venta libre pueden pedirse directamente. Los medicamentos que requieren receta médica según la normativa ARCSA y el Código Orgánico de la Salud de Ecuador necesitan la presentación y validación de la receta por parte de nuestro Químico Farmacéutico Responsable Técnico.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">10</div>
+            <div class="faq-q-text">¿Qué necesito para pedir medicamentos con receta?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Debe presentar una <strong>receta médica válida y vigente</strong> emitida por un profesional de la salud autorizado en Ecuador. La receta será revisada por nuestro Químico Farmacéutico antes de confirmar el pedido. Los medicamentos bajo receta tienen un límite de hasta <strong>3 dosis diarias por persona</strong>, sujeto a aprobación del QF.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">11</div>
+            <div class="faq-q-text">¿Qué pasa si un medicamento no está disponible?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            FarmaSub le comunicará de inmediato si un medicamento no está disponible. Intentaremos encontrar una alternativa terapéutica equivalente en un plazo de <strong>2 horas hábiles</strong>. Si no hay alternativa, le orientamos sobre cómo obtenerlo en otra farmacia. Las alertas de desabastecimiento activas se publican en nuestra sección <a href="desabastecimiento.html">Cartas de Desabastecimiento</a>.
+          </div>
+        </div>
+
+        <div class="faq-cat" id="entregas">Pedidos y entregas</div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">12</div>
+            <div class="faq-q-text">¿Cuándo recibo mi pedido?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Cada grupo familiar tiene <strong>una entrega mensual programada</strong>. Una vez que confirma su pedido, coordinamos el día y hora de entrega con usted. El costo de envío ($1,50 USD) lo absorbe FarmaSub; usted no paga nada por el delivery. Las entregas se realizan dentro del cantón de Santo Domingo de los Tsáchilas.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">13</div>
+            <div class="faq-q-text">¿Qué pasa si me llega un producto en mal estado?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            Si al recibir el pedido detecta que un producto está dañado, con el empaque roto, temperatura inadecuada o cualquier otro problema, tiene derecho a <strong>rechazar la entrega en ese momento</strong>. FarmaSub reprogramará la entrega con un producto en condiciones óptimas sin costo adicional. Consulte nuestra <a href="devoluciones.html">Política de Devoluciones</a> para más detalles.
+          </div>
+        </div>
+
+        <div class="faq-cat" id="precios">Precios y confianza</div>
+
+        <div class="faq-item" onclick="toggleFaq(this)">
+          <div class="faq-q">
+            <div class="faq-num">14</div>
+            <div class="faq-q-text">¿Cómo sé que el precio es realmente el costo?</div>
+            <span class="faq-arrow">▾</span>
+          </div>
+          <div class="faq-a">
+            FarmaSub opera con <strong>total transparencia</strong>. Puede solicitar en cualquier momento los documentos de compra al distribuidor para verificar que el precio que usted paga corresponde exactamente al costo. Además, operamos bajo la supervisión de ARCSA y contamos con un Químico Farmacéutico Responsable Técnico que garantiza la trazabilidad de cada producto. Si desconfía de algún precio, <a href="reclamos.html">escríbanos</a>.
+          </div>
+        </div>
+
+        <div class="cta-faq">
+          <div>
+            <h3>¿No encontró su respuesta?</h3>
+            <p>Escríbanos por WhatsApp o envíe un reclamo formal. Respondemos en máximo 48 horas hábiles.</p>
+          </div>
+          <a href="reclamos.html" class="cta-faq-btn">Contactarnos</a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo-text">Farma<span>Sub</span></div>
+        <p>La farmacia por membresía para familias ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="index.html#como">Cómo funciona</a></li>
+          <li><a href="index.html#planes">Planes y precios</a></li>
+          <li><a href="index.html#calculadora">Calculadora de ahorro</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Nuestra empresa</h4>
+        <ul>
+          <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+          <li><a href="terminos.html">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html">Política de Devolución</a></li>
+          <li><a href="faq.html">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Información regulatoria</h4>
+        <ul>
+          <li><a href="uso-racional.html">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 FarmaSub Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p>Santo Domingo de los Tsáchilas · Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  const isOpen = el.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) el.classList.add('open');
+}
+</script>
+</body>
+</html>

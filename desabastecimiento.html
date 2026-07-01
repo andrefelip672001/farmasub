@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cartas de Desabastecimiento — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;--gold-light:#FDF4E7;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--danger:#C84040;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--ink);line-height:1.6;}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,2.5vw,1.9rem);line-height:1.2;}
+p{color:var(--ink-60);}
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:72px 0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(247,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(26,107,74,.10);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--ink-60);font-size:.9rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-cta{background:var(--green);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.nav-cta:hover{background:var(--green-mid);}
+.page-header{background:var(--white);padding:60px 0 48px;border-bottom:2px solid var(--green-light);}
+.ph-label{font-size:.78rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:block;}
+.page-header h1{margin-bottom:12px;}
+.ph-sub{font-size:.95rem;color:var(--ink-60);max-width:640px;}
+.ph-meta{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;}
+.ph-tag{background:var(--green-light);color:var(--green);font-size:.8rem;font-weight:500;padding:4px 12px;border-radius:20px;}
+.status-banner{background:var(--green-light);border:1.5px solid #A8DCC0;border-radius:var(--r-lg);padding:20px 24px;display:flex;align-items:center;gap:14px;margin-bottom:48px;}
+.status-dot{width:12px;height:12px;background:#2AC96D;border-radius:50%;flex-shrink:0;animation:pulse-green 2s infinite;}
+@keyframes pulse-green{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(42,201,109,.4);}50%{opacity:.8;box-shadow:0 0 0 6px rgba(42,201,109,0);}}
+.status-text{font-size:.95rem;font-weight:600;color:var(--green);}
+.status-sub{font-size:.82rem;color:var(--ink-60);margin-top:2px;}
+.explain-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:56px;}
+.explain-card{background:var(--bg);border-radius:var(--r-lg);padding:24px;}
+.ec-title{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.ec-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+.ec-body{font-size:.88rem;color:var(--ink-60);line-height:1.65;}
+.protocol-steps{display:flex;flex-direction:column;gap:0;margin:28px 0;}
+.ps-item{display:flex;gap:20px;padding-bottom:28px;position:relative;}
+.ps-item:last-child{padding-bottom:0;}
+.ps-item:not(:last-child)::before{content:'';position:absolute;left:19px;top:40px;bottom:0;width:2px;background:var(--green-light);}
+.ps-num{width:40px;height:40px;background:var(--green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;flex-shrink:0;}
+.ps-content{padding-top:6px;}
+.ps-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.ps-desc{font-size:.85rem;color:var(--ink-60);line-height:1.6;}
+.ps-time{display:inline-block;background:var(--gold-light);color:var(--gold);font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:6px;margin-top:6px;}
+.table-section{background:var(--bg);border-radius:var(--r-lg);padding:32px;margin-top:48px;}
+.table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:gap;}
+.table-header h2{font-size:1.3rem;}
+.last-updated{font-size:.78rem;color:var(--ink-30);}
+.alert-table{width:100%;border-collapse:collapse;font-size:.88rem;}
+.alert-table th{text-align:left;padding:12px 16px;background:var(--green);color:#fff;font-weight:600;}
+.alert-table th:first-child{border-radius:10px 0 0 0;}
+.alert-table th:last-child{border-radius:0 10px 0 0;}
+.alert-table td{padding:14px 16px;border-bottom:1px solid var(--white);color:var(--ink-60);background:var(--white);}
+.empty-state{text-align:center;padding:56px 20px;color:var(--ink-30);}
+.empty-icon{font-size:3rem;margin-bottom:16px;}
+.empty-title{font-size:1.05rem;font-weight:600;color:var(--ink-60);margin-bottom:6px;}
+.empty-desc{font-size:.85rem;}
+.status-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.badge-active{background:#FFF0F0;color:var(--danger);}
+.badge-resolved{background:var(--green-light);color:var(--green);}
+.badge-partial{background:var(--gold-light);color:var(--gold);}
+footer{background:var(--ink);padding:48px 0 28px;}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{font-size:.85rem;color:var(--ink-60);margin-top:12px;max-width:240px;}
+.footer-col h4{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col ul li a{font-size:.83rem;color:var(--ink-60);text-decoration:none;transition:color .2s;}
+.footer-col ul li a:hover{color:var(--ink-30);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;}
+.footer-bottom p{font-size:.78rem;color:var(--ink-60);}
+.footer-logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;}
+.footer-logo-text span{color:#5EE8A0;}
+@media(max-width:768px){.footer-inner{grid-template-columns:1fr 1fr;}.nav-links{display:none;}.explain-grid{grid-template-columns:1fr;}section{padding:52px 0;}.alert-table{font-size:.78rem;}.alert-table th,.alert-table td{padding:10px 10px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#como">Cómo funciona</a></li>
+      <li><a href="index.html#planes">Planes</a></li>
+      <li><a href="index.html#calculadora">Calculadora</a></li>
+      <li><a href="index.html#confianza">Confianza</a></li>
+    </ul>
+    <button class="nav-cta" onclick="window.location='index.html#planes'">Comenzar ahora</button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <span class="ph-label">Información regulatoria</span>
+    <h1>Cartas de Desabastecimiento</h1>
+    <p class="ph-sub">Información transparente sobre la disponibilidad de medicamentos en FarmaSub. Publicamos en tiempo real cualquier alerta de desabastecimiento activa.</p>
+    <div class="ph-meta">
+      <span class="ph-tag">Actualización continua</span>
+      <span class="ph-tag">Protocolo ARCSA</span>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+
+    <div class="status-banner">
+      <div class="status-dot"></div>
+      <div>
+        <div class="status-text">Sin alertas activas</div>
+        <div class="status-sub">Todos los medicamentos del catálogo están disponibles normalmente — actualizado el 1 de julio de 2025</div>
+      </div>
+    </div>
+
+    <h2 style="margin-bottom:16px;">¿Qué es el desabastecimiento?</h2>
+    <p style="font-size:.93rem;max-width:760px;margin-bottom:32px;color:var(--ink-60);">El desabastecimiento farmacéutico ocurre cuando un medicamento no puede ser suministrado en las cantidades necesarias para atender la demanda. Puede deberse a problemas de fabricación, restricciones de importación, contingencias sanitarias nacionales o disrupciones en la cadena de distribución. En Ecuador, el Ministerio de Salud Pública y ARCSA mantienen registros oficiales de estas situaciones.</p>
+
+    <div class="explain-grid">
+      <div class="explain-card">
+        <div class="ec-title"><span class="ec-dot"></span>Causas más frecuentes</div>
+        <div class="ec-body">
+          <ul style="padding-left:18px;margin-top:6px;">
+            <li style="margin-bottom:6px;">Problemas de producción en el laboratorio fabricante.</li>
+            <li style="margin-bottom:6px;">Restricciones de importación o aduaneras.</li>
+            <li style="margin-bottom:6px;">Aumento repentino de la demanda (epidemias, estacionalidad).</li>
+            <li style="margin-bottom:6px;">Problemas logísticos en la cadena de distribución nacional.</li>
+            <li>Retiro del mercado por alerta sanitaria de ARCSA.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="explain-card">
+        <div class="ec-title"><span class="ec-dot"></span>Qué NO es responsabilidad de FarmaSub</div>
+        <div class="ec-body">
+          <p>Conforme a los <a href="terminos.html" style="color:var(--green)">Términos y Condiciones</a>, FarmaSub no es responsable de desabastecimientos de origen nacional o internacional que estén fuera de su control. Sin embargo, sí es responsable de comunicar oportunamente y buscar alternativas.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="margin-bottom:20px;">Protocolo de respuesta al desabastecimiento</h2>
+    <p style="font-size:.9rem;color:var(--ink-60);margin-bottom:24px;">Cuando un medicamento deja de estar disponible, FarmaSub sigue el siguiente protocolo de manera inmediata:</p>
+
+    <div class="protocol-steps">
+      <div class="ps-item">
+        <div class="ps-num">1</div>
+        <div class="ps-content">
+          <div class="ps-title">Detección y confirmación</div>
+          <div class="ps-desc">El equipo de FarmaSub verifica con el distribuidor la disponibilidad y el plazo estimado de reposición.</div>
+          <span class="ps-time">Inmediato</span>
+        </div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num">2</div>
+        <div class="ps-content">
+          <div class="ps-title">Búsqueda de alternativa terapéutica</div>
+          <div class="ps-desc">El Químico Farmacéutico Responsable Técnico evalúa si existe un equivalente terapéutico disponible en el catálogo o en el mercado. Se comunica la alternativa al suscriptor para su aprobación o consulta médica.</div>
+          <span class="ps-time">Máximo 2 horas hábiles</span>
+        </div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num">3</div>
+        <div class="ps-content">
+          <div class="ps-title">Comunicación proactiva al suscriptor</div>
+          <div class="ps-desc">Se notifica directamente a los suscriptores que tienen ese medicamento en su historial de pedidos, informando la situación, la alternativa disponible y el tiempo estimado de resolución.</div>
+          <span class="ps-time">Dentro del mismo día hábil</span>
+        </div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num">4</div>
+        <div class="ps-content">
+          <div class="ps-title">Derivación si no hay alternativa</div>
+          <div class="ps-desc">Si no existe alternativa terapéutica disponible, FarmaSub orienta al suscriptor hacia una farmacia aliada o el Ministerio de Salud Pública para la obtención del medicamento.</div>
+          <span class="ps-time">Según disponibilidad</span>
+        </div>
+      </div>
+      <div class="ps-item">
+        <div class="ps-num">5</div>
+        <div class="ps-content">
+          <div class="ps-title">Publicación en esta página</div>
+          <div class="ps-desc">La alerta queda registrada en la tabla de desabastecimiento a continuación hasta su resolución, con fecha de inicio, estado y alternativa disponible.</div>
+          <span class="ps-time">Publicación inmediata</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-section">
+      <div class="table-header">
+        <h2>Alertas de desabastecimiento</h2>
+        <span class="last-updated">Última actualización: 1 jul 2025</span>
+      </div>
+      <table class="alert-table">
+        <thead>
+          <tr>
+            <th>Medicamento</th>
+            <th>Fecha de alerta</th>
+            <th>Estado</th>
+            <th>Alternativa disponible</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <div class="empty-icon">✅</div>
+                <div class="empty-title">Actualmente no hay alertas de desabastecimiento activas</div>
+                <div class="empty-desc">Todos los medicamentos del catálogo están disponibles con normalidad. Si tiene alguna duda, escríbanos.</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:.78rem;color:var(--ink-30);margin-top:14px;text-align:right;">
+        Los estados posibles son:
+        <span class="status-badge badge-active">Activo</span>
+        <span class="status-badge badge-partial" style="margin:0 6px;">Alternativa disponible</span>
+        <span class="status-badge badge-resolved">Resuelto</span>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo-text">Farma<span>Sub</span></div>
+        <p>La farmacia por membresía para familias ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="index.html#como">Cómo funciona</a></li>
+          <li><a href="index.html#planes">Planes y precios</a></li>
+          <li><a href="index.html#calculadora">Calculadora de ahorro</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Nuestra empresa</h4>
+        <ul>
+          <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+          <li><a href="terminos.html">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html">Política de Devolución</a></li>
+          <li><a href="faq.html">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Información regulatoria</h4>
+        <ul>
+          <li><a href="uso-racional.html">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 FarmaSub Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p>Santo Domingo de los Tsáchilas · Ecuador</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

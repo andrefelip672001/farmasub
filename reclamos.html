@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reclamos y Sugerencias — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;--gold-light:#FDF4E7;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--danger:#C84040;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);--shadow-lg:0 8px 40px rgba(26,107,74,.14);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--ink);line-height:1.6;}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,2.5vw,1.9rem);line-height:1.2;}
+p{color:var(--ink-60);}
+.container{max-width:1080px;margin:0 auto;padding:0 24px;}
+section{padding:72px 0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(247,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(26,107,74,.10);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--ink-60);font-size:.9rem;font-weight:500;transition:color .2s;}
+.nav-links a:hover{color:var(--green);}
+.nav-cta{background:var(--green);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.nav-cta:hover{background:var(--green-mid);}
+.page-header{background:var(--white);padding:60px 0 48px;border-bottom:2px solid var(--green-light);}
+.ph-label{font-size:.78rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:block;}
+.page-header h1{margin-bottom:12px;}
+.ph-sub{font-size:.95rem;color:var(--ink-60);max-width:620px;}
+.ph-meta{display:flex;gap:16px;margin-top:20px;flex-wrap:wrap;}
+.ph-tag{background:var(--green-light);color:var(--green);font-size:.8rem;font-weight:500;padding:4px 12px;border-radius:20px;}
+.reclamos-layout{display:grid;grid-template-columns:1fr 340px;gap:48px;align-items:start;}
+.form-wrap{background:var(--white);}
+.form-title{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--ink);margin-bottom:6px;}
+.form-sub{font-size:.88rem;color:var(--ink-60);margin-bottom:28px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group.full{grid-column:1 / -1;}
+label{font-size:.85rem;font-weight:500;color:var(--ink);}
+label span{color:var(--danger);margin-left:2px;}
+input,select,textarea{padding:10px 14px;border:1.5px solid var(--ink-30);border-radius:var(--r);font-size:.9rem;font-family:'Inter',sans-serif;color:var(--ink);background:var(--white);transition:border-color .2s;width:100%;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(26,107,74,.08);}
+input::placeholder,textarea::placeholder{color:var(--ink-30);}
+textarea{resize:vertical;min-height:130px;}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7065' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.btn-submit{background:var(--green);color:#fff;border:none;padding:14px 32px;border-radius:var(--r);font-size:.95rem;font-weight:600;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;font-family:'Inter',sans-serif;}
+.btn-submit:hover{background:var(--green-mid);transform:translateY(-1px);box-shadow:0 4px 20px rgba(26,107,74,.3);}
+.btn-submit:active{transform:translateY(0);}
+.sidebar-cards{display:flex;flex-direction:column;gap:20px;position:sticky;top:80px;}
+.info-card{background:var(--bg);border-radius:var(--r-lg);padding:24px;}
+.ic-icon{width:40px;height:40px;background:var(--green-light);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.ic-icon svg{width:20px;height:20px;}
+.ic-title{font-size:.95rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.ic-body{font-size:.83rem;color:var(--ink-60);line-height:1.6;}
+.ic-body a{color:var(--green);font-weight:500;text-decoration:none;}
+.ic-body a:hover{text-decoration:underline;}
+.wa-card{background:var(--green);border-radius:var(--r-lg);padding:24px;text-align:center;}
+.wa-card h4{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;margin-bottom:6px;}
+.wa-card p{font-size:.82rem;color:rgba(255,255,255,.75);margin-bottom:16px;}
+.wa-btn{display:inline-flex;align-items:center;gap:8px;background:#fff;color:var(--green);padding:10px 20px;border-radius:var(--r);font-size:.88rem;font-weight:600;text-decoration:none;transition:all .2s;}
+.wa-btn:hover{background:var(--green-light);}
+.qf-note{background:var(--gold-light);border-left:4px solid var(--gold);border-radius:0 var(--r) var(--r) 0;padding:14px 16px;margin-top:6px;font-size:.83rem;color:var(--ink-60);line-height:1.6;}
+.qf-note strong{color:var(--ink);}
+.success-msg{display:none;background:var(--green-light);border:1.5px solid #A8DCC0;border-radius:var(--r-lg);padding:28px;text-align:center;margin-top:20px;}
+.success-msg .success-icon{font-size:2.5rem;margin-bottom:12px;}
+.success-msg h3{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--green);margin-bottom:6px;}
+.success-msg p{font-size:.88rem;color:var(--ink-60);}
+footer{background:var(--ink);padding:48px 0 28px;}
+.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{font-size:.85rem;color:var(--ink-60);margin-top:12px;max-width:240px;}
+.footer-col h4{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.footer-col ul li a{font-size:.83rem;color:var(--ink-60);text-decoration:none;transition:color .2s;}
+.footer-col ul li a:hover{color:var(--ink-30);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;}
+.footer-bottom p{font-size:.78rem;color:var(--ink-60);}
+.footer-logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;}
+.footer-logo-text span{color:#5EE8A0;}
+@media(max-width:768px){.footer-inner{grid-template-columns:1fr 1fr;}.nav-links{display:none;}.reclamos-layout{grid-template-columns:1fr;}.sidebar-cards{position:static;}.form-grid{grid-template-columns:1fr;}.form-group.full{grid-column:1;}section{padding:52px 0;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#como">Cómo funciona</a></li>
+      <li><a href="index.html#planes">Planes</a></li>
+      <li><a href="index.html#calculadora">Calculadora</a></li>
+      <li><a href="index.html#confianza">Confianza</a></li>
+    </ul>
+    <button class="nav-cta" onclick="window.location='index.html#planes'">Comenzar ahora</button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <span class="ph-label">Atención al suscriptor</span>
+    <h1>Reclamos y Sugerencias</h1>
+    <p class="ph-sub">Su opinión es fundamental para mejorar el servicio. Reclamos, sugerencias o consultas: respondemos en máximo 48 horas hábiles.</p>
+    <div class="ph-meta">
+      <span class="ph-tag">Respuesta en 48 horas hábiles</span>
+      <span class="ph-tag">QF disponible para consultas médicas</span>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+    <div class="reclamos-layout">
+
+      <div class="form-wrap">
+        <div class="form-title">Envíenos su mensaje</div>
+        <div class="form-sub">Todos los campos marcados con * son obligatorios.</div>
+
+        <form id="reclamos-form" onsubmit="handleSubmit(event)" novalidate>
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label for="nombre">Nombre completo <span>*</span></label>
+              <input type="text" id="nombre" name="nombre" placeholder="Ej: María González" required autocomplete="name"/>
+            </div>
+
+            <div class="form-group">
+              <label for="cedula">Número de cédula <span>*</span></label>
+              <input type="text" id="cedula" name="cedula" placeholder="0000000000" maxlength="10" required/>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Correo electrónico <span>*</span></label>
+              <input type="email" id="email" name="email" placeholder="ejemplo@correo.com" required autocomplete="email"/>
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Teléfono celular <span>*</span></label>
+              <input type="tel" id="telefono" name="telefono" placeholder="09XXXXXXXX" required autocomplete="tel"/>
+            </div>
+
+            <div class="form-group full">
+              <label for="tipo">Tipo de solicitud <span>*</span></label>
+              <select id="tipo" name="tipo" required>
+                <option value="" disabled selected>Seleccione una opción</option>
+                <option value="reclamo">Reclamo</option>
+                <option value="sugerencia">Sugerencia</option>
+                <option value="consulta">Consulta</option>
+                <option value="consulta-qf">Consulta al Químico Farmacéutico</option>
+              </select>
+            </div>
+
+            <div class="form-group full">
+              <label for="pedido">Número de pedido (opcional)</label>
+              <input type="text" id="pedido" name="pedido" placeholder="Ej: PED-2025-001"/>
+            </div>
+
+            <div class="form-group full">
+              <label for="descripcion">Descripción <span>*</span></label>
+              <textarea id="descripcion" name="descripcion" placeholder="Describa con el mayor detalle posible su reclamo, sugerencia o consulta..." required></textarea>
+            </div>
+
+          </div>
+
+          <button type="submit" class="btn-submit">Enviar mensaje</button>
+        </form>
+
+        <div class="success-msg" id="success-msg">
+          <div class="success-icon">✅</div>
+          <h3>Mensaje recibido correctamente</h3>
+          <p>Nos pondremos en contacto con usted en un máximo de <strong>48 horas hábiles</strong>. Si su consulta es urgente, escríbanos por WhatsApp.</p>
+        </div>
+
+        <div class="qf-note" style="margin-top:20px;">
+          <strong>Nota sobre consultas médicas:</strong> Los reclamos y consultas relacionadas con medicamentos, dosis, interacciones o tratamientos son atendidos directamente por el <strong>Químico Farmacéutico Responsable Técnico</strong> de FarmaSub. Seleccione "Consulta al Químico Farmacéutico" en el tipo de solicitud para priorizar su atención.
+        </div>
+
+      </div>
+
+      <div class="sidebar-cards">
+
+        <div class="info-card">
+          <div class="ic-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="ic-title">Tiempo de respuesta</div>
+          <div class="ic-body">Respondemos todos los mensajes en un máximo de <strong>48 horas hábiles</strong> desde la recepción. Los reclamos urgentes relacionados con medicamentos tienen prioridad y se atienden el mismo día hábil.</div>
+        </div>
+
+        <div class="wa-card">
+          <h4>¿Prefiere WhatsApp?</h4>
+          <p>Si su consulta es urgente o prefiere una respuesta más inmediata, escríbanos directamente por WhatsApp.</p>
+          <a href="https://wa.me/593XXXXXXXXX" class="wa-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#1A6B4A"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.098.541 4.072 1.491 5.793L.057 23.9c-.085.328.243.586.543.43l6.334-3.003C8.59 22.318 10.252 23 12 23c6.627 0 12-5.373 12-12S18.627 0 12 0z" fill-rule="evenodd"/></svg>
+            Escribir por WhatsApp
+          </a>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="ic-title">Comprometidos con su satisfacción</div>
+          <div class="ic-body">FarmaSub registra y da seguimiento a todos los reclamos recibidos. Si no queda satisfecho con la resolución, tiene derecho a escalar su caso o presentar una denuncia ante los organismos reguladores ecuatorianos.</div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="ic-title">También puede escribirnos por correo</div>
+          <div class="ic-body"><a href="mailto:contacto@farmasub.ec">contacto@farmasub.ec</a><br>Lunes a viernes, 08h00 – 17h00</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="footer-logo-text">Farma<span>Sub</span></div>
+        <p>La farmacia por membresía para familias ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Producto</h4>
+        <ul>
+          <li><a href="index.html#como">Cómo funciona</a></li>
+          <li><a href="index.html#planes">Planes y precios</a></li>
+          <li><a href="index.html#calculadora">Calculadora de ahorro</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Nuestra empresa</h4>
+        <ul>
+          <li><a href="quienes-somos.html">Quiénes Somos</a></li>
+          <li><a href="terminos.html">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html">Política de Devolución</a></li>
+          <li><a href="faq.html">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Información regulatoria</h4>
+        <ul>
+          <li><a href="uso-racional.html">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 FarmaSub Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p>Santo Domingo de los Tsáchilas · Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('reclamos-form');
+  const required = form.querySelectorAll('[required]');
+  let valid = true;
+  required.forEach(field => {
+    if (!field.value.trim()) {
+      field.style.borderColor = 'var(--danger)';
+      valid = false;
+    } else {
+      field.style.borderColor = '';
+    }
+  });
+  if (!valid) return;
+  form.style.display = 'none';
+  document.getElementById('success-msg').style.display = 'block';
+}
+</script>
+</body>
+</html>
