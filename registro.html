@@ -153,6 +153,12 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .radio-grp{display:flex;gap:16px;}
 .radio-grp label{display:flex;align-items:center;gap:5px;font-size:.88rem;color:var(--ink-60);cursor:pointer;}
 .radio-grp input{accent-color:var(--green);}
+.tbg{display:inline-flex;border:1.5px solid var(--ink-30);border-radius:var(--r);overflow:hidden;flex-shrink:0;}
+.tbg-btn{padding:7px 18px;border:none;background:var(--white);font-size:.85rem;font-weight:500;color:var(--ink-60);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.tbg-btn:not(:first-child){border-left:1px solid var(--ink-30);}
+.tbg-btn.active{background:var(--green);color:#fff;}
+.hs-q-row input[type=text],.hs-q-row select{padding:8px 10px;font-size:.85rem;border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:'Inter',sans-serif;color:var(--ink);background:var(--white);max-width:240px;width:100%;}
+.hs-q-row select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7065' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;appearance:none;}
 .toggle-wrap{display:flex;align-items:center;gap:10px;}
 .toggle-lbl{font-size:.82rem;color:var(--ink-60);}
 .toggle{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;}
@@ -775,10 +781,10 @@ function dropFile(e) {
 // ═══════════════════════════════════════════════════════
 const CONDITIONS = [
   'Diabetes tipo 1','Diabetes tipo 2','Hipertensión arterial',
-  'Colesterol alto / Dislipidemia','Hipotiroidismo / Hipertiroidismo',
-  'Asma / EPOC','Embarazo o lactancia','Enfermedad cardiovascular',
-  'Enfermedad renal','Artritis / Osteoporosis','Depresión / Ansiedad',
-  'Ninguna condición crónica','Otra'
+  'Alergias','Tratamiento antiviral','Salud digestiva',
+  'Salud respiratoria','Colesterol alto / Dislipidemia',
+  'Hipotiroidismo / Hipertiroidismo','Artritis / Osteoporosis',
+  'Salud sexual','Ninguna condición crónica','Otra'
 ];
 
 function buildHealthStep() {
@@ -823,25 +829,40 @@ function buildHealthStep() {
         <div class="hs-sec">
           <span class="hs-sec-label">C — Información adicional</span>
           <div class="hs-q-row">
+            <span class="hs-q">Nombre del médico tratante</span>
+            <input type="text" id="medico-${p.idx}" placeholder="Dr. / Dra."/>
+          </div>
+          <div class="hs-q-row">
+            <span class="hs-q">Tiempo con el tratamiento</span>
+            <select id="tiempo-trat-${p.idx}">
+              <option value="">Seleccionar...</option>
+              <option>Menos de 1 mes</option>
+              <option>De 1 a 6 meses</option>
+              <option>De 6 meses a 1 año</option>
+              <option>Más de 1 año</option>
+              <option>No aplica</option>
+            </select>
+          </div>
+          <div class="hs-q-row">
             <span class="hs-q">¿Tienes recetas médicas vigentes?</span>
-            <div class="radio-grp">
-              <label><input type="radio" name="receta-${p.idx}" value="si"/> Sí</label>
-              <label><input type="radio" name="receta-${p.idx}" value="no"/> No</label>
+            <div class="tbg">
+              <button type="button" class="tbg-btn" data-grp="receta-${p.idx}" data-val="si" onclick="selectTbg(this)">Sí</button>
+              <button type="button" class="tbg-btn" data-grp="receta-${p.idx}" data-val="no" onclick="selectTbg(this)">No</button>
             </div>
           </div>
           <div class="hs-q-row">
             <span class="hs-q">¿Eres alérgico/a a algún medicamento?</span>
-            <div class="radio-grp">
-              <label><input type="radio" name="alergia-${p.idx}" value="si" onchange="toggleAlergia(${p.idx})"/> Sí</label>
-              <label><input type="radio" name="alergia-${p.idx}" value="no" onchange="toggleAlergia(${p.idx})"/> No</label>
+            <div class="tbg">
+              <button type="button" class="tbg-btn" data-grp="alergia-${p.idx}" data-val="si" onclick="selectTbg(this)">Sí</button>
+              <button type="button" class="tbg-btn" data-grp="alergia-${p.idx}" data-val="no" onclick="selectTbg(this)">No</button>
             </div>
           </div>
           <div style="display:none;margin-top:8px;" id="alergia-wrap-${p.idx}">
-            <input type="text" id="alergia-text-${p.idx}" placeholder="¿A cuál medicamento?"/>
+            <input type="text" id="alergia-text-${p.idx}" placeholder="¿A cuál medicamento?" style="width:100%;padding:9px 12px;border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:inherit;font-size:.88rem;"/>
           </div>
           <div style="margin-top:16px;">
-            <label style="font-size:.85rem;font-weight:500;color:var(--ink);display:block;margin-bottom:6px;">Observación para nuestro Químico Farmacéutico (opcional)</label>
-            <textarea id="qf-notes-${p.idx}" placeholder="Escribe aquí cualquier información relevante..." style="width:100%;min-height:80px;padding:10px 14px;border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:inherit;font-size:.88rem;resize:vertical;"></textarea>
+            <label style="font-size:.85rem;font-weight:500;color:var(--ink);display:block;margin-bottom:6px;">Observaciones para nuestro Químico Farmacéutico (opcional)</label>
+            <textarea id="qf-notes-${p.idx}" placeholder="Cualquier información adicional que consideres importante..." style="width:100%;min-height:80px;padding:10px 14px;border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:inherit;font-size:.88rem;resize:vertical;"></textarea>
           </div>
         </div>
       </div>`;
@@ -876,9 +897,14 @@ function toggleNoMeds(personIdx, chk) {
   document.getElementById('meds-wrap-' + personIdx).style.display = chk.checked ? 'none' : 'block';
 }
 
-function toggleAlergia(personIdx) {
-  const si = document.querySelector(`[name="alergia-${personIdx}"][value="si"]:checked`);
-  document.getElementById('alergia-wrap-' + personIdx).style.display = si ? 'block' : 'none';
+function selectTbg(btn) {
+  const grp = btn.dataset.grp;
+  document.querySelectorAll(`[data-grp="${grp}"]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (grp.startsWith('alergia-')) {
+    const idx = grp.replace('alergia-', '');
+    document.getElementById('alergia-wrap-' + idx).style.display = btn.dataset.val === 'si' ? 'block' : 'none';
+  }
 }
 
 let medRowCounts = {};
