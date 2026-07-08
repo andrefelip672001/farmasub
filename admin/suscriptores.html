@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Suscriptores — FarmaSub Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-mid:#2E8A62;--green-light:#EAF4EE;--white:#FFFFFF;--danger:#C84040;
+--ab:#1a1a2e;--asb:#13132a;--anav:#0f0f1e;--acard:#22223a;--atext:#E2E8F0;--amuted:#94A3B8;--aborder:rgba(255,255,255,.07);--r:12px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--ab);color:var(--atext);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+.top-nav{height:64px;background:var(--anav);border-bottom:1px solid var(--aborder);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:34px;height:34px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:18px;height:18px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--white);}
+.logo-text span{color:#5EE8A0;}
+.nav-tag{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amuted);background:rgba(255,255,255,.06);border:1px solid var(--aborder);border-radius:20px;padding:4px 10px;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--amuted);}
+.nav-avatar{width:30px;height:30px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;color:white;}
+.btn-logout{background:none;border:1px solid var(--aborder);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:500;color:var(--amuted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:220px;background:var(--asb);border-right:1px solid var(--aborder);flex-shrink:0;overflow-y:auto;padding:16px 10px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:9px;text-decoration:none;font-size:.82rem;font-weight:500;color:var(--amuted);transition:all .15s;}
+.sb-link:hover{background:rgba(255,255,255,.06);color:var(--atext);}
+.sb-link.active{background:var(--green);color:white;}
+.sb-link svg{width:17px;height:17px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid var(--aborder);margin:8px 0;}
+.main{flex:1;overflow-y:auto;padding:28px;transition:margin-right .3s;}
+.main.panel-open{margin-right:440px;}
+.page-title{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:20px;}
+
+/* TOOLBAR */
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--amuted);}
+.search-input{width:100%;padding:9px 12px 9px 34px;background:var(--acard);border:1px solid var(--aborder);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.82rem;color:var(--atext);outline:none;transition:border .2s;}
+.search-input:focus{border-color:var(--green);}
+.search-input::placeholder{color:var(--amuted);}
+.filter-btns{display:flex;gap:6px;}
+.filter-btn{padding:8px 14px;background:rgba(255,255,255,.05);border:1px solid var(--aborder);border-radius:20px;font-size:.78rem;font-weight:500;color:var(--amuted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.filter-btn:hover{border-color:rgba(26,107,74,.4);color:var(--atext);}
+.filter-btn.active{background:var(--green);border-color:var(--green);color:white;}
+
+/* TABLE */
+.table-wrap{background:var(--acard);border-radius:var(--r);border:1px solid var(--aborder);overflow:hidden;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amuted);border-bottom:1px solid var(--aborder);background:rgba(0,0,0,.15);}
+td{padding:11px 16px;font-size:.82rem;border-bottom:1px solid var(--aborder);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr.clickable{cursor:pointer;}
+tr.clickable:hover td{background:rgba(26,107,74,.08);}
+tr.selected td{background:rgba(26,107,74,.12);}
+
+/* BADGES */
+.badge{display:inline-flex;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:600;}
+.badge-activa{background:rgba(220,252,231,.1);color:#5EE8A0;}
+.badge-pendiente{background:rgba(254,249,195,.12);color:#FCD34D;}
+.badge-vencida{background:rgba(254,226,226,.1);color:#FCA5A5;}
+
+/* SIDE PANEL */
+.side-panel{position:fixed;top:64px;right:0;bottom:0;width:440px;background:var(--asb);border-left:1px solid var(--aborder);overflow-y:auto;transform:translateX(100%);transition:transform .3s;z-index:40;}
+.side-panel.open{transform:translateX(0);}
+.panel-header{padding:20px 24px;border-bottom:1px solid var(--aborder);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:'DM Serif Display',serif;font-size:1.1rem;}
+.btn-close{background:none;border:none;cursor:pointer;color:var(--amuted);padding:4px;border-radius:6px;transition:color .2s;}
+.btn-close:hover{color:var(--atext);}
+.panel-body{padding:20px 24px;}
+.panel-section{margin-bottom:20px;}
+.psec-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amuted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--aborder);}
+.pfield{display:flex;justify-content:space-between;padding:6px 0;font-size:.82rem;}
+.pfield-lbl{color:var(--amuted);}
+.member-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px;margin-bottom:6px;font-size:.82rem;}
+.m-av{width:28px;height:28px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:white;flex-shrink:0;}
+.panel-actions{display:flex;gap:8px;padding-top:4px;}
+.btn-activar{padding:9px 16px;background:var(--green);border:none;border-radius:9px;font-size:.8rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;flex:1;}
+.btn-activar:hover{background:var(--green-mid);}
+.btn-suspender{padding:9px 16px;background:none;border:1px solid rgba(200,64,64,.35);border-radius:9px;font-size:.8rem;font-weight:600;color:#FCA5A5;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;flex:1;}
+.btn-suspender:hover{background:rgba(200,64,64,.12);}
+.btn-comprobante{padding:9px 16px;background:rgba(255,255,255,.06);border:1px solid var(--aborder);border-radius:9px;font-size:.8rem;font-weight:600;color:var(--atext);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;text-decoration:none;text-align:center;}
+.btn-comprobante:hover{background:rgba(255,255,255,.1);}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="/admin/dashboard.html" class="nav-logo">
+      <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <span class="nav-tag">Panel Admin</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesión</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="/admin/dashboard.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio</a>
+    <a href="/admin/suscriptores.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores</a>
+    <a href="/admin/pedidos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos</a>
+    <a href="/admin/catalogo.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Catálogo</a>
+    <hr class="sb-divider"/>
+    <a href="/admin/pagos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</a>
+  </aside>
+
+  <main class="main" id="main">
+    <h1 class="page-title">Suscriptores</h1>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" placeholder="Buscar nombre, cédula o email..." oninput="filterTable()" id="search"/>
+      </div>
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('activa',this)">Activos</button>
+        <button class="filter-btn" onclick="setFilter('pendiente',this)">Pendientes</button>
+        <button class="filter-btn" onclick="setFilter('vencida',this)">Vencidos</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Registro</th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--amuted)">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- SIDE PANEL -->
+<div class="side-panel" id="side-panel">
+  <div class="panel-header">
+    <h2 class="panel-title" id="panel-nombre">Suscriptor</h2>
+    <button class="btn-close" onclick="closePanel()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="panel-body" id="panel-body">Selecciona un suscriptor.</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+let _todos=[],_filtro='todos',_selIdx=null;
+
+(async()=>{
+  const {data:{session}}=await _db.auth.getSession();
+  if(!session){window.location.href='/portal/login.html';return;}
+  const user=session.user;
+  let rol=user.user_metadata?.rol||user.app_metadata?.rol||null;
+  if(!rol){const {data:p}=await _db.from('perfiles').select('rol').eq('id',user.id).single();rol=p?.rol||'suscriptor';}
+  if(rol!=='admin'){window.location.href='/portal/login.html';return;}
+  document.getElementById('nav-nombre').textContent=user.email;
+  document.getElementById('nav-avatar').textContent=user.email[0].toUpperCase();
+  await loadData();
+})();
+
+async function loadData(){
+  const {data}=await _db.from('suscriptores').select('*').order('created_at',{ascending:false});
+  _todos=data||[];
+  renderTable();
+}
+
+function setFilter(f,btn){
+  _filtro=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function filterTable(){renderTable();}
+
+function renderTable(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const rows=_todos.filter(s=>{
+    if(_filtro!=='todos'&&s.estado!==_filtro)return false;
+    return !q||s.nombre?.toLowerCase().includes(q)||s.cedula?.includes(q)||s.email?.toLowerCase().includes(q);
+  });
+  const tbody=document.getElementById('tbody');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--amuted)">Sin resultados</td></tr>';return;}
+  tbody.innerHTML=rows.map((s,i)=>{
+    const cls={activa:'badge-activa',pendiente:'badge-pendiente',vencida:'badge-vencida'}[s.estado]||'badge-pendiente';
+    const fecha=s.created_at?new Date(s.created_at).toLocaleDateString('es-EC'):'—';
+    return `<tr class="clickable${_selIdx===i?' selected':''}" onclick="openPanel(${_todos.indexOf(s)})">
+      <td style="font-weight:500">${s.nombre||'—'}</td>
+      <td style="color:var(--amuted);font-size:.78rem">${s.cedula||'—'}</td>
+      <td style="color:var(--amuted);font-size:.78rem">${s.email||'—'}</td>
+      <td style="color:var(--amuted)">${s.telefono||'—'}</td>
+      <td><span class="badge ${cls}">${s.estado||'—'}</span></td>
+      <td style="color:var(--amuted)">${fecha}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function openPanel(idx){
+  _selIdx=idx;
+  renderTable();
+  const s=_todos[idx];
+  document.getElementById('panel-nombre').textContent=s.nombre||s.email;
+  document.getElementById('side-panel').classList.add('open');
+  document.getElementById('main').classList.add('panel-open');
+  const body=document.getElementById('panel-body');
+  body.innerHTML='<p style="color:var(--amuted);font-size:.82rem">Cargando...</p>';
+
+  const [{data:miembros},{data:pedidos},{data:pagos}]=await Promise.all([
+    _db.from('miembros').select('*').eq('suscriptor_cedula',s.cedula),
+    _db.from('pedidos').select('id,numero,fecha,estado,total').eq('suscriptor_cedula',s.cedula).order('fecha',{ascending:false}).limit(5),
+    _db.from('pagos').select('*').eq('suscriptor_cedula',s.cedula).order('created_at',{ascending:false}).limit(5)
+  ]);
+
+  const cls={activa:'badge-activa',pendiente:'badge-pendiente',vencida:'badge-vencida'}[s.estado]||'badge-pendiente';
+  body.innerHTML=`
+    <div class="panel-section">
+      <p class="psec-title">Datos personales</p>
+      ${[['Cédula',s.cedula],['Email',s.email],['Teléfono',s.telefono],['Dirección',s.direccion],['Barrio',s.barrio||'—'],['Estado',`<span class="badge ${cls}">${s.estado}</span>`]].map(([l,v])=>`<div class="pfield"><span class="pfield-lbl">${l}</span><span>${v}</span></div>`).join('')}
+    </div>
+
+    <div class="panel-section">
+      <p class="psec-title">Grupo familiar (${(miembros||[]).length} miembro(s) adicional(es))</p>
+      ${(miembros||[]).length?miembros.map(m=>`<div class="member-row"><div class="m-av">${m.nombre[0]}</div><div><p style="font-weight:500">${m.nombre}</p><p style="color:var(--amuted);font-size:.75rem">${m.relacion||'Familiar'} · ${m.cedula}</p></div></div>`).join(''):'<p style="color:var(--amuted);font-size:.82rem">Sin miembros adicionales.</p>'}
+    </div>
+
+    <div class="panel-section">
+      <p class="psec-title">Últimos pedidos</p>
+      ${(pedidos||[]).length?pedidos.map(p=>{const pc={pendiente:'badge-pendiente',entregado:'badge-activa'}[p.estado]||'badge-pendiente';return`<div class="pfield"><span style="font-size:.78rem">${p.numero||'#'+p.id}</span><span class="badge ${pc}">${p.estado}</span></div>`;}).join(''):'<p style="color:var(--amuted);font-size:.82rem">Sin pedidos.</p>'}
+    </div>
+
+    <div class="panel-section">
+      <p class="psec-title">Historial de pagos</p>
+      ${(pagos||[]).length?pagos.map(p=>{const pc={pagado:'badge-activa',pendiente:'badge-pendiente',rechazado:'badge-vencida'}[p.estado]||'badge-pendiente';return`<div class="pfield"><span style="font-size:.78rem">${new Date(p.created_at).toLocaleDateString('es-EC',{month:'long',year:'numeric'})}</span><span class="badge ${pc}">${p.estado}</span></div>`;}).join(''):'<p style="color:var(--amuted);font-size:.82rem">Sin pagos registrados.</p>'}
+    </div>
+
+    <div class="panel-actions">
+      <button class="btn-activar" onclick="cambiarEstado('${s.cedula}','activa')">✓ Activar membresía</button>
+      <button class="btn-suspender" onclick="cambiarEstado('${s.cedula}','vencida')">Suspender</button>
+    </div>
+    ${s.comprobante_url?`<a href="${s.comprobante_url}" target="_blank" class="btn-comprobante" style="display:block;margin-top:8px">Ver comprobante de pago</a>`:''}
+  `;
+}
+
+function closePanel(){
+  document.getElementById('side-panel').classList.remove('open');
+  document.getElementById('main').classList.remove('panel-open');
+  _selIdx=null;renderTable();
+}
+
+async function cambiarEstado(cedula,estado){
+  await _db.from('suscriptores').update({estado}).eq('cedula',cedula);
+  await loadData();
+  closePanel();
+}
+
+function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
+</script>
+</body>
+</html>

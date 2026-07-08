@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard Admin — FarmaSub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-mid:#2E8A62;--green-light:#EAF4EE;--gold:#C8903A;--white:#FFFFFF;--danger:#C84040;
+--ab:#1a1a2e;--asb:#13132a;--anav:#0f0f1e;--acard:#22223a;--atext:#E2E8F0;--amuted:#94A3B8;--aborder:rgba(255,255,255,.07);--r:12px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--ab);color:var(--atext);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+.top-nav{height:64px;background:var(--anav);border-bottom:1px solid var(--aborder);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:34px;height:34px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:18px;height:18px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--white);}
+.logo-text span{color:#5EE8A0;}
+.nav-tag{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amuted);background:rgba(255,255,255,.06);border:1px solid var(--aborder);border-radius:20px;padding:4px 10px;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--amuted);}
+.nav-avatar{width:30px;height:30px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;color:white;}
+.btn-logout{background:none;border:1px solid var(--aborder);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:500;color:var(--amuted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:220px;background:var(--asb);border-right:1px solid var(--aborder);flex-shrink:0;overflow-y:auto;padding:16px 10px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:9px;text-decoration:none;font-size:.82rem;font-weight:500;color:var(--amuted);transition:all .15s;}
+.sb-link:hover{background:rgba(255,255,255,.06);color:var(--atext);}
+.sb-link.active{background:var(--green);color:white;}
+.sb-link svg{width:17px;height:17px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid var(--aborder);margin:8px 0;}
+.main{flex:1;overflow-y:auto;padding:28px;}
+.page-title{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:24px;}
+
+/* METRIC CARDS */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.metric-card{background:var(--acard);border-radius:var(--r);padding:20px;border:1px solid var(--aborder);}
+.metric-lbl{font-size:.72rem;font-weight:600;color:var(--amuted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.metric-val{font-family:'DM Serif Display',serif;font-size:2rem;color:var(--atext);}
+.metric-sub{font-size:.75rem;color:var(--amuted);margin-top:4px;}
+.metric-card.accent .metric-val{color:#5EE8A0;}
+.metric-card.gold .metric-val{color:#FCD34D;}
+
+/* TABLES */
+.table-block{background:var(--acard);border-radius:var(--r);border:1px solid var(--aborder);overflow:hidden;margin-bottom:20px;}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--aborder);display:flex;align-items:center;justify-content:space-between;}
+.table-title{font-weight:600;font-size:.9rem;}
+.table-link{font-size:.78rem;color:var(--green);text-decoration:none;font-weight:500;}
+.table-link:hover{text-decoration:underline;}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 20px;text-align:left;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amuted);border-bottom:1px solid var(--aborder);}
+td{padding:12px 20px;font-size:.82rem;border-bottom:1px solid var(--aborder);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.02);}
+
+/* BADGE */
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;}
+.badge-pendiente{background:rgba(254,249,195,.15);color:#FCD34D;}
+.badge-activa{background:rgba(220,252,231,.1);color:#5EE8A0;}
+.badge-vencida{background:rgba(254,226,226,.1);color:#FCA5A5;}
+.badge-entregado{background:rgba(219,234,254,.1);color:#93C5FD;}
+
+/* ACTION BUTTONS */
+.btn-aprobar{padding:5px 12px;background:var(--green);border:none;border-radius:7px;font-size:.75rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-right:6px;}
+.btn-aprobar:hover{background:var(--green-mid);}
+.btn-rechazar{padding:5px 12px;background:none;border:1px solid rgba(200,64,64,.4);border-radius:7px;font-size:.75rem;font-weight:600;color:#FCA5A5;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-rechazar:hover{background:rgba(200,64,64,.15);}
+
+@media(max-width:1100px){.metrics-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="/admin/dashboard.html" class="nav-logo">
+      <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <span class="logo-text">Farma<span>Sub</span></span>
+    </a>
+    <span class="nav-tag">Panel Admin</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">A</div>
+      <span id="nav-nombre">Admin</span>
+    </div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesión</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="/admin/dashboard.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio</a>
+    <a href="/admin/suscriptores.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores</a>
+    <a href="/admin/pedidos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos</a>
+    <a href="/admin/catalogo.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Catálogo</a>
+    <hr class="sb-divider"/>
+    <a href="/admin/pagos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</a>
+  </aside>
+
+  <main class="main">
+    <h1 class="page-title">Panel de control</h1>
+
+    <div class="metrics-grid">
+      <div class="metric-card accent">
+        <p class="metric-lbl">Suscriptores activos</p>
+        <p class="metric-val" id="m-activos">—</p>
+        <p class="metric-sub">membresías vigentes</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-lbl">Pendientes verificación</p>
+        <p class="metric-val" id="m-pendientes">—</p>
+        <p class="metric-sub">esperando confirmación</p>
+      </div>
+      <div class="metric-card">
+        <p class="metric-lbl">Pedidos del mes</p>
+        <p class="metric-val" id="m-pedidos">—</p>
+        <p class="metric-sub" id="m-pedidos-sub">este mes</p>
+      </div>
+      <div class="metric-card gold">
+        <p class="metric-lbl">Ingresos del mes</p>
+        <p class="metric-val" id="m-ingresos">—</p>
+        <p class="metric-sub" id="m-utilidad"></p>
+      </div>
+    </div>
+
+    <!-- PAGOS PENDIENTES -->
+    <div class="table-block">
+      <div class="table-header">
+        <span class="table-title">Pagos pendientes de verificar</span>
+        <a href="/admin/pagos.html" class="table-link">Ver todos →</a>
+      </div>
+      <table>
+        <thead><tr><th>Suscriptor</th><th>Cédula</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
+        <tbody id="pagos-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--amuted)">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- ÚLTIMOS PEDIDOS -->
+    <div class="table-block">
+      <div class="table-header">
+        <span class="table-title">Últimos pedidos</span>
+        <a href="/admin/pedidos.html" class="table-link">Ver todos →</a>
+      </div>
+      <table>
+        <thead><tr><th>Número</th><th>Suscriptor</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead>
+        <tbody id="pedidos-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--amuted)">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+
+(async()=>{
+  const {data:{session}}=await _db.auth.getSession();
+  if(!session){window.location.href='/portal/login.html';return;}
+  const user=session.user;
+  let rol=user.user_metadata?.rol||user.app_metadata?.rol||null;
+  if(!rol){const {data:p}=await _db.from('perfiles').select('rol').eq('id',user.id).single();rol=p?.rol||'suscriptor';}
+  if(rol!=='admin'){window.location.href='/portal/login.html';return;}
+  document.getElementById('nav-nombre').textContent=user.email;
+  document.getElementById('nav-avatar').textContent=user.email[0].toUpperCase();
+  await loadMetrics();
+  await loadPagosPendientes();
+  await loadUltimosPedidos();
+})();
+
+async function loadMetrics(){
+  const [{count:activos},{count:pendientes},{count:pedidosMes}]=await Promise.all([
+    _db.from('suscriptores').select('*',{count:'exact',head:true}).eq('estado','activa'),
+    _db.from('suscriptores').select('*',{count:'exact',head:true}).eq('estado','pendiente'),
+    _db.from('pedidos').select('*',{count:'exact',head:true}).gte('fecha',new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString())
+  ]);
+  document.getElementById('m-activos').textContent=activos||0;
+  document.getElementById('m-pendientes').textContent=pendientes||0;
+  document.getElementById('m-pedidos').textContent=pedidosMes||0;
+  document.getElementById('m-ingresos').textContent=`$${((activos||0)*8).toFixed(0)}`;
+  document.getElementById('m-utilidad').textContent=`Utilidad estimada: $${((activos||0)*5.5).toFixed(0)}`;
+}
+
+async function loadPagosPendientes(){
+  const {data}=await _db.from('pagos').select('*,suscriptores(nombre,cedula)').eq('estado','pendiente').order('created_at',{ascending:false}).limit(5);
+  const tbody=document.getElementById('pagos-tbody');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--amuted)">Sin pagos pendientes</td></tr>';return;}
+  tbody.innerHTML=data.map(p=>`<tr>
+    <td>${p.suscriptores?.nombre||'—'}</td>
+    <td style="color:var(--amuted)">${p.suscriptores?.cedula||'—'}</td>
+    <td>$${(p.monto||8).toFixed(2)}</td>
+    <td style="color:var(--amuted)">${new Date(p.created_at).toLocaleDateString('es-EC')}</td>
+    <td><button class="btn-aprobar" onclick="aprobarPago('${p.id}','${p.suscriptores?.cedula}',this)">Aprobar</button><button class="btn-rechazar" onclick="rechazarPago('${p.id}',this)">Rechazar</button></td>
+  </tr>`).join('');
+}
+
+async function loadUltimosPedidos(){
+  const {data}=await _db.from('pedidos').select('numero,id,fecha,total,estado,suscriptores(nombre)').order('fecha',{ascending:false}).limit(5);
+  const tbody=document.getElementById('pedidos-tbody');
+  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--amuted)">Sin pedidos aún</td></tr>';return;}
+  tbody.innerHTML=data.map(p=>{
+    const cls={pendiente:'badge-pendiente',entregado:'badge-activa',despachado:'badge-entregado','en-proceso':'badge-entregado'}[p.estado]||'badge-pendiente';
+    return `<tr><td style="font-weight:600;color:var(--green)">${p.numero||'#'+p.id}</td><td>${p.suscriptores?.nombre||'—'}</td><td style="color:var(--amuted)">${new Date(p.fecha).toLocaleDateString('es-EC')}</td><td>$${(p.total||0).toFixed(2)}</td><td><span class="badge ${cls}">${p.estado}</span></td></tr>`;
+  }).join('');
+}
+
+async function aprobarPago(id,cedula,btn){
+  btn.disabled=true;btn.textContent='...';
+  await _db.from('pagos').update({estado:'pagado'}).eq('id',id);
+  if(cedula)await _db.from('suscriptores').update({estado:'activa'}).eq('cedula',cedula);
+  btn.closest('tr').remove();
+  const m=parseInt(document.getElementById('m-pendientes').textContent)-1;
+  document.getElementById('m-pendientes').textContent=Math.max(0,m);
+}
+
+async function rechazarPago(id,btn){
+  if(!confirm('¿Rechazar este pago?'))return;
+  btn.disabled=true;
+  await _db.from('pagos').update({estado:'rechazado'}).eq('id',id);
+  btn.closest('tr').remove();
+}
+
+function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
+</script>
+</body>
+</html>

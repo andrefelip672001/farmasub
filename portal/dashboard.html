@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mi Portal — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;
+  --ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;
+  --danger:#C84040;--danger-bg:#FDF2F2;--warning-bg:#FFF8EC;--warning:#B87A00;
+  --r:12px;--shadow:0 2px 12px rgba(26,107,74,.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+/* NAV */
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid rgba(26,107,74,.1);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(26,107,74,.06);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;color:var(--ink-60);}
+.nav-avatar{width:32px;height:32px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:700;font-size:.82rem;flex-shrink:0;}
+.btn-logout{background:none;border:1.5px solid var(--ink-30);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--green-light);border-right:1px solid rgba(26,107,74,.12);flex-shrink:0;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;position:relative;}
+.sb-link:hover{background:rgba(26,107,74,.1);color:var(--green);}
+.sb-link.active{background:var(--green);color:var(--white);}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-badge{margin-left:auto;background:var(--gold);color:white;font-size:.7rem;font-weight:700;border-radius:99px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 5px;}
+.sb-link.active .sb-badge{background:rgba(255,255,255,.3);}
+.sb-divider{border:none;border-top:1px solid rgba(26,107,74,.15);margin:8px 0;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:32px;}
+.page-header{margin-bottom:24px;}
+.greeting{font-family:'DM Serif Display',serif;font-size:1.9rem;color:var(--ink);margin-bottom:4px;}
+.greeting-sub{font-size:.875rem;color:var(--ink-60);}
+
+/* ALERTS */
+.alert{border-radius:var(--r);padding:14px 18px;margin-bottom:20px;display:flex;align-items:flex-start;gap:12px;}
+.alert-warning{background:var(--warning-bg);border:1px solid rgba(184,122,0,.2);}
+.alert-danger{background:var(--danger-bg);border:1px solid rgba(200,64,64,.2);}
+.alert svg{flex-shrink:0;margin-top:1px;}
+.alert p.title{font-size:.875rem;font-weight:600;margin-bottom:3px;}
+.alert-warning p.title{color:var(--warning);}
+.alert-danger p.title{color:var(--danger);}
+.alert p.sub{font-size:.82rem;color:var(--ink-60);line-height:1.4;}
+.btn-renew{display:inline-block;margin-top:10px;padding:7px 16px;background:var(--danger);color:white;border-radius:8px;font-size:.82rem;font-weight:600;text-decoration:none;}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.card{background:var(--white);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);border:1px solid rgba(26,107,74,.06);}
+.card-lbl{font-size:.72rem;font-weight:600;color:var(--ink-60);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.card-val{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--ink);line-height:1.1;}
+.card-sub{font-size:.78rem;color:var(--ink-60);margin-top:4px;}
+
+/* STATUS BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.badge-activa{background:#DCFCE7;color:#166534;}
+.badge-pendiente{background:#FEF9C3;color:#854D0E;}
+.badge-vencida{background:var(--danger-bg);color:var(--danger);}
+.badge-despachado{background:#DBEAFE;color:#1E40AF;}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+/* CTA BUTTON */
+.btn-pedido{display:inline-flex;align-items:center;gap:10px;background:var(--green);color:white;border:none;border-radius:var(--r);padding:16px 28px;font-family:'Inter',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;margin-bottom:32px;}
+.btn-pedido:hover{background:var(--green-mid);transform:translateY(-1px);box-shadow:0 4px 20px rgba(26,107,74,.3);}
+.btn-pedido svg{width:20px;height:20px;stroke-width:2;}
+
+/* LAST ORDER */
+.section-title{font-family:'DM Serif Display',serif;font-size:1.2rem;margin-bottom:14px;}
+.order-card{background:var(--white);border-radius:var(--r);padding:0;box-shadow:var(--shadow);border:1px solid rgba(26,107,74,.06);overflow:hidden;}
+.order-row{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;border-bottom:1px solid var(--green-light);}
+.order-row:last-child{border-bottom:none;}
+.order-lbl{font-size:.82rem;color:var(--ink-60);}
+.order-val{font-size:.875rem;font-weight:500;}
+
+/* SKELETON */
+.skel{background:linear-gradient(90deg,#e8f0ec 25%,#f0f6f2 50%,#e8f0ec 75%);background-size:200% 100%;animation:shim 1.5s infinite;border-radius:8px;height:28px;}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+@media(max-width:900px){.cards-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.sidebar{display:none;}.main{padding:20px;}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <a href="/portal/dashboard.html" class="nav-logo">
+    <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <span class="logo-text">Farma<span>Sub</span></span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span id="nav-nombre">Cargando...</span>
+    </div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesión</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="/portal/dashboard.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>Inicio
+    </a>
+    <a href="/portal/catalogo.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Catálogo
+    </a>
+    <a href="/portal/pedido.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Mi pedido
+      <span class="sb-badge" id="cart-badge" style="display:none">0</span>
+    </a>
+    <a href="/portal/mis-pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mis pedidos
+    </a>
+    <hr class="sb-divider"/>
+    <a href="/portal/cuenta.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi cuenta
+    </a>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1 class="greeting" id="greeting">Buen día...</h1>
+      <p class="greeting-sub">Suscripción FarmaSub · Santo Domingo de los Tsáchilas</p>
+    </div>
+
+    <div id="alert-pendiente" class="alert alert-warning" style="display:none">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B87A00" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <div><p class="title">Pago en verificación</p><p class="sub">Tu pago está siendo verificado. Te notificaremos por WhatsApp en máximo 24 horas.</p></div>
+    </div>
+    <div id="alert-vencida" class="alert alert-danger" style="display:none">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C84040" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <div><p class="title">Membresía vencida</p><p class="sub">Tu membresía ha vencido. Renueva para continuar recibiendo tus medicamentos.</p><a href="/registro.html" class="btn-renew">Renovar membresía</a></div>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card">
+        <p class="card-lbl">Estado membresía</p>
+        <div id="card-estado"><div class="skel" style="width:90px"></div></div>
+      </div>
+      <div class="card">
+        <p class="card-lbl">Miembros del grupo</p>
+        <p class="card-val" id="card-miembros">—</p>
+        <p class="card-sub">incluyendo titular</p>
+      </div>
+      <div class="card">
+        <p class="card-lbl">Días restantes del mes</p>
+        <p class="card-val" id="card-dias">—</p>
+        <p class="card-sub">para hacer tu pedido</p>
+      </div>
+      <div class="card">
+        <p class="card-lbl">Último pedido</p>
+        <p class="card-val" id="card-pedido-fecha" style="font-size:1.1rem;line-height:1.3">—</p>
+        <p class="card-sub" id="card-pedido-estado"></p>
+      </div>
+    </div>
+
+    <a href="/portal/catalogo.html" class="btn-pedido">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      Hacer pedido del mes
+    </a>
+
+    <div id="last-order-section" style="display:none">
+      <h2 class="section-title">Detalle del último pedido</h2>
+      <div class="order-card" id="last-order-detail"></div>
+    </div>
+  </main>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+let _user, _susc;
+
+(async()=>{
+  const {data:{session}} = await _db.auth.getSession();
+  if(!session){window.location.href='/portal/login.html';return;}
+  _user=session.user;
+  await loadDashboard();
+  updateCartBadge();
+})();
+
+async function loadDashboard(){
+  const {data:s} = await _db.from('suscriptores').select('*').eq('email',_user.email).single();
+  _susc=s;
+  const nombre=s?.nombre||_user.email;
+  document.getElementById('nav-avatar').textContent=nombre[0]?.toUpperCase()||'?';
+  document.getElementById('nav-nombre').textContent=nombre;
+  const h=new Date().getHours();
+  const sal=h<12?'Buenos días':h<18?'Buenas tardes':'Buenas noches';
+  document.getElementById('greeting').textContent=`${sal}, ${nombre.split(' ')[0]}`;
+
+  const estado=s?.estado||'pendiente';
+  const cls={activa:'badge-activa',pendiente:'badge-pendiente',vencida:'badge-vencida'}[estado]||'badge-pendiente';
+  const lbl={activa:'Activa',pendiente:'Pendiente',vencida:'Vencida'}[estado]||estado;
+  document.getElementById('card-estado').innerHTML=`<span class="badge ${cls}"><span class="badge-dot"></span>${lbl}</span>`;
+  if(estado==='pendiente')document.getElementById('alert-pendiente').style.display='flex';
+  if(estado==='vencida')document.getElementById('alert-vencida').style.display='flex';
+
+  const {count} = await _db.from('miembros').select('*',{count:'exact',head:true}).eq('suscriptor_cedula',s?.cedula);
+  document.getElementById('card-miembros').textContent=(count||0)+1;
+
+  const now=new Date();
+  document.getElementById('card-dias').textContent=new Date(now.getFullYear(),now.getMonth()+1,0).getDate()-now.getDate();
+
+  const {data:ped} = await _db.from('pedidos').select('id,fecha,estado,total').eq('suscriptor_cedula',s?.cedula).order('fecha',{ascending:false}).limit(1);
+  if(ped&&ped.length){
+    const p=ped[0];
+    document.getElementById('card-pedido-fecha').textContent=new Date(p.fecha).toLocaleDateString('es-EC',{day:'numeric',month:'short',year:'numeric'});
+    const ecls={pendiente:'badge-pendiente',despachado:'badge-despachado',entregado:'badge-activa'}[p.estado]||'badge-pendiente';
+    document.getElementById('card-pedido-estado').innerHTML=`<span class="badge ${ecls}" style="font-size:.7rem;padding:2px 8px">${p.estado}</span>`;
+    document.getElementById('last-order-section').style.display='block';
+    const {data:items}=await _db.from('pedido_items').select('cantidad,productos(nombre)').eq('pedido_id',p.id);
+    const rows=[
+      `<div class="order-row"><span class="order-lbl">Número de pedido</span><span class="order-val">#${p.id}</span></div>`,
+      `<div class="order-row"><span class="order-lbl">Fecha</span><span class="order-val">${new Date(p.fecha).toLocaleDateString('es-EC',{day:'numeric',month:'long',year:'numeric'})}</span></div>`,
+      `<div class="order-row"><span class="order-lbl">Estado</span><span class="order-val"><span class="badge ${ecls}">${p.estado}</span></span></div>`,
+      `<div class="order-row"><span class="order-lbl">Total</span><span class="order-val">$${(p.total||0).toFixed(2)}</span></div>`,
+      ...(items||[]).map(i=>`<div class="order-row" style="padding-left:28px"><span class="order-lbl">• ${i.productos?.nombre||'Producto'}</span><span class="order-val">×${i.cantidad}</span></div>`)
+    ];
+    document.getElementById('last-order-detail').innerHTML=rows.join('');
+  }else{
+    document.getElementById('card-pedido-fecha').textContent='Sin pedidos aún';
+  }
+}
+
+function updateCartBadge(){
+  const c=JSON.parse(localStorage.getItem('farmasub_cart')||'[]');
+  const b=document.getElementById('cart-badge');
+  if(c.length){b.style.display='flex';b.textContent=c.length;}else b.style.display='none';
+}
+function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
+</script>
+</body>
+</html>

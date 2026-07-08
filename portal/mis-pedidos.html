@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mis pedidos — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--danger:#C84040;--r:12px;--shadow:0 2px 12px rgba(26,107,74,.08);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid rgba(26,107,74,.1);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(26,107,74,.06);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;color:var(--ink-60);}
+.nav-avatar{width:32px;height:32px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:700;font-size:.82rem;}
+.btn-logout{background:none;border:1.5px solid var(--ink-30);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:240px;background:var(--green-light);border-right:1px solid rgba(26,107,74,.12);flex-shrink:0;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;}
+.sb-link:hover{background:rgba(26,107,74,.1);color:var(--green);}
+.sb-link.active{background:var(--green);color:var(--white);}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-badge{margin-left:auto;background:var(--gold);color:white;font-size:.7rem;font-weight:700;border-radius:99px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 5px;}
+.sb-link.active .sb-badge{background:rgba(255,255,255,.3);}
+.sb-divider{border:none;border-top:1px solid rgba(26,107,74,.15);margin:8px 0;}
+.main{flex:1;overflow-y:auto;padding:28px;}
+.page-title{font-family:'DM Serif Display',serif;font-size:1.7rem;margin-bottom:24px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600;}
+.badge-pendiente{background:#FEF9C3;color:#854D0E;}
+.badge-en-proceso{background:#DBEAFE;color:#1E40AF;}
+.badge-despachado{background:#F3E8FF;color:#6B21A8;}
+.badge-entregado{background:#DCFCE7;color:#166534;}
+.badge-cancelado{background:#FEE2E2;color:#991B1B;}
+
+/* PEDIDOS LIST */
+.pedidos-list{display:flex;flex-direction:column;gap:10px;}
+.pedido-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);border:1px solid rgba(26,107,74,.06);overflow:hidden;}
+.pedido-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;transition:background .15s;gap:12px;}
+.pedido-header:hover{background:var(--green-light);}
+.ped-info{display:flex;align-items:center;gap:16px;flex:1;flex-wrap:wrap;}
+.ped-num{font-weight:700;font-size:.875rem;color:var(--green);}
+.ped-fecha{font-size:.82rem;color:var(--ink-60);}
+.ped-count{font-size:.82rem;color:var(--ink-60);}
+.ped-total{font-weight:600;font-size:.9rem;}
+.ped-chevron{color:var(--ink-30);transition:transform .2s;flex-shrink:0;}
+.ped-chevron.open{transform:rotate(180deg);}
+
+.pedido-detail{display:none;border-top:1px solid var(--green-light);padding:16px 20px;}
+.pedido-detail.open{display:block;}
+.detail-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);margin-bottom:10px;}
+.detail-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--green-light);font-size:.875rem;}
+.detail-item:last-child{border:none;}
+.detail-item-name{color:var(--ink);}
+.detail-item-meta{font-size:.8rem;color:var(--ink-60);}
+
+.empty{text-align:center;padding:60px 20px;color:var(--ink-60);}
+.empty svg{width:48px;height:48px;color:var(--ink-30);margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <a href="/portal/dashboard.html" class="nav-logo">
+    <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <span class="logo-text">Farma<span>Sub</span></span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span id="nav-nombre">Cargando...</span>
+    </div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesión</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="/portal/dashboard.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>Inicio</a>
+    <a href="/portal/catalogo.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Catálogo</a>
+    <a href="/portal/pedido.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Mi pedido
+      <span class="sb-badge" id="cart-badge" style="display:none">0</span>
+    </a>
+    <a href="/portal/mis-pedidos.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mis pedidos</a>
+    <hr class="sb-divider"/>
+    <a href="/portal/cuenta.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi cuenta</a>
+  </aside>
+
+  <main class="main">
+    <h1 class="page-title">Mis pedidos</h1>
+    <div class="pedidos-list" id="pedidos-list">
+      <div style="text-align:center;padding:40px;color:var(--ink-60)">Cargando...</div>
+    </div>
+  </main>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+let _cedula;
+
+(async()=>{
+  const {data:{session}}=await _db.auth.getSession();
+  if(!session){window.location.href='/portal/login.html';return;}
+  const {data:s}=await _db.from('suscriptores').select('nombre,cedula').eq('email',session.user.email).single();
+  _cedula=s?.cedula;
+  document.getElementById('nav-nombre').textContent=s?.nombre||session.user.email;
+  document.getElementById('nav-avatar').textContent=(s?.nombre||session.user.email)[0].toUpperCase();
+  await loadPedidos();
+  updateCartBadge();
+})();
+
+async function loadPedidos(){
+  const {data:pedidos}=await _db.from('pedidos').select('id,numero,fecha,estado,total').eq('suscriptor_cedula',_cedula).order('fecha',{ascending:false});
+  const list=document.getElementById('pedidos-list');
+  if(!pedidos||!pedidos.length){
+    list.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>Aún no tienes pedidos.</p><a href="/portal/catalogo.html" style="display:inline-block;margin-top:12px;padding:10px 20px;background:var(--green);color:white;border-radius:10px;text-decoration:none;font-weight:600;font-size:.875rem">Ver catálogo</a></div>';
+    return;
+  }
+  list.innerHTML=pedidos.map((p,i)=>{
+    const cls=badgeCls(p.estado);
+    const fecha=new Date(p.fecha).toLocaleDateString('es-EC',{day:'numeric',month:'long',year:'numeric'});
+    return `<div class="pedido-card">
+      <div class="pedido-header" onclick="togglePedido(${i},${p.id})">
+        <div class="ped-info">
+          <span class="ped-num">${p.numero||'#'+p.id}</span>
+          <span class="ped-fecha">${fecha}</span>
+          <span class="badge ${cls}">${p.estado}</span>
+        </div>
+        <span class="ped-total">$${(p.total||0).toFixed(2)}</span>
+        <svg class="ped-chevron" id="chev-${i}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="pedido-detail" id="detail-${i}">
+        <p class="detail-title">Cargando productos...</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function togglePedido(idx,pedidoId){
+  const det=document.getElementById('detail-'+idx);
+  const chev=document.getElementById('chev-'+idx);
+  if(det.classList.contains('open')){
+    det.classList.remove('open');chev.classList.remove('open');return;
+  }
+  det.classList.add('open');chev.classList.add('open');
+  if(det.dataset.loaded)return;
+  det.dataset.loaded='1';
+  const {data:items}=await _db.from('pedido_items').select('cantidad,precio_unitario,productos(nombre),suscriptores(nombre),miembros(nombre)').eq('pedido_id',pedidoId);
+  if(!items||!items.length){det.innerHTML='<p class="detail-title">Sin productos</p>';return;}
+  det.innerHTML=`<p class="detail-title">Productos</p>`+items.map(i=>`
+    <div class="detail-item">
+      <div>
+        <span class="detail-item-name">${i.productos?.nombre||'Producto'}</span>
+        <p class="detail-item-meta">Para: ${i.miembros?.nombre||'Titular'}</p>
+      </div>
+      <div style="text-align:right">
+        <span>×${i.cantidad}</span>
+        <p class="detail-item-meta">$${((i.precio_unitario||0)*i.cantidad).toFixed(2)}</p>
+      </div>
+    </div>`).join('');
+}
+
+function badgeCls(e){return{'pendiente':'badge-pendiente','en-proceso':'badge-en-proceso','despachado':'badge-despachado','entregado':'badge-entregado','cancelado':'badge-cancelado'}[e]||'badge-pendiente';}
+function updateCartBadge(){const c=JSON.parse(localStorage.getItem('farmasub_cart')||'[]');const b=document.getElementById('cart-badge');if(c.length){b.style.display='flex';b.textContent=c.length;}else b.style.display='none';}
+function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
+</script>
+</body>
+</html>

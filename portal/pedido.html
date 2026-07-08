@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mi pedido — FarmaSub Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--danger:#C84040;--danger-bg:#FDF2F2;--r:12px;--shadow:0 2px 12px rgba(26,107,74,.08);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid rgba(26,107,74,.1);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(26,107,74,.06);}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;color:var(--ink-60);}
+.nav-avatar{width:32px;height:32px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:700;font-size:.82rem;}
+.btn-logout{background:none;border:1.5px solid var(--ink-30);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:240px;background:var(--green-light);border-right:1px solid rgba(26,107,74,.12);flex-shrink:0;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;}
+.sb-link:hover{background:rgba(26,107,74,.1);color:var(--green);}
+.sb-link.active{background:var(--green);color:var(--white);}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-badge{margin-left:auto;background:var(--gold);color:white;font-size:.7rem;font-weight:700;border-radius:99px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 5px;}
+.sb-link.active .sb-badge{background:rgba(255,255,255,.3);}
+.sb-divider{border:none;border-top:1px solid rgba(26,107,74,.15);margin:8px 0;}
+.main{flex:1;overflow-y:auto;padding:28px;}
+.page-title{font-family:'DM Serif Display',serif;font-size:1.7rem;margin-bottom:24px;}
+
+/* CART ITEM */
+.cart-empty{text-align:center;padding:60px 20px;color:var(--ink-60);}
+.cart-empty svg{width:48px;height:48px;color:var(--ink-30);margin-bottom:12px;}
+.cart-list{display:flex;flex-direction:column;gap:12px;margin-bottom:24px;}
+.cart-item{background:var(--white);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);border:1px solid rgba(26,107,74,.06);}
+.item-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.item-nombre{font-weight:600;font-size:.95rem;}
+.item-activo{font-size:.8rem;color:var(--ink-60);}
+.badge-receta{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:#FEF3C7;border-radius:20px;font-size:.7rem;font-weight:600;color:#92400E;margin-top:4px;}
+.btn-del{background:none;border:none;color:var(--ink-30);cursor:pointer;padding:4px;border-radius:6px;transition:color .2s;}
+.btn-del:hover{color:var(--danger);}
+.item-controls{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+.ctrl-group{display:flex;flex-direction:column;gap:5px;}
+.ctrl-label{font-size:.75rem;font-weight:600;color:var(--ink-60);}
+.ctrl-select,.ctrl-input{padding:8px 12px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.85rem;color:var(--ink);background:var(--white);outline:none;transition:border .2s;}
+.ctrl-select:focus,.ctrl-input:focus{border-color:var(--green);}
+.qty-note{font-size:.72rem;color:var(--ink-60);margin-top:2px;}
+.receta-label{display:flex;align-items:center;gap:6px;font-size:.8rem;font-weight:500;color:var(--green);cursor:pointer;padding:8px 12px;border:1.5px solid var(--green);border-radius:8px;transition:all .2s;}
+.receta-label:hover{background:var(--green-light);}
+.receta-ok{color:var(--green-mid);font-size:.8rem;font-weight:600;display:none;}
+
+/* ORDER SUMMARY */
+.order-summary{background:var(--white);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);border:1px solid rgba(26,107,74,.06);margin-bottom:16px;}
+.summary-title{font-weight:600;margin-bottom:14px;font-size:.95rem;}
+.summary-row{display:flex;justify-content:space-between;font-size:.875rem;padding:6px 0;border-bottom:1px solid var(--green-light);}
+.summary-row:last-child{border:none;padding-bottom:0;}
+.summary-row.total{font-weight:700;font-size:1rem;color:var(--green);}
+.addr-field{margin-top:12px;}
+.addr-label{font-size:.75rem;font-weight:600;color:var(--ink-60);margin-bottom:5px;}
+.addr-input{width:100%;padding:9px 12px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);background:var(--white);outline:none;transition:border .2s;}
+.addr-input:focus{border-color:var(--green);}
+
+/* CONFIRM BTN */
+.btn-confirm{width:100%;padding:15px;background:var(--green);border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:1rem;font-weight:600;color:white;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-confirm:hover:not(:disabled){background:var(--green-mid);transform:translateY(-1px);}
+.btn-confirm:disabled{opacity:.6;cursor:not-allowed;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.btn-confirm.loading .spinner{display:block;}
+.btn-confirm.loading .btn-lbl{display:none;}
+
+/* SUCCESS */
+.success-panel{display:none;background:var(--white);border-radius:20px;padding:40px;text-align:center;box-shadow:var(--shadow);}
+.success-panel.show{display:block;}
+.success-icon{width:64px;height:64px;background:var(--green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.success-icon svg{width:32px;height:32px;color:var(--green);}
+.success-title{font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:8px;}
+.success-text{font-size:.9rem;color:var(--ink-60);line-height:1.5;}
+.btn-back{display:inline-block;margin-top:20px;padding:12px 24px;background:var(--green);color:white;border-radius:var(--r);text-decoration:none;font-weight:600;font-size:.9rem;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <a href="/portal/dashboard.html" class="nav-logo">
+    <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+    <span class="logo-text">Farma<span>Sub</span></span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span id="nav-nombre">Cargando...</span>
+    </div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesión</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="/portal/dashboard.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>Inicio</a>
+    <a href="/portal/catalogo.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Catálogo</a>
+    <a href="/portal/pedido.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Mi pedido
+      <span class="sb-badge" id="cart-badge" style="display:none">0</span>
+    </a>
+    <a href="/portal/mis-pedidos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mis pedidos</a>
+    <hr class="sb-divider"/>
+    <a href="/portal/cuenta.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi cuenta</a>
+  </aside>
+
+  <main class="main">
+    <h1 class="page-title">Mi pedido del mes</h1>
+
+    <div id="main-content">
+      <div class="cart-empty" id="cart-empty" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <p>Tu pedido está vacío.</p>
+        <a href="/portal/catalogo.html" style="display:inline-block;margin-top:12px;padding:10px 20px;background:var(--green);color:white;border-radius:10px;text-decoration:none;font-weight:600;font-size:.875rem;">Ver catálogo</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;" id="cart-grid">
+        <div>
+          <div class="cart-list" id="cart-list"></div>
+        </div>
+        <div>
+          <div class="order-summary" id="order-summary">
+            <p class="summary-title">Resumen del pedido</p>
+            <div id="summary-rows"></div>
+            <div class="addr-field">
+              <p class="addr-label">Dirección de entrega</p>
+              <input class="addr-input" type="text" id="addr-input" placeholder="Cargando dirección..."/>
+            </div>
+          </div>
+          <button class="btn-confirm" id="btn-confirm" onclick="confirmarPedido()">
+            <span class="btn-lbl">Confirmar pedido</span>
+            <span class="spinner"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="success-panel" id="success-panel">
+      <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <h2 class="success-title">¡Pedido recibido!</h2>
+      <p class="success-text" id="success-text">Entrega programada para el próximo mes hábil.</p>
+      <a href="/portal/mis-pedidos.html" class="btn-back">Ver mis pedidos</a>
+    </div>
+  </main>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+let _user,_susc,_miembros=[],_cart=[],_recetas={};
+
+(async()=>{
+  const {data:{session}}=await _db.auth.getSession();
+  if(!session){window.location.href='/portal/login.html';return;}
+  _user=session.user;
+  const {data:s}=await _db.from('suscriptores').select('*').eq('email',_user.email).single();
+  _susc=s;
+  document.getElementById('nav-nombre').textContent=s?.nombre||_user.email;
+  document.getElementById('nav-avatar').textContent=(s?.nombre||_user.email)[0].toUpperCase();
+  if(s){
+    document.getElementById('addr-input').value=`${s.direccion}${s.barrio?', '+s.barrio:''}`;
+    const {data:m}=await _db.from('miembros').select('*').eq('suscriptor_cedula',s.cedula);
+    _miembros=m||[];
+  }
+  _cart=JSON.parse(localStorage.getItem('farmasub_cart')||'[]');
+  renderCart();
+  updateCartBadge();
+})();
+
+function renderCart(){
+  if(!_cart.length){
+    document.getElementById('cart-empty').style.display='block';
+    document.getElementById('cart-grid').style.display='none';
+    return;
+  }
+  document.getElementById('cart-empty').style.display='none';
+  document.getElementById('cart-grid').style.display='grid';
+
+  const memberOpts=[`<option value="titular">${_susc?.nombre||'Titular'}</option>`,..._miembros.map(m=>`<option value="${m.cedula}">${m.nombre}</option>`)].join('');
+
+  document.getElementById('cart-list').innerHTML=_cart.map((item,i)=>{
+    const dosisMax=item.requiere_receta?3:2;
+    const maxCajas=Math.ceil((dosisMax*30)/(item.unidades_caja||30));
+    return `<div class="cart-item">
+      <div class="item-header">
+        <div>
+          <p class="item-nombre">${item.nombre}</p>
+          <p class="item-activo">${item.principio_activo||''}</p>
+          ${item.requiere_receta?'<span class="badge-receta">Requiere receta</span>':''}
+        </div>
+        <button class="btn-del" onclick="removeItem(${i})"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg></button>
+      </div>
+      <div class="item-controls">
+        <div class="ctrl-group">
+          <span class="ctrl-label">Para</span>
+          <select class="ctrl-select" id="miembro-${i}" onchange="updateItem(${i})">${memberOpts}</select>
+        </div>
+        <div class="ctrl-group">
+          <span class="ctrl-label">Cajas</span>
+          <input class="ctrl-input" type="number" id="qty-${i}" value="${item.cantidad}" min="1" max="${maxCajas}" style="width:80px" onchange="updateItem(${i})"/>
+          <span class="qty-note">Máx. ${maxCajas} caj. (${dosisMax} dosis/día)</span>
+        </div>
+        <div class="ctrl-group" style="justify-content:flex-end">
+          <span class="ctrl-label">Precio costo</span>
+          <span style="font-weight:600;color:var(--green);font-size:.95rem">$${(item.precio_costo*item.cantidad).toFixed(2)}</span>
+        </div>
+        ${item.requiere_receta?`
+        <div class="ctrl-group">
+          <span class="ctrl-label">Receta médica</span>
+          <label class="receta-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Subir receta
+            <input type="file" accept="image/*,.pdf" style="display:none" onchange="handleReceta(${i},this)"/>
+          </label>
+          <span class="receta-ok" id="receta-ok-${i}">✓ Receta cargada</span>
+        </div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  renderSummary();
+}
+
+function updateItem(i){
+  const qty=parseInt(document.getElementById('qty-'+i)?.value)||1;
+  const miembro=document.getElementById('miembro-'+i)?.value;
+  _cart[i].cantidad=qty;
+  _cart[i].miembro=miembro;
+  localStorage.setItem('farmasub_cart',JSON.stringify(_cart));
+  renderSummary();
+}
+
+function removeItem(i){
+  _cart.splice(i,1);
+  localStorage.setItem('farmasub_cart',JSON.stringify(_cart));
+  renderCart();
+  updateCartBadge();
+}
+
+function handleReceta(i,input){
+  if(input.files[0]){
+    _recetas[i]=input.files[0];
+    const ok=document.getElementById('receta-ok-'+i);
+    if(ok)ok.style.display='block';
+  }
+}
+
+function renderSummary(){
+  const rows=_cart.map(i=>`<div class="summary-row"><span>${i.nombre} ×${i.cantidad}</span><span>$${(i.precio_costo*i.cantidad).toFixed(2)}</span></div>`);
+  const total=_cart.reduce((s,i)=>s+i.precio_costo*i.cantidad,0);
+  rows.push(`<div class="summary-row total"><span>Total al costo</span><span>$${total.toFixed(2)}</span></div>`);
+  document.getElementById('summary-rows').innerHTML=rows.join('');
+  updateCartBadge();
+}
+
+async function confirmarPedido(){
+  if(!_cart.length)return;
+  // Validate recetas
+  const sinReceta=_cart.filter((i,idx)=>i.requiere_receta&&!_recetas[idx]);
+  if(sinReceta.length){alert(`Debes subir la receta médica para: ${sinReceta.map(i=>i.nombre).join(', ')}`);return;}
+
+  const btn=document.getElementById('btn-confirm');
+  btn.disabled=true;btn.classList.add('loading');
+  try{
+    const total=_cart.reduce((s,i)=>s+i.precio_costo*i.cantidad,0);
+    const addr=document.getElementById('addr-input').value;
+    const num=`PED-${new Date().getFullYear()}${String(new Date().getMonth()+1).padStart(2,'0')}-${Math.floor(1000+Math.random()*9000)}`;
+    const {data:pedido,error}=await _db.from('pedidos').insert({
+      suscriptor_cedula:_susc?.cedula,numero:num,estado:'pendiente',total,direccion_entrega:addr,
+      fecha:new Date().toISOString()
+    }).select().single();
+    if(error)throw error;
+
+    // Upload recetas and insert items
+    for(let i=0;i<_cart.length;i++){
+      let recetaUrl=null;
+      if(_recetas[i]){
+        const path=`${_susc?.cedula}/${pedido.id}_${i}_${_recetas[i].name}`;
+        const {error:ue}=await _db.storage.from('recetas').upload(path,_recetas[i]);
+        if(!ue){const {data:u}=_db.storage.from('recetas').getPublicUrl(path);recetaUrl=u.publicUrl;}
+      }
+      await _db.from('pedido_items').insert({
+        pedido_id:pedido.id,producto_id:_cart[i].id,
+        miembro_cedula:_cart[i].miembro==='titular'?_susc?.cedula:_cart[i].miembro,
+        cantidad:_cart[i].cantidad,precio_unitario:_cart[i].precio_costo,receta_url:recetaUrl
+      });
+    }
+
+    localStorage.removeItem('farmasub_cart');
+    const entrega=primerDiaHabilSiguienteMes();
+    document.getElementById('success-text').textContent=`Tu pedido ${num} fue recibido. Entrega programada para el ${entrega}.`;
+    document.getElementById('main-content').style.display='none';
+    document.getElementById('success-panel').classList.add('show');
+  }catch(e){
+    console.error(e);
+    alert('Error al confirmar el pedido. Intenta nuevamente.');
+    btn.disabled=false;btn.classList.remove('loading');
+  }
+}
+
+function primerDiaHabilSiguienteMes(){
+  const now=new Date();
+  let d=new Date(now.getFullYear(),now.getMonth()+1,1);
+  while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);
+  return d.toLocaleDateString('es-EC',{weekday:'long',day:'numeric',month:'long'});
+}
+
+function updateCartBadge(){
+  const c=JSON.parse(localStorage.getItem('farmasub_cart')||'[]');
+  const b=document.getElementById('cart-badge');
+  if(c.length){b.style.display='flex';b.textContent=c.length;}else b.style.display='none';
+}
+function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
+</script>
+</body>
+</html>

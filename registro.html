@@ -481,7 +481,16 @@ footer{background:var(--ink);padding:28px 0;}
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+// ═══════════════════════════════════════════════════════
+// SUPABASE CLIENT
+// ═══════════════════════════════════════════════════════
+const _db = supabase.createClient(
+  'https://cjimcldhoglgqachcimm.supabase.co',
+  'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC'
+);
+
 // ═══════════════════════════════════════════════════════
 // ESTADO GLOBAL
 // ═══════════════════════════════════════════════════════
@@ -528,7 +537,7 @@ function navigate(dir) {
 
   if (S.step === 3) updatePaymentSummary();
   if (S.step === 4 && !S.healthBuilt) { buildHealthStep(); S.healthBuilt = true; }
-  if (S.step === 5) buildConfirmation();
+  if (S.step === 5) { buildConfirmation(); submitRegistro(); }
 
   renderUI();
 }
@@ -933,6 +942,116 @@ function removeMedRow(personIdx, rowIdx) {
 // ═══════════════════════════════════════════════════════
 // PASO 5 — CONFIRMACIÓN
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// SUPABASE — ENVÍO DE DATOS
+// ═══════════════════════════════════════════════════════
+function collectHealthData(idx) {
+  const conditions = Array.from(
+    document.querySelectorAll(`[name="cond-${idx}"]:checked`)
+  ).map(cb => cb.value);
+  const otraText = document.getElementById('otra-text-' + idx);
+  const noMedsEl = document.getElementById('no-meds-' + idx);
+  const noMeds = noMedsEl ? noMedsEl.checked : false;
+  const meds = [];
+  if (!noMeds) {
+    document.querySelectorAll(`#med-rows-${idx} .med-row`).forEach(row => {
+      const n = row.querySelector('.med-name')?.value.trim();
+      if (n) meds.push({
+        nombre: n,
+        dosis: row.querySelector('.med-dose')?.value.trim() || '',
+        frecuencia: row.querySelector('.med-freq')?.value || ''
+      });
+    });
+  }
+  const recetaBtn = document.querySelector(`[data-grp="receta-${idx}"].active`);
+  const alergiaBtn = document.querySelector(`[data-grp="alergia-${idx}"].active`);
+  return {
+    condiciones: conditions,
+    condicion_otra: otraText?.value.trim() || null,
+    no_toma_medicamentos: noMeds,
+    medicamentos: meds,
+    medico_tratante: document.getElementById('medico-' + idx)?.value.trim() || null,
+    tiempo_tratamiento: document.getElementById('tiempo-trat-' + idx)?.value || null,
+    tiene_receta: recetaBtn?.dataset.val || null,
+    alergico: alergiaBtn?.dataset.val || null,
+    alergia_detalle: document.getElementById('alergia-text-' + idx)?.value.trim() || null,
+    observaciones_qf: document.getElementById('qf-notes-' + idx)?.value.trim() || null
+  };
+}
+
+async function submitRegistro() {
+  try {
+    // 1. Subir comprobante a Storage
+    let comprobanteUrl = null;
+    if (S.payment.file) {
+      const ext = S.payment.file.name.split('.').pop();
+      const path = `${S.titular.cedula}/${Date.now()}.${ext}`;
+      const { error: upErr } = await _db.storage
+        .from('comprobantes')
+        .upload(path, S.payment.file);
+      if (!upErr) {
+        const { data } = _db.storage.from('comprobantes').getPublicUrl(path);
+        comprobanteUrl = data.publicUrl;
+      }
+    }
+
+    // 2. Insertar suscriptor titular
+    const { error: suscErr } = await _db.from('suscriptores').insert({
+      nombre: S.titular.nombre,
+      cedula: S.titular.cedula,
+      fecha_nac: S.titular.fechaNac || null,
+      telefono: S.titular.telefono,
+      email: S.titular.email,
+      direccion: S.titular.direccion,
+      barrio: S.titular.barrio || null,
+      comprobante_url: comprobanteUrl,
+      estado: 'pendiente'
+    });
+    if (suscErr) throw suscErr;
+
+    // 3. Insertar miembros adicionales
+    if (S.members.length > 0) {
+      await _db.from('miembros').insert(
+        S.members.map(m => ({
+          suscriptor_cedula: S.titular.cedula,
+          nombre: m.nombre,
+          cedula: m.cedula,
+          fecha_nac: m.fechaNac || null,
+          relacion: m.relacion
+        }))
+      );
+    }
+
+    // 4. Insertar cuestionario de salud por cada persona
+    const allPersons = [
+      { ...S.titular, es_titular: true, idx: 0 },
+      ...S.members.map((m, i) => ({ ...m, es_titular: false, idx: i + 1 }))
+    ];
+    for (const p of allPersons) {
+      const hd = collectHealthData(p.idx);
+      if (!p.es_titular && hd.condiciones.length === 0) continue;
+      await _db.from('salud').insert({
+        suscriptor_cedula: S.titular.cedula,
+        persona_cedula: p.cedula,
+        persona_nombre: p.nombre,
+        es_titular: p.es_titular,
+        condiciones: hd.condiciones,
+        condicion_otra: hd.condicion_otra,
+        no_toma_medicamentos: hd.no_toma_medicamentos,
+        medicamentos: hd.medicamentos,
+        medico_tratante: hd.medico_tratante,
+        tiempo_tratamiento: hd.tiempo_tratamiento,
+        tiene_receta: hd.tiene_receta,
+        alergico: hd.alergico,
+        alergia_detalle: hd.alergia_detalle,
+        observaciones_qf: hd.observaciones_qf
+      });
+    }
+  } catch (err) {
+    console.error('[FarmaSub] Error al enviar registro:', err);
+  }
+}
+
 function buildConfirmation() {
   const nombre = S.titular.nombre || '—';
   document.getElementById('conf-title').textContent = `¡Bienvenido/a a FarmaSub, ${nombre.split(' ')[0]}!`;

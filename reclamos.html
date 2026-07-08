@@ -267,8 +267,14 @@ footer{background:var(--ink);padding:48px 0 28px;}
   </div>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-function handleSubmit(e) {
+const _db = supabase.createClient(
+  'https://cjimcldhoglgqachcimm.supabase.co',
+  'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC'
+);
+
+async function handleSubmit(e) {
   e.preventDefault();
   const form = document.getElementById('reclamos-form');
   const required = form.querySelectorAll('[required]');
@@ -284,6 +290,20 @@ function handleSubmit(e) {
   if (!valid) return;
   form.style.display = 'none';
   document.getElementById('success-msg').style.display = 'block';
+  try {
+    await _db.from('reclamos').insert({
+      nombre: document.getElementById('nombre').value.trim(),
+      cedula: document.getElementById('cedula').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      telefono: document.getElementById('telefono').value.trim(),
+      tipo: document.getElementById('tipo').value,
+      descripcion: document.getElementById('descripcion').value.trim(),
+      numero_pedido: document.getElementById('pedido').value.trim() || null,
+      estado: 'pendiente'
+    });
+  } catch (err) {
+    console.error('[FarmaSub] Error al enviar reclamo:', err);
+  }
 }
 </script>
 </body>
