@@ -7,84 +7,88 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--green:#1A6B4A;--green-mid:#2E8A62;--green-light:#EAF4EE;--white:#FFFFFF;--danger:#C84040;
---ab:#1a1a2e;--asb:#13132a;--anav:#0f0f1e;--acard:#22223a;--atext:#E2E8F0;--amuted:#94A3B8;--aborder:rgba(255,255,255,.07);--r:12px;}
+:root{
+  --green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;
+  --ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;
+  --danger:#C84040;--danger-bg:#FDF2F2;--border:#E8F0EC;--r:12px;
+  --shadow:0 2px 12px rgba(26,107,74,.08);
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Inter',sans-serif;background:var(--ab);color:var(--atext);height:100vh;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
 .app{display:flex;flex-direction:column;height:100vh;}
-.top-nav{height:64px;background:var(--anav);border-bottom:1px solid var(--aborder);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;}
-.nav-left{display:flex;align-items:center;gap:16px;}
+.top-nav{height:64px;background:var(--white);box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.logo-mark{width:34px;height:34px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;}
-.logo-mark svg{width:18px;height:18px;}
-.logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--white);}
-.logo-text span{color:#5EE8A0;}
-.nav-tag{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--amuted);background:rgba(255,255,255,.06);border:1px solid var(--aborder);border-radius:20px;padding:4px 10px;}
+.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:20px;height:20px;}
+.logo-text{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);}
+.logo-text span{color:var(--green);}
+.nav-tag{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--white);background:var(--green);border-radius:20px;padding:5px 12px;}
 .nav-right{display:flex;align-items:center;gap:12px;}
-.nav-user{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--amuted);}
-.nav-avatar{width:30px;height:30px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;color:white;}
-.btn-logout{background:none;border:1px solid var(--aborder);border-radius:8px;padding:5px 12px;font-size:.78rem;font-weight:500;color:var(--amuted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.nav-user{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;color:var(--ink-60);}
+.nav-avatar{width:32px;height:32px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:white;}
+.btn-logout{background:none;border:1.5px solid var(--ink-30);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger);}
 .layout{display:flex;flex:1;overflow:hidden;}
-.sidebar{width:220px;background:var(--asb);border-right:1px solid var(--aborder);flex-shrink:0;overflow-y:auto;padding:16px 10px;display:flex;flex-direction:column;gap:2px;}
-.sb-link{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:9px;text-decoration:none;font-size:.82rem;font-weight:500;color:var(--amuted);transition:all .15s;}
-.sb-link:hover{background:rgba(255,255,255,.06);color:var(--atext);}
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F0F4F2;flex-shrink:0;overflow-y:auto;padding:16px 10px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;}
+.sb-link:hover{background:var(--green-light);color:var(--green);}
 .sb-link.active{background:var(--green);color:white;}
 .sb-link svg{width:17px;height:17px;flex-shrink:0;stroke-width:1.8;}
-.sb-divider{border:none;border-top:1px solid var(--aborder);margin:8px 0;}
+.sb-divider{border:none;border-top:1px solid var(--border);margin:8px 0;}
 .main{flex:1;overflow-y:auto;padding:28px;transition:margin-right .3s;}
 .main.panel-open{margin-right:440px;}
-.page-title{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:20px;}
+.page-title{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--ink);margin-bottom:20px;}
 
 /* TOOLBAR */
 .toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
 .search-wrap{position:relative;flex:1;min-width:200px;}
-.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--amuted);}
-.search-input{width:100%;padding:9px 12px 9px 34px;background:var(--acard);border:1px solid var(--aborder);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.82rem;color:var(--atext);outline:none;transition:border .2s;}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-30);}
+.search-input{width:100%;padding:9px 12px 9px 36px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);outline:none;transition:border .2s;}
 .search-input:focus{border-color:var(--green);}
-.search-input::placeholder{color:var(--amuted);}
-.filter-btns{display:flex;gap:6px;}
-.filter-btn{padding:8px 14px;background:rgba(255,255,255,.05);border:1px solid var(--aborder);border-radius:20px;font-size:.78rem;font-weight:500;color:var(--amuted);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
-.filter-btn:hover{border-color:rgba(26,107,74,.4);color:var(--atext);}
+.search-input::placeholder{color:var(--ink-30);}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-btn{padding:8px 14px;background:var(--white);border:1.5px solid var(--border);border-radius:20px;font-size:.78rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.filter-btn:hover{border-color:var(--green);color:var(--green);}
 .filter-btn.active{background:var(--green);border-color:var(--green);color:white;}
 
 /* TABLE */
-.table-wrap{background:var(--acard);border-radius:var(--r);border:1px solid var(--aborder);overflow:hidden;}
+.table-wrap{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);}
 table{width:100%;border-collapse:collapse;}
-th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amuted);border-bottom:1px solid var(--aborder);background:rgba(0,0,0,.15);}
-td{padding:11px 16px;font-size:.82rem;border-bottom:1px solid var(--aborder);vertical-align:middle;}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid var(--border);background:var(--bg);}
+td{padding:12px 16px;font-size:.82rem;border-bottom:1px solid #F0F4F2;vertical-align:middle;color:var(--ink);}
 tr:last-child td{border-bottom:none;}
 tr.clickable{cursor:pointer;}
-tr.clickable:hover td{background:rgba(26,107,74,.08);}
-tr.selected td{background:rgba(26,107,74,.12);}
+tr.clickable:hover td{background:var(--green-light);}
+tr.selected td{background:#EAF4EE;}
 
 /* BADGES */
-.badge{display:inline-flex;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:600;}
-.badge-activa{background:rgba(220,252,231,.1);color:#5EE8A0;}
-.badge-pendiente{background:rgba(254,249,195,.12);color:#FCD34D;}
-.badge-vencida{background:rgba(254,226,226,.1);color:#FCA5A5;}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+.badge-activa{background:#DCFCE7;color:#166534;}
+.badge-pendiente{background:#FEF9C3;color:#854D0E;}
+.badge-vencida{background:#FEE2E2;color:#991B1B;}
 
 /* SIDE PANEL */
-.side-panel{position:fixed;top:64px;right:0;bottom:0;width:440px;background:var(--asb);border-left:1px solid var(--aborder);overflow-y:auto;transform:translateX(100%);transition:transform .3s;z-index:40;}
+.side-panel{position:fixed;top:64px;right:0;bottom:0;width:440px;background:var(--white);border-left:1px solid var(--border);overflow-y:auto;transform:translateX(100%);transition:transform .3s;z-index:40;box-shadow:-4px 0 20px rgba(26,107,74,.08);}
 .side-panel.open{transform:translateX(0);}
-.panel-header{padding:20px 24px;border-bottom:1px solid var(--aborder);display:flex;align-items:center;justify-content:space-between;}
-.panel-title{font-family:'DM Serif Display',serif;font-size:1.1rem;}
-.btn-close{background:none;border:none;cursor:pointer;color:var(--amuted);padding:4px;border-radius:6px;transition:color .2s;}
-.btn-close:hover{color:var(--atext);}
+.panel-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-family:'DM Serif Display',serif;font-size:1.15rem;color:var(--ink);}
+.btn-close{background:none;border:none;cursor:pointer;color:var(--ink-60);padding:4px;border-radius:6px;transition:color .2s;}
+.btn-close:hover{color:var(--ink);}
 .panel-body{padding:20px 24px;}
 .panel-section{margin-bottom:20px;}
-.psec-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--amuted);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--aborder);}
+.psec-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-60);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
 .pfield{display:flex;justify-content:space-between;padding:6px 0;font-size:.82rem;}
-.pfield-lbl{color:var(--amuted);}
-.member-row{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px;margin-bottom:6px;font-size:.82rem;}
-.m-av{width:28px;height:28px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:white;flex-shrink:0;}
+.pfield-lbl{color:var(--ink-60);}
+.member-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--green-light);border-radius:10px;margin-bottom:6px;font-size:.82rem;}
+.m-av{width:30px;height:30px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:white;flex-shrink:0;}
 .panel-actions{display:flex;gap:8px;padding-top:4px;}
-.btn-activar{padding:9px 16px;background:var(--green);border:none;border-radius:9px;font-size:.8rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;flex:1;}
+.btn-activar{padding:10px 16px;background:var(--green);border:none;border-radius:10px;font-size:.82rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;flex:1;}
 .btn-activar:hover{background:var(--green-mid);}
-.btn-suspender{padding:9px 16px;background:none;border:1px solid rgba(200,64,64,.35);border-radius:9px;font-size:.8rem;font-weight:600;color:#FCA5A5;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;flex:1;}
-.btn-suspender:hover{background:rgba(200,64,64,.12);}
-.btn-comprobante{padding:9px 16px;background:rgba(255,255,255,.06);border:1px solid var(--aborder);border-radius:9px;font-size:.8rem;font-weight:600;color:var(--atext);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;text-decoration:none;text-align:center;}
-.btn-comprobante:hover{background:rgba(255,255,255,.1);}
+.btn-suspender{padding:10px 16px;background:none;border:1.5px solid var(--danger);border-radius:10px;font-size:.82rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;flex:1;}
+.btn-suspender:hover{background:var(--danger-bg);}
+.btn-comprobante{padding:10px 16px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-size:.82rem;font-weight:600;color:var(--ink);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;text-decoration:none;text-align:center;display:block;margin-top:8px;}
+.btn-comprobante:hover{background:var(--green-light);border-color:var(--green);color:var(--green);}
 </style>
 </head>
 <body>
@@ -131,7 +135,7 @@ tr.selected td{background:rgba(26,107,74,.12);}
     <div class="table-wrap">
       <table>
         <thead><tr><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Registro</th></tr></thead>
-        <tbody id="tbody"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--amuted)">Cargando...</td></tr></tbody>
+        <tbody id="tbody"><tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr></tbody>
       </table>
     </div>
   </main>
@@ -143,7 +147,7 @@ tr.selected td{background:rgba(26,107,74,.12);}
     <h2 class="panel-title" id="panel-nombre">Suscriptor</h2>
     <button class="btn-close" onclick="closePanel()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
-  <div class="panel-body" id="panel-body">Selecciona un suscriptor.</div>
+  <div class="panel-body" id="panel-body"><p style="color:var(--ink-60);font-size:.875rem">Selecciona un suscriptor.</p></div>
 </div>
 </div>
 
@@ -186,17 +190,17 @@ function renderTable(){
     return !q||s.nombre?.toLowerCase().includes(q)||s.cedula?.includes(q)||s.email?.toLowerCase().includes(q);
   });
   const tbody=document.getElementById('tbody');
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--amuted)">Sin resultados</td></tr>';return;}
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';return;}
   tbody.innerHTML=rows.map((s,i)=>{
     const cls={activa:'badge-activa',pendiente:'badge-pendiente',vencida:'badge-vencida'}[s.estado]||'badge-pendiente';
     const fecha=s.created_at?new Date(s.created_at).toLocaleDateString('es-EC'):'—';
     return `<tr class="clickable${_selIdx===i?' selected':''}" onclick="openPanel(${_todos.indexOf(s)})">
-      <td style="font-weight:500">${s.nombre||'—'}</td>
-      <td style="color:var(--amuted);font-size:.78rem">${s.cedula||'—'}</td>
-      <td style="color:var(--amuted);font-size:.78rem">${s.email||'—'}</td>
-      <td style="color:var(--amuted)">${s.telefono||'—'}</td>
+      <td style="font-weight:600">${s.nombre||'—'}</td>
+      <td style="color:var(--ink-60);font-size:.78rem">${s.cedula||'—'}</td>
+      <td style="color:var(--ink-60);font-size:.78rem">${s.email||'—'}</td>
+      <td style="color:var(--ink-60)">${s.telefono||'—'}</td>
       <td><span class="badge ${cls}">${s.estado||'—'}</span></td>
-      <td style="color:var(--amuted)">${fecha}</td>
+      <td style="color:var(--ink-60)">${fecha}</td>
     </tr>`;
   }).join('');
 }
@@ -209,7 +213,7 @@ async function openPanel(idx){
   document.getElementById('side-panel').classList.add('open');
   document.getElementById('main').classList.add('panel-open');
   const body=document.getElementById('panel-body');
-  body.innerHTML='<p style="color:var(--amuted);font-size:.82rem">Cargando...</p>';
+  body.innerHTML='<p style="color:var(--ink-60);font-size:.875rem">Cargando...</p>';
 
   const [{data:miembros},{data:pedidos},{data:pagos}]=await Promise.all([
     _db.from('miembros').select('*').eq('suscriptor_cedula',s.cedula),
@@ -221,29 +225,29 @@ async function openPanel(idx){
   body.innerHTML=`
     <div class="panel-section">
       <p class="psec-title">Datos personales</p>
-      ${[['Cédula',s.cedula],['Email',s.email],['Teléfono',s.telefono],['Dirección',s.direccion],['Barrio',s.barrio||'—'],['Estado',`<span class="badge ${cls}">${s.estado}</span>`]].map(([l,v])=>`<div class="pfield"><span class="pfield-lbl">${l}</span><span>${v}</span></div>`).join('')}
+      ${[['Cédula',s.cedula],['Email',s.email],['Teléfono',s.telefono],['Dirección',s.direccion],['Barrio',s.barrio||'—'],['Estado',`<span class="badge ${cls}">${s.estado}</span>`]].map(([l,v])=>`<div class="pfield"><span class="pfield-lbl">${l}</span><span style="font-weight:500">${v}</span></div>`).join('')}
     </div>
 
     <div class="panel-section">
-      <p class="psec-title">Grupo familiar (${(miembros||[]).length} miembro(s) adicional(es))</p>
-      ${(miembros||[]).length?miembros.map(m=>`<div class="member-row"><div class="m-av">${m.nombre[0]}</div><div><p style="font-weight:500">${m.nombre}</p><p style="color:var(--amuted);font-size:.75rem">${m.relacion||'Familiar'} · ${m.cedula}</p></div></div>`).join(''):'<p style="color:var(--amuted);font-size:.82rem">Sin miembros adicionales.</p>'}
+      <p class="psec-title">Grupo familiar (${(miembros||[]).length} adicional(es))</p>
+      ${(miembros||[]).length?miembros.map(m=>`<div class="member-row"><div class="m-av">${m.nombre[0]}</div><div><p style="font-weight:600;font-size:.875rem">${m.nombre}</p><p style="color:var(--ink-60);font-size:.78rem">${m.relacion||'Familiar'} · ${m.cedula}</p></div></div>`).join(''):'<p style="color:var(--ink-60);font-size:.875rem">Sin miembros adicionales.</p>'}
     </div>
 
     <div class="panel-section">
       <p class="psec-title">Últimos pedidos</p>
-      ${(pedidos||[]).length?pedidos.map(p=>{const pc={pendiente:'badge-pendiente',entregado:'badge-activa'}[p.estado]||'badge-pendiente';return`<div class="pfield"><span style="font-size:.78rem">${p.numero||'#'+p.id}</span><span class="badge ${pc}">${p.estado}</span></div>`;}).join(''):'<p style="color:var(--amuted);font-size:.82rem">Sin pedidos.</p>'}
+      ${(pedidos||[]).length?pedidos.map(p=>{const pc={pendiente:'badge-pendiente',entregado:'badge-activa'}[p.estado]||'badge-pendiente';return`<div class="pfield"><span style="font-size:.82rem;font-weight:500">${p.numero||'#'+p.id}</span><span class="badge ${pc}">${p.estado}</span></div>`;}).join(''):'<p style="color:var(--ink-60);font-size:.875rem">Sin pedidos aún.</p>'}
     </div>
 
     <div class="panel-section">
       <p class="psec-title">Historial de pagos</p>
-      ${(pagos||[]).length?pagos.map(p=>{const pc={pagado:'badge-activa',pendiente:'badge-pendiente',rechazado:'badge-vencida'}[p.estado]||'badge-pendiente';return`<div class="pfield"><span style="font-size:.78rem">${new Date(p.created_at).toLocaleDateString('es-EC',{month:'long',year:'numeric'})}</span><span class="badge ${pc}">${p.estado}</span></div>`;}).join(''):'<p style="color:var(--amuted);font-size:.82rem">Sin pagos registrados.</p>'}
+      ${(pagos||[]).length?pagos.map(p=>{const pc={pagado:'badge-activa',pendiente:'badge-pendiente',rechazado:'badge-vencida'}[p.estado]||'badge-pendiente';return`<div class="pfield"><span style="font-size:.82rem">${new Date(p.created_at).toLocaleDateString('es-EC',{month:'long',year:'numeric'})}</span><span class="badge ${pc}">${p.estado}</span></div>`;}).join(''):'<p style="color:var(--ink-60);font-size:.875rem">Sin pagos registrados.</p>'}
     </div>
 
     <div class="panel-actions">
       <button class="btn-activar" onclick="cambiarEstado('${s.cedula}','activa')">✓ Activar membresía</button>
       <button class="btn-suspender" onclick="cambiarEstado('${s.cedula}','vencida')">Suspender</button>
     </div>
-    ${s.comprobante_url?`<a href="${s.comprobante_url}" target="_blank" class="btn-comprobante" style="display:block;margin-top:8px">Ver comprobante de pago</a>`:''}
+    ${s.comprobante_url?`<a href="${s.comprobante_url}" target="_blank" class="btn-comprobante">Ver comprobante de pago</a>`:''}
   `;
 }
 
