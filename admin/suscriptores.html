@@ -67,6 +67,37 @@ tr.selected td{background:#EAF4EE;}
 .badge-activa{background:#DCFCE7;color:#166534;}
 .badge-pendiente{background:#FEF9C3;color:#854D0E;}
 .badge-vencida{background:#FEE2E2;color:#991B1B;}
+.badge-kyc-ok{background:#DCFCE7;color:#166534;}
+.badge-kyc-pend{background:#FEF9C3;color:#854D0E;}
+.badge-kyc-err{background:#FEE2E2;color:#991B1B;}
+
+/* KYC MODAL */
+.kmo{position:fixed;inset:0;background:rgba(18,32,26,.45);z-index:100;display:flex;align-items:center;justify-content:center;}
+.kmo.hidden{display:none;}
+.km{background:var(--white);border-radius:var(--r);width:540px;max-width:94vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(26,107,74,.18);}
+.km-hd{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);}
+.km-hd h3{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--ink);}
+.km-body{padding:22px;}
+.km-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.km-info-item{background:var(--bg);border-radius:8px;padding:10px 12px;}
+.km-info-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);margin-bottom:2px;}
+.km-info-val{font-size:.875rem;font-weight:600;color:var(--ink);}
+.km-docs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.km-doc{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.km-doc-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);padding:8px 12px;background:var(--bg);border-bottom:1px solid var(--border);}
+.km-doc img{width:100%;height:150px;object-fit:cover;display:block;}
+.km-doc-placeholder{height:150px;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--bg);}
+.km-motivo{display:none;margin-bottom:16px;}
+.km-motivo label{font-size:.82rem;font-weight:500;color:var(--ink);display:block;margin-bottom:6px;}
+.km-motivo textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);resize:vertical;min-height:80px;outline:none;}
+.km-motivo textarea:focus{border-color:var(--green);}
+.km-actions{display:flex;gap:10px;padding-top:4px;}
+.km-btn-ok{flex:1;padding:11px;background:var(--green);border:none;border-radius:10px;font-size:.875rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.km-btn-ok:hover{background:var(--green-mid);}
+.km-btn-no{flex:1;padding:11px;background:none;border:1.5px solid var(--danger);border-radius:10px;font-size:.875rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.km-btn-no:hover{background:var(--danger-bg);}
+.km-btn-confirm-no{width:100%;margin-top:8px;padding:10px;background:var(--danger);border:none;border-radius:10px;font-size:.875rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.km-btn-confirm-no:hover{background:#a83232;}
 
 /* SIDE PANEL */
 .side-panel{position:fixed;top:64px;right:0;bottom:0;width:440px;background:var(--white);border-left:1px solid var(--border);overflow-y:auto;transform:translateX(100%);transition:transform .3s;z-index:40;box-shadow:-4px 0 20px rgba(26,107,74,.08);}
@@ -134,11 +165,24 @@ tr.selected td{background:#EAF4EE;}
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>Registro</th></tr></thead>
-        <tbody id="tbody"><tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr></tbody>
+        <thead><tr><th>Nombre</th><th>Cédula</th><th>Email</th><th>Teléfono</th><th>Estado</th><th>KYC</th><th>Registro</th></tr></thead>
+        <tbody id="tbody"><tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr></tbody>
       </table>
     </div>
   </main>
+</div>
+
+<!-- KYC MODAL -->
+<div class="kmo hidden" id="kyc-modal" onclick="closeKycModalClick(event)">
+  <div class="km">
+    <div class="km-hd">
+      <h3>Documentos KYC — <span id="km-nombre"></span></h3>
+      <button class="btn-close" onclick="closeKycModal()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="km-body" id="kyc-modal-body">
+      <p style="color:var(--ink-60);font-size:.875rem">Cargando documentos...</p>
+    </div>
+  </div>
 </div>
 
 <!-- SIDE PANEL -->
@@ -190,16 +234,19 @@ function renderTable(){
     return !q||s.nombre?.toLowerCase().includes(q)||s.cedula?.includes(q)||s.email?.toLowerCase().includes(q);
   });
   const tbody=document.getElementById('tbody');
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';return;}
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';return;}
   tbody.innerHTML=rows.map((s,i)=>{
     const cls={activa:'badge-activa',pendiente:'badge-pendiente',vencida:'badge-vencida'}[s.estado]||'badge-pendiente';
+    const kycCls={verificado:'badge-kyc-ok',pendiente:'badge-kyc-pend',rechazado:'badge-kyc-err'}[s.kyc_estado]||'badge-kyc-pend';
+    const kycLbl={verificado:'Verificado',pendiente:'Pendiente',rechazado:'Rechazado'}[s.kyc_estado]||'Pendiente';
     const fecha=s.created_at?new Date(s.created_at).toLocaleDateString('es-EC'):'—';
-    return `<tr class="clickable${_selIdx===i?' selected':''}" onclick="openPanel(${_todos.indexOf(s)})">
+    return `<tr class="clickable${_selIdx===_todos.indexOf(s)?' selected':''}" onclick="openPanel(${_todos.indexOf(s)})">
       <td style="font-weight:600">${s.nombre||'—'}</td>
       <td style="color:var(--ink-60);font-size:.78rem">${s.cedula||'—'}</td>
       <td style="color:var(--ink-60);font-size:.78rem">${s.email||'—'}</td>
       <td style="color:var(--ink-60)">${s.telefono||'—'}</td>
       <td><span class="badge ${cls}">${s.estado||'—'}</span></td>
+      <td><span class="badge ${kycCls}">${kycLbl}</span></td>
       <td style="color:var(--ink-60)">${fecha}</td>
     </tr>`;
   }).join('');
@@ -243,6 +290,17 @@ async function openPanel(idx){
       ${(pagos||[]).length?pagos.map(p=>{const pc={pagado:'badge-activa',pendiente:'badge-pendiente',rechazado:'badge-vencida'}[p.estado]||'badge-pendiente';return`<div class="pfield"><span style="font-size:.82rem">${new Date(p.created_at).toLocaleDateString('es-EC',{month:'long',year:'numeric'})}</span><span class="badge ${pc}">${p.estado}</span></div>`;}).join(''):'<p style="color:var(--ink-60);font-size:.875rem">Sin pagos registrados.</p>'}
     </div>
 
+    <div class="panel-section">
+      <p class="psec-title">Verificación KYC</p>
+      <div class="pfield">
+        <span class="pfield-lbl">Estado KYC</span>
+        <span class="badge ${{verificado:'badge-kyc-ok',pendiente:'badge-kyc-pend',rechazado:'badge-kyc-err'}[s.kyc_estado]||'badge-kyc-pend'}">${{verificado:'Verificado',pendiente:'Pendiente',rechazado:'Rechazado'}[s.kyc_estado]||'Pendiente'}</span>
+      </div>
+      ${s.kyc_estado==='rechazado'&&s.kyc_motivo_rechazo?`<div class="pfield"><span class="pfield-lbl">Motivo</span><span style="font-size:.78rem;color:var(--danger)">${s.kyc_motivo_rechazo}</span></div>`:''}
+      ${s.kyc_fecha?`<div class="pfield"><span class="pfield-lbl">Fecha revisión</span><span>${new Date(s.kyc_fecha).toLocaleDateString('es-EC')}</span></div>`:''}
+      ${(s.cedula_frontal_url||s.cedula_posterior_url)?`<button class="btn-comprobante" onclick="abrirModalKYC()" style="margin-top:10px">Ver documentos KYC</button>`:'<p style="font-size:.82rem;color:var(--ink-60);margin-top:6px">No hay documentos cargados.</p>'}
+    </div>
+
     <div class="panel-actions">
       <button class="btn-activar" onclick="cambiarEstado('${s.cedula}','activa')">✓ Activar membresía</button>
       <button class="btn-suspender" onclick="cambiarEstado('${s.cedula}','vencida')">Suspender</button>
@@ -261,6 +319,86 @@ async function cambiarEstado(cedula,estado){
   await _db.from('suscriptores').update({estado}).eq('cedula',cedula);
   await loadData();
   closePanel();
+}
+
+async function abrirModalKYC(){
+  const s=_todos[_selIdx];
+  document.getElementById('km-nombre').textContent=s.nombre||s.cedula;
+  document.getElementById('kyc-modal').classList.remove('hidden');
+  const body=document.getElementById('kyc-modal-body');
+  body.innerHTML='<p style="color:var(--ink-60);font-size:.875rem">Cargando documentos...</p>';
+
+  let frontalUrl=null, posteriorUrl=null;
+  if(s.cedula_frontal_url){
+    const {data:f}=await _db.storage.from('kyc-documentos').createSignedUrl(s.cedula_frontal_url,3600);
+    frontalUrl=f?.signedUrl||null;
+  }
+  if(s.cedula_posterior_url){
+    const {data:b}=await _db.storage.from('kyc-documentos').createSignedUrl(s.cedula_posterior_url,3600);
+    posteriorUrl=b?.signedUrl||null;
+  }
+
+  const kycCls={verificado:'badge-kyc-ok',pendiente:'badge-kyc-pend',rechazado:'badge-kyc-err'}[s.kyc_estado]||'badge-kyc-pend';
+  const kycLbl={verificado:'Verificado',pendiente:'Pendiente',rechazado:'Rechazado'}[s.kyc_estado]||'Pendiente';
+  body.innerHTML=`
+    <div class="km-info">
+      <div class="km-info-item"><div class="km-info-lbl">Cédula</div><div class="km-info-val">${s.cedula||'—'}</div></div>
+      <div class="km-info-item"><div class="km-info-lbl">Estado KYC</div><div class="km-info-val"><span class="badge ${kycCls}">${kycLbl}</span></div></div>
+    </div>
+    <div class="km-docs">
+      <div class="km-doc">
+        <div class="km-doc-lbl">Frontal</div>
+        ${frontalUrl?`<img src="${frontalUrl}" alt="Cédula frontal"/>`:'<div class="km-doc-placeholder">📄</div>'}
+      </div>
+      <div class="km-doc">
+        <div class="km-doc-lbl">Posterior</div>
+        ${posteriorUrl?`<img src="${posteriorUrl}" alt="Cédula posterior"/>`:'<div class="km-doc-placeholder">📄</div>'}
+      </div>
+    </div>
+    <div class="km-motivo" id="km-motivo">
+      <label>Motivo del rechazo</label>
+      <textarea id="km-motivo-text" placeholder="Indique por qué se rechaza la verificación..."></textarea>
+      <button class="km-btn-confirm-no" id="km-btn-confirm-no" onclick="rechazarKYC()">Confirmar rechazo</button>
+    </div>
+    <div class="km-actions">
+      <button class="km-btn-ok" onclick="aprobarKYC()">✓ Aprobar KYC</button>
+      <button class="km-btn-no" onclick="toggleRechazarModal()">✗ Rechazar</button>
+    </div>
+  `;
+}
+
+function closeKycModal(){document.getElementById('kyc-modal').classList.add('hidden');}
+function closeKycModalClick(e){if(e.target===document.getElementById('kyc-modal'))closeKycModal();}
+
+function toggleRechazarModal(){
+  const el=document.getElementById('km-motivo');
+  if(el)el.style.display=el.style.display==='block'?'none':'block';
+}
+
+async function aprobarKYC(){
+  const s=_todos[_selIdx];
+  await _db.from('suscriptores').update({
+    kyc_estado:'verificado',
+    kyc_fecha:new Date().toISOString(),
+    estado:'activa'
+  }).eq('cedula',s.cedula);
+  closeKycModal();
+  await loadData();
+  openPanel(_selIdx);
+}
+
+async function rechazarKYC(){
+  const s=_todos[_selIdx];
+  const motivo=document.getElementById('km-motivo-text').value.trim();
+  if(!motivo){document.getElementById('km-motivo-text').focus();return;}
+  await _db.from('suscriptores').update({
+    kyc_estado:'rechazado',
+    kyc_fecha:new Date().toISOString(),
+    kyc_motivo_rechazo:motivo
+  }).eq('cedula',s.cedula);
+  closeKycModal();
+  await loadData();
+  openPanel(_selIdx);
 }
 
 function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}

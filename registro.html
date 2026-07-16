@@ -227,7 +227,29 @@ footer{background:var(--ink);padding:28px 0;}
   .ps-label{display:none;}
   .wizard-main{padding:28px 16px 110px;}
   .footer-mini{flex-direction:column;gap:6px;text-align:center;}
+  .kyc-grid{grid-template-columns:1fr;}
 }
+
+/* ── CÉDULA VALIDACIÓN EN TIEMPO REAL ── */
+input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba(26,107,74,.08)!important;}
+
+/* ── KYC SECTION (PASO 3) ── */
+.kyc-divider{height:1px;background:var(--green-light);margin:28px 0;}
+.kyc-head{margin-bottom:18px;}
+.kyc-head h2{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:4px;font-family:'Inter',sans-serif;}
+.kyc-head p{font-size:.83rem;color:var(--ink-60);}
+.kyc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.kyc-zone-wrap{display:flex;flex-direction:column;gap:4px;}
+.kyc-zone-label{font-size:.85rem;font-weight:500;color:var(--ink);}
+.kyc-zone-sub{font-size:.75rem;color:var(--ink-60);margin-bottom:6px;}
+.kyc-preview{display:none;border:1.5px solid var(--green-light);border-radius:var(--r);overflow:hidden;}
+.kyc-preview-img{width:100%;max-height:130px;object-fit:cover;display:block;}
+.kyc-preview-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--green-light);}
+.kyc-preview-name{font-size:.75rem;color:var(--green);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.kyc-btn-change{background:none;border:none;font-size:.75rem;color:var(--ink-60);cursor:pointer;padding:0 4px;font-family:'Inter',sans-serif;}
+.kyc-btn-change:hover{color:var(--green);}
+.kyc-pdf-block{display:flex;align-items:center;justify-content:center;height:80px;font-size:2rem;background:var(--bg);}
+.kyc-legal{display:flex;gap:8px;align-items:flex-start;background:var(--bg);border-radius:var(--r);padding:12px 14px;font-size:.75rem;color:var(--ink-60);line-height:1.55;}
 </style>
 </head>
 <body>
@@ -410,6 +432,59 @@ footer{background:var(--ink);padding:28px 0;}
         <span class="field-error" id="err-upload"></span>
       </div>
 
+      <!-- KYC — Verificación de identidad -->
+      <div class="kyc-divider"></div>
+      <div class="kyc-head">
+        <h2>Verificación de identidad</h2>
+        <p>Para activar tu membresía necesitamos verificar tu identidad. Sube una foto clara de tu cédula de identidad.</p>
+      </div>
+      <div class="kyc-grid">
+        <!-- Frontal -->
+        <div class="kyc-zone-wrap">
+          <label class="kyc-zone-label">Parte frontal <span class="req">*</span></label>
+          <p class="kyc-zone-sub">Debe verse claramente tu foto, nombre y número de cédula</p>
+          <div class="upload-zone" id="kyc-front-zone" onclick="document.getElementById('kyc-front-input').click()" ondragover="kycDragOver(event,'kyc-front-zone')" ondragleave="kycDragLeave(event,'kyc-front-zone')" ondrop="kycDrop(event,'front')">
+            <input type="file" id="kyc-front-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'front')"/>
+            <div class="upload-icon">🪪</div>
+            <div class="upload-text">Cédula — Parte frontal</div>
+            <div class="upload-hint">JPG, PNG o PDF · Máx. 5 MB</div>
+          </div>
+          <div class="kyc-preview" id="kyc-front-preview">
+            <img class="kyc-preview-img" id="kyc-front-img" src="" alt="Frontal" style="display:none"/>
+            <div class="kyc-pdf-block" id="kyc-front-pdf" style="display:none">📄</div>
+            <div class="kyc-preview-bar">
+              <span class="kyc-preview-name" id="kyc-front-name"></span>
+              <button class="kyc-btn-change" onclick="clearKycFile(event,'front')" type="button">Cambiar</button>
+            </div>
+          </div>
+          <span class="field-error" id="err-kyc-front"></span>
+        </div>
+        <!-- Posterior -->
+        <div class="kyc-zone-wrap">
+          <label class="kyc-zone-label">Parte posterior <span class="req">*</span></label>
+          <p class="kyc-zone-sub">Debe verse claramente la información adicional</p>
+          <div class="upload-zone" id="kyc-back-zone" onclick="document.getElementById('kyc-back-input').click()" ondragover="kycDragOver(event,'kyc-back-zone')" ondragleave="kycDragLeave(event,'kyc-back-zone')" ondrop="kycDrop(event,'back')">
+            <input type="file" id="kyc-back-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'back')"/>
+            <div class="upload-icon">🪪</div>
+            <div class="upload-text">Cédula — Parte posterior</div>
+            <div class="upload-hint">JPG, PNG o PDF · Máx. 5 MB</div>
+          </div>
+          <div class="kyc-preview" id="kyc-back-preview">
+            <img class="kyc-preview-img" id="kyc-back-img" src="" alt="Posterior" style="display:none"/>
+            <div class="kyc-pdf-block" id="kyc-back-pdf" style="display:none">📄</div>
+            <div class="kyc-preview-bar">
+              <span class="kyc-preview-name" id="kyc-back-name"></span>
+              <button class="kyc-btn-change" onclick="clearKycFile(event,'back')" type="button">Cambiar</button>
+            </div>
+          </div>
+          <span class="field-error" id="err-kyc-back"></span>
+        </div>
+      </div>
+      <div class="kyc-legal">
+        <span style="flex-shrink:0;font-size:1rem;margin-top:1px;">🔒</span>
+        <span>Tu información es confidencial y está protegida bajo la Ley Orgánica de Protección de Datos Personales (LOPDP). Solo será usada para verificar tu identidad.</span>
+      </div>
+
       <div class="confirm-check">
         <input type="checkbox" id="s3-confirm"/>
         <label for="s3-confirm">Confirmo que he realizado la transferencia de <strong>$8.00 USD</strong> a la cuenta indicada y que el comprobante adjunto corresponde a este pago.</label>
@@ -498,7 +573,7 @@ const S = {
   step: 1,
   titular: { nombre:'', cedula:'', fechaNac:'', telefono:'', email:'', direccion:'', barrio:'' },
   members: [],
-  payment: { file: null },
+  payment: { file: null, cedula_frontal: null, cedula_posterior: null },
   healthBuilt: false
 };
 
@@ -510,6 +585,8 @@ const CHECK_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none"><
 window.addEventListener('DOMContentLoaded', () => {
   renderTitularCard();
   setProximaEntrega();
+  document.getElementById('s1-cedula').addEventListener('blur', () => validateCedulaBlur('s1-cedula', 'err-s1-cedula'));
+  document.getElementById('m-cedula').addEventListener('blur',  () => validateCedulaBlur('m-cedula',  'err-m-cedula'));
 });
 
 function setProximaEntrega() {
@@ -573,6 +650,119 @@ function renderUI() {
 }
 
 // ═══════════════════════════════════════════════════════
+// KYC — CÉDULA ECUATORIANA
+// ═══════════════════════════════════════════════════════
+function validarCedulaEcuador(cedula) {
+  if (!cedula || !/^\d{10}$/.test(cedula)) return false;
+  const prov = parseInt(cedula.substring(0, 2), 10);
+  if ((prov < 1 || prov > 24) && prov !== 30) return false;
+  const coef = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+  let suma = 0;
+  for (let i = 0; i < 9; i++) {
+    let val = parseInt(cedula[i], 10) * coef[i];
+    if (val >= 10) val -= 9;
+    suma += val;
+  }
+  const digitoVerificador = suma % 10 === 0 ? 0 : 10 - (suma % 10);
+  return digitoVerificador === parseInt(cedula[9], 10);
+}
+
+function validateCedulaBlur(inputId, errId) {
+  const input = document.getElementById(inputId);
+  const errEl = document.getElementById(errId);
+  const val = input.value.trim();
+  if (!val) return;
+  if (validarCedulaEcuador(val)) {
+    input.classList.remove('invalid');
+    input.classList.add('cedula-valid');
+    if (errEl) errEl.textContent = '';
+  } else {
+    input.classList.remove('cedula-valid');
+    input.classList.add('invalid');
+    if (errEl) errEl.textContent = 'La cédula ecuatoriana no es válida';
+  }
+}
+
+function handleKycFile(input, side) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    const errId = side === 'front' ? 'err-kyc-front' : 'err-kyc-back';
+    showErr(errId, 'El archivo no puede superar 5 MB');
+    input.value = '';
+    return;
+  }
+  const zoneId   = side === 'front' ? 'kyc-front-zone'    : 'kyc-back-zone';
+  const prevId   = side === 'front' ? 'kyc-front-preview'  : 'kyc-back-preview';
+  const imgId    = side === 'front' ? 'kyc-front-img'      : 'kyc-back-img';
+  const pdfId    = side === 'front' ? 'kyc-front-pdf'      : 'kyc-back-pdf';
+  const nameId   = side === 'front' ? 'kyc-front-name'     : 'kyc-back-name';
+  const errId    = side === 'front' ? 'err-kyc-front'      : 'err-kyc-back';
+
+  if (side === 'front') S.payment.cedula_frontal = file;
+  else                  S.payment.cedula_posterior = file;
+
+  document.getElementById(errId).textContent = '';
+  document.getElementById(zoneId).style.display = 'none';
+  document.getElementById(prevId).style.display = 'block';
+  document.getElementById(nameId).textContent = file.name;
+
+  const imgEl = document.getElementById(imgId);
+  const pdfEl = document.getElementById(pdfId);
+  if (file.type === 'application/pdf') {
+    imgEl.style.display = 'none';
+    pdfEl.style.display = 'flex';
+  } else {
+    pdfEl.style.display = 'none';
+    imgEl.style.display = 'block';
+    const reader = new FileReader();
+    reader.onload = e => { imgEl.src = e.target.result; };
+    reader.readAsDataURL(file);
+  }
+}
+
+function clearKycFile(event, side) {
+  event.stopPropagation();
+  const zoneId = side === 'front' ? 'kyc-front-zone'   : 'kyc-back-zone';
+  const prevId = side === 'front' ? 'kyc-front-preview' : 'kyc-back-preview';
+  const inpId  = side === 'front' ? 'kyc-front-input'   : 'kyc-back-input';
+  const imgId  = side === 'front' ? 'kyc-front-img'     : 'kyc-back-img';
+  const pdfId  = side === 'front' ? 'kyc-front-pdf'     : 'kyc-back-pdf';
+
+  if (side === 'front') S.payment.cedula_frontal = null;
+  else                  S.payment.cedula_posterior = null;
+
+  document.getElementById(inpId).value = '';
+  document.getElementById(imgId).src = '';
+  document.getElementById(imgId).style.display = 'none';
+  document.getElementById(pdfId).style.display = 'none';
+  document.getElementById(prevId).style.display = 'none';
+  document.getElementById(zoneId).style.display = '';
+}
+
+function kycDragOver(event, zoneId) {
+  event.preventDefault();
+  document.getElementById(zoneId).classList.add('drag-over');
+}
+
+function kycDragLeave(event, zoneId) {
+  document.getElementById(zoneId).classList.remove('drag-over');
+}
+
+function kycDrop(event, side) {
+  event.preventDefault();
+  const zoneId = side === 'front' ? 'kyc-front-zone' : 'kyc-back-zone';
+  document.getElementById(zoneId).classList.remove('drag-over');
+  const file = event.dataTransfer.files[0];
+  if (!file) return;
+  const inputId = side === 'front' ? 'kyc-front-input' : 'kyc-back-input';
+  const dt = new DataTransfer();
+  dt.items.add(file);
+  document.getElementById(inputId).files = dt.files;
+  handleKycFile(document.getElementById(inputId), side);
+}
+
+// ═══════════════════════════════════════════════════════
 // VALIDACIÓN
 // ═══════════════════════════════════════════════════════
 function validateStep(step) {
@@ -599,7 +789,7 @@ function validateStep1() {
     if (!document.getElementById(id).value.trim()) { showErr(id, msg); ok = false; }
   });
   const cedula = document.getElementById('s1-cedula').value.trim();
-  if (cedula && !/^\d{10}$/.test(cedula)) { showErr('s1-cedula', 'La cédula debe tener exactamente 10 dígitos numéricos'); ok = false; }
+  if (cedula && !validarCedulaEcuador(cedula)) { showErr('s1-cedula', 'La cédula ecuatoriana no es válida'); ok = false; }
   const tel = document.getElementById('s1-telefono').value.trim();
   if (tel && !/^09\d{8}$/.test(tel)) { showErr('s1-telefono', 'El teléfono debe empezar con 09 y tener 10 dígitos'); ok = false; }
   const email = document.getElementById('s1-email').value.trim();
@@ -610,6 +800,8 @@ function validateStep1() {
 function validateStep3() {
   let ok = true;
   if (!S.payment.file) { showErr('err-upload', 'Debe subir el comprobante de pago'); ok = false; }
+  if (!S.payment.cedula_frontal) { showErr('err-kyc-front', 'Debe subir la parte frontal de su cédula'); ok = false; }
+  if (!S.payment.cedula_posterior) { showErr('err-kyc-back', 'Debe subir la parte posterior de su cédula'); ok = false; }
   if (!document.getElementById('s3-confirm').checked) { showErr('err-s3-confirm', 'Debe confirmar que realizó la transferencia'); ok = false; }
   return ok;
 }
@@ -725,7 +917,7 @@ function confirmAddMember() {
   let ok = true;
   if (!nombre) { showErr('m-nombre', 'Ingrese el nombre'); ok = false; }
   if (!cedula) { showErr('m-cedula', 'Ingrese el número de cédula'); ok = false; }
-  else if (!/^\d{10}$/.test(cedula)) { showErr('m-cedula', 'Deben ser exactamente 10 dígitos'); ok = false; }
+  else if (!validarCedulaEcuador(cedula)) { showErr('m-cedula', 'La cédula ecuatoriana no es válida'); ok = false; }
   else if (cedula === S.titular.cedula || S.members.some(m => m.cedula === cedula)) {
     showErr('m-cedula', 'Esta cédula ya está registrada en la membresía'); ok = false;
   }
@@ -981,7 +1173,7 @@ function collectHealthData(idx) {
 
 async function submitRegistro() {
   try {
-    // 1. Subir comprobante a Storage
+    // 1. Subir comprobante a Storage (bucket público)
     let comprobanteUrl = null;
     if (S.payment.file) {
       const ext = S.payment.file.name.split('.').pop();
@@ -995,7 +1187,27 @@ async function submitRegistro() {
       }
     }
 
-    // 2. Insertar suscriptor titular
+    // 2. Subir documentos KYC a Storage (bucket privado — guardar path, no URL pública)
+    let kycFrontalPath = null;
+    let kycPosteriorPath = null;
+    if (S.payment.cedula_frontal) {
+      const ext = S.payment.cedula_frontal.name.split('.').pop();
+      const path = `${S.titular.cedula}/cedula_frontal.${ext}`;
+      const { error: kycFErr } = await _db.storage
+        .from('kyc-documentos')
+        .upload(path, S.payment.cedula_frontal, { upsert: true });
+      if (!kycFErr) kycFrontalPath = path;
+    }
+    if (S.payment.cedula_posterior) {
+      const ext = S.payment.cedula_posterior.name.split('.').pop();
+      const path = `${S.titular.cedula}/cedula_posterior.${ext}`;
+      const { error: kycBErr } = await _db.storage
+        .from('kyc-documentos')
+        .upload(path, S.payment.cedula_posterior, { upsert: true });
+      if (!kycBErr) kycPosteriorPath = path;
+    }
+
+    // 3. Insertar suscriptor titular
     const { error: suscErr } = await _db.from('suscriptores').insert({
       nombre: S.titular.nombre,
       cedula: S.titular.cedula,
@@ -1005,11 +1217,14 @@ async function submitRegistro() {
       direccion: S.titular.direccion,
       barrio: S.titular.barrio || null,
       comprobante_url: comprobanteUrl,
-      estado: 'pendiente'
+      estado: 'pendiente',
+      kyc_estado: 'pendiente',
+      cedula_frontal_url: kycFrontalPath,
+      cedula_posterior_url: kycPosteriorPath
     });
     if (suscErr) throw suscErr;
 
-    // 3. Insertar miembros adicionales
+    // 4. Insertar miembros adicionales
     if (S.members.length > 0) {
       await _db.from('miembros').insert(
         S.members.map(m => ({
@@ -1022,7 +1237,7 @@ async function submitRegistro() {
       );
     }
 
-    // 4. Insertar cuestionario de salud por cada persona
+    // 5. Insertar cuestionario de salud por cada persona
     const allPersons = [
       { ...S.titular, es_titular: true, idx: 0 },
       ...S.members.map((m, i) => ({ ...m, es_titular: false, idx: i + 1 }))
