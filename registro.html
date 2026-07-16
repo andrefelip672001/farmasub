@@ -330,6 +330,59 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
           <span class="field-error" id="err-s1-barrio"></span>
         </div>
       </div>
+
+      <!-- KYC — Verificación de identidad -->
+      <div class="kyc-divider"></div>
+      <div class="kyc-head">
+        <h2>Verificación de identidad</h2>
+        <p>Sube una foto clara de tu cédula para verificar tu identidad</p>
+      </div>
+      <div class="kyc-grid">
+        <!-- Frontal -->
+        <div class="kyc-zone-wrap">
+          <label class="kyc-zone-label">Parte frontal <span class="req">*</span></label>
+          <p class="kyc-zone-sub">Debe verse claramente tu foto, nombre y número de cédula</p>
+          <div class="upload-zone" id="kyc-front-zone" onclick="document.getElementById('kyc-front-input').click()" ondragover="kycDragOver(event,'kyc-front-zone')" ondragleave="kycDragLeave(event,'kyc-front-zone')" ondrop="kycDrop(event,'front')">
+            <input type="file" id="kyc-front-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'front')"/>
+            <div class="upload-icon">🪪</div>
+            <div class="upload-text">Cédula — Parte frontal</div>
+            <div class="upload-hint">JPG, PNG o PDF · Máx. 5 MB</div>
+          </div>
+          <div class="kyc-preview" id="kyc-front-preview">
+            <img class="kyc-preview-img" id="kyc-front-img" src="" alt="Frontal" style="display:none"/>
+            <div class="kyc-pdf-block" id="kyc-front-pdf" style="display:none">📄</div>
+            <div class="kyc-preview-bar">
+              <span class="kyc-preview-name" id="kyc-front-name"></span>
+              <button class="kyc-btn-change" onclick="clearKycFile(event,'front')" type="button">Cambiar</button>
+            </div>
+          </div>
+          <span class="field-error" id="err-kyc-front"></span>
+        </div>
+        <!-- Posterior -->
+        <div class="kyc-zone-wrap">
+          <label class="kyc-zone-label">Parte posterior <span class="req">*</span></label>
+          <p class="kyc-zone-sub">Debe verse claramente la información adicional</p>
+          <div class="upload-zone" id="kyc-back-zone" onclick="document.getElementById('kyc-back-input').click()" ondragover="kycDragOver(event,'kyc-back-zone')" ondragleave="kycDragLeave(event,'kyc-back-zone')" ondrop="kycDrop(event,'back')">
+            <input type="file" id="kyc-back-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'back')"/>
+            <div class="upload-icon">🪪</div>
+            <div class="upload-text">Cédula — Parte posterior</div>
+            <div class="upload-hint">JPG, PNG o PDF · Máx. 5 MB</div>
+          </div>
+          <div class="kyc-preview" id="kyc-back-preview">
+            <img class="kyc-preview-img" id="kyc-back-img" src="" alt="Posterior" style="display:none"/>
+            <div class="kyc-pdf-block" id="kyc-back-pdf" style="display:none">📄</div>
+            <div class="kyc-preview-bar">
+              <span class="kyc-preview-name" id="kyc-back-name"></span>
+              <button class="kyc-btn-change" onclick="clearKycFile(event,'back')" type="button">Cambiar</button>
+            </div>
+          </div>
+          <span class="field-error" id="err-kyc-back"></span>
+        </div>
+      </div>
+      <div class="kyc-legal">
+        <span style="flex-shrink:0;font-size:1rem;margin-top:1px;">🔒</span>
+        <span>Tu información es confidencial y está protegida bajo la Ley Orgánica de Protección de Datos Personales (LOPDP). Solo será usada para verificar tu identidad.</span>
+      </div>
     </div>
 
     <!-- ══ PASO 2 — FAMILIA ══ -->
@@ -430,59 +483,6 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
           <button class="btn-clear-file" onclick="clearFile(event)" title="Quitar archivo">×</button>
         </div>
         <span class="field-error" id="err-upload"></span>
-      </div>
-
-      <!-- KYC — Verificación de identidad -->
-      <div class="kyc-divider"></div>
-      <div class="kyc-head">
-        <h2>Verificación de identidad</h2>
-        <p>Para activar tu membresía necesitamos verificar tu identidad. Sube una foto clara de tu cédula de identidad.</p>
-      </div>
-      <div class="kyc-grid">
-        <!-- Frontal -->
-        <div class="kyc-zone-wrap">
-          <label class="kyc-zone-label">Parte frontal <span class="req">*</span></label>
-          <p class="kyc-zone-sub">Debe verse claramente tu foto, nombre y número de cédula</p>
-          <div class="upload-zone" id="kyc-front-zone" onclick="document.getElementById('kyc-front-input').click()" ondragover="kycDragOver(event,'kyc-front-zone')" ondragleave="kycDragLeave(event,'kyc-front-zone')" ondrop="kycDrop(event,'front')">
-            <input type="file" id="kyc-front-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'front')"/>
-            <div class="upload-icon">🪪</div>
-            <div class="upload-text">Cédula — Parte frontal</div>
-            <div class="upload-hint">JPG, PNG o PDF · Máx. 5 MB</div>
-          </div>
-          <div class="kyc-preview" id="kyc-front-preview">
-            <img class="kyc-preview-img" id="kyc-front-img" src="" alt="Frontal" style="display:none"/>
-            <div class="kyc-pdf-block" id="kyc-front-pdf" style="display:none">📄</div>
-            <div class="kyc-preview-bar">
-              <span class="kyc-preview-name" id="kyc-front-name"></span>
-              <button class="kyc-btn-change" onclick="clearKycFile(event,'front')" type="button">Cambiar</button>
-            </div>
-          </div>
-          <span class="field-error" id="err-kyc-front"></span>
-        </div>
-        <!-- Posterior -->
-        <div class="kyc-zone-wrap">
-          <label class="kyc-zone-label">Parte posterior <span class="req">*</span></label>
-          <p class="kyc-zone-sub">Debe verse claramente la información adicional</p>
-          <div class="upload-zone" id="kyc-back-zone" onclick="document.getElementById('kyc-back-input').click()" ondragover="kycDragOver(event,'kyc-back-zone')" ondragleave="kycDragLeave(event,'kyc-back-zone')" ondrop="kycDrop(event,'back')">
-            <input type="file" id="kyc-back-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'back')"/>
-            <div class="upload-icon">🪪</div>
-            <div class="upload-text">Cédula — Parte posterior</div>
-            <div class="upload-hint">JPG, PNG o PDF · Máx. 5 MB</div>
-          </div>
-          <div class="kyc-preview" id="kyc-back-preview">
-            <img class="kyc-preview-img" id="kyc-back-img" src="" alt="Posterior" style="display:none"/>
-            <div class="kyc-pdf-block" id="kyc-back-pdf" style="display:none">📄</div>
-            <div class="kyc-preview-bar">
-              <span class="kyc-preview-name" id="kyc-back-name"></span>
-              <button class="kyc-btn-change" onclick="clearKycFile(event,'back')" type="button">Cambiar</button>
-            </div>
-          </div>
-          <span class="field-error" id="err-kyc-back"></span>
-        </div>
-      </div>
-      <div class="kyc-legal">
-        <span style="flex-shrink:0;font-size:1rem;margin-top:1px;">🔒</span>
-        <span>Tu información es confidencial y está protegida bajo la Ley Orgánica de Protección de Datos Personales (LOPDP). Solo será usada para verificar tu identidad.</span>
       </div>
 
       <div class="confirm-check">
@@ -794,14 +794,14 @@ function validateStep1() {
   if (tel && !/^09\d{8}$/.test(tel)) { showErr('s1-telefono', 'El teléfono debe empezar con 09 y tener 10 dígitos'); ok = false; }
   const email = document.getElementById('s1-email').value.trim();
   if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('s1-email', 'Ingrese un correo electrónico válido'); ok = false; }
+  if (!S.payment.cedula_frontal) { showErr('err-kyc-front', 'Debe subir la parte frontal de su cédula'); ok = false; }
+  if (!S.payment.cedula_posterior) { showErr('err-kyc-back', 'Debe subir la parte posterior de su cédula'); ok = false; }
   return ok;
 }
 
 function validateStep3() {
   let ok = true;
   if (!S.payment.file) { showErr('err-upload', 'Debe subir el comprobante de pago'); ok = false; }
-  if (!S.payment.cedula_frontal) { showErr('err-kyc-front', 'Debe subir la parte frontal de su cédula'); ok = false; }
-  if (!S.payment.cedula_posterior) { showErr('err-kyc-back', 'Debe subir la parte posterior de su cédula'); ok = false; }
   if (!document.getElementById('s3-confirm').checked) { showErr('err-s3-confirm', 'Debe confirmar que realizó la transferencia'); ok = false; }
   return ok;
 }
