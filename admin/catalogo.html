@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -38,8 +38,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .sb-divider{border:none;border-top:1px solid var(--border);margin:8px 0;}
 .main{flex:1;overflow-y:auto;padding:28px;}
 .page-title{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--ink);margin-bottom:20px;}
-
-/* TOOLBAR */
 .toolbar{display:flex;gap:10px;margin-bottom:16px;align-items:center;}
 .search-wrap{position:relative;flex:1;min-width:180px;}
 .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-30);}
@@ -47,22 +45,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .search-input:focus{border-color:var(--green);}
 .search-input::placeholder{color:var(--ink-30);}
 .btn-nuevo{padding:10px 18px;background:var(--green);border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;color:white;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap;}
-.btn-nuevo:hover{background:var(--green-mid);transform:translateY(-1px);}
-
-/* TABLE */
+.btn-nuevo:hover{background:var(--green-mid);}
 .table-wrap{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;box-shadow:var(--shadow);}
 table{width:100%;border-collapse:collapse;}
 th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid var(--border);background:var(--bg);}
 td{padding:12px 16px;font-size:.82rem;border-bottom:1px solid #F0F4F2;vertical-align:middle;color:var(--ink);}
 tr:last-child td{border-bottom:none;}
 tr:hover td{background:var(--green-light);}
-
-/* BADGES */
 .badge-activo{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;background:#DCFCE7;color:#166534;}
 .badge-inactivo{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;background:#F1F5F9;color:var(--ink-60);}
 .badge-receta{display:inline-block;padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:600;background:#FEF9C3;color:#854D0E;}
-
-/* ACTION BUTTONS */
 .btn-edit{padding:5px 12px;background:none;border:1.5px solid var(--border);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-right:6px;}
 .btn-edit:hover{border-color:var(--green);color:var(--green);background:var(--green-light);}
 .btn-toggle{padding:5px 12px;background:none;border:1.5px solid var(--border);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
@@ -71,7 +63,7 @@ tr:hover td{background:var(--green-light);}
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(18,32,26,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--white);border-radius:20px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;padding:32px;box-shadow:0 24px 60px rgba(26,107,74,.2);}
+.modal{background:var(--white);border-radius:20px;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;padding:32px;box-shadow:0 24px 60px rgba(26,107,74,.2);}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
 .modal-title{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--ink);}
 .btn-close{background:none;border:none;cursor:pointer;color:var(--ink-60);padding:4px;border-radius:6px;transition:color .2s;}
@@ -93,6 +85,52 @@ tr:hover td{background:var(--green-light);}
 .btn-cancel:hover{border-color:var(--ink-30);color:var(--ink);}
 .btn-guardar{padding:10px 24px;background:var(--green);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;color:white;cursor:pointer;transition:all .2s;}
 .btn-guardar:hover{background:var(--green-mid);}
+.section-divider{grid-column:1/-1;height:1px;background:var(--border);margin:4px 0;}
+.section-label{font-size:.78rem;font-weight:700;color:var(--ink-60);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;}
+
+/* FOTOS */
+.photo-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.photo-drop-zone{border:2px dashed var(--border);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);user-select:none;}
+.photo-drop-zone:hover,.photo-drop-zone.drag-over{border-color:var(--green);background:var(--green-light);}
+.photo-drop-zone.disabled{opacity:.5;pointer-events:none;}
+.photo-drop-icon{font-size:1.3rem;margin-bottom:3px;}
+.photo-drop-text{font-size:.82rem;color:var(--ink-60);}
+.photo-drop-hint{font-size:.72rem;color:var(--ink-30);margin-top:2px;}
+.photo-counter{font-size:.72rem;font-weight:600;color:var(--ink-60);margin-top:8px;min-height:1em;}
+.photo-previews{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.photo-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid var(--border);cursor:grab;flex-shrink:0;transition:border-color .15s;}
+.photo-thumb:active{cursor:grabbing;}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
+.photo-thumb-del{position:absolute;top:3px;right:3px;background:rgba(18,32,26,.75);border:none;color:white;width:18px;height:18px;border-radius:50%;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.photo-badge-main{position:absolute;bottom:3px;left:3px;background:var(--green);color:white;font-size:.5rem;font-weight:700;padding:2px 5px;border-radius:4px;text-transform:uppercase;letter-spacing:.03em;}
+.photo-thumb.dragging{opacity:.3;}
+.photo-thumb.drag-over-thumb{border-color:var(--green);box-shadow:0 0 0 2px var(--green-menta);}
+.err-fotos{font-size:.72rem;color:var(--danger);display:none;margin-top:4px;}
+
+/* RELACIONADOS ADMIN */
+.rel-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
+.rel-auto-box{background:var(--green-light);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+.rel-auto-title{font-size:.72rem;font-weight:700;color:var(--green);margin-bottom:6px;}
+.rel-auto-item{font-size:.8rem;color:var(--ink);display:flex;justify-content:space-between;padding:3px 0;}
+.rel-auto-note{font-size:.72rem;color:var(--ink-60);margin-top:6px;font-style:italic;}
+.rel-search-wrap{position:relative;margin-bottom:8px;}
+.rel-search-input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);outline:none;background:var(--white);transition:border .2s;}
+.rel-search-input:focus{border-color:var(--green);}
+.rel-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--border);border-radius:10px;box-shadow:var(--shadow);z-index:300;max-height:180px;overflow-y:auto;display:none;}
+.rel-dropdown.open{display:block;}
+.rel-drop-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);}
+.rel-drop-item:last-child{border-bottom:none;}
+.rel-drop-item:hover{background:var(--green-light);}
+.rel-drop-name{font-size:.82rem;font-weight:600;color:var(--ink);}
+.rel-drop-sub{font-size:.72rem;color:var(--ink-60);}
+.rel-manual-list{display:flex;flex-direction:column;gap:6px;margin-bottom:6px;}
+.rel-manual-card{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:8px 12px;}
+.rel-manual-info{display:flex;flex-direction:column;gap:1px;}
+.rel-manual-name{font-size:.82rem;font-weight:600;color:var(--ink);}
+.rel-manual-price{font-size:.75rem;color:var(--green);font-weight:600;}
+.rel-manual-del{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1rem;padding:0 4px;line-height:1;font-family:'Inter',sans-serif;}
+.rel-manual-del:hover{color:var(--danger);}
+.rel-limit-msg{font-size:.72rem;color:var(--ink-60);}
 </style>
 </head>
 <body>
@@ -154,22 +192,54 @@ tr:hover td{background:var(--green-light);}
     <input type="hidden" id="f-id"/>
     <div class="form-grid">
       <div class="field fg-full"><label>Nombre del producto *</label><input id="f-nombre" type="text" placeholder="Ej. Metformina 500mg"/></div>
-      <div class="field fg-full"><label>Principio activo *</label><input id="f-activo" type="text" placeholder="Ej. Clorhidrato de Metformina"/></div>
-      <div class="field"><label>Categoría</label>
-        <select id="f-categoria"><option value="">Sin categoría</option></select>
-      </div>
+      <div class="field fg-full"><label>Principio activo *</label><input id="f-activo" type="text" placeholder="Ej. Clorhidrato de Metformina" oninput="onActivoChange()"/></div>
+      <div class="field"><label>Categoría</label><select id="f-categoria"><option value="">Sin categoría</option></select></div>
       <div class="field"><label>Unidades por caja</label><input id="f-unidades" type="number" min="1" placeholder="30"/></div>
       <div class="field"><label>Precio farmacia ($) *</label><input id="f-pfarmacia" type="number" step="0.01" min="0" placeholder="0.00"/></div>
       <div class="field"><label>Precio costo ($) *</label><input id="f-pcosto" type="number" step="0.01" min="0" placeholder="0.00"/></div>
       <div class="field"><label>Stock actual</label><input id="f-stock" type="number" min="0" placeholder="0"/></div>
-      <div class="field" style="align-self:end">
-        <div class="check-row"><input type="checkbox" id="f-receta"/><label for="f-receta">Requiere receta médica</label></div>
-      </div>
+      <div class="field" style="align-self:end"><div class="check-row"><input type="checkbox" id="f-receta"/><label for="f-receta">Requiere receta médica</label></div></div>
       <div class="field fg-full"><label>Indicaciones</label><textarea id="f-indicaciones" placeholder="Describe las indicaciones del medicamento..."></textarea></div>
       <div class="field fg-full"><label>Dosis recomendada</label><textarea id="f-dosis" placeholder="Ej. 1 comprimido cada 12 horas con las comidas..."></textarea></div>
       <div class="field fg-full"><label>Contraindicaciones</label><textarea id="f-contraindicaciones" placeholder="Contraindicado en casos de..."></textarea></div>
       <div class="field fg-full"><label>Efectos secundarios</label><textarea id="f-efectos" placeholder="Puede producir náuseas, mareos..."></textarea></div>
     </div>
+
+    <!-- FOTOS DEL PRODUCTO -->
+    <div class="photo-section">
+      <div class="section-label">Fotos del producto <span style="color:var(--danger)">*</span></div>
+      <div class="photo-drop-zone" id="foto-drop-zone"
+           onclick="document.getElementById('foto-file-input').click()"
+           ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event)">
+        <input type="file" id="foto-file-input" accept="image/*" multiple style="display:none" onchange="fotoFileChange(this)"/>
+        <div class="photo-drop-icon">🖼️</div>
+        <div class="photo-drop-text">Arrastra fotos aquí o haz clic para subir</div>
+        <div class="photo-drop-hint">JPG, PNG · Máx. 3 fotos · La primera es la principal</div>
+      </div>
+      <div class="photo-counter" id="foto-counter"></div>
+      <div class="photo-previews" id="foto-previews"></div>
+      <span class="err-fotos" id="err-fotos">Debe subir al menos 1 foto</span>
+    </div>
+
+    <!-- PRODUCTOS RELACIONADOS -->
+    <div class="rel-section">
+      <div class="section-label" style="margin-bottom:12px;">Productos relacionados</div>
+      <div class="rel-auto-box" id="rel-auto-box" style="display:none">
+        <div class="rel-auto-title">🔗 Relaciones automáticas por principio activo</div>
+        <div class="rel-auto-list" id="rel-auto-list"></div>
+        <p class="rel-auto-note">Se mostrarán automáticamente al cliente cuando vea este producto</p>
+      </div>
+      <div class="rel-search-wrap">
+        <input class="rel-search-input" id="rel-search" type="text"
+               placeholder="Buscar producto para relacionar..."
+               oninput="onRelSearch()" onfocus="openRelDropdown()" onblur="blurRelDropdown()"
+               autocomplete="off"/>
+        <div class="rel-dropdown" id="rel-dropdown"></div>
+      </div>
+      <div class="rel-manual-list" id="rel-manual-list"></div>
+      <div class="rel-limit-msg" id="rel-limit-msg" style="display:none">Máximo 5 relaciones manuales alcanzado</div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
       <button class="btn-guardar" onclick="guardarProducto()">Guardar producto</button>
@@ -180,7 +250,14 @@ tr:hover td{background:var(--green-light);}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+const FOTO_BUCKET='producto-fotos';
+const FOTO_URL_BASE='https://cjimcldhoglgqachcimm.supabase.co/storage/v1/object/public/producto-fotos/';
+
 let _productos=[],_categorias=[];
+let _fotos=[];      // [{file:File|null, url:string, path:string|null}]
+let _manualRel=[];  // [{id, nombre, precio_costo, principio_activo}]
+let _fotoDragIdx=null;
+let _relSearchTimer=null;
 
 (async()=>{
   const {data:{session}}=await _db.auth.getSession();
@@ -226,19 +303,36 @@ function renderTable(){
   </tr>`).join('');
 }
 
-function openModal(id){
+// ── MODAL ──────────────────────────────────────────────
+function openModal(){
+  _resetModal();
+  document.getElementById('modal-title').textContent='Agregar producto';
   document.getElementById('modal-overlay').classList.add('open');
-  if(!id){
-    document.getElementById('modal-title').textContent='Agregar producto';
-    ['id','nombre','activo','categoria','unidades','pfarmacia','pcosto','stock','indicaciones','dosis','contraindicaciones','efectos'].forEach(k=>document.getElementById('f-'+k).value='');
-    document.getElementById('f-receta').checked=false;
-  }
 }
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+function _resetModal(){
+  _fotos=[];_fotoDragIdx=null;
+  _manualRel=[];
+  ['id','nombre','activo','categoria','unidades','pfarmacia','pcosto','stock','indicaciones','dosis','contraindicaciones','efectos'].forEach(k=>{
+    const el=document.getElementById('f-'+k);if(el)el.value='';
+  });
+  document.getElementById('f-receta').checked=false;
+  document.getElementById('rel-auto-box').style.display='none';
+  document.getElementById('rel-search').value='';
+  closeRelDropdown();
+  renderFotos();
+  renderManualRels();
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  closeRelDropdown();
+}
 function closeModalClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
 
-function editProducto(id){
+async function editProducto(id){
   const p=_productos.find(x=>x.id===id);if(!p)return;
+  _resetModal();
   document.getElementById('modal-title').textContent='Editar producto';
   document.getElementById('f-id').value=p.id;
   document.getElementById('f-nombre').value=p.nombre||'';
@@ -253,6 +347,16 @@ function editProducto(id){
   document.getElementById('f-dosis').value=p.dosis||'';
   document.getElementById('f-contraindicaciones').value=p.contraindicaciones||'';
   document.getElementById('f-efectos').value=p.efectos_secundarios||'';
+
+  const [{data:fotos},{data:rels}]=await Promise.all([
+    _db.from('producto_fotos').select('*').eq('producto_id',id).order('orden'),
+    _db.from('productos_relacionados').select('relacionado_id,productos!relacionado_id(id,nombre,precio_costo,principio_activo)').eq('producto_id',id).eq('tipo','manual')
+  ]);
+  (fotos||[]).forEach(f=>_fotos.push({file:null,url:FOTO_URL_BASE+f.path,path:f.path}));
+  renderFotos();
+  (rels||[]).forEach(r=>{if(r.productos)_manualRel.push(r.productos);});
+  renderManualRels();
+  if(p.principio_activo)await loadAutoRelated(p.principio_activo,id);
   document.getElementById('modal-overlay').classList.add('open');
 }
 
@@ -260,6 +364,10 @@ async function guardarProducto(){
   const nombre=document.getElementById('f-nombre').value.trim();
   const principio=document.getElementById('f-activo').value.trim();
   if(!nombre||!principio){alert('Nombre y principio activo son obligatorios.');return;}
+  if(_fotos.length===0){
+    const e=document.getElementById('err-fotos');e.style.display='block';
+    setTimeout(()=>e.style.display='none',3000);return;
+  }
   const payload={
     nombre,principio_activo:principio,
     categoria_id:document.getElementById('f-categoria').value||null,
@@ -274,9 +382,38 @@ async function guardarProducto(){
     efectos_secundarios:document.getElementById('f-efectos').value.trim()||null,
     activo:true
   };
-  const id=document.getElementById('f-id').value;
-  if(id){await _db.from('productos').update(payload).eq('id',id);}
-  else{await _db.from('productos').insert(payload);}
+  const existingId=document.getElementById('f-id').value;
+  let productoId;
+  if(existingId){
+    await _db.from('productos').update(payload).eq('id',existingId);
+    productoId=parseInt(existingId);
+  }else{
+    const {data:ins}=await _db.from('productos').insert(payload).select('id').single();
+    productoId=ins.id;
+  }
+
+  // Sync photos
+  await _db.from('producto_fotos').delete().eq('producto_id',productoId);
+  const fotoInserts=[];
+  for(let i=0;i<_fotos.length;i++){
+    const f=_fotos[i];
+    let path=f.path;
+    if(f.file){
+      const ext=f.file.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+      path=`${productoId}/${i+1}.${ext}`;
+      await _db.storage.from(FOTO_BUCKET).upload(path,f.file,{upsert:true});
+    }
+    if(path)fotoInserts.push({producto_id:productoId,path,orden:i+1,es_principal:i===0});
+  }
+  if(fotoInserts.length)await _db.from('producto_fotos').insert(fotoInserts);
+
+  // Sync manual relations
+  await _db.from('productos_relacionados').delete().eq('producto_id',productoId).eq('tipo','manual');
+  if(_manualRel.length){
+    await _db.from('productos_relacionados').insert(
+      _manualRel.map(r=>({producto_id:productoId,relacionado_id:r.id,tipo:'manual'}))
+    );
+  }
   closeModal();
   await loadData();
 }
@@ -284,6 +421,126 @@ async function guardarProducto(){
 async function toggleActivo(id,activo){
   await _db.from('productos').update({activo}).eq('id',id);
   await loadData();
+}
+
+// ── FOTOS ─────────────────────────────────────────────
+function renderFotos(){
+  const count=_fotos.length;
+  const zone=document.getElementById('foto-drop-zone');
+  const counter=document.getElementById('foto-counter');
+  const previews=document.getElementById('foto-previews');
+  zone.classList.toggle('disabled',count>=3);
+  counter.textContent=count===0?'':(count>=3?'Máximo 3 fotos alcanzado':`${count}/3 fotos`);
+  previews.innerHTML=_fotos.map((f,i)=>`
+    <div class="photo-thumb${i===_fotoDragIdx?' dragging':''}" draggable="true"
+         ondragstart="thumbDragStart(${i})" ondragover="thumbDragOver(event,${i})"
+         ondragleave="thumbDragLeave(${i})" ondrop="thumbDrop(event,${i})" ondragend="thumbDragEnd()">
+      <img src="${f.url}" alt="Foto ${i+1}"/>
+      ${i===0?'<span class="photo-badge-main">Principal</span>':''}
+      <button class="photo-thumb-del" onclick="removeFoto(event,${i})" type="button">✕</button>
+    </div>`).join('');
+}
+
+function fotoFileChange(input){
+  Array.from(input.files).forEach(addFotoFile);
+  input.value='';
+}
+function addFotoFile(file){
+  if(_fotos.length>=3||!file.type.startsWith('image/'))return;
+  _fotos.push({file,url:URL.createObjectURL(file),path:null});
+  renderFotos();
+}
+function removeFoto(e,idx){
+  e.stopPropagation();
+  const f=_fotos[idx];
+  if(f.url?.startsWith('blob:'))URL.revokeObjectURL(f.url);
+  _fotos.splice(idx,1);
+  renderFotos();
+}
+function fotoDragOver(e){e.preventDefault();document.getElementById('foto-drop-zone').classList.add('drag-over');}
+function fotoDragLeave(){document.getElementById('foto-drop-zone').classList.remove('drag-over');}
+function fotoDrop(e){
+  e.preventDefault();
+  document.getElementById('foto-drop-zone').classList.remove('drag-over');
+  Array.from(e.dataTransfer.files).forEach(addFotoFile);
+}
+function thumbDragStart(idx){_fotoDragIdx=idx;setTimeout(()=>renderFotos(),0);}
+function thumbDragOver(e,idx){
+  e.preventDefault();
+  document.querySelectorAll('.photo-thumb').forEach((el,i)=>el.classList.toggle('drag-over-thumb',i===idx&&i!==_fotoDragIdx));
+}
+function thumbDragLeave(idx){document.querySelectorAll('.photo-thumb')[idx]?.classList.remove('drag-over-thumb');}
+function thumbDragEnd(){_fotoDragIdx=null;renderFotos();}
+function thumbDrop(e,toIdx){
+  e.preventDefault();e.stopPropagation();
+  if(_fotoDragIdx===null||_fotoDragIdx===toIdx)return;
+  const moved=_fotos.splice(_fotoDragIdx,1)[0];
+  _fotos.splice(toIdx,0,moved);
+  _fotoDragIdx=null;
+  renderFotos();
+}
+
+// ── RELACIONADOS ───────────────────────────────────────
+async function loadAutoRelated(principio,excludeId){
+  if(!principio){document.getElementById('rel-auto-box').style.display='none';return;}
+  const {data}=await _db.from('productos').select('id,nombre,precio_costo').eq('principio_activo',principio).eq('activo',true).neq('id',excludeId||0).limit(10);
+  const box=document.getElementById('rel-auto-box');
+  if(data&&data.length){
+    document.getElementById('rel-auto-list').innerHTML=data.map(p=>`<div class="rel-auto-item"><span>${p.nombre}</span><span style="color:var(--green);font-weight:600">$${(p.precio_costo||0).toFixed(2)}</span></div>`).join('');
+    box.style.display='block';
+  }else{
+    box.style.display='none';
+  }
+}
+
+async function onActivoChange(){
+  const principio=document.getElementById('f-activo').value.trim();
+  const excludeId=parseInt(document.getElementById('f-id').value)||0;
+  if(principio.length>=3)await loadAutoRelated(principio,excludeId);
+  else document.getElementById('rel-auto-box').style.display='none';
+}
+
+async function onRelSearch(){
+  const q=document.getElementById('rel-search').value.trim();
+  clearTimeout(_relSearchTimer);
+  if(q.length<2){closeRelDropdown();return;}
+  _relSearchTimer=setTimeout(async()=>{
+    const {data}=await _db.from('productos').select('id,nombre,principio_activo,precio_costo').ilike('nombre','%'+q+'%').eq('activo',true).limit(8);
+    const dd=document.getElementById('rel-dropdown');
+    const currentId=parseInt(document.getElementById('f-id').value)||0;
+    const filtered=(data||[]).filter(p=>p.id!==currentId&&!_manualRel.find(r=>r.id===p.id));
+    if(!filtered.length){closeRelDropdown();return;}
+    dd.innerHTML=filtered.map(p=>`
+      <div class="rel-drop-item" onmousedown="addManualRel(${p.id},${JSON.stringify(p.nombre)},${p.precio_costo||0},${JSON.stringify(p.principio_activo||'')})">
+        <div class="rel-drop-name">${p.nombre}</div>
+        <div class="rel-drop-sub">${p.principio_activo||''} · $${(p.precio_costo||0).toFixed(2)}</div>
+      </div>`).join('');
+    dd.classList.add('open');
+  },300);
+}
+
+function openRelDropdown(){const dd=document.getElementById('rel-dropdown');if(dd.innerHTML)dd.classList.add('open');}
+function blurRelDropdown(){setTimeout(closeRelDropdown,200);}
+function closeRelDropdown(){document.getElementById('rel-dropdown').classList.remove('open');}
+
+function addManualRel(id,nombre,precio_costo,principio_activo){
+  if(_manualRel.length>=5||_manualRel.find(r=>r.id===id))return;
+  _manualRel.push({id,nombre,precio_costo,principio_activo});
+  document.getElementById('rel-search').value='';
+  closeRelDropdown();
+  renderManualRels();
+}
+function removeManualRel(idx){_manualRel.splice(idx,1);renderManualRels();}
+function renderManualRels(){
+  document.getElementById('rel-manual-list').innerHTML=_manualRel.map((r,i)=>`
+    <div class="rel-manual-card">
+      <div class="rel-manual-info">
+        <span class="rel-manual-name">${r.nombre}</span>
+        <span class="rel-manual-price">$${(r.precio_costo||0).toFixed(2)}</span>
+      </div>
+      <button class="rel-manual-del" onclick="removeManualRel(${i})" type="button">✕</button>
+    </div>`).join('');
+  document.getElementById('rel-limit-msg').style.display=_manualRel.length>=5?'block':'none';
 }
 
 function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
