@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Registrarse — FarmaSub Ecuador</title>
+<title>Registrarse — MediCosto Ecuador</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-mid:#2E8A62;--gold:#C8903A;--gold-light:#FDF4E7;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--danger:#C84040;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);--shadow-lg:0 8px 40px rgba(26,107,74,.14);}
+:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-menta:#ADEBB3;--green-mid:#2E8A62;--gold:#C8903A;--gold-light:#FDF4E7;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--danger:#C84040;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);--shadow-lg:0 8px 40px rgba(26,107,74,.14);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;}
@@ -239,7 +239,7 @@ footer{background:var(--ink);padding:28px 0;}
       <div class="logo-mark">
         <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
       </div>
-      <span class="logo-text">Farma<span>Sub</span></span>
+      <span class="logo-text">Medi<span>Costo</span></span>
     </a>
     <a href="index.html" class="nav-back">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -372,7 +372,7 @@ footer{background:var(--ink);padding:28px 0;}
 
       <div class="payment-summary">
         <div class="ps-title">Resumen de tu membresía</div>
-        <div class="ps-row"><span class="ps-key">Plan</span><span class="ps-val">Familiar FarmaSub</span></div>
+        <div class="ps-row"><span class="ps-key">Plan</span><span class="ps-val">Familiar MediCosto</span></div>
         <div class="ps-row"><span class="ps-key">Miembros registrados</span><span class="ps-val" id="s3-members">1 persona</span></div>
         <div class="ps-row"><span class="ps-key">Valor mensual</span><span class="ps-val green">$8.00 USD</span></div>
         <div class="ps-row"><span class="ps-key">Próxima entrega</span><span class="ps-val" id="s3-proxima">—</span></div>
@@ -388,7 +388,7 @@ footer{background:var(--ink);padding:28px 0;}
         <div class="bank-row"><span class="bank-key">Banco</span><span class="bank-val">[BANCO PENDIENTE]</span></div>
         <div class="bank-row"><span class="bank-key">Tipo de cuenta</span><span class="bank-val">[PENDIENTE]</span></div>
         <div class="bank-row"><span class="bank-key">Número de cuenta</span><span class="bank-val">[PENDIENTE]</span></div>
-        <div class="bank-row"><span class="bank-key">Titular de la cuenta</span><span class="bank-val">FarmaSub Ecuador</span></div>
+        <div class="bank-row"><span class="bank-key">Titular de la cuenta</span><span class="bank-val">MediCosto Ecuador</span></div>
         <div class="bank-row"><span class="bank-key">Monto exacto</span><span class="bank-val" style="color:var(--green)">$8.00 USD</span></div>
         <div class="bank-concept">
           <strong>Concepto obligatorio:</strong> Escribe en el concepto de la transferencia "Membresía " seguido del <strong>número de cédula del titular</strong>. Ej: <em>Membresía 1234567890</em>
@@ -435,7 +435,7 @@ footer{background:var(--ink);padding:28px 0;}
           <circle cx="40" cy="40" r="35"/>
           <path d="M24 40l11 11 21-22" class="check-anim path"/>
         </svg>
-        <div class="conf-title" id="conf-title">¡Bienvenido a FarmaSub!</div>
+        <div class="conf-title" id="conf-title">¡Bienvenido a MediCosto!</div>
         <p class="conf-sub">Tu registro está completo. Estamos verificando tu pago.</p>
       </div>
       <div class="conf-cards">
@@ -476,8 +476,8 @@ footer{background:var(--ink);padding:28px 0;}
 
 <footer>
   <div class="footer-mini">
-    <div class="footer-logo-text">Farma<span>Sub</span></div>
-    <p>© 2025 FarmaSub Ecuador · Santo Domingo de los Tsáchilas</p>
+    <div class="footer-logo-text">Medi<span>Costo</span></div>
+    <p>© 2025 MediCosto Ecuador · Santo Domingo de los Tsáchilas</p>
   </div>
 </footer>
 
@@ -1048,13 +1048,13 @@ async function submitRegistro() {
       });
     }
   } catch (err) {
-    console.error('[FarmaSub] Error al enviar registro:', err);
+    console.error('[MediCosto] Error al enviar registro:', err);
   }
 }
 
 function buildConfirmation() {
   const nombre = S.titular.nombre || '—';
-  document.getElementById('conf-title').textContent = `¡Bienvenido/a a FarmaSub, ${nombre.split(' ')[0]}!`;
+  document.getElementById('conf-title').textContent = `¡Bienvenido/a a MediCosto, ${nombre.split(' ')[0]}!`;
   document.getElementById('conf-telefono').textContent = S.titular.telefono || 'registrado';
   document.getElementById('conf-direccion').textContent = [S.titular.direccion, S.titular.barrio].filter(Boolean).join(', ') || '—';
   const list = document.getElementById('conf-members');

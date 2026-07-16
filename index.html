@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>FarmaSub Ecuador — Tu farmacia por membresía</title>
+<title>MediCosto Ecuador — El precio justo para tu bienestar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -11,6 +11,7 @@
 :root {
   --green:       #1A6B4A;
   --green-light: #EAF4EE;
+  --green-menta: #ADEBB3;
   --green-mid:   #2E8A62;
   --gold:        #C8903A;
   --gold-light:  #FDF4E7;
@@ -32,9 +33,9 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink
 
 /* ── TYPOGRAPHY ─────────────────────────────────────────── */
 .serif { font-family: 'DM Serif Display', serif; }
-h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.1; }
+h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.1rem, 4.2vw, 3.2rem); line-height: 1.15; }
 h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); line-height: 1.2; }
-h3 { font-size: 1.1rem; font-weight: 600; }
+h3 { font-size: 1.05rem; font-weight: 600; }
 p  { color: var(--ink-60); }
 
 /* ── LAYOUT ─────────────────────────────────────────────── */
@@ -62,13 +63,13 @@ nav {
 .nav-links { display: flex; gap: 28px; list-style: none; }
 .nav-links a { text-decoration: none; color: var(--ink-60); font-size: .9rem; font-weight: 500; transition: color .2s; }
 .nav-links a:hover { color: var(--green); }
-.nav-cta { background: var(--green); color: var(--white); border: none; padding: 9px 20px; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; transition: background .2s; }
+.nav-cta { background: var(--green); color: var(--white); border: none; padding: 9px 20px; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; transition: background .2s; text-decoration: none; display: inline-block; }
 .nav-cta:hover { background: var(--green-mid); }
 
 /* ── HERO ───────────────────────────────────────────────── */
 #hero {
   background: linear-gradient(135deg, #0E3D29 0%, #1A6B4A 60%, #2E8A62 100%);
-  padding: 100px 0 80px; position: relative; overflow: hidden;
+  padding: 96px 0 76px; position: relative; overflow: hidden;
 }
 #hero::before {
   content: '';
@@ -77,18 +78,36 @@ nav {
   background: radial-gradient(circle, rgba(200,144,58,.18) 0%, transparent 70%);
   pointer-events: none;
 }
-.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+
+/* Eyebrow — menta background */
 .hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
-  padding: 5px 12px; border-radius: 20px; margin-bottom: 20px;
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--green-menta);
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 22px;
 }
-.hero-eyebrow span { font-size: .78rem; color: rgba(255,255,255,.85); font-weight: 500; }
-.hero-dot { width: 7px; height: 7px; background: #5EE8A0; border-radius: 50%; animation: pulse 2s infinite; }
+.hero-eyebrow span { font-size: .78rem; color: var(--green); font-weight: 700; }
+.hero-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
-#hero h1 { color: var(--white); margin-bottom: 20px; }
+
+#hero h1 { color: var(--white); margin-bottom: 18px; }
 #hero h1 em { font-style: italic; color: #8EF5C0; }
-.hero-sub { font-size: 1.05rem; color: rgba(255,255,255,.75); margin-bottom: 36px; max-width: 440px; }
+.hero-sub {
+  font-size: .97rem; color: rgba(255,255,255,.78); margin-bottom: 22px;
+  max-width: 470px; line-height: 1.7;
+}
+
+/* 3 key-point cards */
+.hero-points { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+.hp-item {
+  display: flex; flex-direction: column; gap: 3px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.13);
+  border-radius: 10px; padding: 10px 14px; flex: 1; min-width: 140px;
+}
+.hp-no  { font-size: .76rem; color: rgba(255,255,255,.58); }
+.hp-arr { font-size: .7rem;  color: rgba(255,255,255,.3);  margin: 2px 0; }
+.hp-yes { font-size: .8rem;  color: #8EF5C0; font-weight: 600; }
+
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 .btn-primary {
   background: var(--gold); color: var(--white); border: none;
@@ -103,7 +122,7 @@ nav {
   cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
 }
 .btn-ghost:hover { border-color: rgba(255,255,255,.7); background: rgba(255,255,255,.07); }
-.hero-stats { display: flex; gap: 28px; margin-top: 44px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.12); }
+.hero-stats { display: flex; gap: 28px; margin-top: 40px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.12); }
 .stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--white); }
 .stat-label { font-size: .78rem; color: rgba(255,255,255,.6); margin-top: 2px; }
 
@@ -149,55 +168,75 @@ nav {
 .sb-text { font-size: .82rem; color: var(--gold); font-weight: 600; }
 .sb-val { font-size: 1.1rem; font-weight: 700; color: var(--gold); }
 
-/* ── HOW IT WORKS ───────────────────────────────────────── */
-#como { background: var(--white); }
+/* ── CÓMO FUNCIONA — menta background ──────────────────── */
+#como { background: rgba(173,235,179,.18); }
 #como .section-label { font-size: .78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
 #como h2 { margin-bottom: 14px; }
-#como .section-sub { font-size: 1.05rem; max-width: 520px; margin-bottom: 56px; }
+#como .section-intro { font-size: .97rem; color: var(--ink-60); max-width: 640px; margin-bottom: 52px; line-height: 1.7; }
 .steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; }
 .step-card { position: relative; }
+
+/* Step numbers — menta badge */
 .step-num {
   width: 44px; height: 44px; border-radius: 12px;
-  background: var(--green-light); color: var(--green);
+  background: var(--green-menta); color: var(--green);
   font-family: 'DM Serif Display', serif; font-size: 1.3rem;
   display: flex; align-items: center; justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 16px; font-weight: 700;
 }
 .step-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-.step-desc { font-size: .88rem; color: var(--ink-60); line-height: 1.6; }
+.step-desc { font-size: .875rem; color: var(--ink-60); line-height: 1.65; }
 .step-connector {
   position: absolute; top: 22px; left: 44px; right: -28px; height: 1px;
   background: repeating-linear-gradient(to right, var(--ink-30) 0, var(--ink-30) 4px, transparent 4px, transparent 10px);
 }
 .step-card:last-child .step-connector { display: none; }
 
+/* ── POR QUÉ MEDICOSTO ──────────────────────────────────── */
+#porque {
+  background: rgba(173,235,179,.14);
+  border-top: 1px solid rgba(26,107,74,.07);
+  border-bottom: 1px solid rgba(26,107,74,.07);
+}
+#porque .section-label {
+  font-size: .78rem; font-weight: 600; color: var(--green);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 10px; text-align: center;
+}
+#porque h2 { text-align: center; margin-bottom: 44px; }
+.porque-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.porque-card {
+  background: var(--white); border-radius: var(--r-lg); padding: 32px 28px;
+  box-shadow: var(--shadow);
+}
+.porque-card--highlight { background: var(--green); }
+.porque-card--highlight h3 { color: var(--white); }
+.porque-card--highlight p  { color: rgba(255,255,255,.82); }
+.porque-card--highlight .pc-tag { background: rgba(255,255,255,.2); color: var(--white); border: none; }
+.pc-tag {
+  display: inline-block; font-size: .72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em;
+  padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
+  background: #FFF0F0; color: var(--danger);
+}
+.pc-tag.ok { background: var(--green-light); color: var(--green); }
+.porque-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
+.porque-card p { font-size: .875rem; color: var(--ink-60); line-height: 1.7; }
+
 /* ── PLANS ──────────────────────────────────────────────── */
 #planes { background: var(--bg); }
 .plans-header { text-align: center; margin-bottom: 48px; }
 .plans-header .section-label { font-size: .78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
-.plans-toggle {
-  display: inline-flex; background: var(--white); border: 1px solid var(--ink-30);
-  border-radius: 10px; padding: 4px; margin-top: 24px; gap: 4px;
-}
-.toggle-btn {
-  padding: 8px 20px; border-radius: 7px; border: none; background: transparent;
-  font-size: .88rem; font-weight: 500; color: var(--ink-60); cursor: pointer; transition: all .2s;
-}
-.toggle-btn.active { background: var(--green); color: var(--white); }
-.plans-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
 .plan-card {
   background: var(--card); border: 1.5px solid transparent;
   border-radius: var(--r-lg); padding: 28px;
   transition: all .2s; box-shadow: var(--shadow);
 }
 .plan-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-.plan-card.featured {
-  background: var(--green); border-color: var(--green);
-}
+.plan-card.featured { background: var(--green); border-color: var(--green); }
 .plan-badge {
   display: inline-block; font-size: .72rem; font-weight: 600; padding: 3px 10px;
-  border-radius: 20px; background: var(--gold-light); color: var(--gold);
-  margin-bottom: 12px;
+  border-radius: 20px; background: var(--gold-light); color: var(--gold); margin-bottom: 12px;
 }
 .plan-card.featured .plan-badge { background: rgba(255,255,255,.2); color: var(--white); }
 .plan-name { font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
@@ -214,8 +253,7 @@ nav {
 .feat-icon { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
 .plan-btn {
   width: 100%; padding: 12px; border-radius: var(--r); border: 1.5px solid var(--green);
-  background: transparent; color: var(--green); font-size: .9rem; font-weight: 600;
-  cursor: pointer; transition: all .2s;
+  background: transparent; color: var(--green); font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s;
 }
 .plan-btn:hover { background: var(--green); color: var(--white); }
 .plan-card.featured .plan-btn { background: var(--white); color: var(--green); border-color: var(--white); }
@@ -223,9 +261,7 @@ nav {
 
 /* ── CALCULATOR ─────────────────────────────────────────── */
 #calculadora { background: var(--white); }
-.calc-wrapper {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
-}
+.calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
 .calc-left h2 { margin-bottom: 12px; }
 .calc-left p { margin-bottom: 28px; }
 .calc-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
@@ -234,7 +270,8 @@ nav {
   border: 1.5px solid var(--ink-30); background: var(--white);
   cursor: pointer; transition: all .15s; color: var(--ink-60);
 }
-.pill.active { border-color: var(--green); background: var(--green-light); color: var(--green); }
+/* Pills activos — menta background */
+.pill.active { border-color: var(--green); background: var(--green-menta); color: var(--green); }
 .calc-personas { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
 .calc-personas label { font-size: .88rem; font-weight: 500; color: var(--ink); }
 .counter { display: flex; align-items: center; gap: 10px; }
@@ -274,21 +311,19 @@ nav {
 }
 .cs-label { font-size: .83rem; color: var(--gold); font-weight: 600; }
 .cs-val { font-size: 1.2rem; font-weight: 700; color: var(--gold); }
-.calc-annual {
-  margin-top: 10px; text-align: center;
-  font-size: .82rem; color: var(--ink-60); padding: 8px;
-}
+.calc-annual { margin-top: 10px; text-align: center; font-size: .82rem; color: var(--ink-60); padding: 8px; }
 .calc-annual strong { color: var(--green); }
 
-/* ── TRUST ──────────────────────────────────────────────── */
-#confianza { background: var(--bg); }
+/* ── CONFIANZA — menta background ──────────────────────── */
+#confianza { background: rgba(173,235,179,.15); }
 .trust-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
 .trust-card {
   background: var(--white); border-radius: var(--r-lg); padding: 28px;
   box-shadow: var(--shadow);
 }
+/* Trust icons — menta circles */
 .trust-icon {
-  width: 48px; height: 48px; border-radius: 14px; background: var(--green-light);
+  width: 48px; height: 48px; border-radius: 14px; background: var(--green-menta);
   display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
 }
 .trust-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
@@ -304,9 +339,7 @@ nav {
 .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
 
 /* ── FOOTER ─────────────────────────────────────────────── */
-footer {
-  background: var(--ink); padding: 48px 0 28px;
-}
+footer { background: var(--ink); padding: 48px 0 28px; }
 .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
 .footer-brand p { font-size: .85rem; color: var(--ink-60); margin-top: 12px; max-width: 240px; }
 .footer-col h4 { font-size: .85rem; font-weight: 600; color: var(--white); margin-bottom: 14px; }
@@ -320,10 +353,11 @@ footer {
 
 /* ── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .hero-grid, .calc-wrapper, .steps-grid, .plans-grid, .trust-grid { grid-template-columns: 1fr; }
+  .hero-grid, .calc-wrapper, .steps-grid, .porque-grid, .trust-grid { grid-template-columns: 1fr; }
   .footer-inner { grid-template-columns: 1fr 1fr; }
   .hero-stats { gap: 20px; }
-  .plans-grid { gap: 14px; }
+  .hero-points { gap: 8px; }
+  .hp-item { min-width: 100%; }
   .nav-links { display: none; }
   .step-connector { display: none; }
   section { padding: 56px 0; }
@@ -342,7 +376,7 @@ footer {
           <path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
         </svg>
       </div>
-      <span class="logo-text">Farma<span>Sub</span></span>
+      <span class="logo-text">Medi<span>Costo</span></span>
     </a>
     <ul class="nav-links">
       <li><a href="#como">Cómo funciona</a></li>
@@ -359,16 +393,40 @@ footer {
   <div class="container">
     <div class="hero-grid">
       <div>
+        <!-- Eyebrow con fondo menta -->
         <div class="hero-eyebrow">
           <div class="hero-dot"></div>
-          <span>Disponible en Ecuador — Santo Domingo</span>
+          <span>Disponible en Santo Domingo, Ecuador</span>
         </div>
-        <h1>Tu farmacia familiar por <em>lo que realmente cuesta</em></h1>
-        <p class="hero-sub">Paga una membresía mensual y accede a medicamentos al costo para toda tu familia. Sin sorpresas, con entrega a domicilio o a tu trabajo.</p>
+
+        <h1>El precio justo para <em>tu bienestar</em></h1>
+
+        <p class="hero-sub">En MediCosto no ofrecemos descuentos — te vendemos exactamente al precio que nos cuesta a nosotros. Sin margen, sin ganancia en el producto. Solo pagas $8 al mes por tu membresía familiar y accedes al costo real de medicamentos, productos de salud y bienestar.</p>
+
+        <!-- 3 puntos clave en horizontal -->
+        <div class="hero-points">
+          <div class="hp-item">
+            <span class="hp-no">❌ Sin descuentos falsos</span>
+            <span class="hp-arr">→</span>
+            <span class="hp-yes">✅ Precio al costo real</span>
+          </div>
+          <div class="hp-item">
+            <span class="hp-no">❌ Sin margen oculto</span>
+            <span class="hp-arr">→</span>
+            <span class="hp-yes">✅ Total transparencia</span>
+          </div>
+          <div class="hp-item">
+            <span class="hp-no">❌ Sin letra pequeña</span>
+            <span class="hp-arr">→</span>
+            <span class="hp-yes">✅ $8 fijos al mes</span>
+          </div>
+        </div>
+
         <div class="hero-actions">
           <a href="registro.html" class="btn-primary">Comenzar desde $8/mes</a>
           <a href="#calculadora" class="btn-ghost">Calcular mi ahorro</a>
         </div>
+
         <div class="hero-stats">
           <div>
             <div class="stat-num">40%</div>
@@ -384,6 +442,7 @@ footer {
           </div>
         </div>
       </div>
+
       <!-- Mini calculadora hero -->
       <div class="hero-card">
         <div class="hcard-title">Selecciona tus medicamentos</div>
@@ -432,7 +491,7 @@ footer {
             <div class="rb-sub">sin membresía</div>
           </div>
           <div class="result-box sub">
-            <div class="rb-label">Con FarmaSub</div>
+            <div class="rb-label">Con MediCosto</div>
             <div class="rb-val" id="hero-total">$8</div>
             <div class="rb-sub">medicamentos + suscripción</div>
           </div>
@@ -450,31 +509,56 @@ footer {
 <section id="como">
   <div class="container">
     <div class="section-label">Proceso</div>
-    <h2>Así de simple</h2>
-    <p class="section-sub">En menos de 5 minutos activas tu membresía y tu familia empieza a ahorrar.</p>
+    <h2>¿Cómo funciona MediCosto?</h2>
+    <p class="section-intro">No somos una farmacia tradicional. Somos una membresía que te da acceso directo al precio que pagamos nosotros a los distribuidores. Sin intermediarios, sin margen oculto.</p>
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-connector"></div>
         <div class="step-num">1</div>
-        <div class="step-title">Elige tu plan</div>
-        <p class="step-desc">Un solo plan de $8/mes cubre hasta 4 personas de tu grupo familiar. Medicamentos al costo exacto, sin márgenes.</p>
+        <div class="step-title">Elige tu membresía</div>
+        <p class="step-desc">$8 al mes cubre a toda tu familia (hasta 4 personas). Un solo pago, sin costos extras ni cobros sorpresa.</p>
       </div>
       <div class="step-card">
         <div class="step-connector"></div>
         <div class="step-num">2</div>
-        <div class="step-title">Crea tu cuenta</div>
-        <p class="step-desc">Registra a los miembros de tu familia. Cada uno recibe su carnet digital con acceso al catálogo.</p>
+        <div class="step-title">Registra a tu familia</div>
+        <p class="step-desc">Cada miembro se identifica con su cédula. Así garantizamos que el beneficio sea solo para tu hogar.</p>
       </div>
       <div class="step-card">
         <div class="step-connector"></div>
         <div class="step-num">3</div>
-        <div class="step-title">Pide tus medicamentos</div>
-        <p class="step-desc">Selecciona desde el catálogo, adjunta tu receta si aplica y confirma tu pedido en segundos.</p>
+        <div class="step-title">Pide lo que necesitas</div>
+        <p class="step-desc">Entra al catálogo, selecciona tus productos y asígnalos a cada miembro. Ves el precio real al lado del precio de farmacia.</p>
       </div>
       <div class="step-card">
         <div class="step-num">4</div>
-        <div class="step-title">Recíbelos en casa</div>
-        <p class="step-desc">Entrega a domicilio o en tu lugar de trabajo en Santo Domingo. Sin costo de envío adicional.</p>
+        <div class="step-title">Recíbelo en casa</div>
+        <p class="step-desc">Una entrega mensual programada a tu domicilio en Santo Domingo. Sin costo adicional de envío.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── POR QUÉ MEDICOSTO ── -->
+<section id="porque">
+  <div class="container">
+    <div class="section-label">La diferencia</div>
+    <h2>No son descuentos. Es el precio real.</h2>
+    <div class="porque-grid">
+      <div class="porque-card">
+        <span class="pc-tag">❌ El problema</span>
+        <h3>Las farmacias tradicionales</h3>
+        <p>Compran al distribuidor y venden con 30-40% de margen. Tú pagas ese margen cada vez que compras un medicamento, sin saberlo.</p>
+      </div>
+      <div class="porque-card">
+        <span class="pc-tag">❌ El engaño</span>
+        <h3>Los descuentos de siempre</h3>
+        <p>Un porcentaje de descuento sobre un precio ya inflado no es ahorro real. Es marketing. El precio base sigue siendo elevado.</p>
+      </div>
+      <div class="porque-card porque-card--highlight">
+        <span class="pc-tag ok">✅ La solución</span>
+        <h3>MediCosto</h3>
+        <p>Compramos al distribuidor y te cobramos exactamente lo mismo que pagamos. Nuestra ganancia es tu membresía de $8, no el producto.</p>
       </div>
     </div>
   </div>
@@ -489,7 +573,6 @@ footer {
       <p style="color:var(--ink-60); margin-top:8px">Sin letra pequeña. Cancela cuando quieras.</p>
     </div>
 
-    <!-- Plan único -->
     <div style="display:flex; justify-content:center;">
       <div class="plan-card featured" style="max-width:420px; width:100%;">
         <span class="plan-badge">Plan único</span>
@@ -532,7 +615,7 @@ footer {
       <div class="calc-left">
         <div class="section-label">Calculadora</div>
         <h2>Calcula tu ahorro real</h2>
-        <p>Selecciona los medicamentos de tu familia y ve exactamente cuánto ahorras con FarmaSub cada mes.</p>
+        <p>Selecciona los medicamentos de tu familia y ve exactamente cuánto ahorras con MediCosto cada mes.</p>
         <div class="calc-pills" id="calc-pills">
           <div class="pill active" data-farmacia="22" data-costo="18" data-name="Losartán 50mg" onclick="togglePill(this)">Losartán 50mg</div>
           <div class="pill" data-farmacia="13" data-costo="8" data-name="Metformina 850mg" onclick="togglePill(this)">Metformina</div>
@@ -569,7 +652,7 @@ footer {
 <section id="confianza">
   <div class="container">
     <div style="text-align:center; margin-bottom:48px">
-      <div class="section-label" style="text-align:center">Por qué FarmaSub</div>
+      <div class="section-label" style="text-align:center">Por qué MediCosto</div>
       <h2>Construido con responsabilidad</h2>
     </div>
     <div class="trust-grid">
@@ -601,7 +684,7 @@ footer {
 <!-- ── CTA ── -->
 <section id="cta-band">
   <div class="container">
-    <h2>¿Listo para empezar a ahorrar?</h2>
+    <h2>¿Listo para empezar?</h2>
     <p>Activa tu membresía hoy. El primer mes lo pruebas sin compromiso.</p>
     <div class="cta-actions">
       <a href="registro.html" class="btn-primary">Ver planes</a>
@@ -615,8 +698,8 @@ footer {
   <div class="container">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="footer-logo-text">Farma<span>Sub</span></div>
-        <p>La farmacia por membresía para familias ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+        <div class="footer-logo-text">Medi<span>Costo</span></div>
+        <p>La membresía de salud para familias ecuatorianas. Medicamentos al precio real, entregados a tu puerta.</p>
       </div>
       <div class="footer-col">
         <h4>Producto</h4>
@@ -646,7 +729,7 @@ footer {
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 FarmaSub Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p>© 2025 MediCosto Ecuador. Operamos bajo normativa ARCSA.</p>
       <p>Santo Domingo de los Tsáchilas · Ecuador</p>
     </div>
   </div>
@@ -686,7 +769,7 @@ updateHeroCalc();
 
 // ── FULL CALCULATOR ──────────────────────────────────────
 let personas = 1;
-const PLAN_PRICE = 8; // suscripción fija por grupo familiar
+const PLAN_PRICE = 8;
 
 function changePersonas(delta) {
   personas = Math.max(1, Math.min(4, personas + delta));
@@ -722,7 +805,6 @@ function renderCalc() {
     </div>`;
   });
 
-  // suscripción fija por grupo, delivery incluido (lo absorbe FarmaSub)
   const conMem = totalC + PLAN_PRICE;
   const ahorro = totalF - conMem;
   const pct    = totalF > 0 ? Math.round((ahorro / totalF) * 100) : 0;
@@ -736,7 +818,7 @@ function renderCalc() {
       <span style="font-weight:600;color:var(--ink)">+$${PLAN_PRICE.toFixed(2)}</span>
     </div>
     <div class="calc-row" style="font-size:.78rem; opacity:.7">
-      <span class="cr-name">Delivery incluido (FarmaSub lo absorbe)</span>
+      <span class="cr-name">Delivery incluido (MediCosto lo absorbe)</span>
       <span style="color:var(--green)">$0 para ti</span>
     </div>
     <div class="calc-sep"></div>
@@ -747,7 +829,7 @@ function renderCalc() {
         <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">sin membresía</div>
       </div>
       <div class="ct-box sub">
-        <div class="ct-label">Con FarmaSub</div>
+        <div class="ct-label">Con MediCosto</div>
         <div class="ct-val">$${conMem.toFixed(0)}</div>
         <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">medicamentos + $8 membresía</div>
       </div>
