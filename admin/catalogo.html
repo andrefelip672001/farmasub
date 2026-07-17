@@ -276,13 +276,13 @@ let _relSearchTimer=null;
   document.getElementById('nav-avatar').textContent=user.email[0].toUpperCase();
   const {data:cats,error:catsErr}=await _db.from('categorias').select('*').order('nombre');
   if(catsErr){
-    console.error('[MediCosto] Error cargando categorías:',catsErr);
-    document.querySelector('.page-title').insertAdjacentHTML('afterend',`<div style="background:#FDF2F2;border:1.5px solid var(--danger);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem;color:var(--danger)">Error cargando categorías: ${catsErr.message}</div>`);
+    console.error('[MediCosto] Error cargando categor\u00edas:',catsErr);
+    document.querySelector('.page-title').insertAdjacentHTML('afterend',`<div style="background:#FDF2F2;border:1.5px solid var(--danger);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem;color:var(--danger)">Error cargando categor\u00edas: ${catsErr.message}</div>`);
   }
   _categorias=cats||[];
   const sel=document.getElementById('f-categoria');
   if(_categorias.length===0&&!catsErr){
-    const o=document.createElement('option');o.value='';o.textContent='(sin categorías en BD)';sel.appendChild(o);
+    const o=document.createElement('option');o.value='';o.textContent='(sin categor\u00edas en BD)';sel.appendChild(o);
   }
   _categorias.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.nombre;sel.appendChild(o);});
   await loadData();
@@ -303,11 +303,11 @@ function renderTable(){
   if(!rows.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';return;}
   tbody.innerHTML=rows.map(p=>`<tr>
     <td style="font-weight:600">${p.nombre}</td>
-    <td style="color:var(--ink-60);font-size:.78rem">${p.principio_activo||'—'}</td>
-    <td style="color:var(--ink-60);font-size:.78rem">${p.categorias?.nombre||'—'}</td>
+    <td style="color:var(--ink-60);font-size:.78rem">${p.principio_activo||'\u2014'}</td>
+    <td style="color:var(--ink-60);font-size:.78rem">${p.categorias?.nombre||'\u2014'}</td>
     <td style="color:var(--danger);text-decoration:line-through;font-size:.78rem">$${(p.precio_farmacia||0).toFixed(2)}</td>
     <td style="color:var(--green);font-weight:700">$${(p.precio_costo||0).toFixed(2)}</td>
-    <td>${p.requiere_receta?'<span class="badge-receta">Sí</span>':'—'}</td>
+    <td>${p.requiere_receta?'<span class="badge-receta">S\u00ed</span>':'\u2014'}</td>
     <td><span class="${p.activo?'badge-activo':'badge-inactivo'}">${p.activo?'Activo':'Inactivo'}</span></td>
     <td>
       <button class="btn-edit" onclick="editProducto(${p.id})">Editar</button>
@@ -316,7 +316,7 @@ function renderTable(){
   </tr>`).join('');
 }
 
-// ── MODAL ──────────────────────────────────────────────
+// \u2500\u2500 MODAL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 function openModal(){
   _resetModal();
   document.getElementById('modal-title').textContent='Agregar producto';
@@ -346,6 +346,11 @@ function closeModal(){
 function closeModalClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
 
 async function editProducto(id){
+  console.log('[STUB] editProducto llamado con id:', id);
+}
+
+/* STUB_ORIGINAL_EDIT_START
+async function editProducto_FULL(id){
   const p=_productos.find(x=>x.id===id);if(!p)return;
   _resetModal();
   document.getElementById('modal-title').textContent='Editar producto';
@@ -362,7 +367,6 @@ async function editProducto(id){
   document.getElementById('f-dosis').value=p.dosis||'';
   document.getElementById('f-contraindicaciones').value=p.contraindicaciones||'';
   document.getElementById('f-efectos').value=p.efectos_secundarios||'';
-
   const [{data:fotos},{data:rels}]=await Promise.all([
     _db.from('producto_fotos').select('*').eq('producto_id',id).order('orden'),
     _db.from('productos_relacionados').select('relacionado_id,productos!relacionado_id(id,nombre,precio_costo,principio_activo)').eq('producto_id',id).eq('tipo','manual')
@@ -374,6 +378,7 @@ async function editProducto(id){
   if(p.principio_activo)await loadAutoRelated(p.principio_activo,id);
   document.getElementById('modal-overlay').classList.add('open');
 }
+STUB_ORIGINAL_EDIT_END */
 
 function _showModalError(msg){
   document.getElementById('modal-error-msg').textContent=msg;
@@ -411,8 +416,8 @@ async function guardarProducto(){
 
   const precio_farmacia=parseFloat(document.getElementById('f-pfarmacia').value);
   const precio_costo=parseFloat(document.getElementById('f-pcosto').value);
-  if(isNaN(precio_farmacia)||precio_farmacia<0){_showModalError('Precio farmacia debe ser un número válido mayor o igual a 0.');return;}
-  if(isNaN(precio_costo)||precio_costo<0){_showModalError('Precio costo debe ser un número válido mayor o igual a 0.');return;}
+  if(isNaN(precio_farmacia)||precio_farmacia<0){_showModalError('Precio farmacia debe ser un n\u00famero v\u00e1lido mayor o igual a 0.');return;}
+  if(isNaN(precio_costo)||precio_costo<0){_showModalError('Precio costo debe ser un n\u00famero v\u00e1lido mayor o igual a 0.');return;}
 
   const payload={
     nombre,
@@ -487,25 +492,31 @@ async function guardarProducto(){
 }
 
 async function toggleActivo(id,activo){
+  console.log('[STUB] toggleActivo llamado con id:', id, 'activo:', activo);
+}
+
+/* STUB_ORIGINAL_TOGGLE_START
+async function toggleActivo_FULL(id,activo){
   await _db.from('productos').update({activo}).eq('id',id);
   await loadData();
 }
+STUB_ORIGINAL_TOGGLE_END */
 
-// ── FOTOS ─────────────────────────────────────────────
+// \u2500\u2500 FOTOS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 function renderFotos(){
   const count=_fotos.length;
   const zone=document.getElementById('foto-drop-zone');
   const counter=document.getElementById('foto-counter');
   const previews=document.getElementById('foto-previews');
   zone.classList.toggle('disabled',count>=3);
-  counter.textContent=count===0?'':(count>=3?'Máximo 3 fotos alcanzado':`${count}/3 fotos`);
+  counter.textContent=count===0?'':(count>=3?'M\u00e1ximo 3 fotos alcanzado':`${count}/3 fotos`);
   previews.innerHTML=_fotos.map((f,i)=>`
     <div class="photo-thumb${i===_fotoDragIdx?' dragging':''}" draggable="true"
          ondragstart="thumbDragStart(${i})" ondragover="thumbDragOver(event,${i})"
          ondragleave="thumbDragLeave(${i})" ondrop="thumbDrop(event,${i})" ondragend="thumbDragEnd()">
       <img src="${f.url}" alt="Foto ${i+1}"/>
       ${i===0?'<span class="photo-badge-main">Principal</span>':''}
-      <button class="photo-thumb-del" onclick="removeFoto(event,${i})" type="button">✕</button>
+      <button class="photo-thumb-del" onclick="removeFoto(event,${i})" type="button">\u2715</button>
     </div>`).join('');
 }
 
@@ -548,7 +559,7 @@ function thumbDrop(e,toIdx){
   renderFotos();
 }
 
-// ── RELACIONADOS ───────────────────────────────────────
+// \u2500\u2500 RELACIONADOS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 async function loadAutoRelated(principio,excludeId){
   if(!principio){document.getElementById('rel-auto-box').style.display='none';return;}
   const {data}=await _db.from('productos').select('id,nombre,precio_costo').eq('principio_activo',principio).eq('activo',true).neq('id',excludeId||0).limit(10);
@@ -581,7 +592,7 @@ async function onRelSearch(){
     dd.innerHTML=filtered.map(p=>`
       <div class="rel-drop-item" onmousedown="addManualRelById(${p.id})">
         <div class="rel-drop-name">${p.nombre}</div>
-        <div class="rel-drop-sub">${p.principio_activo||''} · $${(p.precio_costo||0).toFixed(2)}</div>
+        <div class="rel-drop-sub">${p.principio_activo||''} \u00b7 $${(p.precio_costo||0).toFixed(2)}</div>
       </div>`).join('');
     dd.classList.add('open');
   },300);
@@ -610,7 +621,7 @@ function renderManualRels(){
         <span class="rel-manual-name">${r.nombre}</span>
         <span class="rel-manual-price">$${(r.precio_costo||0).toFixed(2)}</span>
       </div>
-      <button class="rel-manual-del" onclick="removeManualRel(${i})" type="button">✕</button>
+      <button class="rel-manual-del" onclick="removeManualRel(${i})" type="button">\u2715</button>
     </div>`).join('');
   document.getElementById('rel-limit-msg').style.display=_manualRel.length>=5?'block':'none';
 }
