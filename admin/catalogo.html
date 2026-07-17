@@ -579,7 +579,7 @@ async function onRelSearch(){
     const filtered=(data||[]).filter(p=>p.id!==currentId&&!_manualRel.find(r=>r.id===p.id));
     if(!filtered.length){closeRelDropdown();return;}
     dd.innerHTML=filtered.map(p=>`
-      <div class="rel-drop-item" onmousedown="addManualRel(${p.id},${JSON.stringify(p.nombre)},${p.precio_costo||0},${JSON.stringify(p.principio_activo||'')})">
+      <div class="rel-drop-item" onmousedown="addManualRelById(${p.id})">
         <div class="rel-drop-name">${p.nombre}</div>
         <div class="rel-drop-sub">${p.principio_activo||''} · $${(p.precio_costo||0).toFixed(2)}</div>
       </div>`).join('');
@@ -591,6 +591,10 @@ function openRelDropdown(){const dd=document.getElementById('rel-dropdown');if(d
 function blurRelDropdown(){setTimeout(closeRelDropdown,200);}
 function closeRelDropdown(){document.getElementById('rel-dropdown').classList.remove('open');}
 
+function addManualRelById(id){
+  const p=_productos.find(x=>x.id===id);
+  if(p)addManualRel(p.id,p.nombre,p.precio_costo||0,p.principio_activo||'');
+}
 function addManualRel(id,nombre,precio_costo,principio_activo){
   if(_manualRel.length>=5||_manualRel.find(r=>r.id===id))return;
   _manualRel.push({id,nombre,precio_costo,principio_activo});
