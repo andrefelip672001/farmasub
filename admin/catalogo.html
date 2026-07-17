@@ -131,6 +131,8 @@ tr:hover td{background:var(--green-light);}
 .rel-manual-del{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1rem;padding:0 4px;line-height:1;font-family:'Inter',sans-serif;}
 .rel-manual-del:hover{color:var(--danger);}
 .rel-limit-msg{font-size:.72rem;color:var(--ink-60);}
+.modal-error{display:none;background:#FDF2F2;border:1.5px solid var(--danger);border-radius:10px;padding:12px 14px;margin-top:16px;font-size:.82rem;color:var(--danger);line-height:1.5;}
+.modal-error strong{display:block;margin-bottom:2px;font-weight:700;}
 </style>
 </head>
 <body>
@@ -193,7 +195,7 @@ tr:hover td{background:var(--green-light);}
     <div class="form-grid">
       <div class="field fg-full"><label>Nombre del producto *</label><input id="f-nombre" type="text" placeholder="Ej. Metformina 500mg"/></div>
       <div class="field fg-full"><label>Principio activo *</label><input id="f-activo" type="text" placeholder="Ej. Clorhidrato de Metformina" oninput="onActivoChange()"/></div>
-      <div class="field"><label>Categoría</label><select id="f-categoria"><option value="">Sin categoría</option></select></div>
+      <div class="field"><label>Categoría *</label><select id="f-categoria"><option value="">— Selecciona una categoría —</option></select><span style="font-size:.72rem;color:var(--danger);display:none" id="err-categoria">Selecciona una categoría</span></div>
       <div class="field"><label>Unidades por caja</label><input id="f-unidades" type="number" min="1" placeholder="30"/></div>
       <div class="field"><label>Precio farmacia ($) *</label><input id="f-pfarmacia" type="number" step="0.01" min="0" placeholder="0.00"/></div>
       <div class="field"><label>Precio costo ($) *</label><input id="f-pcosto" type="number" step="0.01" min="0" placeholder="0.00"/></div>
@@ -240,9 +242,13 @@ tr:hover td{background:var(--green-light);}
       <div class="rel-limit-msg" id="rel-limit-msg" style="display:none">Máximo 5 relaciones manuales alcanzado</div>
     </div>
 
+    <div class="modal-error" id="modal-error">
+      <strong>Error al guardar</strong>
+      <span id="modal-error-msg"></span>
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      <button class="btn-guardar" onclick="guardarProducto()">Guardar producto</button>
+      <button class="btn-guardar" id="btn-guardar" onclick="guardarProducto()">Guardar producto</button>
     </div>
   </div>
 </div>
@@ -268,9 +274,16 @@ let _relSearchTimer=null;
   if(rol!=='admin'){window.location.href='/portal/login.html';return;}
   document.getElementById('nav-nombre').textContent=user.email;
   document.getElementById('nav-avatar').textContent=user.email[0].toUpperCase();
-  const {data:cats}=await _db.from('categorias').select('*').order('nombre');
+  const {data:cats,error:catsErr}=await _db.from('categorias').select('*').order('nombre');
+  if(catsErr){
+    console.error('[MediCosto] Error cargando categorías:',catsErr);
+    document.querySelector('.page-title').insertAdjacentHTML('afterend',`<div style="background:#FDF2F2;border:1.5px solid var(--danger);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem;color:var(--danger)">Error cargando categorías: ${catsErr.message}</div>`);
+  }
   _categorias=cats||[];
   const sel=document.getElementById('f-categoria');
+  if(_categorias.length===0&&!catsErr){
+    const o=document.createElement('option');o.value='';o.textContent='(sin categorías en BD)';sel.appendChild(o);
+  }
   _categorias.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.nombre;sel.appendChild(o);});
   await loadData();
 })();
@@ -319,6 +332,8 @@ function _resetModal(){
   document.getElementById('f-receta').checked=false;
   document.getElementById('rel-auto-box').style.display='none';
   document.getElementById('rel-search').value='';
+  document.getElementById('err-categoria').style.display='none';
+  _hideModalError();
   closeRelDropdown();
   renderFotos();
   renderManualRels();
@@ -360,20 +375,52 @@ async function editProducto(id){
   document.getElementById('modal-overlay').classList.add('open');
 }
 
+function _showModalError(msg){
+  document.getElementById('modal-error-msg').textContent=msg;
+  document.getElementById('modal-error').style.display='block';
+  document.getElementById('modal-error').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function _hideModalError(){document.getElementById('modal-error').style.display='none';}
+
 async function guardarProducto(){
+  _hideModalError();
+
+  // Validaciones front-end
   const nombre=document.getElementById('f-nombre').value.trim();
   const principio=document.getElementById('f-activo').value.trim();
-  if(!nombre||!principio){alert('Nombre y principio activo son obligatorios.');return;}
+  const categoriaId=document.getElementById('f-categoria').value;
+  let valid=true;
+
+  if(!nombre||!principio){
+    _showModalError('Nombre y principio activo son obligatorios.');
+    return;
+  }
+  if(!categoriaId){
+    document.getElementById('err-categoria').style.display='block';
+    document.getElementById('f-categoria').focus();
+    valid=false;
+  }else{
+    document.getElementById('err-categoria').style.display='none';
+  }
   if(_fotos.length===0){
     const e=document.getElementById('err-fotos');e.style.display='block';
-    setTimeout(()=>e.style.display='none',3000);return;
+    setTimeout(()=>e.style.display='none',3000);
+    valid=false;
   }
+  if(!valid)return;
+
+  const precio_farmacia=parseFloat(document.getElementById('f-pfarmacia').value);
+  const precio_costo=parseFloat(document.getElementById('f-pcosto').value);
+  if(isNaN(precio_farmacia)||precio_farmacia<0){_showModalError('Precio farmacia debe ser un número válido mayor o igual a 0.');return;}
+  if(isNaN(precio_costo)||precio_costo<0){_showModalError('Precio costo debe ser un número válido mayor o igual a 0.');return;}
+
   const payload={
-    nombre,principio_activo:principio,
-    categoria_id:document.getElementById('f-categoria').value||null,
+    nombre,
+    principio_activo:principio,
+    categoria_id:categoriaId,
     unidades_caja:parseInt(document.getElementById('f-unidades').value)||30,
-    precio_farmacia:parseFloat(document.getElementById('f-pfarmacia').value)||0,
-    precio_costo:parseFloat(document.getElementById('f-pcosto').value)||0,
+    precio_farmacia,
+    precio_costo,
     stock:parseInt(document.getElementById('f-stock').value)||0,
     requiere_receta:document.getElementById('f-receta').checked,
     indicaciones:document.getElementById('f-indicaciones').value.trim()||null,
@@ -382,40 +429,61 @@ async function guardarProducto(){
     efectos_secundarios:document.getElementById('f-efectos').value.trim()||null,
     activo:true
   };
-  const existingId=document.getElementById('f-id').value;
-  let productoId;
-  if(existingId){
-    await _db.from('productos').update(payload).eq('id',existingId);
-    productoId=parseInt(existingId);
-  }else{
-    const {data:ins}=await _db.from('productos').insert(payload).select('id').single();
-    productoId=ins.id;
-  }
+  console.log('[MediCosto] guardarProducto payload:', payload);
 
-  // Sync photos
-  await _db.from('producto_fotos').delete().eq('producto_id',productoId);
-  const fotoInserts=[];
-  for(let i=0;i<_fotos.length;i++){
-    const f=_fotos[i];
-    let path=f.path;
-    if(f.file){
-      const ext=f.file.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
-      path=`${productoId}/${i+1}.${ext}`;
-      await _db.storage.from(FOTO_BUCKET).upload(path,f.file,{upsert:true});
+  const btn=document.getElementById('btn-guardar');
+  btn.disabled=true;btn.textContent='Guardando...';
+
+  try{
+    const existingId=document.getElementById('f-id').value;
+    let productoId;
+    if(existingId){
+      const {error:updErr}=await _db.from('productos').update(payload).eq('id',existingId);
+      if(updErr){console.error('[MediCosto] update error:',updErr);throw updErr;}
+      productoId=parseInt(existingId);
+    }else{
+      const {data:ins,error:insErr}=await _db.from('productos').insert(payload).select('id').single();
+      if(insErr){console.error('[MediCosto] insert error:',insErr);throw insErr;}
+      productoId=ins.id;
     }
-    if(path)fotoInserts.push({producto_id:productoId,path,orden:i+1,es_principal:i===0});
-  }
-  if(fotoInserts.length)await _db.from('producto_fotos').insert(fotoInserts);
 
-  // Sync manual relations
-  await _db.from('productos_relacionados').delete().eq('producto_id',productoId).eq('tipo','manual');
-  if(_manualRel.length){
-    await _db.from('productos_relacionados').insert(
-      _manualRel.map(r=>({producto_id:productoId,relacionado_id:r.id,tipo:'manual'}))
-    );
+    // Sync photos
+    const {error:delFotosErr}=await _db.from('producto_fotos').delete().eq('producto_id',productoId);
+    if(delFotosErr)console.warn('[MediCosto] delete fotos warning:',delFotosErr);
+    const fotoInserts=[];
+    for(let i=0;i<_fotos.length;i++){
+      const f=_fotos[i];
+      let path=f.path;
+      if(f.file){
+        const ext=f.file.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+        path=`${productoId}/${i+1}.${ext}`;
+        const {error:upErr}=await _db.storage.from(FOTO_BUCKET).upload(path,f.file,{upsert:true});
+        if(upErr){console.error('[MediCosto] foto upload error:',upErr);throw new Error(`Error subiendo foto ${i+1}: ${upErr.message}`);}
+      }
+      if(path)fotoInserts.push({producto_id:productoId,path,orden:i+1,es_principal:i===0});
+    }
+    if(fotoInserts.length){
+      const {error:fotInsErr}=await _db.from('producto_fotos').insert(fotoInserts);
+      if(fotInsErr){console.error('[MediCosto] producto_fotos insert error:',fotInsErr);throw fotInsErr;}
+    }
+
+    // Sync manual relations
+    await _db.from('productos_relacionados').delete().eq('producto_id',productoId).eq('tipo','manual');
+    if(_manualRel.length){
+      const {error:relErr}=await _db.from('productos_relacionados').insert(
+        _manualRel.map(r=>({producto_id:productoId,relacionado_id:r.id,tipo:'manual'}))
+      );
+      if(relErr)console.warn('[MediCosto] relaciones insert warning:',relErr);
+    }
+    closeModal();
+    await loadData();
+  }catch(err){
+    console.error('[MediCosto] guardarProducto error completo:',err);
+    _showModalError(err?.message||err?.details||JSON.stringify(err)||'Error desconocido al guardar');
+  }finally{
+    const b=document.getElementById('btn-guardar');
+    b.disabled=false;b.textContent='Guardar producto';
   }
-  closeModal();
-  await loadData();
 }
 
 async function toggleActivo(id,activo){
