@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Catálogo Admin — MediCosto</title>
+<title>Catalogo Admin - MediCosto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -59,7 +59,6 @@ tr:hover td{background:var(--green-light);}
 .btn-edit:hover{border-color:var(--green);color:var(--green);background:var(--green-light);}
 .btn-toggle{padding:5px 12px;background:none;border:1.5px solid var(--border);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
 .btn-toggle:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-bg);}
-
 /* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(18,32,26,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
@@ -85,9 +84,7 @@ tr:hover td{background:var(--green-light);}
 .btn-cancel:hover{border-color:var(--ink-30);color:var(--ink);}
 .btn-guardar{padding:10px 24px;background:var(--green);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;color:white;cursor:pointer;transition:all .2s;}
 .btn-guardar:hover{background:var(--green-mid);}
-.section-divider{grid-column:1/-1;height:1px;background:var(--border);margin:4px 0;}
 .section-label{font-size:.78rem;font-weight:700;color:var(--ink-60);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;}
-
 /* FOTOS */
 .photo-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .photo-drop-zone{border:2px dashed var(--border);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);user-select:none;}
@@ -106,8 +103,7 @@ tr:hover td{background:var(--green-light);}
 .photo-thumb.dragging{opacity:.3;}
 .photo-thumb.drag-over-thumb{border-color:var(--green);box-shadow:0 0 0 2px var(--green-menta);}
 .err-fotos{font-size:.72rem;color:var(--danger);display:none;margin-top:4px;}
-
-/* RELACIONADOS ADMIN */
+/* RELACIONADOS */
 .rel-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .rel-auto-box{background:var(--green-light);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
 .rel-auto-title{font-size:.72rem;font-weight:700;color:var(--green);margin-bottom:6px;}
@@ -148,7 +144,7 @@ tr:hover td{background:var(--green-light);}
   </div>
   <div class="nav-right">
     <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
-    <button onclick="logout()" class="btn-logout">Cerrar sesión</button>
+    <button onclick="logout()" class="btn-logout">Cerrar sesion</button>
   </div>
 </nav>
 
@@ -157,13 +153,13 @@ tr:hover td{background:var(--green-light);}
     <a href="/admin/dashboard.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio</a>
     <a href="/admin/suscriptores.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores</a>
     <a href="/admin/pedidos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos</a>
-    <a href="/admin/catalogo.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Catálogo</a>
+    <a href="/admin/catalogo.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Catalogo</a>
     <hr class="sb-divider"/>
     <a href="/admin/pagos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</a>
   </aside>
 
   <main class="main">
-    <h1 class="page-title">Catálogo de productos</h1>
+    <h1 class="page-title">Catalogo de productos</h1>
     <div class="toolbar">
       <div class="search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -176,7 +172,7 @@ tr:hover td{background:var(--green-light);}
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Nombre</th><th>Principio activo</th><th>Categoría</th><th>P. farmacia</th><th>P. costo</th><th>Receta</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Principio activo</th><th>Categoria</th><th>P. farmacia</th><th>P. costo</th><th>Receta</th><th>Estado</th><th>Acciones</th></tr></thead>
         <tbody id="tbody"><tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr></tbody>
       </table>
     </div>
@@ -195,16 +191,16 @@ tr:hover td{background:var(--green-light);}
     <div class="form-grid">
       <div class="field fg-full"><label>Nombre del producto *</label><input id="f-nombre" type="text" placeholder="Ej. Metformina 500mg"/></div>
       <div class="field fg-full"><label>Principio activo *</label><input id="f-activo" type="text" placeholder="Ej. Clorhidrato de Metformina" oninput="onActivoChange()"/></div>
-      <div class="field"><label>Categoría *</label><select id="f-categoria"><option value="">— Selecciona una categoría —</option></select><span style="font-size:.72rem;color:var(--danger);display:none" id="err-categoria">Selecciona una categoría</span></div>
+      <div class="field"><label>Categoria *</label><select id="f-categoria"><option value="">-- Selecciona una categoria --</option></select><span style="font-size:.72rem;color:var(--danger);display:none" id="err-categoria">Selecciona una categoria</span></div>
       <div class="field"><label>Unidades por caja</label><input id="f-unidades" type="number" min="1" placeholder="30"/></div>
       <div class="field"><label>Precio farmacia ($) *</label><input id="f-pfarmacia" type="number" step="0.01" min="0" placeholder="0.00"/></div>
       <div class="field"><label>Precio costo ($) *</label><input id="f-pcosto" type="number" step="0.01" min="0" placeholder="0.00"/></div>
       <div class="field"><label>Stock actual</label><input id="f-stock" type="number" min="0" placeholder="0"/></div>
-      <div class="field" style="align-self:end"><div class="check-row"><input type="checkbox" id="f-receta"/><label for="f-receta">Requiere receta médica</label></div></div>
+      <div class="field" style="align-self:end"><div class="check-row"><input type="checkbox" id="f-receta"/><label for="f-receta">Requiere receta medica</label></div></div>
       <div class="field fg-full"><label>Indicaciones</label><textarea id="f-indicaciones" placeholder="Describe las indicaciones del medicamento..."></textarea></div>
       <div class="field fg-full"><label>Dosis recomendada</label><textarea id="f-dosis" placeholder="Ej. 1 comprimido cada 12 horas con las comidas..."></textarea></div>
       <div class="field fg-full"><label>Contraindicaciones</label><textarea id="f-contraindicaciones" placeholder="Contraindicado en casos de..."></textarea></div>
-      <div class="field fg-full"><label>Efectos secundarios</label><textarea id="f-efectos" placeholder="Puede producir náuseas, mareos..."></textarea></div>
+      <div class="field fg-full"><label>Efectos secundarios</label><textarea id="f-efectos" placeholder="Puede producir nauseas, mareos..."></textarea></div>
     </div>
 
     <!-- FOTOS DEL PRODUCTO -->
@@ -214,9 +210,9 @@ tr:hover td{background:var(--green-light);}
            onclick="document.getElementById('foto-file-input').click()"
            ondragover="fotoDragOver(event)" ondragleave="fotoDragLeave(event)" ondrop="fotoDrop(event)">
         <input type="file" id="foto-file-input" accept="image/*" multiple style="display:none" onchange="fotoFileChange(this)"/>
-        <div class="photo-drop-icon">🖼️</div>
-        <div class="photo-drop-text">Arrastra fotos aquí o haz clic para subir</div>
-        <div class="photo-drop-hint">JPG, PNG · Máx. 3 fotos · La primera es la principal</div>
+        <div class="photo-drop-icon">&#128444;</div>
+        <div class="photo-drop-text">Arrastra fotos aqui o haz clic para subir</div>
+        <div class="photo-drop-hint">JPG, PNG - Max. 3 fotos - La primera es la principal</div>
       </div>
       <div class="photo-counter" id="foto-counter"></div>
       <div class="photo-previews" id="foto-previews"></div>
@@ -227,9 +223,9 @@ tr:hover td{background:var(--green-light);}
     <div class="rel-section">
       <div class="section-label" style="margin-bottom:12px;">Productos relacionados</div>
       <div class="rel-auto-box" id="rel-auto-box" style="display:none">
-        <div class="rel-auto-title">🔗 Relaciones automáticas por principio activo</div>
+        <div class="rel-auto-title">Relaciones automaticas por principio activo</div>
         <div class="rel-auto-list" id="rel-auto-list"></div>
-        <p class="rel-auto-note">Se mostrarán automáticamente al cliente cuando vea este producto</p>
+        <p class="rel-auto-note">Se mostraran automaticamente al cliente cuando vea este producto</p>
       </div>
       <div class="rel-search-wrap">
         <input class="rel-search-input" id="rel-search" type="text"
@@ -239,7 +235,7 @@ tr:hover td{background:var(--green-light);}
         <div class="rel-dropdown" id="rel-dropdown"></div>
       </div>
       <div class="rel-manual-list" id="rel-manual-list"></div>
-      <div class="rel-limit-msg" id="rel-limit-msg" style="display:none">Máximo 5 relaciones manuales alcanzado</div>
+      <div class="rel-limit-msg" id="rel-limit-msg" style="display:none">Maximo 5 relaciones manuales alcanzado</div>
     </div>
 
     <div class="modal-error" id="modal-error">
@@ -255,378 +251,448 @@ tr:hover td{background:var(--green-light);}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
-const FOTO_BUCKET='producto-fotos';
-const FOTO_URL_BASE='https://cjimcldhoglgqachcimm.supabase.co/storage/v1/object/public/producto-fotos/';
+var _db = supabase.createClient(
+  'https://cjimcldhoglgqachcimm.supabase.co',
+  'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC'
+);
+var FOTO_BUCKET = 'producto-fotos';
+var FOTO_URL_BASE = 'https://cjimcldhoglgqachcimm.supabase.co/storage/v1/object/public/producto-fotos/';
 
-let _productos=[],_categorias=[];
-let _fotos=[];      // [{file:File|null, url:string, path:string|null}]
-let _manualRel=[];  // [{id, nombre, precio_costo, principio_activo}]
-let _fotoDragIdx=null;
-let _relSearchTimer=null;
+var _productos = [];
+var _categorias = [];
+var _fotos = [];
+var _manualRel = [];
+var _fotoDragIdx = null;
+var _relSearchTimer = null;
 
-(async()=>{
-  const {data:{session}}=await _db.auth.getSession();
-  if(!session){window.location.href='/portal/login.html';return;}
-  const user=session.user;
-  let rol=user.user_metadata?.rol||user.app_metadata?.rol||null;
-  if(!rol){const {data:p}=await _db.from('perfiles').select('rol').eq('id',user.id).single();rol=p?.rol||'suscriptor';}
-  if(rol!=='admin'){window.location.href='/portal/login.html';return;}
-  document.getElementById('nav-nombre').textContent=user.email;
-  document.getElementById('nav-avatar').textContent=user.email[0].toUpperCase();
-  const {data:cats,error:catsErr}=await _db.from('categorias').select('*').order('nombre');
-  if(catsErr){
-    console.error('[MediCosto] Error cargando categor\u00edas:',catsErr);
-    document.querySelector('.page-title').insertAdjacentHTML('afterend',`<div style="background:#FDF2F2;border:1.5px solid var(--danger);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem;color:var(--danger)">Error cargando categor\u00edas: ${catsErr.message}</div>`);
+(async function init() {
+  var session_data = await _db.auth.getSession();
+  var session = session_data.data.session;
+  if (!session) { window.location.href = '/portal/login.html'; return; }
+  var user = session.user;
+  var rol = (user.user_metadata && user.user_metadata.rol) || (user.app_metadata && user.app_metadata.rol) || null;
+  if (!rol) {
+    var pres = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    rol = (pres.data && pres.data.rol) || 'suscriptor';
   }
-  _categorias=cats||[];
-  const sel=document.getElementById('f-categoria');
-  if(_categorias.length===0&&!catsErr){
-    const o=document.createElement('option');o.value='';o.textContent='(sin categor\u00edas en BD)';sel.appendChild(o);
+  if (rol !== 'admin') { window.location.href = '/portal/login.html'; return; }
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email[0].toUpperCase();
+
+  var cats_res = await _db.from('categorias').select('*').order('nombre');
+  var catsErr = cats_res.error;
+  var cats = cats_res.data;
+  if (catsErr) {
+    console.error('[MediCosto] Error cargando categorias:', catsErr);
+    var errDiv = document.createElement('div');
+    errDiv.style.cssText = 'background:#FDF2F2;border:1.5px solid var(--danger);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:.82rem;color:var(--danger)';
+    errDiv.textContent = 'Error cargando categorias: ' + catsErr.message;
+    document.querySelector('.page-title').insertAdjacentElement('afterend', errDiv);
   }
-  _categorias.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.nombre;sel.appendChild(o);});
+  _categorias = cats || [];
+  var sel = document.getElementById('f-categoria');
+  if (_categorias.length === 0 && !catsErr) {
+    var o = document.createElement('option');
+    o.value = '';
+    o.textContent = '(sin categorias en BD)';
+    sel.appendChild(o);
+  }
+  _categorias.forEach(function(c) {
+    var o = document.createElement('option');
+    o.value = c.id;
+    o.textContent = c.nombre;
+    sel.appendChild(o);
+  });
   await loadData();
 })();
 
-async function loadData(){
-  const {data}=await _db.from('productos').select('*,categorias(nombre)').order('nombre');
-  _productos=data||[];
+async function loadData() {
+  var res = await _db.from('productos').select('*,categorias(nombre)').order('nombre');
+  _productos = res.data || [];
   renderTable();
 }
 
-function filterTable(){renderTable();}
+function filterTable() { renderTable(); }
 
-function renderTable(){
-  const q=document.getElementById('search').value.toLowerCase();
-  const rows=_productos.filter(p=>!q||p.nombre?.toLowerCase().includes(q)||(p.principio_activo||'').toLowerCase().includes(q));
-  const tbody=document.getElementById('tbody');
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';return;}
-  tbody.innerHTML=rows.map(p=>`<tr>
-    <td style="font-weight:600">${p.nombre}</td>
-    <td style="color:var(--ink-60);font-size:.78rem">${p.principio_activo||'\u2014'}</td>
-    <td style="color:var(--ink-60);font-size:.78rem">${p.categorias?.nombre||'\u2014'}</td>
-    <td style="color:var(--danger);text-decoration:line-through;font-size:.78rem">$${(p.precio_farmacia||0).toFixed(2)}</td>
-    <td style="color:var(--green);font-weight:700">$${(p.precio_costo||0).toFixed(2)}</td>
-    <td>${p.requiere_receta?'<span class="badge-receta">S\u00ed</span>':'\u2014'}</td>
-    <td><span class="${p.activo?'badge-activo':'badge-inactivo'}">${p.activo?'Activo':'Inactivo'}</span></td>
-    <td>
-      <button class="btn-edit" onclick="editProducto(${p.id})">Editar</button>
-      <button class="btn-toggle" onclick="toggleActivo(${p.id},${!p.activo})">${p.activo?'Desactivar':'Activar'}</button>
-    </td>
-  </tr>`).join('');
+function renderTable() {
+  var q = document.getElementById('search').value.toLowerCase();
+  var rows = _productos.filter(function(p) {
+    return !q || (p.nombre && p.nombre.toLowerCase().includes(q)) || (p.principio_activo || '').toLowerCase().includes(q);
+  });
+  var tbody = document.getElementById('tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';
+    return;
+  }
+  var html = '';
+  rows.forEach(function(p) {
+    var recetaBadge = p.requiere_receta ? '<span class="badge-receta">Si</span>' : '-';
+    var estadoBadge = '<span class="' + (p.activo ? 'badge-activo' : 'badge-inactivo') + '">' + (p.activo ? 'Activo' : 'Inactivo') + '</span>';
+    var btnToggle = p.activo ? 'Desactivar' : 'Activar';
+    html += '<tr>';
+    html += '<td style="font-weight:600">' + (p.nombre || '') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + (p.principio_activo || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + ((p.categorias && p.categorias.nombre) || '-') + '</td>';
+    html += '<td style="color:var(--danger);text-decoration:line-through;font-size:.78rem">$' + (p.precio_farmacia || 0).toFixed(2) + '</td>';
+    html += '<td style="color:var(--green);font-weight:700">$' + (p.precio_costo || 0).toFixed(2) + '</td>';
+    html += '<td>' + recetaBadge + '</td>';
+    html += '<td>' + estadoBadge + '</td>';
+    html += '<td><button class="btn-edit" onclick="editProducto(' + p.id + ')">Editar</button>';
+    html += '<button class="btn-toggle" onclick="toggleActivo(' + p.id + ',' + (!p.activo) + ')">' + btnToggle + '</button></td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
 }
 
-// \u2500\u2500 MODAL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function openModal(){
+function openModal() {
   _resetModal();
-  document.getElementById('modal-title').textContent='Agregar producto';
+  document.getElementById('modal-title').textContent = 'Agregar producto';
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-function _resetModal(){
-  _fotos=[];_fotoDragIdx=null;
-  _manualRel=[];
-  ['id','nombre','activo','categoria','unidades','pfarmacia','pcosto','stock','indicaciones','dosis','contraindicaciones','efectos'].forEach(k=>{
-    const el=document.getElementById('f-'+k);if(el)el.value='';
+function _resetModal() {
+  _fotos = []; _fotoDragIdx = null;
+  _manualRel = [];
+  var fields = ['id','nombre','activo','categoria','unidades','pfarmacia','pcosto','stock','indicaciones','dosis','contraindicaciones','efectos'];
+  fields.forEach(function(k) {
+    var el = document.getElementById('f-' + k);
+    if (el) el.value = '';
   });
-  document.getElementById('f-receta').checked=false;
-  document.getElementById('rel-auto-box').style.display='none';
-  document.getElementById('rel-search').value='';
-  document.getElementById('err-categoria').style.display='none';
+  document.getElementById('f-receta').checked = false;
+  document.getElementById('rel-auto-box').style.display = 'none';
+  document.getElementById('rel-search').value = '';
+  document.getElementById('err-categoria').style.display = 'none';
   _hideModalError();
   closeRelDropdown();
   renderFotos();
   renderManualRels();
 }
 
-function closeModal(){
+function closeModal() {
   document.getElementById('modal-overlay').classList.remove('open');
   closeRelDropdown();
 }
-function closeModalClick(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
-
-async function editProducto(id){
-  console.log('[STUB] editProducto llamado con id:', id);
+function closeModalClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
 
-/* STUB_ORIGINAL_EDIT_START
-async function editProducto_FULL(id){
-  const p=_productos.find(x=>x.id===id);if(!p)return;
+async function editProducto(id) {
+  var p = null;
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { p = _productos[i]; break; }
+  }
+  if (!p) return;
   _resetModal();
-  document.getElementById('modal-title').textContent='Editar producto';
-  document.getElementById('f-id').value=p.id;
-  document.getElementById('f-nombre').value=p.nombre||'';
-  document.getElementById('f-activo').value=p.principio_activo||'';
-  document.getElementById('f-categoria').value=p.categoria_id||'';
-  document.getElementById('f-unidades').value=p.unidades_caja||'';
-  document.getElementById('f-pfarmacia').value=p.precio_farmacia||'';
-  document.getElementById('f-pcosto').value=p.precio_costo||'';
-  document.getElementById('f-stock').value=p.stock||'';
-  document.getElementById('f-receta').checked=!!p.requiere_receta;
-  document.getElementById('f-indicaciones').value=p.indicaciones||'';
-  document.getElementById('f-dosis').value=p.dosis||'';
-  document.getElementById('f-contraindicaciones').value=p.contraindicaciones||'';
-  document.getElementById('f-efectos').value=p.efectos_secundarios||'';
-  const [{data:fotos},{data:rels}]=await Promise.all([
-    _db.from('producto_fotos').select('*').eq('producto_id',id).order('orden'),
-    _db.from('productos_relacionados').select('relacionado_id,productos!relacionado_id(id,nombre,precio_costo,principio_activo)').eq('producto_id',id).eq('tipo','manual')
+  document.getElementById('modal-title').textContent = 'Editar producto';
+  document.getElementById('f-id').value = p.id;
+  document.getElementById('f-nombre').value = p.nombre || '';
+  document.getElementById('f-activo').value = p.principio_activo || '';
+  document.getElementById('f-categoria').value = p.categoria_id || '';
+  document.getElementById('f-unidades').value = p.unidades_caja || '';
+  document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
+  document.getElementById('f-pcosto').value = p.precio_costo || '';
+  document.getElementById('f-stock').value = p.stock || '';
+  document.getElementById('f-receta').checked = !!p.requiere_receta;
+  document.getElementById('f-indicaciones').value = p.indicaciones || '';
+  document.getElementById('f-dosis').value = p.dosis || '';
+  document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
+  document.getElementById('f-efectos').value = p.efectos_secundarios || '';
+
+  var res = await Promise.all([
+    _db.from('producto_fotos').select('*').eq('producto_id', id).order('orden'),
+    _db.from('productos_relacionados').select('relacionado_id,productos!relacionado_id(id,nombre,precio_costo,principio_activo)').eq('producto_id', id).eq('tipo', 'manual')
   ]);
-  (fotos||[]).forEach(f=>_fotos.push({file:null,url:FOTO_URL_BASE+f.path,path:f.path}));
+  var fotos = res[0].data || [];
+  var rels = res[1].data || [];
+  fotos.forEach(function(f) { _fotos.push({file: null, url: FOTO_URL_BASE + f.path, path: f.path}); });
   renderFotos();
-  (rels||[]).forEach(r=>{if(r.productos)_manualRel.push(r.productos);});
+  rels.forEach(function(r) { if (r.productos) _manualRel.push(r.productos); });
   renderManualRels();
-  if(p.principio_activo)await loadAutoRelated(p.principio_activo,id);
+  if (p.principio_activo) await loadAutoRelated(p.principio_activo, id);
   document.getElementById('modal-overlay').classList.add('open');
 }
-STUB_ORIGINAL_EDIT_END */
 
-function _showModalError(msg){
-  document.getElementById('modal-error-msg').textContent=msg;
-  document.getElementById('modal-error').style.display='block';
-  document.getElementById('modal-error').scrollIntoView({behavior:'smooth',block:'nearest'});
+function _showModalError(msg) {
+  document.getElementById('modal-error-msg').textContent = msg;
+  document.getElementById('modal-error').style.display = 'block';
+  document.getElementById('modal-error').scrollIntoView({behavior: 'smooth', block: 'nearest'});
 }
-function _hideModalError(){document.getElementById('modal-error').style.display='none';}
+function _hideModalError() { document.getElementById('modal-error').style.display = 'none'; }
 
-async function guardarProducto(){
+async function guardarProducto() {
   _hideModalError();
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var principio = document.getElementById('f-activo').value.trim();
+  var categoriaId = document.getElementById('f-categoria').value;
+  var valid = true;
 
-  // Validaciones front-end
-  const nombre=document.getElementById('f-nombre').value.trim();
-  const principio=document.getElementById('f-activo').value.trim();
-  const categoriaId=document.getElementById('f-categoria').value;
-  let valid=true;
-
-  if(!nombre||!principio){
+  if (!nombre || !principio) {
     _showModalError('Nombre y principio activo son obligatorios.');
     return;
   }
-  if(!categoriaId){
-    document.getElementById('err-categoria').style.display='block';
+  if (!categoriaId) {
+    document.getElementById('err-categoria').style.display = 'block';
     document.getElementById('f-categoria').focus();
-    valid=false;
-  }else{
-    document.getElementById('err-categoria').style.display='none';
+    valid = false;
+  } else {
+    document.getElementById('err-categoria').style.display = 'none';
   }
-  if(_fotos.length===0){
-    const e=document.getElementById('err-fotos');e.style.display='block';
-    setTimeout(()=>e.style.display='none',3000);
-    valid=false;
+  if (_fotos.length === 0) {
+    var ef = document.getElementById('err-fotos');
+    ef.style.display = 'block';
+    setTimeout(function() { ef.style.display = 'none'; }, 3000);
+    valid = false;
   }
-  if(!valid)return;
+  if (!valid) return;
 
-  const precio_farmacia=parseFloat(document.getElementById('f-pfarmacia').value);
-  const precio_costo=parseFloat(document.getElementById('f-pcosto').value);
-  if(isNaN(precio_farmacia)||precio_farmacia<0){_showModalError('Precio farmacia debe ser un n\u00famero v\u00e1lido mayor o igual a 0.');return;}
-  if(isNaN(precio_costo)||precio_costo<0){_showModalError('Precio costo debe ser un n\u00famero v\u00e1lido mayor o igual a 0.');return;}
+  var precio_farmacia = parseFloat(document.getElementById('f-pfarmacia').value);
+  var precio_costo = parseFloat(document.getElementById('f-pcosto').value);
+  if (isNaN(precio_farmacia) || precio_farmacia < 0) { _showModalError('Precio farmacia: ingrese un numero valido >= 0.'); return; }
+  if (isNaN(precio_costo) || precio_costo < 0) { _showModalError('Precio costo: ingrese un numero valido >= 0.'); return; }
 
-  const payload={
-    nombre,
-    principio_activo:principio,
-    categoria_id:categoriaId,
-    unidades_caja:parseInt(document.getElementById('f-unidades').value)||30,
-    precio_farmacia,
-    precio_costo,
-    stock:parseInt(document.getElementById('f-stock').value)||0,
-    requiere_receta:document.getElementById('f-receta').checked,
-    indicaciones:document.getElementById('f-indicaciones').value.trim()||null,
-    dosis:document.getElementById('f-dosis').value.trim()||null,
-    contraindicaciones:document.getElementById('f-contraindicaciones').value.trim()||null,
-    efectos_secundarios:document.getElementById('f-efectos').value.trim()||null,
-    activo:true
+  var payload = {
+    nombre: nombre,
+    principio_activo: principio,
+    categoria_id: categoriaId,
+    unidades_caja: parseInt(document.getElementById('f-unidades').value) || 30,
+    precio_farmacia: precio_farmacia,
+    precio_costo: precio_costo,
+    stock: parseInt(document.getElementById('f-stock').value) || 0,
+    requiere_receta: document.getElementById('f-receta').checked,
+    indicaciones: document.getElementById('f-indicaciones').value.trim() || null,
+    dosis: document.getElementById('f-dosis').value.trim() || null,
+    contraindicaciones: document.getElementById('f-contraindicaciones').value.trim() || null,
+    efectos_secundarios: document.getElementById('f-efectos').value.trim() || null,
+    activo: true
   };
-  console.log('[MediCosto] guardarProducto payload:', payload);
 
-  const btn=document.getElementById('btn-guardar');
-  btn.disabled=true;btn.textContent='Guardando...';
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
 
-  try{
-    const existingId=document.getElementById('f-id').value;
-    let productoId;
-    if(existingId){
-      const {error:updErr}=await _db.from('productos').update(payload).eq('id',existingId);
-      if(updErr){console.error('[MediCosto] update error:',updErr);throw updErr;}
-      productoId=parseInt(existingId);
-    }else{
-      const {data:ins,error:insErr}=await _db.from('productos').insert(payload).select('id').single();
-      if(insErr){console.error('[MediCosto] insert error:',insErr);throw insErr;}
-      productoId=ins.id;
+  try {
+    var existingId = document.getElementById('f-id').value;
+    var productoId;
+    if (existingId) {
+      var upd = await _db.from('productos').update(payload).eq('id', existingId);
+      if (upd.error) { console.error('[MediCosto] update error:', upd.error); throw upd.error; }
+      productoId = parseInt(existingId);
+    } else {
+      var ins = await _db.from('productos').insert(payload).select('id').single();
+      if (ins.error) { console.error('[MediCosto] insert error:', ins.error); throw ins.error; }
+      productoId = ins.data.id;
     }
 
-    // Sync photos
-    const {error:delFotosErr}=await _db.from('producto_fotos').delete().eq('producto_id',productoId);
-    if(delFotosErr)console.warn('[MediCosto] delete fotos warning:',delFotosErr);
-    const fotoInserts=[];
-    for(let i=0;i<_fotos.length;i++){
-      const f=_fotos[i];
-      let path=f.path;
-      if(f.file){
-        const ext=f.file.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
-        path=`${productoId}/${i+1}.${ext}`;
-        const {error:upErr}=await _db.storage.from(FOTO_BUCKET).upload(path,f.file,{upsert:true});
-        if(upErr){console.error('[MediCosto] foto upload error:',upErr);throw new Error(`Error subiendo foto ${i+1}: ${upErr.message}`);}
+    var delF = await _db.from('producto_fotos').delete().eq('producto_id', productoId);
+    if (delF.error) console.warn('[MediCosto] delete fotos:', delF.error);
+
+    var fotoInserts = [];
+    for (var fi = 0; fi < _fotos.length; fi++) {
+      var f = _fotos[fi];
+      var path = f.path;
+      if (f.file) {
+        var parts = f.file.name.split('.');
+        var ext = parts[parts.length - 1].toLowerCase().replace('jpeg', 'jpg');
+        path = productoId + '/' + (fi + 1) + '.' + ext;
+        var up = await _db.storage.from(FOTO_BUCKET).upload(path, f.file, {upsert: true});
+        if (up.error) { console.error('[MediCosto] foto upload:', up.error); throw new Error('Error foto ' + (fi + 1) + ': ' + up.error.message); }
       }
-      if(path)fotoInserts.push({producto_id:productoId,path,orden:i+1,es_principal:i===0});
+      if (path) fotoInserts.push({producto_id: productoId, path: path, orden: fi + 1, es_principal: fi === 0});
     }
-    if(fotoInserts.length){
-      const {error:fotInsErr}=await _db.from('producto_fotos').insert(fotoInserts);
-      if(fotInsErr){console.error('[MediCosto] producto_fotos insert error:',fotInsErr);throw fotInsErr;}
+    if (fotoInserts.length) {
+      var fotIns = await _db.from('producto_fotos').insert(fotoInserts);
+      if (fotIns.error) { console.error('[MediCosto] fotos insert:', fotIns.error); throw fotIns.error; }
     }
 
-    // Sync manual relations
-    await _db.from('productos_relacionados').delete().eq('producto_id',productoId).eq('tipo','manual');
-    if(_manualRel.length){
-      const {error:relErr}=await _db.from('productos_relacionados').insert(
-        _manualRel.map(r=>({producto_id:productoId,relacionado_id:r.id,tipo:'manual'}))
-      );
-      if(relErr)console.warn('[MediCosto] relaciones insert warning:',relErr);
+    await _db.from('productos_relacionados').delete().eq('producto_id', productoId).eq('tipo', 'manual');
+    if (_manualRel.length) {
+      var relData = _manualRel.map(function(r) { return {producto_id: productoId, relacionado_id: r.id, tipo: 'manual'}; });
+      var relIns = await _db.from('productos_relacionados').insert(relData);
+      if (relIns.error) console.warn('[MediCosto] relaciones insert:', relIns.error);
     }
     closeModal();
     await loadData();
-  }catch(err){
-    console.error('[MediCosto] guardarProducto error completo:',err);
-    _showModalError(err?.message||err?.details||JSON.stringify(err)||'Error desconocido al guardar');
-  }finally{
-    const b=document.getElementById('btn-guardar');
-    b.disabled=false;b.textContent='Guardar producto';
+  } catch(err) {
+    console.error('[MediCosto] guardarProducto error:', err);
+    _showModalError((err && err.message) || 'Error desconocido al guardar');
+  } finally {
+    var b = document.getElementById('btn-guardar');
+    b.disabled = false;
+    b.textContent = 'Guardar producto';
   }
 }
 
-async function toggleActivo(id,activo){
-  console.log('[STUB] toggleActivo llamado con id:', id, 'activo:', activo);
-}
-
-/* STUB_ORIGINAL_TOGGLE_START
-async function toggleActivo_FULL(id,activo){
-  await _db.from('productos').update({activo}).eq('id',id);
+async function toggleActivo(id, activo) {
+  await _db.from('productos').update({activo: activo}).eq('id', id);
   await loadData();
 }
-STUB_ORIGINAL_TOGGLE_END */
 
-// \u2500\u2500 FOTOS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function renderFotos(){
-  const count=_fotos.length;
-  const zone=document.getElementById('foto-drop-zone');
-  const counter=document.getElementById('foto-counter');
-  const previews=document.getElementById('foto-previews');
-  zone.classList.toggle('disabled',count>=3);
-  counter.textContent=count===0?'':(count>=3?'M\u00e1ximo 3 fotos alcanzado':`${count}/3 fotos`);
-  previews.innerHTML=_fotos.map((f,i)=>`
-    <div class="photo-thumb${i===_fotoDragIdx?' dragging':''}" draggable="true"
-         ondragstart="thumbDragStart(${i})" ondragover="thumbDragOver(event,${i})"
-         ondragleave="thumbDragLeave(${i})" ondrop="thumbDrop(event,${i})" ondragend="thumbDragEnd()">
-      <img src="${f.url}" alt="Foto ${i+1}"/>
-      ${i===0?'<span class="photo-badge-main">Principal</span>':''}
-      <button class="photo-thumb-del" onclick="removeFoto(event,${i})" type="button">\u2715</button>
-    </div>`).join('');
+// FOTOS
+function renderFotos() {
+  var count = _fotos.length;
+  var zone = document.getElementById('foto-drop-zone');
+  var counter = document.getElementById('foto-counter');
+  var previews = document.getElementById('foto-previews');
+  zone.classList.toggle('disabled', count >= 3);
+  if (count === 0) { counter.textContent = ''; }
+  else if (count >= 3) { counter.textContent = 'Max. 3 fotos'; }
+  else { counter.textContent = count + '/3 fotos'; }
+  var html = '';
+  _fotos.forEach(function(f, i) {
+    html += '<div class="photo-thumb' + (i === _fotoDragIdx ? ' dragging' : '') + '"';
+    html += ' draggable="true"';
+    html += ' ondragstart="thumbDragStart(' + i + ')"';
+    html += ' ondragover="thumbDragOver(event,' + i + ')"';
+    html += ' ondragleave="thumbDragLeave(' + i + ')"';
+    html += ' ondrop="thumbDrop(event,' + i + ')"';
+    html += ' ondragend="thumbDragEnd()">';
+    html += '<img src="' + f.url + '" alt="Foto ' + (i + 1) + '"/>';
+    if (i === 0) html += '<span class="photo-badge-main">Principal</span>';
+    html += '<button class="photo-thumb-del" onclick="removeFoto(event,' + i + ')" type="button">x</button>';
+    html += '</div>';
+  });
+  previews.innerHTML = html;
 }
 
-function fotoFileChange(input){
+function fotoFileChange(input) {
   Array.from(input.files).forEach(addFotoFile);
-  input.value='';
+  input.value = '';
 }
-function addFotoFile(file){
-  if(_fotos.length>=3||!file.type.startsWith('image/'))return;
-  _fotos.push({file,url:URL.createObjectURL(file),path:null});
+function addFotoFile(file) {
+  if (_fotos.length >= 3 || !file.type.startsWith('image/')) return;
+  _fotos.push({file: file, url: URL.createObjectURL(file), path: null});
   renderFotos();
 }
-function removeFoto(e,idx){
+function removeFoto(e, idx) {
   e.stopPropagation();
-  const f=_fotos[idx];
-  if(f.url?.startsWith('blob:'))URL.revokeObjectURL(f.url);
-  _fotos.splice(idx,1);
+  var f = _fotos[idx];
+  if (f.url && f.url.startsWith('blob:')) URL.revokeObjectURL(f.url);
+  _fotos.splice(idx, 1);
   renderFotos();
 }
-function fotoDragOver(e){e.preventDefault();document.getElementById('foto-drop-zone').classList.add('drag-over');}
-function fotoDragLeave(){document.getElementById('foto-drop-zone').classList.remove('drag-over');}
-function fotoDrop(e){
+function fotoDragOver(e) {
+  e.preventDefault();
+  document.getElementById('foto-drop-zone').classList.add('drag-over');
+}
+function fotoDragLeave() {
+  document.getElementById('foto-drop-zone').classList.remove('drag-over');
+}
+function fotoDrop(e) {
   e.preventDefault();
   document.getElementById('foto-drop-zone').classList.remove('drag-over');
   Array.from(e.dataTransfer.files).forEach(addFotoFile);
 }
-function thumbDragStart(idx){_fotoDragIdx=idx;setTimeout(()=>renderFotos(),0);}
-function thumbDragOver(e,idx){
+function thumbDragStart(idx) { _fotoDragIdx = idx; setTimeout(renderFotos, 0); }
+function thumbDragOver(e, idx) {
   e.preventDefault();
-  document.querySelectorAll('.photo-thumb').forEach((el,i)=>el.classList.toggle('drag-over-thumb',i===idx&&i!==_fotoDragIdx));
+  document.querySelectorAll('.photo-thumb').forEach(function(el, i) {
+    el.classList.toggle('drag-over-thumb', i === idx && i !== _fotoDragIdx);
+  });
 }
-function thumbDragLeave(idx){document.querySelectorAll('.photo-thumb')[idx]?.classList.remove('drag-over-thumb');}
-function thumbDragEnd(){_fotoDragIdx=null;renderFotos();}
-function thumbDrop(e,toIdx){
-  e.preventDefault();e.stopPropagation();
-  if(_fotoDragIdx===null||_fotoDragIdx===toIdx)return;
-  const moved=_fotos.splice(_fotoDragIdx,1)[0];
-  _fotos.splice(toIdx,0,moved);
-  _fotoDragIdx=null;
+function thumbDragLeave(idx) {
+  var thumbs = document.querySelectorAll('.photo-thumb');
+  if (thumbs[idx]) thumbs[idx].classList.remove('drag-over-thumb');
+}
+function thumbDragEnd() { _fotoDragIdx = null; renderFotos(); }
+function thumbDrop(e, toIdx) {
+  e.preventDefault(); e.stopPropagation();
+  if (_fotoDragIdx === null || _fotoDragIdx === toIdx) return;
+  var moved = _fotos.splice(_fotoDragIdx, 1)[0];
+  _fotos.splice(toIdx, 0, moved);
+  _fotoDragIdx = null;
   renderFotos();
 }
 
-// \u2500\u2500 RELACIONADOS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-async function loadAutoRelated(principio,excludeId){
-  if(!principio){document.getElementById('rel-auto-box').style.display='none';return;}
-  const {data}=await _db.from('productos').select('id,nombre,precio_costo').eq('principio_activo',principio).eq('activo',true).neq('id',excludeId||0).limit(10);
-  const box=document.getElementById('rel-auto-box');
-  if(data&&data.length){
-    document.getElementById('rel-auto-list').innerHTML=data.map(p=>`<div class="rel-auto-item"><span>${p.nombre}</span><span style="color:var(--green);font-weight:600">$${(p.precio_costo||0).toFixed(2)}</span></div>`).join('');
-    box.style.display='block';
-  }else{
-    box.style.display='none';
+// RELACIONADOS
+async function loadAutoRelated(principio, excludeId) {
+  if (!principio) { document.getElementById('rel-auto-box').style.display = 'none'; return; }
+  var res = await _db.from('productos').select('id,nombre,precio_costo')
+    .eq('principio_activo', principio).eq('activo', true).neq('id', excludeId || 0).limit(10);
+  var box = document.getElementById('rel-auto-box');
+  if (res.data && res.data.length) {
+    var html = '';
+    res.data.forEach(function(p) {
+      html += '<div class="rel-auto-item"><span>' + p.nombre + '</span>';
+      html += '<span style="color:var(--green);font-weight:600">$' + (p.precio_costo || 0).toFixed(2) + '</span></div>';
+    });
+    document.getElementById('rel-auto-list').innerHTML = html;
+    box.style.display = 'block';
+  } else {
+    box.style.display = 'none';
   }
 }
 
-async function onActivoChange(){
-  const principio=document.getElementById('f-activo').value.trim();
-  const excludeId=parseInt(document.getElementById('f-id').value)||0;
-  if(principio.length>=3)await loadAutoRelated(principio,excludeId);
-  else document.getElementById('rel-auto-box').style.display='none';
+async function onActivoChange() {
+  var principio = document.getElementById('f-activo').value.trim();
+  var excludeId = parseInt(document.getElementById('f-id').value) || 0;
+  if (principio.length >= 3) await loadAutoRelated(principio, excludeId);
+  else document.getElementById('rel-auto-box').style.display = 'none';
 }
 
-async function onRelSearch(){
-  const q=document.getElementById('rel-search').value.trim();
+async function onRelSearch() {
+  var q = document.getElementById('rel-search').value.trim();
   clearTimeout(_relSearchTimer);
-  if(q.length<2){closeRelDropdown();return;}
-  _relSearchTimer=setTimeout(async()=>{
-    const {data}=await _db.from('productos').select('id,nombre,principio_activo,precio_costo').ilike('nombre','%'+q+'%').eq('activo',true).limit(8);
-    const dd=document.getElementById('rel-dropdown');
-    const currentId=parseInt(document.getElementById('f-id').value)||0;
-    const filtered=(data||[]).filter(p=>p.id!==currentId&&!_manualRel.find(r=>r.id===p.id));
-    if(!filtered.length){closeRelDropdown();return;}
-    dd.innerHTML=filtered.map(p=>`
-      <div class="rel-drop-item" onmousedown="addManualRelById(${p.id})">
-        <div class="rel-drop-name">${p.nombre}</div>
-        <div class="rel-drop-sub">${p.principio_activo||''} \u00b7 $${(p.precio_costo||0).toFixed(2)}</div>
-      </div>`).join('');
+  if (q.length < 2) { closeRelDropdown(); return; }
+  _relSearchTimer = setTimeout(async function() {
+    var res = await _db.from('productos').select('id,nombre,principio_activo,precio_costo')
+      .ilike('nombre', '%' + q + '%').eq('activo', true).limit(8);
+    var dd = document.getElementById('rel-dropdown');
+    var currentId = parseInt(document.getElementById('f-id').value) || 0;
+    var filtered = (res.data || []).filter(function(p) {
+      return p.id !== currentId && !_manualRel.find(function(r) { return r.id === p.id; });
+    });
+    if (!filtered.length) { closeRelDropdown(); return; }
+    var html = '';
+    filtered.forEach(function(p) {
+      html += '<div class="rel-drop-item" onmousedown="addManualRelById(' + p.id + ')">';
+      html += '<div class="rel-drop-name">' + p.nombre + '</div>';
+      html += '<div class="rel-drop-sub">' + (p.principio_activo || '') + ' | $' + (p.precio_costo || 0).toFixed(2) + '</div>';
+      html += '</div>';
+    });
+    dd.innerHTML = html;
     dd.classList.add('open');
-  },300);
+  }, 300);
 }
 
-function openRelDropdown(){const dd=document.getElementById('rel-dropdown');if(dd.innerHTML)dd.classList.add('open');}
-function blurRelDropdown(){setTimeout(closeRelDropdown,200);}
-function closeRelDropdown(){document.getElementById('rel-dropdown').classList.remove('open');}
-
-function addManualRelById(id){
-  const p=_productos.find(x=>x.id===id);
-  if(p)addManualRel(p.id,p.nombre,p.precio_costo||0,p.principio_activo||'');
+function openRelDropdown() {
+  var dd = document.getElementById('rel-dropdown');
+  if (dd.innerHTML) dd.classList.add('open');
 }
-function addManualRel(id,nombre,precio_costo,principio_activo){
-  if(_manualRel.length>=5||_manualRel.find(r=>r.id===id))return;
-  _manualRel.push({id,nombre,precio_costo,principio_activo});
-  document.getElementById('rel-search').value='';
+function blurRelDropdown() { setTimeout(closeRelDropdown, 200); }
+function closeRelDropdown() { document.getElementById('rel-dropdown').classList.remove('open'); }
+
+function addManualRelById(id) {
+  var p = null;
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { p = _productos[i]; break; }
+  }
+  if (p) addManualRel(p.id, p.nombre, p.precio_costo || 0, p.principio_activo || '');
+}
+function addManualRel(id, nombre, precio_costo, principio_activo) {
+  if (_manualRel.length >= 5) return;
+  for (var i = 0; i < _manualRel.length; i++) { if (_manualRel[i].id === id) return; }
+  _manualRel.push({id: id, nombre: nombre, precio_costo: precio_costo, principio_activo: principio_activo});
+  document.getElementById('rel-search').value = '';
   closeRelDropdown();
   renderManualRels();
 }
-function removeManualRel(idx){_manualRel.splice(idx,1);renderManualRels();}
-function renderManualRels(){
-  document.getElementById('rel-manual-list').innerHTML=_manualRel.map((r,i)=>`
-    <div class="rel-manual-card">
-      <div class="rel-manual-info">
-        <span class="rel-manual-name">${r.nombre}</span>
-        <span class="rel-manual-price">$${(r.precio_costo||0).toFixed(2)}</span>
-      </div>
-      <button class="rel-manual-del" onclick="removeManualRel(${i})" type="button">\u2715</button>
-    </div>`).join('');
-  document.getElementById('rel-limit-msg').style.display=_manualRel.length>=5?'block':'none';
+function removeManualRel(idx) { _manualRel.splice(idx, 1); renderManualRels(); }
+function renderManualRels() {
+  var html = '';
+  _manualRel.forEach(function(r, i) {
+    html += '<div class="rel-manual-card">';
+    html += '<div class="rel-manual-info">';
+    html += '<span class="rel-manual-name">' + r.nombre + '</span>';
+    html += '<span class="rel-manual-price">$' + (r.precio_costo || 0).toFixed(2) + '</span>';
+    html += '</div>';
+    html += '<button class="rel-manual-del" onclick="removeManualRel(' + i + ')" type="button">x</button>';
+    html += '</div>';
+  });
+  document.getElementById('rel-manual-list').innerHTML = html;
+  document.getElementById('rel-limit-msg').style.display = _manualRel.length >= 5 ? 'block' : 'none';
 }
 
-function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
+function logout() { _db.auth.signOut().then(function() { window.location.href = '/portal/login.html'; }); }
 </script>
 </body>
 </html>
