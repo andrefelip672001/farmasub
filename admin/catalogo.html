@@ -376,41 +376,51 @@ function closeModalClick(e) {
   if (e.target === document.getElementById('modal-overlay')) closeModal();
 }
 
-async function editProducto(id) {
-  var p = null;
+async function editarProducto(id) {
+  var producto = null;
   for (var i = 0; i < _productos.length; i++) {
-    if (_productos[i].id === id) { p = _productos[i]; break; }
+    if (_productos[i].id === id) {
+      producto = _productos[i];
+      break;
+    }
   }
-  if (!p) return;
-  _resetModal();
-  document.getElementById('modal-title').textContent = 'Editar producto';
-  document.getElementById('f-id').value = p.id;
-  document.getElementById('f-nombre').value = p.nombre || '';
-  document.getElementById('f-activo').value = p.principio_activo || '';
-  document.getElementById('f-categoria').value = p.categoria_id || '';
-  document.getElementById('f-unidades').value = p.unidades_caja || '';
-  document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
-  document.getElementById('f-pcosto').value = p.precio_costo || '';
-  document.getElementById('f-stock').value = p.stock || '';
-  document.getElementById('f-receta').checked = !!p.requiere_receta;
-  document.getElementById('f-indicaciones').value = p.indicaciones || '';
-  document.getElementById('f-dosis').value = p.dosis || '';
-  document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
-  document.getElementById('f-efectos').value = p.efectos_secundarios || '';
+  if (!producto) return;
 
-  var res = await Promise.all([
-    _db.from('producto_fotos').select('*').eq('producto_id', id).order('orden'),
-    _db.from('productos_relacionados').select('relacionado_id,productos!relacionado_id(id,nombre,precio_costo,principio_activo)').eq('producto_id', id).eq('tipo', 'manual')
-  ]);
-  var fotos = res[0].data || [];
-  var rels = res[1].data || [];
-  fotos.forEach(function(f) { _fotos.push({file: null, url: FOTO_URL_BASE + f.path, path: f.path}); });
-  renderFotos();
-  rels.forEach(function(r) { if (r.productos) _manualRel.push(r.productos); });
-  renderManualRels();
-  if (p.principio_activo) await loadAutoRelated(p.principio_activo, id);
+  _resetModal();
+  document.getElementById('f-id').value = id;
+  document.getElementById('modal-title').innerHTML = 'Editar producto';
+  document.getElementById('f-nombre').value = producto.nombre || '';
+  document.getElementById('f-activo').value = producto.principio_activo || '';
+  document.getElementById('f-categoria').value = producto.categoria_id || '';
+  document.getElementById('f-unidades').value = producto.unidades_caja || '';
+  document.getElementById('f-pfarmacia').value = producto.precio_farmacia || '';
+  document.getElementById('f-pcosto').value = producto.precio_costo || '';
+  document.getElementById('f-stock').value = producto.stock || '';
+  document.getElementById('f-receta').checked = producto.requiere_receta || false;
+  document.getElementById('f-indicaciones').value = producto.indicaciones || '';
+  document.getElementById('f-dosis').value = producto.dosis || '';
+  document.getElementById('f-contraindicaciones').value = producto.contraindicaciones || '';
+  document.getElementById('f-efectos').value = producto.efectos_secundarios || '';
+
+  _fotos = [];
+
+  var fotosRes = await _db
+    .from('producto_fotos')
+    .select('*')
+    .eq('producto_id', id)
+    .order('orden');
+
+  if (fotosRes.data) {
+    fotosRes.data.forEach(function(f) {
+      _fotos.push({file: null, url: FOTO_URL_BASE + f.path, path: f.path});
+    });
+    renderFotos();
+  }
+
+  document.getElementById('modal-error').style.display = 'none';
   document.getElementById('modal-overlay').classList.add('open');
 }
+function editProducto(id) { editarProducto(id); }
 
 function _showModalError(msg) {
   document.getElementById('modal-error-msg').textContent = msg;
