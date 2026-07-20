@@ -6,44 +6,44 @@
 [[redirects]]
   from = "/admin/catalogo"
   to = "/admin/catalogo.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/admin/dashboard"
   to = "/admin/dashboard.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/admin/suscriptores"
   to = "/admin/suscriptores.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/admin/pedidos"
   to = "/admin/pedidos.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/portal/dashboard"
   to = "/portal/dashboard.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/portal/catalogo"
   to = "/portal/catalogo.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/portal/pedido"
   to = "/portal/pedido.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/portal/mis-pedidos"
   to = "/portal/mis-pedidos.html"
-  status = 200
+  status = 301
 
 [[redirects]]
   from = "/portal/cuenta"
   to = "/portal/cuenta.html"
-  status = 200
+  status = 301
