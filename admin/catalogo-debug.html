@@ -322,7 +322,157 @@ tr:hover td{background:var(--green-light);}
     </div>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">  _resetModal();
+  document.getElementById('modal-title').textContent = 'Agregar producto';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function closeModalClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) { closeModal(); }
+}
+
+async function guardarProducto() {
+  var id = document.getElementById('f-id').value;
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var activo = document.getElementById('f-activo').value.trim();
+  var catId = document.getElementById('f-categoria').value;
+  var unidades = document.getElementById('f-unidades').value;
+  var pfarmacia = document.getElementById('f-pfarmacia').value;
+  var pcosto = document.getElementById('f-pcosto').value;
+  var stock = document.getElementById('f-stock').value;
+  var receta = document.getElementById('f-receta').checked;
+  var indicaciones = document.getElementById('f-indicaciones').value.trim();
+  var dosis = document.getElementById('f-dosis').value.trim();
+  var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
+  var efectos = document.getElementById('f-efectos').value.trim();
+
+  var valid = true;
+  if (!catId) {
+    document.getElementById('err-categoria').style.display = 'block';
+    valid = false;
+  } else {
+    document.getElementById('err-categoria').style.display = 'none';
+  }
+  if (_fotoItems.length === 0) {
+    document.getElementById('err-fotos').style.display = 'block';
+    valid = false;
+  } else {
+    document.getElementById('err-fotos').style.display = 'none';
+  }
+  if (!nombre || !pfarmacia || !pcosto) {
+    showModalError('Nombre, precio farmacia y precio costo son obligatorios.');
+    return;
+  }
+  if (!valid) { return; }
+
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  document.getElementById('modal-error').style.display = 'none';
+
+  var payload = {
+    nombre: nombre,
+    principio_activo: activo || null,
+    categoria_id: catId ? Number(catId) : null,
+    unidades_por_caja: unidades ? Number(unidades) : null,
+    precio_farmacia: pfarmacia ? Number(pfarmacia) : null,
+    precio_costo: pcosto ? Number(pcosto) : null,
+    stock: stock ? Number(stock) : 0,
+    requiere_receta: receta,
+    indicaciones: indicaciones || null,
+    dosis: dosis || null,
+    contraindicaciones: contraindicaciones || null,
+    efectos_secundarios: efectos || null
+  };
+
+  var prodId;
+  if (id) {
+    var upd = await sb.from('productos').update(payload).eq('id', Number(id)).select('id').single();
+    if (upd.error) { showModalError(upd.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+    prodId = Number(id);
+  } else {
+    payload.activo = true;
+    var ins = await sb.from('productos').insert(payload).select('id').single();
+    if (ins.error) { showModalError(ins.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+    prodId = ins.data.id;
+  }
+
+  var fotoErr = await syncFotos(prodId);
+  if (fotoErr) { showModalError(fotoErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+
+  var relErr = await syncRelManuales(prodId);
+  if (relErr) { showModalError(relErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+
+  closeModal();
+  await loadProductos();
+}
+
+function showModalError(msg) {
+  document.getElementById('modal-error-msg').textContent = msg;
+  document.getElementById('modal-error').style.display = 'block';
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = false;
+  btn.textContent = 'Guardar producto';
+}
+
+async function editarProducto(id) {
+  _resetModal();
+  document.getElementById('modal-title').textContent = 'Editar producto';
+  document.getElementById('modal-overlay').classList.add('open');
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Cargando...';
+
+  var res = await sb.from('productos').select('*').eq('id', id).single();
+  if (res.error) { showModalError(res.error.message); return; }
+  var p = res.data;
+
+  document.getElementById('f-id').value = p.id;
+  document.getElementById('f-nombre').value = p.nombre || '';
+  document.getElementById('f-activo').value = p.principio_activo || '';
+  document.getElementById('f-categoria').value = p.categoria_id || '';
+  document.getElementById('f-unidades').value = p.unidades_por_caja || '';
+  document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
+  document.getElementById('f-pcosto').value = p.precio_costo || '';
+  document.getElementById('f-stock').value = p.stock || '';
+  document.getElementById('f-receta').checked = !!p.requiere_receta;
+  document.getElementById('f-indicaciones').value = p.indicaciones || '';
+  document.getElementById('f-dosis').value = p.dosis || '';
+  document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
+  document.getElementById('f-efectos').value = p.efectos_secundarios || '';
+
+  var fotosRes = await sb.from('producto_fotos').select('id,url,orden').eq('producto_id', id).order('orden');
+  if (!fotosRes.error && fotosRes.data) {
+    _fotoItems = [];
+    for (var i = 0; i < fotosRes.data.length; i++) {
+      _fotoItems.push({ existing: true, id: fotosRes.data[i].id, url: fotosRes.data[i].url, orden: fotosRes.data[i].orden });
+    }
+    renderFotos();
+  }
+
+  if (p.principio_activo) { onActivoChange(); }
+
+  btn.disabled = false;
+  btn.textContent = 'Guardar producto';
+}
+
+function editProducto(id) { editarProducto(id); }
+
+async function toggleActivo(id, actual) {
+  var nuevoEstado = !actual;
+  var res = await sb.from('productos').update({ activo: nuevoEstado }).eq('id', id);
+  if (res.error) { alert('Error: ' + res.error.message); return; }
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { _productos[i].activo = nuevoEstado; break; }
+  }
+  renderTable(_productos);
+}
+
+</script>
 <script>
 var SUPABASE_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
@@ -474,6 +624,156 @@ function _resetModal() {
 }
 
 function openModal() {
+  _resetModal();
+  document.getElementById('modal-title').textContent = 'Agregar producto';
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function closeModalClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) { closeModal(); }
+}
+
+async function guardarProducto() {
+  var id = document.getElementById('f-id').value;
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var activo = document.getElementById('f-activo').value.trim();
+  var catId = document.getElementById('f-categoria').value;
+  var unidades = document.getElementById('f-unidades').value;
+  var pfarmacia = document.getElementById('f-pfarmacia').value;
+  var pcosto = document.getElementById('f-pcosto').value;
+  var stock = document.getElementById('f-stock').value;
+  var receta = document.getElementById('f-receta').checked;
+  var indicaciones = document.getElementById('f-indicaciones').value.trim();
+  var dosis = document.getElementById('f-dosis').value.trim();
+  var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
+  var efectos = document.getElementById('f-efectos').value.trim();
+
+  var valid = true;
+  if (!catId) {
+    document.getElementById('err-categoria').style.display = 'block';
+    valid = false;
+  } else {
+    document.getElementById('err-categoria').style.display = 'none';
+  }
+  if (_fotoItems.length === 0) {
+    document.getElementById('err-fotos').style.display = 'block';
+    valid = false;
+  } else {
+    document.getElementById('err-fotos').style.display = 'none';
+  }
+  if (!nombre || !pfarmacia || !pcosto) {
+    showModalError('Nombre, precio farmacia y precio costo son obligatorios.');
+    return;
+  }
+  if (!valid) { return; }
+
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  document.getElementById('modal-error').style.display = 'none';
+
+  var payload = {
+    nombre: nombre,
+    principio_activo: activo || null,
+    categoria_id: catId ? Number(catId) : null,
+    unidades_por_caja: unidades ? Number(unidades) : null,
+    precio_farmacia: pfarmacia ? Number(pfarmacia) : null,
+    precio_costo: pcosto ? Number(pcosto) : null,
+    stock: stock ? Number(stock) : 0,
+    requiere_receta: receta,
+    indicaciones: indicaciones || null,
+    dosis: dosis || null,
+    contraindicaciones: contraindicaciones || null,
+    efectos_secundarios: efectos || null
+  };
+
+  var prodId;
+  if (id) {
+    var upd = await sb.from('productos').update(payload).eq('id', Number(id)).select('id').single();
+    if (upd.error) { showModalError(upd.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+    prodId = Number(id);
+  } else {
+    payload.activo = true;
+    var ins = await sb.from('productos').insert(payload).select('id').single();
+    if (ins.error) { showModalError(ins.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+    prodId = ins.data.id;
+  }
+
+  var fotoErr = await syncFotos(prodId);
+  if (fotoErr) { showModalError(fotoErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+
+  var relErr = await syncRelManuales(prodId);
+  if (relErr) { showModalError(relErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+
+  closeModal();
+  await loadProductos();
+}
+
+function showModalError(msg) {
+  document.getElementById('modal-error-msg').textContent = msg;
+  document.getElementById('modal-error').style.display = 'block';
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = false;
+  btn.textContent = 'Guardar producto';
+}
+
+async function editarProducto(id) {
+  _resetModal();
+  document.getElementById('modal-title').textContent = 'Editar producto';
+  document.getElementById('modal-overlay').classList.add('open');
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Cargando...';
+
+  var res = await sb.from('productos').select('*').eq('id', id).single();
+  if (res.error) { showModalError(res.error.message); return; }
+  var p = res.data;
+
+  document.getElementById('f-id').value = p.id;
+  document.getElementById('f-nombre').value = p.nombre || '';
+  document.getElementById('f-activo').value = p.principio_activo || '';
+  document.getElementById('f-categoria').value = p.categoria_id || '';
+  document.getElementById('f-unidades').value = p.unidades_por_caja || '';
+  document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
+  document.getElementById('f-pcosto').value = p.precio_costo || '';
+  document.getElementById('f-stock').value = p.stock || '';
+  document.getElementById('f-receta').checked = !!p.requiere_receta;
+  document.getElementById('f-indicaciones').value = p.indicaciones || '';
+  document.getElementById('f-dosis').value = p.dosis || '';
+  document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
+  document.getElementById('f-efectos').value = p.efectos_secundarios || '';
+
+  var fotosRes = await sb.from('producto_fotos').select('id,url,orden').eq('producto_id', id).order('orden');
+  if (!fotosRes.error && fotosRes.data) {
+    _fotoItems = [];
+    for (var i = 0; i < fotosRes.data.length; i++) {
+      _fotoItems.push({ existing: true, id: fotosRes.data[i].id, url: fotosRes.data[i].url, orden: fotosRes.data[i].orden });
+    }
+    renderFotos();
+  }
+
+  if (p.principio_activo) { onActivoChange(); }
+
+  btn.disabled = false;
+  btn.textContent = 'Guardar producto';
+}
+
+function editProducto(id) { editarProducto(id); }
+
+async function toggleActivo(id, actual) {
+  var nuevoEstado = !actual;
+  var res = await sb.from('productos').update({ activo: nuevoEstado }).eq('id', id);
+  if (res.error) { alert('Error: ' + res.error.message); return; }
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { _productos[i].activo = nuevoEstado; break; }
+  }
+  renderTable(_productos);
+}
+
 </script>
 </body>
 </html>
