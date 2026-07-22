@@ -2,10 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Catalogo Admin - MediCosto</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<title>Test</title>
 <style>
 :root{
   --green:#1A6B4A;--green-light:#EAF4EE;--green-menta:#ADEBB3;--green-mid:#2E8A62;
@@ -128,6 +125,7 @@ tr:hover td{background:var(--green-light);}
 </style>
 </head>
 <body>
+<body>
 <div class="app">
 
 <nav class="top-nav">
@@ -166,7 +164,7 @@ tr:hover td{background:var(--green-light);}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
       Pedidos
     </a>
-    <a href="/admin/catalogo-v2.html" class="sb-link active">
+    <a href="/admin/catalogo.html" class="sb-link active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
       Catalogo
     </a>
@@ -324,8 +322,465 @@ tr:hover td{background:var(--green-light);}
     </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js">  _resetModal();
+  document.getElementById('modal-title').textContent = 'Agregar producto';
+  document.getElementById('modal-overlay').classList.add('open');
+}
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function closeModalClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) { closeModal(); }
+}
+
+async function guardarProducto() {
+  var id = document.getElementById('f-id').value;
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var activo = document.getElementById('f-activo').value.trim();
+  var catId = document.getElementById('f-categoria').value;
+  var unidades = document.getElementById('f-unidades').value;
+  var pfarmacia = document.getElementById('f-pfarmacia').value;
+  var pcosto = document.getElementById('f-pcosto').value;
+  var stock = document.getElementById('f-stock').value;
+  var receta = document.getElementById('f-receta').checked;
+  var indicaciones = document.getElementById('f-indicaciones').value.trim();
+  var dosis = document.getElementById('f-dosis').value.trim();
+  var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
+  var efectos = document.getElementById('f-efectos').value.trim();
+
+  var valid = true;
+  if (!catId) {
+    document.getElementById('err-categoria').style.display = 'block';
+    valid = false;
+  } else {
+    document.getElementById('err-categoria').style.display = 'none';
+  }
+  if (_fotoItems.length === 0) {
+    document.getElementById('err-fotos').style.display = 'block';
+    valid = false;
+  } else {
+    document.getElementById('err-fotos').style.display = 'none';
+  }
+  if (!nombre || !pfarmacia || !pcosto) {
+    showModalError('Nombre, precio farmacia y precio costo son obligatorios.');
+    return;
+  }
+  if (!valid) { return; }
+
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+  document.getElementById('modal-error').style.display = 'none';
+
+  var payload = {
+    nombre: nombre,
+    principio_activo: activo || null,
+    categoria_id: catId ? Number(catId) : null,
+    unidades_por_caja: unidades ? Number(unidades) : null,
+    precio_farmacia: pfarmacia ? Number(pfarmacia) : null,
+    precio_costo: pcosto ? Number(pcosto) : null,
+    stock: stock ? Number(stock) : 0,
+    requiere_receta: receta,
+    indicaciones: indicaciones || null,
+    dosis: dosis || null,
+    contraindicaciones: contraindicaciones || null,
+    efectos_secundarios: efectos || null
+  };
+
+  var prodId;
+  if (id) {
+    var upd = await sb.from('productos').update(payload).eq('id', Number(id)).select('id').single();
+    if (upd.error) { showModalError(upd.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+    prodId = Number(id);
+  } else {
+    payload.activo = true;
+    var ins = await sb.from('productos').insert(payload).select('id').single();
+    if (ins.error) { showModalError(ins.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+    prodId = ins.data.id;
+  }
+
+  var fotoErr = await syncFotos(prodId);
+  if (fotoErr) { showModalError(fotoErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+
+  var relErr = await syncRelManuales(prodId);
+  if (relErr) { showModalError(relErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
+
+  closeModal();
+  await loadProductos();
+}
+
+function showModalError(msg) {
+  document.getElementById('modal-error-msg').textContent = msg;
+  document.getElementById('modal-error').style.display = 'block';
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = false;
+  btn.textContent = 'Guardar producto';
+}
+
+async function editarProducto(id) {
+  _resetModal();
+  document.getElementById('modal-title').textContent = 'Editar producto';
+  document.getElementById('modal-overlay').classList.add('open');
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Cargando...';
+
+  var res = await sb.from('productos').select('*').eq('id', id).single();
+  if (res.error) { showModalError(res.error.message); return; }
+  var p = res.data;
+
+  document.getElementById('f-id').value = p.id;
+  document.getElementById('f-nombre').value = p.nombre || '';
+  document.getElementById('f-activo').value = p.principio_activo || '';
+  document.getElementById('f-categoria').value = p.categoria_id || '';
+  document.getElementById('f-unidades').value = p.unidades_por_caja || '';
+  document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
+  document.getElementById('f-pcosto').value = p.precio_costo || '';
+  document.getElementById('f-stock').value = p.stock || '';
+  document.getElementById('f-receta').checked = !!p.requiere_receta;
+  document.getElementById('f-indicaciones').value = p.indicaciones || '';
+  document.getElementById('f-dosis').value = p.dosis || '';
+  document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
+  document.getElementById('f-efectos').value = p.efectos_secundarios || '';
+
+  var fotosRes = await sb.from('producto_fotos').select('id,url,orden').eq('producto_id', id).order('orden');
+  if (!fotosRes.error && fotosRes.data) {
+    _fotoItems = [];
+    for (var i = 0; i < fotosRes.data.length; i++) {
+      _fotoItems.push({ existing: true, id: fotosRes.data[i].id, url: fotosRes.data[i].url, orden: fotosRes.data[i].orden });
+    }
+    renderFotos();
+  }
+
+  if (p.principio_activo) { onActivoChange(); }
+
+  btn.disabled = false;
+  btn.textContent = 'Guardar producto';
+}
+
+function editProducto(id) { editarProducto(id); }
+
+async function toggleActivo(id, actual) {
+  var nuevoEstado = !actual;
+  var res = await sb.from('productos').update({ activo: nuevoEstado }).eq('id', id);
+  if (res.error) { alert('Error: ' + res.error.message); return; }
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { _productos[i].activo = nuevoEstado; break; }
+  }
+  renderTable(_productos);
+}
+
+function renderFotos() {
+  var previews = document.getElementById('foto-previews');
+  var counter = document.getElementById('foto-counter');
+  var dropZone = document.getElementById('foto-drop-zone');
+  previews.innerHTML = '';
+  if (_fotoItems.length === 0) {
+    counter.textContent = '';
+    dropZone.classList.remove('disabled');
+    return;
+  }
+  counter.textContent = _fotoItems.length + ' / 3 foto' + (_fotoItems.length !== 1 ? 's' : '');
+  if (_fotoItems.length >= 3) {
+    dropZone.classList.add('disabled');
+  } else {
+    dropZone.classList.remove('disabled');
+  }
+  for (var i = 0; i < _fotoItems.length; i++) {
+    (function(idx) {
+      var item = _fotoItems[idx];
+      var div = document.createElement('div');
+      div.className = 'photo-thumb';
+      div.draggable = true;
+      var img = document.createElement('img');
+      img.src = item.previewUrl || item.url || '';
+      var del = document.createElement('button');
+      del.className = 'photo-thumb-del';
+      del.type = 'button';
+      del.innerHTML = '&#x2715;';
+      del.onclick = function() { _fotoItems.splice(idx, 1); renderFotos(); };
+      div.appendChild(img);
+      div.appendChild(del);
+      if (idx === 0) {
+        var badge = document.createElement('span');
+        badge.className = 'photo-badge-main';
+        badge.textContent = 'Principal';
+        div.appendChild(badge);
+      }
+      div.addEventListener('dragstart', function() {
+        _dragSrcIdx = idx;
+        setTimeout(function() { div.classList.add('dragging'); }, 0);
+      });
+      div.addEventListener('dragend', function() {
+        div.classList.remove('dragging');
+        _dragSrcIdx = null;
+        document.querySelectorAll('.photo-thumb').forEach(function(t) { t.classList.remove('drag-over-thumb'); });
+      });
+      div.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        div.classList.add('drag-over-thumb');
+      });
+      div.addEventListener('dragleave', function() {
+        div.classList.remove('drag-over-thumb');
+      });
+      div.addEventListener('drop', function(e) {
+        e.preventDefault();
+        div.classList.remove('drag-over-thumb');
+        if (_dragSrcIdx === null || _dragSrcIdx === idx) { return; }
+        var moved = _fotoItems.splice(_dragSrcIdx, 1)[0];
+        _fotoItems.splice(idx, 0, moved);
+        renderFotos();
+      });
+      previews.appendChild(div);
+    })(i);
+  }
+}
+
+function fotoDragOver(e) {
+  e.preventDefault();
+  document.getElementById('foto-drop-zone').classList.add('drag-over');
+}
+
+function fotoDragLeave(e) {
+  document.getElementById('foto-drop-zone').classList.remove('drag-over');
+}
+
+function fotoDrop(e) {
+  e.preventDefault();
+  document.getElementById('foto-drop-zone').classList.remove('drag-over');
+  var files = e.dataTransfer.files;
+  addFotoFiles(files);
+}
+
+function fotoFileChange(input) {
+  addFotoFiles(input.files);
+  input.value = '';
+}
+
+function addFotoFiles(files) {
+  var remaining = 3 - _fotoItems.length;
+  if (remaining <= 0) { return; }
+  var added = 0;
+  for (var i = 0; i < files.length && added < remaining; i++) {
+    var f = files[i];
+    if (!f.type.match('image.*')) { continue; }
+    var url = URL.createObjectURL(f);
+    _fotoItems.push({ existing: false, file: f, previewUrl: url });
+    added++;
+  }
+  document.getElementById('err-fotos').style.display = 'none';
+  renderFotos();
+}
+
+async function syncFotos(prodId) {
+  var BUCKET = 'producto-fotos';
+  var toDelete = [];
+  var existingAfter = [];
+  var newItems = [];
+  for (var i = 0; i < _fotoItems.length; i++) {
+    if (_fotoItems[i].existing) {
+      existingAfter.push(_fotoItems[i]);
+    } else {
+      newItems.push({ item: _fotoItems[i], orden: i });
+    }
+  }
+
+  var fotosRes = await sb.from('producto_fotos').select('id,url,orden').eq('producto_id', prodId);
+  if (fotosRes.error) { return fotosRes.error.message; }
+  var dbFotos = fotosRes.data || [];
+  for (var j = 0; j < dbFotos.length; j++) {
+    var found = false;
+    for (var k = 0; k < existingAfter.length; k++) {
+      if (existingAfter[k].id === dbFotos[j].id) { found = true; break; }
+    }
+    if (!found) { toDelete.push(dbFotos[j]); }
+  }
+
+  for (var d = 0; d < toDelete.length; d++) {
+    var urlParts = toDelete[d].url.split('/producto-fotos/');
+    if (urlParts.length === 2) {
+      await sb.storage.from(BUCKET).remove([urlParts[1]]);
+    }
+    await sb.from('producto_fotos').delete().eq('id', toDelete[d].id);
+  }
+
+  for (var n = 0; n < newItems.length; n++) {
+    var ext = newItems[n].item.file.name.split('.').pop().toLowerCase();
+    var fname = prodId + '_' + Date.now() + '_' + n + '.' + ext;
+    var up = await sb.storage.from(BUCKET).upload(fname, newItems[n].item.file, { upsert: false, contentType: newItems[n].item.file.type });
+    if (up.error) { return up.error.message; }
+    var pub = sb.storage.from(BUCKET).getPublicUrl(fname);
+    var publicUrl = pub.data.publicUrl;
+    var ins = await sb.from('producto_fotos').insert({ producto_id: prodId, url: publicUrl, orden: newItems[n].orden });
+    if (ins.error) { return ins.error.message; }
+  }
+
+  for (var e = 0; e < existingAfter.length; e++) {
+    var newOrden = -1;
+    for (var f2 = 0; f2 < _fotoItems.length; f2++) {
+      if (_fotoItems[f2].existing && _fotoItems[f2].id === existingAfter[e].id) { newOrden = f2; break; }
+    }
+    if (newOrden !== existingAfter[e].orden) {
+      await sb.from('producto_fotos').update({ orden: newOrden }).eq('id', existingAfter[e].id);
+    }
+  }
+  return null;
+}
+
+function onActivoChange() {
+  var activo = document.getElementById('f-activo').value.trim().toLowerCase();
+  var autoBox = document.getElementById('rel-auto-box');
+  var autoList = document.getElementById('rel-auto-list');
+  if (!activo) { autoBox.style.display = 'none'; autoList.innerHTML = ''; return; }
+  var currentId = document.getElementById('f-id').value;
+  var matches = [];
+  for (var i = 0; i < _productos.length; i++) {
+    var p = _productos[i];
+    if (String(p.id) === String(currentId)) { continue; }
+    if (p.principio_activo && p.principio_activo.toLowerCase() === activo) {
+      matches.push(p);
+    }
+  }
+  if (matches.length === 0) { autoBox.style.display = 'none'; autoList.innerHTML = ''; return; }
+  autoList.innerHTML = '';
+  for (var j = 0; j < matches.length; j++) {
+    var div = document.createElement('div');
+    div.className = 'rel-auto-item';
+    div.textContent = matches[j].nombre;
+    autoList.appendChild(div);
+  }
+  autoBox.style.display = 'block';
+}
+
+function onRelSearch() {
+  var q = document.getElementById('rel-search').value.trim().toLowerCase();
+  var dd = document.getElementById('rel-dropdown');
+  if (!q) { dd.innerHTML = ''; dd.classList.remove('open'); return; }
+  var currentId = document.getElementById('f-id').value;
+  var results = [];
+  for (var i = 0; i < _productos.length; i++) {
+    var p = _productos[i];
+    if (String(p.id) === String(currentId)) { continue; }
+    var alreadyManual = false;
+    for (var m = 0; m < _relManuales.length; m++) {
+      if (_relManuales[m].id === p.id) { alreadyManual = true; break; }
+    }
+    if (alreadyManual) { continue; }
+    var nombre = (p.nombre || '').toLowerCase();
+    var pActivo = (p.principio_activo || '').toLowerCase();
+    if (nombre.indexOf(q) !== -1 || pActivo.indexOf(q) !== -1) {
+      results.push(p);
+    }
+    if (results.length >= 8) { break; }
+  }
+  dd.innerHTML = '';
+  if (results.length === 0) { dd.classList.remove('open'); return; }
+  for (var r = 0; r < results.length; r++) {
+    (function(prod) {
+      var item = document.createElement('div');
+      item.className = 'rel-drop-item';
+      var nameDiv = document.createElement('div');
+      nameDiv.className = 'rel-drop-name';
+      nameDiv.textContent = prod.nombre;
+      var subDiv = document.createElement('div');
+      subDiv.className = 'rel-drop-sub';
+      subDiv.textContent = prod.principio_activo || '';
+      item.appendChild(nameDiv);
+      item.appendChild(subDiv);
+      item.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        addManualRelById(prod.id);
+      });
+      dd.appendChild(item);
+    })(results[r]);
+  }
+  dd.classList.add('open');
+}
+
+function openRelDropdown() {
+  if (document.getElementById('rel-search').value.trim()) { onRelSearch(); }
+}
+
+function blurRelDropdown() {
+  if (_relDropTimer) { clearTimeout(_relDropTimer); }
+  _relDropTimer = setTimeout(function() {
+    document.getElementById('rel-dropdown').classList.remove('open');
+  }, 200);
+}
+
+function addManualRelById(id) {
+  if (_relManuales.length >= 5) { return; }
+  var prod = null;
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { prod = _productos[i]; break; }
+  }
+  if (!prod) { return; }
+  for (var j = 0; j < _relManuales.length; j++) {
+    if (_relManuales[j].id === id) { return; }
+  }
+  _relManuales.push(prod);
+  document.getElementById('rel-search').value = '';
+  document.getElementById('rel-dropdown').classList.remove('open');
+  renderRelManuales();
+}
+
+function removeManualRel(id) {
+  for (var i = 0; i < _relManuales.length; i++) {
+    if (_relManuales[i].id === id) { _relManuales.splice(i, 1); break; }
+  }
+  renderRelManuales();
+}
+
+function renderRelManuales() {
+  var list = document.getElementById('rel-manual-list');
+  var limitMsg = document.getElementById('rel-limit-msg');
+  list.innerHTML = '';
+  for (var i = 0; i < _relManuales.length; i++) {
+    (function(prod) {
+      var card = document.createElement('div');
+      card.className = 'rel-manual-card';
+      var info = document.createElement('div');
+      info.className = 'rel-manual-info';
+      var nameEl = document.createElement('span');
+      nameEl.className = 'rel-manual-name';
+      nameEl.textContent = prod.nombre;
+      var priceEl = document.createElement('span');
+      priceEl.className = 'rel-manual-price';
+      priceEl.textContent = fmt(prod.precio_farmacia);
+      info.appendChild(nameEl);
+      info.appendChild(priceEl);
+      var del = document.createElement('button');
+      del.className = 'rel-manual-del';
+      del.type = 'button';
+      del.innerHTML = '&#x2715;';
+      del.onclick = function() { removeManualRel(prod.id); };
+      card.appendChild(info);
+      card.appendChild(del);
+      list.appendChild(card);
+    })(_relManuales[i]);
+  }
+  limitMsg.style.display = _relManuales.length >= 5 ? 'block' : 'none';
+}
+
+async function syncRelManuales(prodId) {
+  var del = await sb.from('productos_relacionados').delete().eq('producto_id', prodId).eq('tipo', 'manual');
+  if (del.error) { return del.error.message; }
+  for (var i = 0; i < _relManuales.length; i++) {
+    var ins = await sb.from('productos_relacionados').insert({ producto_id: prodId, relacionado_id: _relManuales[i].id, tipo: 'manual' });
+    if (ins.error) { return ins.error.message; }
+  }
+  return null;
+}
+
+async function logout() {
+  await sb.auth.signOut();
+  location.href = '/admin/login.html';
+}
+
+init();
+</script>
 <script>
 var SUPABASE_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
