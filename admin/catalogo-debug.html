@@ -125,7 +125,203 @@ tr:hover td{background:var(--green-light);}
 </style>
 </head>
 <body>
-<h1>Test</h1>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="/admin/dashboard.html" class="nav-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 20 20" fill="none">
+          <path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
+          <path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="logo-text">Medi<span>Costo</span></span>
+    </a>
+    <span class="nav-tag">Panel Admin</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">A</div>
+      <span id="nav-nombre">Admin</span>
+    </div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesion</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="/admin/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Inicio
+    </a>
+    <a href="/admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Suscriptores
+    </a>
+    <a href="/admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Pedidos
+    </a>
+    <a href="/admin/catalogo-v2.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Catalogo
+    </a>
+    <hr class="sb-divider"/>
+    <a href="/admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Pagos
+    </a>
+  </aside>
+
+  <main class="main">
+    <h1 class="page-title">Catalogo de productos</h1>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" id="search" placeholder="Buscar producto o principio activo..." oninput="filterTable()"/>
+      </div>
+      <button class="btn-nuevo" onclick="openModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Agregar producto
+      </button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Principio activo</th>
+            <th>Categoria</th>
+            <th>P. farmacia</th>
+            <th>P. costo</th>
+            <th>Receta</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modal-title">Agregar producto</h2>
+      <button class="btn-close" onclick="closeModal()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <input type="hidden" id="f-id"/>
+    <div class="form-grid">
+      <div class="field fg-full">
+        <label>Nombre del producto *</label>
+        <input type="text" id="f-nombre" placeholder="Ej. Metformina 500mg"/>
+      </div>
+      <div class="field fg-full">
+        <label>Principio activo *</label>
+        <input type="text" id="f-activo" placeholder="Ej. Clorhidrato de Metformina" oninput="onActivoChange()"/>
+      </div>
+      <div class="field">
+        <label>Categoria *</label>
+        <select id="f-categoria"><option value="">-- Selecciona --</option></select>
+        <span class="err-msg" id="err-categoria">Selecciona una categoria</span>
+      </div>
+      <div class="field">
+        <label>Unidades por caja</label>
+        <input type="number" id="f-unidades" min="1" placeholder="30"/>
+      </div>
+      <div class="field">
+        <label>Precio farmacia ($) *</label>
+        <input type="number" id="f-pfarmacia" step="0.01" min="0" placeholder="0.00"/>
+      </div>
+      <div class="field">
+        <label>Precio costo ($) *</label>
+        <input type="number" id="f-pcosto" step="0.01" min="0" placeholder="0.00"/>
+      </div>
+      <div class="field">
+        <label>Stock actual</label>
+        <input type="number" id="f-stock" min="0" placeholder="0"/>
+      </div>
+      <div class="field" style="align-self:end">
+        <div class="check-row">
+          <input type="checkbox" id="f-receta"/>
+          <label for="f-receta">Requiere receta medica</label>
+        </div>
+      </div>
+      <div class="field fg-full">
+        <label>Indicaciones</label>
+        <textarea id="f-indicaciones" placeholder="Indicaciones del medicamento..."></textarea>
+      </div>
+      <div class="field fg-full">
+        <label>Dosis recomendada</label>
+        <textarea id="f-dosis" placeholder="Ej. 1 comprimido cada 12 horas..."></textarea>
+      </div>
+      <div class="field fg-full">
+        <label>Contraindicaciones</label>
+        <textarea id="f-contraindicaciones" placeholder="Contraindicado en casos de..."></textarea>
+      </div>
+      <div class="field fg-full">
+        <label>Efectos secundarios</label>
+        <textarea id="f-efectos" placeholder="Puede producir nauseas, mareos..."></textarea>
+      </div>
+    </div>
+
+    <!-- FOTOS -->
+    <div class="photo-section">
+      <div class="section-label">Fotos del producto <span style="color:var(--danger)">*</span></div>
+      <div class="photo-drop-zone" id="foto-drop-zone"
+           onclick="document.getElementById('foto-input').click()"
+           ondragover="fotoDragOver(event)"
+           ondragleave="fotoDragLeave(event)"
+           ondrop="fotoDrop(event)">
+        <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="fotoFileChange(this)"/>
+        <div class="photo-drop-text">Arrastra fotos aqui o haz clic para subir</div>
+        <div class="photo-drop-hint">JPG, PNG - Max. 3 fotos - La primera es la principal</div>
+      </div>
+      <div class="photo-counter" id="foto-counter"></div>
+      <div class="photo-previews" id="foto-previews"></div>
+      <span class="err-msg" id="err-fotos">Debe subir al menos 1 foto</span>
+    </div>
+
+    <!-- RELACIONADOS -->
+    <div class="rel-section">
+      <div class="section-label" style="margin-bottom:12px;">Productos relacionados</div>
+      <div class="rel-auto-box" id="rel-auto-box" style="display:none">
+        <div class="rel-auto-title">Relaciones automaticas por principio activo</div>
+        <div id="rel-auto-list"></div>
+        <p class="rel-auto-note">Se mostraran automaticamente al cliente cuando vea este producto</p>
+      </div>
+      <div class="rel-search-wrap">
+        <input class="rel-search-input" id="rel-search" type="text"
+               placeholder="Buscar producto para relacionar..."
+               oninput="onRelSearch()"
+               onfocus="openRelDropdown()"
+               onblur="blurRelDropdown()"
+               autocomplete="off"/>
+        <div class="rel-dropdown" id="rel-dropdown"></div>
+      </div>
+      <div class="rel-manual-list" id="rel-manual-list"></div>
+      <div class="rel-limit-msg" id="rel-limit-msg" style="display:none">Maximo 5 relaciones manuales</div>
+    </div>
+
+    <div class="modal-error" id="modal-error">
+      <strong>Error al guardar</strong>
+      <span id="modal-error-msg"></span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-guardar" id="btn-guardar" onclick="guardarProducto()">Guardar producto</button>
+    </div>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var SUPABASE_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
