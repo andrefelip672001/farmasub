@@ -327,7 +327,153 @@ tr:hover td{background:var(--green-light);}
 var SUPABASE_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
 var SUPABASE_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
 var sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-console.log('Supabase conectado:', sb);
+
+var _productos = [];
+var _categorias = [];
+var _fotoItems = [];
+var _relManuales = [];
+var _dragSrcIdx = null;
+var _relDropTimer = null;
+
+async function init() {
+  var s = await sb.auth.getSession();
+  if (!s.data.session) { location.href = '/admin/login.html'; return; }
+  var u = s.data.session.user;
+  var rol = (u.user_metadata && u.user_metadata.rol) || (u.app_metadata && u.app_metadata.rol);
+  if (!rol) {
+    var pr = await sb.from('perfiles').select('rol').eq('id', u.id).single();
+    rol = pr.data && pr.data.rol;
+  }
+  if (rol !== 'admin') { location.href = '/portal/dashboard.html'; return; }
+  var inicial = (u.user_metadata && u.user_metadata.nombre)
+    ? u.user_metadata.nombre.charAt(0).toUpperCase()
+    : u.email.charAt(0).toUpperCase();
+  var nombre = (u.user_metadata && u.user_metadata.nombre) ? u.user_metadata.nombre : u.email;
+  document.getElementById('nav-avatar').textContent = inicial;
+  document.getElementById('nav-nombre').textContent = nombre;
+  await loadCategorias();
+  await loadProductos();
+}
+
+async function loadCategorias() {
+  var res = await sb.from('categorias').select('id,nombre').order('nombre');
+  if (res.error) { console.error('categorias:', res.error); return; }
+  _categorias = res.data || [];
+  var sel = document.getElementById('f-categoria');
+  sel.innerHTML = '<option value="">-- Selecciona --</option>';
+  for (var i = 0; i < _categorias.length; i++) {
+    var op = document.createElement('option');
+    op.value = _categorias[i].id;
+    op.textContent = _categorias[i].nombre;
+    sel.appendChild(op);
+  }
+}
+
+async function loadProductos() {
+  var tbody = document.getElementById('tbody');
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>';
+  var res = await sb.from('productos').select('id,nombre,principio_activo,categoria_id,precio_farmacia,precio_costo,requiere_receta,activo').order('nombre');
+  if (res.error) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--danger)">Error al cargar productos</td></tr>';
+    return;
+  }
+  _productos = res.data || [];
+  renderTable(_productos);
+}
+
+function catNombre(id) {
+  for (var i = 0; i < _categorias.length; i++) {
+    if (_categorias[i].id === id) { return _categorias[i].nombre; }
+  }
+  return '\u2014';
+}
+
+function fmt(n) {
+  if (n == null) { return '\u2014'; }
+  return '$' + Number(n).toFixed(2);
+}
+
+function renderTable(lista) {
+  var tbody = document.getElementById('tbody');
+  if (!lista || lista.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Sin productos</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < lista.length; i++) {
+    var p = lista[i];
+    var estadoBadge = p.activo
+      ? '<span class="badge-activo">Activo</span>'
+      : '<span class="badge-inactivo">Inactivo</span>';
+    var recetaBadge = p.requiere_receta
+      ? '<span class="badge-receta">Receta</span>'
+      : '\u2014';
+    var btnToggleLabel = p.activo ? 'Desactivar' : 'Activar';
+    html += '<tr>';
+    html += '<td>' + (p.nombre || '') + '</td>';
+    html += '<td>' + (p.principio_activo || '\u2014') + '</td>';
+    html += '<td>' + catNombre(p.categoria_id) + '</td>';
+    html += '<td>' + fmt(p.precio_farmacia) + '</td>';
+    html += '<td>' + fmt(p.precio_costo) + '</td>';
+    html += '<td>' + recetaBadge + '</td>';
+    html += '<td>' + estadoBadge + '</td>';
+    html += '<td>';
+    html += '<button class="btn-edit" onclick="editProducto(' + p.id + ')">Editar</button>';
+    html += '<button class="btn-toggle" onclick="toggleActivo(' + p.id + ',' + (p.activo ? 'true' : 'false') + ')">' + btnToggleLabel + '</button>';
+    html += '</td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function filterTable() {
+  var q = document.getElementById('search').value.toLowerCase();
+  if (!q) { renderTable(_productos); return; }
+  var filtered = [];
+  for (var i = 0; i < _productos.length; i++) {
+    var p = _productos[i];
+    var nombre = (p.nombre || '').toLowerCase();
+    var activo = (p.principio_activo || '').toLowerCase();
+    if (nombre.indexOf(q) !== -1 || activo.indexOf(q) !== -1) {
+      filtered.push(p);
+    }
+  }
+  renderTable(filtered);
+}
+
+function _resetModal() {
+  document.getElementById('f-id').value = '';
+  document.getElementById('f-nombre').value = '';
+  document.getElementById('f-activo').value = '';
+  document.getElementById('f-categoria').value = '';
+  document.getElementById('f-unidades').value = '';
+  document.getElementById('f-pfarmacia').value = '';
+  document.getElementById('f-pcosto').value = '';
+  document.getElementById('f-stock').value = '';
+  document.getElementById('f-receta').checked = false;
+  document.getElementById('f-indicaciones').value = '';
+  document.getElementById('f-dosis').value = '';
+  document.getElementById('f-contraindicaciones').value = '';
+  document.getElementById('f-efectos').value = '';
+  document.getElementById('err-categoria').style.display = 'none';
+  document.getElementById('err-fotos').style.display = 'none';
+  document.getElementById('modal-error').style.display = 'none';
+  document.getElementById('modal-error-msg').textContent = '';
+  document.getElementById('btn-guardar').disabled = false;
+  document.getElementById('btn-guardar').textContent = 'Guardar producto';
+  document.getElementById('rel-auto-box').style.display = 'none';
+  document.getElementById('rel-auto-list').innerHTML = '';
+  document.getElementById('rel-search').value = '';
+  document.getElementById('rel-dropdown').innerHTML = '';
+  document.getElementById('rel-dropdown').classList.remove('open');
+  document.getElementById('rel-manual-list').innerHTML = '';
+  document.getElementById('rel-limit-msg').style.display = 'none';
+  _fotoItems = [];
+  _relManuales = [];
+  renderFotos();
+}
+
+function openModal() {
 </script>
 </body>
 </html>
