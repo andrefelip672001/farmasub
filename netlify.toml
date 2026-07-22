@@ -5,7 +5,12 @@
 
 [[redirects]]
   from = "/admin/catalogo"
-  to = "/admin/catalogo.html"
+  to = "/admin/catalogo-v2.html"
+  status = 301
+
+[[redirects]]
+  from = "/admin/catalogo.html"
+  to = "/admin/catalogo-v2.html"
   status = 301
 
 [[redirects]]
