@@ -388,11 +388,11 @@ function catNombre(id) {
   for (var i = 0; i < _categorias.length; i++) {
     if (_categorias[i].id === id) { return _categorias[i].nombre; }
   }
-  return '—';
+  return '\u2014';
 }
 
 function fmt(n) {
-  if (n == null) { return '—'; }
+  if (n == null) { return '\u2014'; }
   return '$' + Number(n).toFixed(2);
 }
 
@@ -410,11 +410,11 @@ function renderTable(lista) {
       : '<span class="badge-inactivo">Inactivo</span>';
     var recetaBadge = p.requiere_receta
       ? '<span class="badge-receta">Receta</span>'
-      : '—';
+      : '\u2014';
     var btnToggleLabel = p.activo ? 'Desactivar' : 'Activar';
     html += '<tr>';
     html += '<td>' + (p.nombre || '') + '</td>';
-    html += '<td>' + (p.principio_activo || '—') + '</td>';
+    html += '<td>' + (p.principio_activo || '\u2014') + '</td>';
     html += '<td>' + catNombre(p.categoria_id) + '</td>';
     html += '<td>' + fmt(p.precio_farmacia) + '</td>';
     html += '<td>' + fmt(p.precio_costo) + '</td>';
