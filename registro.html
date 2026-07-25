@@ -1245,7 +1245,8 @@ async function submitRegistro() {
       rol: 'suscriptor'
     });
     if (userErr) {
-      console.error('Error guardando datos usuario:', userErr);
+      _showSubmitError('Error guardando usuario: ' + userErr.message + ' | code: ' + userErr.code);
+      throw new Error('Error guardando usuario: ' + userErr.message + ' | code: ' + userErr.code);
     }
 
     // 4. Insertar suscripcion (vinculada al auth user)
