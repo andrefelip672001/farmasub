@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -256,7 +256,7 @@ body::after {
 <div class="card">
 
   <!-- Logo -->
-  <a href="/" class="logo">
+  <a href="../" class="logo">
     <div class="logo-mark">
       <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
@@ -300,7 +300,7 @@ body::after {
     </div>
 
     <div class="forgot">
-      <a href="/portal/recuperar.html">¿Olvidaste tu contraseña?</a>
+      <a href="../portal/recuperar.html">¿Olvidaste tu contraseña?</a>
     </div>
 
     <button type="submit" id="btn-submit" class="btn-login">
@@ -312,7 +312,7 @@ body::after {
 
   <hr class="divider"/>
 
-  <p class="register-link">¿No tienes cuenta? <a href="/registro.html">Regístrate</a></p>
+  <p class="register-link">¿No tienes cuenta? <a href="../registro.html">Regístrate</a></p>
 
 </div>
 
@@ -371,9 +371,9 @@ async function redirectByRole(user) {
   }
 
   if (rol === 'admin') {
-    window.location.href = '/admin/dashboard.html';
+    window.location.href = '../admin/dashboard.html';
   } else {
-    window.location.href = '/portal/dashboard.html';
+    window.location.href = '../portal/dashboard.html';
   }
 }
 

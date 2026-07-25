@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -89,7 +89,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <div class="app">
 
 <nav class="top-nav">
-  <a href="/portal/dashboard.html" class="nav-logo">
+  <a href="../portal/dashboard.html" class="nav-logo">
     <div class="logo-mark"><svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
     <span class="logo-text">Medi<span>Costo</span></span>
   </a>
@@ -104,14 +104,14 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 
 <div class="layout">
   <aside class="sidebar">
-    <a href="/portal/dashboard.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>Inicio</a>
-    <a href="/portal/catalogo.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Catálogo</a>
-    <a href="/portal/pedido.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Mi pedido
+    <a href="../portal/dashboard.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>Inicio</a>
+    <a href="../portal/catalogo.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Catálogo</a>
+    <a href="../portal/pedido.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Mi pedido
       <span class="sb-badge" id="cart-badge" style="display:none">0</span>
     </a>
-    <a href="/portal/mis-pedidos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mis pedidos</a>
+    <a href="../portal/mis-pedidos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Mis pedidos</a>
     <hr class="sb-divider"/>
-    <a href="/portal/cuenta.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi cuenta</a>
+    <a href="../portal/cuenta.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Mi cuenta</a>
   </aside>
 
   <main class="main">
@@ -121,7 +121,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       <div class="cart-empty" id="cart-empty" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
         <p>Tu pedido está vacío.</p>
-        <a href="/portal/catalogo.html" style="display:inline-block;margin-top:12px;padding:10px 20px;background:var(--green);color:white;border-radius:10px;text-decoration:none;font-weight:600;font-size:.875rem;">Ver catálogo</a>
+        <a href="../portal/catalogo.html" style="display:inline-block;margin-top:12px;padding:10px 20px;background:var(--green);color:white;border-radius:10px;text-decoration:none;font-weight:600;font-size:.875rem;">Ver catálogo</a>
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;" id="cart-grid">
@@ -149,7 +149,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
       <h2 class="success-title">¡Pedido recibido!</h2>
       <p class="success-text" id="success-text">Entrega programada para el próximo mes hábil.</p>
-      <a href="/portal/mis-pedidos.html" class="btn-back">Ver mis pedidos</a>
+      <a href="../portal/mis-pedidos.html" class="btn-back">Ver mis pedidos</a>
     </div>
   </main>
 </div>
@@ -162,7 +162,7 @@ let _user,_susc,_miembros=[],_cart=[],_recetas={};
 
 (async()=>{
   const {data:{session}}=await _db.auth.getSession();
-  if(!session){window.location.href='/portal/login.html';return;}
+  if(!session){window.location.href='../portal/login.html';return;}
   _user=session.user;
   const {data:s}=await _db.from('suscriptores').select('*').eq('email',_user.email).single();
   _susc=s;
@@ -320,7 +320,7 @@ function updateCartBadge(){
   const b=document.getElementById('cart-badge');
   if(c.length){b.style.display='flex';b.textContent=c.length;}else b.style.display='none';
 }
-function logout(){_db.auth.signOut().then(()=>window.location.href='/portal/login.html');}
+function logout(){_db.auth.signOut().then(()=>window.location.href='../portal/login.html');}
 </script>
 </body>
 </html>
