@@ -1232,18 +1232,11 @@ async function submitRegistro() {
       if (!kycBErr) kycPosteriorPath = path;
     }
 
-    // 3. Insertar suscriptor titular (vinculado al auth user)
-    const { error: suscErr } = await _db.from('suscriptores').insert({
-      id: userId,
-      nombre: S.titular.nombre,
-      cedula: S.titular.cedula,
-      fecha_nac: S.titular.fechaNac || null,
-      telefono: S.titular.telefono,
-      email: S.titular.email,
-      direccion: S.titular.direccion,
-      barrio: S.titular.barrio || null,
-      comprobante_url: comprobanteUrl,
+    // 3. Insertar suscripcion (vinculada al auth user)
+    const { error: suscErr } = await _db.from('suscripciones').insert({
+      titular_id: userId,
       estado: 'pendiente',
+      comprobante_url: comprobanteUrl,
       kyc_estado: 'pendiente',
       cedula_frontal_url: kycFrontalPath,
       cedula_posterior_url: kycPosteriorPath
