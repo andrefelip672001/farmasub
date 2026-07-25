@@ -1246,11 +1246,27 @@ async function submitRegistro() {
       throw suscErr;
     }
 
-    // 4. Insertar miembros adicionales
+    // 4. Insertar datos del titular en tabla usuarios
+    var { error: userErr } = await _db.from('usuarios').insert({
+      id: userId,
+      nombre: S.titular.nombre,
+      cedula: S.titular.cedula,
+      telefono: S.titular.telefono,
+      email: S.titular.email,
+      direccion: S.titular.direccion,
+      barrio: S.titular.barrio,
+      fecha_nacimiento: S.titular.fecha_nacimiento,
+      rol: 'suscriptor'
+    });
+    if (userErr) {
+      console.error('Error guardando datos usuario:', userErr);
+    }
+
+    // 5. Insertar miembros adicionales
     if (S.members.length > 0) {
       const { error: membErr } = await _db.from('miembros').insert(
         S.members.map(m => ({
-          suscriptor_cedula: S.titular.cedula,
+          titular_id: userId,
           nombre: m.nombre,
           cedula: m.cedula,
           fecha_nac: m.fechaNac || null,
