@@ -1173,6 +1173,8 @@ function collectHealthData(idx) {
 
 async function submitRegistro() {
   try {
+    alert('[DEBUG] submitRegistro() iniciado');
+
     // 1. Subir comprobante a Storage (bucket público)
     let comprobanteUrl = null;
     if (S.payment.file) {
@@ -1181,10 +1183,15 @@ async function submitRegistro() {
       const { error: upErr } = await _db.storage
         .from('comprobantes')
         .upload(path, S.payment.file);
-      if (!upErr) {
+      if (upErr) {
+        alert('[DEBUG] Error subiendo comprobante: ' + upErr.message + ' | code: ' + upErr.statusCode);
+      } else {
         const { data } = _db.storage.from('comprobantes').getPublicUrl(path);
         comprobanteUrl = data.publicUrl;
+        alert('[DEBUG] Comprobante subido OK: ' + comprobanteUrl);
       }
+    } else {
+      alert('[DEBUG] Sin archivo de comprobante');
     }
 
     // 2. Subir documentos KYC a Storage (bucket privado — guardar path, no URL pública)
@@ -1196,7 +1203,11 @@ async function submitRegistro() {
       const { error: kycFErr } = await _db.storage
         .from('kyc-documentos')
         .upload(path, S.payment.cedula_frontal, { upsert: true });
-      if (!kycFErr) kycFrontalPath = path;
+      if (kycFErr) {
+        alert('[DEBUG] Error KYC frontal: ' + kycFErr.message);
+      } else {
+        kycFrontalPath = path;
+      }
     }
     if (S.payment.cedula_posterior) {
       const ext = S.payment.cedula_posterior.name.split('.').pop();
@@ -1204,8 +1215,14 @@ async function submitRegistro() {
       const { error: kycBErr } = await _db.storage
         .from('kyc-documentos')
         .upload(path, S.payment.cedula_posterior, { upsert: true });
-      if (!kycBErr) kycPosteriorPath = path;
+      if (kycBErr) {
+        alert('[DEBUG] Error KYC posterior: ' + kycBErr.message);
+      } else {
+        kycPosteriorPath = path;
+      }
     }
+
+    alert('[DEBUG] Llegando a INSERT suscriptores. Email: ' + S.titular.email + ' | Cedula: ' + S.titular.cedula);
 
     // 3. Insertar suscriptor titular
     const { error: suscErr } = await _db.from('suscriptores').insert({
@@ -1222,11 +1239,15 @@ async function submitRegistro() {
       cedula_frontal_url: kycFrontalPath,
       cedula_posterior_url: kycPosteriorPath
     });
-    if (suscErr) throw suscErr;
+    if (suscErr) {
+      alert('[DEBUG] ERROR en INSERT suscriptores: ' + suscErr.message + ' | code: ' + suscErr.code + ' | details: ' + suscErr.details);
+      throw suscErr;
+    }
+    alert('[DEBUG] INSERT suscriptores OK');
 
     // 4. Insertar miembros adicionales
     if (S.members.length > 0) {
-      await _db.from('miembros').insert(
+      const { error: membErr } = await _db.from('miembros').insert(
         S.members.map(m => ({
           suscriptor_cedula: S.titular.cedula,
           nombre: m.nombre,
@@ -1235,6 +1256,7 @@ async function submitRegistro() {
           relacion: m.relacion
         }))
       );
+      if (membErr) alert('[DEBUG] Error miembros: ' + membErr.message);
     }
 
     // 5. Insertar cuestionario de salud por cada persona
@@ -1245,7 +1267,7 @@ async function submitRegistro() {
     for (const p of allPersons) {
       const hd = collectHealthData(p.idx);
       if (!p.es_titular && hd.condiciones.length === 0) continue;
-      await _db.from('salud').insert({
+      const { error: saludErr } = await _db.from('salud').insert({
         suscriptor_cedula: S.titular.cedula,
         persona_cedula: p.cedula,
         persona_nombre: p.nombre,
@@ -1261,9 +1283,13 @@ async function submitRegistro() {
         alergia_detalle: hd.alergia_detalle,
         observaciones_qf: hd.observaciones_qf
       });
+      if (saludErr) alert('[DEBUG] Error salud (' + p.nombre + '): ' + saludErr.message);
     }
+
+    alert('[DEBUG] submitRegistro() completado sin errores fatales');
   } catch (err) {
     console.error('[MediCosto] Error al enviar registro:', err);
+    alert('[DEBUG] EXCEPCION CAPTURADA: ' + (err.message || JSON.stringify(err)));
   }
 }
 
