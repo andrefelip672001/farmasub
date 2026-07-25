@@ -531,6 +531,11 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
         <div class="wb-text">Recibirás una confirmación por WhatsApp al número <span id="conf-telefono">registrado</span></div>
         <div class="wb-sub">una vez que tu pago sea verificado por nuestro equipo</div>
       </div>
+      <div style="background:#EAF4EE;border:1.5px solid #ADEBB3;border-radius:12px;padding:16px 20px;margin:16px 0;text-align:center;">
+        <div style="font-size:.85rem;font-weight:700;color:#1A6B4A;margin-bottom:4px;">🔑 Tu contraseña temporal</div>
+        <div style="font-size:.9rem;color:#12201A;">Tu contraseña es tu <strong>número de cédula</strong>. Cámbiala después de tu primer ingreso al portal.</div>
+      </div>
+      <div id="submit-error" style="display:none;background:#FDF2F2;border:1.5px solid #C84040;border-radius:12px;padding:14px 18px;margin:12px 0;font-size:.85rem;color:#C84040;"></div>
       <div style="text-align:center;margin-top:24px;">
         <a href="index.html" class="btn-home">Volver al inicio</a>
         <p style="margin-top:16px;font-size:.8rem;">¿Tienes dudas? <a href="https://wa.me/593XXXXXXXXX" style="color:var(--green);font-weight:500;">Escríbenos por WhatsApp</a></p>
@@ -1171,9 +1176,27 @@ function collectHealthData(idx) {
   };
 }
 
+function _showSubmitError(msg) {
+  const el = document.getElementById('submit-error');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 async function submitRegistro() {
   try {
-    alert('[DEBUG] submitRegistro() iniciado');
+    // 0. Crear cuenta en Supabase Auth
+    const authRes = await _db.auth.signUp({
+      email: S.titular.email,
+      password: S.titular.cedula,
+      options: { data: { rol: 'suscriptor' } }
+    });
+    if (authRes.error) {
+      _showSubmitError('Error al crear cuenta: ' + authRes.error.message);
+      throw authRes.error;
+    }
+    const userId = authRes.data.user.id;
 
     // 1. Subir comprobante a Storage (bucket público)
     let comprobanteUrl = null;
@@ -1183,18 +1206,13 @@ async function submitRegistro() {
       const { error: upErr } = await _db.storage
         .from('comprobantes')
         .upload(path, S.payment.file);
-      if (upErr) {
-        alert('[DEBUG] Error subiendo comprobante: ' + upErr.message + ' | code: ' + upErr.statusCode);
-      } else {
+      if (!upErr) {
         const { data } = _db.storage.from('comprobantes').getPublicUrl(path);
         comprobanteUrl = data.publicUrl;
-        alert('[DEBUG] Comprobante subido OK: ' + comprobanteUrl);
       }
-    } else {
-      alert('[DEBUG] Sin archivo de comprobante');
     }
 
-    // 2. Subir documentos KYC a Storage (bucket privado — guardar path, no URL pública)
+    // 2. Subir documentos KYC a Storage (bucket privado)
     let kycFrontalPath = null;
     let kycPosteriorPath = null;
     if (S.payment.cedula_frontal) {
@@ -1203,11 +1221,7 @@ async function submitRegistro() {
       const { error: kycFErr } = await _db.storage
         .from('kyc-documentos')
         .upload(path, S.payment.cedula_frontal, { upsert: true });
-      if (kycFErr) {
-        alert('[DEBUG] Error KYC frontal: ' + kycFErr.message);
-      } else {
-        kycFrontalPath = path;
-      }
+      if (!kycFErr) kycFrontalPath = path;
     }
     if (S.payment.cedula_posterior) {
       const ext = S.payment.cedula_posterior.name.split('.').pop();
@@ -1215,17 +1229,12 @@ async function submitRegistro() {
       const { error: kycBErr } = await _db.storage
         .from('kyc-documentos')
         .upload(path, S.payment.cedula_posterior, { upsert: true });
-      if (kycBErr) {
-        alert('[DEBUG] Error KYC posterior: ' + kycBErr.message);
-      } else {
-        kycPosteriorPath = path;
-      }
+      if (!kycBErr) kycPosteriorPath = path;
     }
 
-    alert('[DEBUG] Llegando a INSERT suscriptores. Email: ' + S.titular.email + ' | Cedula: ' + S.titular.cedula);
-
-    // 3. Insertar suscriptor titular
+    // 3. Insertar suscriptor titular (vinculado al auth user)
     const { error: suscErr } = await _db.from('suscriptores').insert({
+      id: userId,
       nombre: S.titular.nombre,
       cedula: S.titular.cedula,
       fecha_nac: S.titular.fechaNac || null,
@@ -1240,10 +1249,9 @@ async function submitRegistro() {
       cedula_posterior_url: kycPosteriorPath
     });
     if (suscErr) {
-      alert('[DEBUG] ERROR en INSERT suscriptores: ' + suscErr.message + ' | code: ' + suscErr.code + ' | details: ' + suscErr.details);
+      _showSubmitError('Error al guardar datos: ' + suscErr.message + (suscErr.details ? ' — ' + suscErr.details : ''));
       throw suscErr;
     }
-    alert('[DEBUG] INSERT suscriptores OK');
 
     // 4. Insertar miembros adicionales
     if (S.members.length > 0) {
@@ -1256,7 +1264,7 @@ async function submitRegistro() {
           relacion: m.relacion
         }))
       );
-      if (membErr) alert('[DEBUG] Error miembros: ' + membErr.message);
+      if (membErr) console.error('Error miembros:', membErr);
     }
 
     // 5. Insertar cuestionario de salud por cada persona
@@ -1283,13 +1291,13 @@ async function submitRegistro() {
         alergia_detalle: hd.alergia_detalle,
         observaciones_qf: hd.observaciones_qf
       });
-      if (saludErr) alert('[DEBUG] Error salud (' + p.nombre + '): ' + saludErr.message);
+      if (saludErr) console.error('Error salud:', saludErr);
     }
-
-    alert('[DEBUG] submitRegistro() completado sin errores fatales');
   } catch (err) {
-    console.error('[MediCosto] Error al enviar registro:', err);
-    alert('[DEBUG] EXCEPCION CAPTURADA: ' + (err.message || JSON.stringify(err)));
+    console.error('[MediCosto] submitRegistro error:', err);
+    if (!document.getElementById('submit-error').style.display || document.getElementById('submit-error').style.display === 'none') {
+      _showSubmitError('Error inesperado: ' + (err.message || 'intenta de nuevo'));
+    }
   }
 }
 
