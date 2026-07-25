@@ -1232,21 +1232,7 @@ async function submitRegistro() {
       if (!kycBErr) kycPosteriorPath = path;
     }
 
-    // 3. Insertar suscripcion (vinculada al auth user)
-    const { error: suscErr } = await _db.from('suscripciones').insert({
-      titular_id: userId,
-      estado: 'pendiente',
-      comprobante_url: comprobanteUrl,
-      kyc_estado: 'pendiente',
-      cedula_frontal_url: kycFrontalPath,
-      cedula_posterior_url: kycPosteriorPath
-    });
-    if (suscErr) {
-      _showSubmitError('Error al guardar datos: ' + suscErr.message + (suscErr.details ? ' — ' + suscErr.details : ''));
-      throw suscErr;
-    }
-
-    // 4. Insertar datos del titular en tabla usuarios
+    // 3. Insertar datos del titular en tabla usuarios
     var { error: userErr } = await _db.from('usuarios').insert({
       id: userId,
       nombre: S.titular.nombre,
@@ -1260,6 +1246,20 @@ async function submitRegistro() {
     });
     if (userErr) {
       console.error('Error guardando datos usuario:', userErr);
+    }
+
+    // 4. Insertar suscripcion (vinculada al auth user)
+    const { error: suscErr } = await _db.from('suscripciones').insert({
+      titular_id: userId,
+      estado: 'pendiente',
+      comprobante_url: comprobanteUrl,
+      kyc_estado: 'pendiente',
+      cedula_frontal_url: kycFrontalPath,
+      cedula_posterior_url: kycPosteriorPath
+    });
+    if (suscErr) {
+      _showSubmitError('Error al guardar datos: ' + suscErr.message + (suscErr.details ? ' — ' + suscErr.details : ''));
+      throw suscErr;
     }
 
     // 5. Insertar miembros adicionales
