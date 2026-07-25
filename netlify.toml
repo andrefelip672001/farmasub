@@ -5,12 +5,12 @@
 
 [[redirects]]
   from = "/admin/catalogo"
-  to = "/admin/gestion-productos.html"
+  to = "/admin/productos.html"
   status = 301
 
 [[redirects]]
   from = "/admin/catalogo.html"
-  to = "/admin/gestion-productos.html"
+  to = "/admin/productos.html"
   status = 301
 
 [[redirects]]
