@@ -33,7 +33,7 @@ html { scroll-behavior: smooth; }
 body { font-family: 'Inter', sans-serif; }
 
 /* ── HERO ── */
-.hero-bg { background: linear-gradient(135deg, #C94415 0%, #E8521A 55%, #D4611F 100%); }
+.hero-bg { background: linear-gradient(135deg, #C94415 0%, #E8521A 40%, #F07040 70%, #F5A070 100%); }
 .hero-blob {
   position: absolute; top: -80px; right: -100px;
   width: 520px; height: 520px; border-radius: 50%;
@@ -273,77 +273,53 @@ body { font-family: 'Inter', sans-serif; }
           </div>
         </div>
       </div>
-      <!-- Right: mini calculator -->
-      <div style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.25)">
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6B7280;margin-bottom:16px">Selecciona tus medicamentos</div>
-        <div id="hero-meds" style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px">
-          <div class="hero-med-row" data-farmacia="22" data-costo="18" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Losartán 50mg ×30</span>
+      <!-- Right: persona con badges flotantes -->
+      <div style="position:relative;display:flex;justify-content:center;align-items:center;padding:40px 20px">
+        <!-- Círculo de fondo -->
+        <div style="width:320px;height:320px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.15),rgba(245,166,35,0.2));display:flex;align-items:center;justify-content:center;position:relative;">
+          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face"
+               alt="Familia saludable MediCosto"
+               style="width:280px;height:280px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.3);">
+          <!-- Badge superior derecho: 24 Hrs -->
+          <div style="position:absolute;top:20px;right:-20px;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;background:#ECFDF5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$22</span>
-              <span style="font-size:.88rem;font-weight:600;color:#059669">$18</span>
-            </div>
-          </div>
-          <div class="hero-med-row" data-farmacia="13" data-costo="8" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Metformina 850mg ×30</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$13</span>
-              <span style="font-size:.88rem;font-weight:600;color:#059669">$8</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#1A1A2E;">24 Hrs</div>
+              <div style="font-size:10px;color:#6B7280;">Disponible</div>
             </div>
           </div>
-          <div class="hero-med-row" data-farmacia="18" data-costo="12" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Atorvastatina 20mg ×30</span>
+          <!-- Badge inferior izquierdo: Entrega -->
+          <div style="position:absolute;bottom:20px;left:-30px;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;background:#FFF0EB;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#E8521A" stroke-width="2"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
             </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$18</span>
-              <span style="font-size:.88rem;font-weight:600;color:#059669">$12</span>
-            </div>
-          </div>
-          <div class="hero-med-row" data-farmacia="15" data-costo="9" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Levotiroxina 100mcg ×30</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$15</span>
-              <span style="font-size:.88rem;font-weight:600;color:#059669">$9</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#1A1A2E;">Entrega</div>
+              <div style="font-size:10px;color:#6B7280;">Santo Domingo</div>
             </div>
           </div>
-          <div class="hero-med-row" data-farmacia="17" data-costo="9" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Omega 3 ×60 cápsulas</span>
+          <!-- Badge superior izquierdo: Precio al costo -->
+          <div style="position:absolute;top:50px;left:-40px;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;background:#ECFDF5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
             </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$17</span>
-              <span style="font-size:.88rem;font-weight:600;color:#059669">$9</span>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#1A1A2E;">Precio al costo</div>
+              <div style="font-size:10px;color:#6B7280;">Sin margen oculto</div>
             </div>
           </div>
-        </div>
-        <div style="height:1px;background:#F3F4F6;margin-bottom:14px"></div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-          <div style="background:#FEF2F2;border-radius:10px;padding:12px 14px">
-            <div style="font-size:.72rem;color:#6B7280;margin-bottom:3px">Farmacia normal</div>
-            <div id="hero-farmacia" style="font-size:1.4rem;font-weight:700;color:#EF4444">$0</div>
-            <div style="font-size:.7rem;color:#6B7280;margin-top:2px">sin membresía</div>
+          <!-- Badge inferior derecho: ARCSA -->
+          <div style="position:absolute;bottom:60px;right:-35px;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:flex;align-items:center;gap:8px;">
+            <div style="width:28px;height:28px;background:#FFF8ED;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F5A623" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#1A1A2E;">Regulado</div>
+              <div style="font-size:10px;color:#6B7280;">ARCSA Ecuador</div>
+            </div>
           </div>
-          <div style="background:#ECFDF5;border-radius:10px;padding:12px 14px">
-            <div style="font-size:.72rem;color:#6B7280;margin-bottom:3px">Con MediCosto</div>
-            <div id="hero-total" style="font-size:1.4rem;font-weight:700;color:#059669">$8</div>
-            <div style="font-size:.7rem;color:#6B7280;margin-top:2px">meds + suscripción</div>
-          </div>
-        </div>
-        <div id="hero-saving" style="display:none;background:#FFF8ED;border:1px solid #F5D6A0;border-radius:10px;padding:10px 14px;justify-content:space-between;align-items:center">
-          <span style="font-size:.82rem;color:#E8521A;font-weight:600">&#128241; Ahorras este mes</span>
-          <span id="hero-saving-val" style="font-size:1.1rem;font-weight:700;color:#E8521A">$0</span>
         </div>
       </div>
     </div>
@@ -715,6 +691,33 @@ body { font-family: 'Inter', sans-serif; }
   </div>
 </section>
 
+<!-- ── POR QUÉ MEDICOSTO ── -->
+<section style="padding:80px 0;background:#FFF0EB">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:44px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">La diferencia</div>
+      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">No son descuentos. Es el precio real.</h2>
+    </div>
+    <div class="porque-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+      <div style="background:#fff;border-radius:20px;padding:32px 28px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
+        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:#FEF2F2;color:#EF4444">&#10060; El problema</span>
+        <h3 style="font-size:1.05rem;font-weight:600;color:#1A1A2E;margin-bottom:12px">Las farmacias tradicionales</h3>
+        <p style="font-size:.88rem;color:#6B7280;line-height:1.7">Compran al distribuidor y venden con 30–40% de margen. Tú pagas ese margen cada vez que compras un medicamento, sin saberlo.</p>
+      </div>
+      <div style="background:#fff;border-radius:20px;padding:32px 28px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
+        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:#FEF2F2;color:#EF4444">&#10060; El engaño</span>
+        <h3 style="font-size:1.05rem;font-weight:600;color:#1A1A2E;margin-bottom:12px">Los descuentos de siempre</h3>
+        <p style="font-size:.88rem;color:#6B7280;line-height:1.7">Un porcentaje de descuento sobre un precio ya inflado no es ahorro real. Es marketing. El precio base sigue siendo elevado.</p>
+      </div>
+      <div style="background:#E8521A;border-radius:20px;padding:32px 28px">
+        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:rgba(255,255,255,.2);color:#fff">&#10003; MediCosto</span>
+        <h3 style="font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:12px">El precio que pagamos nosotros</h3>
+        <p style="font-size:.88rem;color:rgba(255,255,255,.85);line-height:1.7;font-weight:500">Compramos al distribuidor y te cobramos exactamente lo mismo que pagamos. Nuestra ganancia es tu membresía de $8, no el producto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── CALCULADORA ── -->
 <section id="calculadora" style="padding:80px 0;background:#fff">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px">
@@ -774,33 +777,6 @@ body { font-family: 'Inter', sans-serif; }
             En 12 meses ahorras <strong id="ct-anual" style="color:#059669">$0 USD</strong>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── POR QUÉ MEDICOSTO ── -->
-<section style="padding:80px 0;background:#FFF0EB">
-  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
-    <div style="text-align:center;margin-bottom:44px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">La diferencia</div>
-      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">No son descuentos. Es el precio real.</h2>
-    </div>
-    <div class="porque-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
-      <div style="background:#fff;border-radius:20px;padding:32px 28px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
-        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:#FEF2F2;color:#EF4444">&#10060; El problema</span>
-        <h3 style="font-size:1.05rem;font-weight:600;color:#1A1A2E;margin-bottom:12px">Las farmacias tradicionales</h3>
-        <p style="font-size:.88rem;color:#6B7280;line-height:1.7">Compran al distribuidor y venden con 30–40% de margen. Tú pagas ese margen cada vez que compras un medicamento, sin saberlo.</p>
-      </div>
-      <div style="background:#fff;border-radius:20px;padding:32px 28px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
-        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:#FEF2F2;color:#EF4444">&#10060; El engaño</span>
-        <h3 style="font-size:1.05rem;font-weight:600;color:#1A1A2E;margin-bottom:12px">Los descuentos de siempre</h3>
-        <p style="font-size:.88rem;color:#6B7280;line-height:1.7">Un porcentaje de descuento sobre un precio ya inflado no es ahorro real. Es marketing. El precio base sigue siendo elevado.</p>
-      </div>
-      <div style="background:#E8521A;border-radius:20px;padding:32px 28px">
-        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:rgba(255,255,255,.2);color:#fff">&#10003; MediCosto</span>
-        <h3 style="font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:12px">El precio que pagamos nosotros</h3>
-        <p style="font-size:.88rem;color:rgba(255,255,255,.85);line-height:1.7;font-weight:500">Compramos al distribuidor y te cobramos exactamente lo mismo que pagamos. Nuestra ganancia es tu membresía de $8, no el producto.</p>
       </div>
     </div>
   </div>
