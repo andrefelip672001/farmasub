@@ -5,739 +5,976 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MediCosto Ecuador — El precio justo para tu bienestar</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'] },
+      colors: {
+        naranja: '#E8521A',
+        'naranja-d': '#C94415',
+        'naranja-light': '#FFF0EB',
+        amarillo: '#F5A623',
+        'amarillo-light': '#FFF8ED',
+        verde: '#059669',
+        'verde-light': '#ECFDF5',
+        'gris-oscuro': '#1A1A2E',
+        'gris-medio': '#6B7280',
+        'gris-claro': '#F9FAFB'
+      }
+    }
+  }
+}
+</script>
 <style>
-/* ── TOKENS ─────────────────────────────────────────────── */
-:root {
-  --green:       #1A6B4A;
-  --green-light: #EAF4EE;
-  --green-menta: #ADEBB3;
-  --green-mid:   #2E8A62;
-  --gold:        #C8903A;
-  --gold-light:  #FDF4E7;
-  --ink:         #12201A;
-  --ink-60:      #5A7065;
-  --ink-30:      #B0C4BB;
-  --white:       #FFFFFF;
-  --bg:          #F7FAF8;
-  --card:        #FFFFFF;
-  --danger:      #C84040;
-  --r:           14px;
-  --r-lg:        20px;
-  --shadow:      0 2px 16px rgba(26,107,74,.10);
-  --shadow-lg:   0 8px 40px rgba(26,107,74,.14);
-}
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
+body { font-family: 'Inter', sans-serif; }
 
-/* ── TYPOGRAPHY ─────────────────────────────────────────── */
-.serif { font-family: 'DM Serif Display', serif; }
-h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.1rem, 4.2vw, 3.2rem); line-height: 1.15; }
-h2 { font-family: 'DM Serif Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); line-height: 1.2; }
-h3 { font-size: 1.05rem; font-weight: 600; }
-p  { color: var(--ink-60); }
-
-/* ── LAYOUT ─────────────────────────────────────────────── */
-.container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-section { padding: 80px 0; }
-
-/* ── NAV ────────────────────────────────────────────────── */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(247,250,248,.92); backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(26,107,74,.10);
+/* ── HERO ── */
+.hero-bg { background: linear-gradient(135deg, #C94415 0%, #E8521A 55%, #D4611F 100%); }
+.hero-blob {
+  position: absolute; top: -80px; right: -100px;
+  width: 520px; height: 520px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(245,166,35,.22) 0%, transparent 68%);
+  pointer-events: none; z-index: 0;
 }
-.nav-inner {
-  display: flex; align-items: center; justify-content: space-between;
-  height: 64px;
+.hero-inner { position: relative; z-index: 1; }
+
+/* ── CART DRAWER ── */
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 50;
+  width: 380px; max-width: 100vw; background: #fff;
+  box-shadow: -4px 0 40px rgba(0,0,0,.18);
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column;
 }
-.logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.logo-mark {
-  width: 36px; height: 36px; background: var(--green); border-radius: 10px;
+.cart-drawer.open { transform: translateX(0); }
+.cart-overlay {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(0,0,0,.4); opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+.cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 60;
+  background: #1A1A2E; color: #fff; border-radius: 12px; padding: 12px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: .88rem; font-weight: 500;
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s cubic-bezier(.4,0,.2,1); pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── PRODUCT CARD ── */
+.product-card {
+  background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  transition: box-shadow .22s, transform .22s;
+}
+.product-card:hover {
+  box-shadow: 0 10px 36px rgba(232,82,26,.16);
+  transform: translateY(-4px);
+}
+.add-wrap { opacity: 0; transform: translateY(6px); transition: all .2s; }
+.product-card:hover .add-wrap { opacity: 1; transform: translateY(0); }
+
+/* ── HERO MED ROWS ── */
+.hero-med-row { cursor: pointer; transition: background .15s; border-radius: 10px; }
+.hero-med-row:hover { background: #FFF0EB; }
+.hero-med-row.active { background: #ECFDF5; }
+.h-check {
+  width: 18px; height: 18px; border-radius: 5px;
+  border: 1.5px solid #D1D5DB; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
 }
-.logo-mark svg { width: 20px; height: 20px; }
-.logo-text { font-family: 'DM Serif Display', serif; font-size: 1.25rem; color: var(--ink); }
-.logo-text span { color: var(--green); }
-.nav-links { display: flex; gap: 28px; list-style: none; }
-.nav-links a { text-decoration: none; color: var(--ink-60); font-size: .9rem; font-weight: 500; transition: color .2s; }
-.nav-links a:hover { color: var(--green); }
-.nav-cta { background: var(--green); color: var(--white); border: none; padding: 9px 20px; border-radius: 8px; font-size: .9rem; font-weight: 600; cursor: pointer; transition: background .2s; text-decoration: none; display: inline-block; }
-.nav-cta:hover { background: var(--green-mid); }
+.hero-med-row.active .h-check { background: #059669; border-color: #059669; }
+.h-check-icon { display: none; }
+.hero-med-row.active .h-check-icon { display: block; }
 
-/* ── HERO ───────────────────────────────────────────────── */
-#hero {
-  background: linear-gradient(135deg, #0E3D29 0%, #1A6B4A 60%, #2E8A62 100%);
-  padding: 96px 0 76px; position: relative; overflow: hidden;
+/* ── FILTERS & PILLS ── */
+.cat-btn {
+  padding: 7px 16px; border-radius: 20px; font-size: .83rem; font-weight: 500;
+  border: 1.5px solid #E5E7EB; background: #fff; color: #6B7280;
+  cursor: pointer; white-space: nowrap; transition: all .15s;
 }
-#hero::before {
-  content: '';
-  position: absolute; top: -40%; right: -10%;
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(200,144,58,.18) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.cat-btn:hover { border-color: #E8521A; color: #E8521A; }
+.cat-btn.active { border-color: #E8521A; background: #FFF0EB; color: #E8521A; }
 
-/* Eyebrow — menta background */
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: var(--green-menta);
-  padding: 5px 14px; border-radius: 20px; margin-bottom: 22px;
-}
-.hero-eyebrow span { font-size: .78rem; color: var(--green); font-weight: 700; }
-.hero-dot { width: 7px; height: 7px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
-
-#hero h1 { color: var(--white); margin-bottom: 18px; }
-#hero h1 em { font-style: italic; color: #8EF5C0; }
-.hero-sub {
-  font-size: .97rem; color: rgba(255,255,255,.78); margin-bottom: 22px;
-  max-width: 470px; line-height: 1.7;
-}
-
-/* 3 key-point cards */
-.hero-points { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
-.hp-item {
-  display: flex; flex-direction: column; gap: 3px;
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.13);
-  border-radius: 10px; padding: 10px 14px; flex: 1; min-width: 140px;
-}
-.hp-no  { font-size: .76rem; color: rgba(255,255,255,.58); }
-.hp-arr { font-size: .7rem;  color: rgba(255,255,255,.3);  margin: 2px 0; }
-.hp-yes { font-size: .8rem;  color: #8EF5C0; font-weight: 600; }
-
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-.btn-primary {
-  background: var(--gold); color: var(--white); border: none;
-  padding: 14px 28px; border-radius: var(--r); font-size: .95rem; font-weight: 600;
-  cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
-}
-.btn-primary:hover { background: #D49840; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(200,144,58,.4); }
-.btn-ghost {
-  background: transparent; color: var(--white);
-  border: 1.5px solid rgba(255,255,255,.35);
-  padding: 14px 28px; border-radius: var(--r); font-size: .95rem; font-weight: 500;
-  cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
-}
-.btn-ghost:hover { border-color: rgba(255,255,255,.7); background: rgba(255,255,255,.07); }
-.hero-stats { display: flex; gap: 28px; margin-top: 40px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,.12); }
-.stat-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--white); }
-.stat-label { font-size: .78rem; color: rgba(255,255,255,.6); margin-top: 2px; }
-
-/* Hero calculator card */
-.hero-card {
-  background: var(--white); border-radius: var(--r-lg); padding: 28px;
-  box-shadow: var(--shadow-lg);
-}
-.hcard-title { font-size: .82rem; font-weight: 600; color: var(--ink-60); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 16px; }
-.hcard-med { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
-.med-row {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 12px; border-radius: 8px; background: var(--bg);
-  cursor: pointer; transition: background .15s; user-select: none;
-}
-.med-row.active { background: var(--green-light); }
-.med-row-left { display: flex; align-items: center; gap: 10px; }
-.med-check {
-  width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--ink-30);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s;
-}
-.med-row.active .med-check { background: var(--green); border-color: var(--green); }
-.med-check svg { display: none; }
-.med-row.active .med-check svg { display: block; }
-.med-name { font-size: .88rem; color: var(--ink); font-weight: 500; }
-.med-prices { display: flex; align-items: center; gap: 8px; }
-.med-old { font-size: .8rem; color: var(--ink-30); text-decoration: line-through; }
-.med-new { font-size: .88rem; font-weight: 600; color: var(--green); }
-.hcard-sep { height: 1px; background: var(--bg); margin: 4px 0 16px; }
-.hcard-result { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.result-box { border-radius: 10px; padding: 12px 14px; }
-.result-box.normal { background: #FFF0F0; }
-.result-box.sub { background: var(--green-light); }
-.rb-label { font-size: .72rem; color: var(--ink-60); margin-bottom: 3px; }
-.rb-val { font-size: 1.4rem; font-weight: 600; font-family: 'DM Serif Display', serif; }
-.result-box.normal .rb-val { color: var(--danger); }
-.result-box.sub .rb-val { color: var(--green); }
-.rb-sub { font-size: .7rem; color: var(--ink-60); margin-top: 2px; }
-.saving-banner {
-  margin-top: 12px; background: var(--gold-light); border: 1px solid #F0D5A0;
-  border-radius: 10px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
-}
-.sb-text { font-size: .82rem; color: var(--gold); font-weight: 600; }
-.sb-val { font-size: 1.1rem; font-weight: 700; color: var(--gold); }
-
-/* ── CÓMO FUNCIONA — menta background ──────────────────── */
-#como { background: rgba(173,235,179,.18); }
-#como .section-label { font-size: .78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
-#como h2 { margin-bottom: 14px; }
-#como .section-intro { font-size: .97rem; color: var(--ink-60); max-width: 640px; margin-bottom: 52px; line-height: 1.7; }
-.steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 28px; }
-.step-card { position: relative; }
-
-/* Step numbers — menta badge */
-.step-num {
-  width: 44px; height: 44px; border-radius: 12px;
-  background: var(--green-menta); color: var(--green);
-  font-family: 'DM Serif Display', serif; font-size: 1.3rem;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 16px; font-weight: 700;
-}
-.step-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-.step-desc { font-size: .875rem; color: var(--ink-60); line-height: 1.65; }
-.step-connector {
-  position: absolute; top: 22px; left: 44px; right: -28px; height: 1px;
-  background: repeating-linear-gradient(to right, var(--ink-30) 0, var(--ink-30) 4px, transparent 4px, transparent 10px);
-}
-.step-card:last-child .step-connector { display: none; }
-
-/* ── POR QUÉ MEDICOSTO ──────────────────────────────────── */
-#porque {
-  background: rgba(173,235,179,.14);
-  border-top: 1px solid rgba(26,107,74,.07);
-  border-bottom: 1px solid rgba(26,107,74,.07);
-}
-#porque .section-label {
-  font-size: .78rem; font-weight: 600; color: var(--green);
-  text-transform: uppercase; letter-spacing: .1em;
-  margin-bottom: 10px; text-align: center;
-}
-#porque h2 { text-align: center; margin-bottom: 44px; }
-.porque-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
-.porque-card {
-  background: var(--white); border-radius: var(--r-lg); padding: 32px 28px;
-  box-shadow: var(--shadow);
-}
-.porque-card--highlight { background: var(--green); }
-.porque-card--highlight h3 { color: var(--white); }
-.porque-card--highlight p  { color: #FFFFFF; font-weight: 500; }
-.porque-card--highlight .pc-tag { background: rgba(255,255,255,.2); color: var(--white); border: none; }
-.pc-tag {
-  display: inline-block; font-size: .72rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: .05em;
-  padding: 4px 12px; border-radius: 20px; margin-bottom: 16px;
-  background: #FFF0F0; color: var(--danger);
-}
-.pc-tag.ok { background: var(--green-light); color: var(--green); }
-.porque-card h3 { font-size: 1.05rem; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
-.porque-card p { font-size: .875rem; color: var(--ink-60); line-height: 1.7; }
-
-/* ── PLANS ──────────────────────────────────────────────── */
-#planes { background: var(--bg); }
-.plans-header { text-align: center; margin-bottom: 48px; }
-.plans-header .section-label { font-size: .78rem; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
-.plan-card {
-  background: var(--card); border: 1.5px solid transparent;
-  border-radius: var(--r-lg); padding: 28px;
-  transition: all .2s; box-shadow: var(--shadow);
-}
-.plan-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-.plan-card.featured { background: var(--green); border-color: var(--green); }
-.plan-badge {
-  display: inline-block; font-size: .72rem; font-weight: 600; padding: 3px 10px;
-  border-radius: 20px; background: var(--gold-light); color: var(--gold); margin-bottom: 12px;
-}
-.plan-card.featured .plan-badge { background: rgba(255,255,255,.2); color: var(--white); }
-.plan-name { font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
-.plan-card.featured .plan-name { color: var(--white); }
-.plan-price { font-family: 'DM Serif Display', serif; font-size: 2.4rem; color: var(--ink); line-height: 1; margin: 10px 0 4px; }
-.plan-card.featured .plan-price { color: var(--white); }
-.plan-period { font-size: .8rem; color: var(--ink-60); margin-bottom: 20px; }
-.plan-card.featured .plan-period { color: rgba(255,255,255,.65); }
-.plan-sep { height: 1px; background: var(--bg); margin-bottom: 18px; }
-.plan-card.featured .plan-sep { background: rgba(255,255,255,.15); }
-.plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; }
-.plan-features li { display: flex; align-items: flex-start; gap: 8px; font-size: .88rem; color: var(--ink-60); }
-.plan-card.featured .plan-features li { color: rgba(255,255,255,.8); }
-.feat-icon { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
-.plan-btn {
-  width: 100%; padding: 12px; border-radius: var(--r); border: 1.5px solid var(--green);
-  background: transparent; color: var(--green); font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s;
-}
-.plan-btn:hover { background: var(--green); color: var(--white); }
-.plan-card.featured .plan-btn { background: var(--white); color: var(--green); border-color: var(--white); }
-.plan-card.featured .plan-btn:hover { background: var(--green-light); }
-
-/* ── CALCULATOR ─────────────────────────────────────────── */
-#calculadora { background: var(--white); }
-.calc-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-.calc-left h2 { margin-bottom: 12px; }
-.calc-left p { margin-bottom: 28px; }
-.calc-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-.pill {
+.calc-pill {
   padding: 7px 14px; border-radius: 20px; font-size: .83rem; font-weight: 500;
-  border: 1.5px solid var(--ink-30); background: var(--white);
-  cursor: pointer; transition: all .15s; color: var(--ink-60);
+  border: 1.5px solid #E5E7EB; background: #fff; color: #6B7280;
+  cursor: pointer; transition: all .15s;
 }
-/* Pills activos — menta background */
-.pill.active { border-color: var(--green); background: var(--green-menta); color: var(--green); }
-.calc-personas { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-.calc-personas label { font-size: .88rem; font-weight: 500; color: var(--ink); }
-.counter { display: flex; align-items: center; gap: 10px; }
-.counter-btn {
-  width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--ink-30);
-  background: var(--white); font-size: 1.1rem; color: var(--ink-60);
-  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s;
-}
-.counter-btn:hover { border-color: var(--green); color: var(--green); }
-.counter-val { font-size: 1.1rem; font-weight: 600; min-width: 20px; text-align: center; color: var(--ink); }
-.calc-right {
-  background: var(--bg); border-radius: var(--r-lg); padding: 24px; position: sticky; top: 80px;
-}
-.calc-empty { text-align: center; padding: 40px 0; color: var(--ink-30); font-size: .9rem; }
-.calc-row {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,.05); font-size: .85rem;
-}
-.calc-row:last-of-type { border: none; }
-.cr-name { color: var(--ink-60); }
-.cr-prices { display: flex; gap: 10px; align-items: center; }
-.cr-old { color: var(--ink-30); text-decoration: line-through; font-size: .8rem; }
-.cr-new { color: var(--green); font-weight: 600; }
-.calc-sep { height: 1px; background: var(--ink-30); margin: 12px 0; opacity: .3; }
-.calc-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.ct-box { border-radius: 10px; padding: 12px; }
-.ct-box.normal { background: #FFF0F0; }
-.ct-box.sub { background: var(--green-light); }
-.ct-label { font-size: .72rem; color: var(--ink-60); margin-bottom: 3px; }
-.ct-val { font-size: 1.4rem; font-weight: 600; font-family: 'DM Serif Display', serif; }
-.ct-box.normal .ct-val { color: var(--danger); }
-.ct-box.sub .ct-val { color: var(--green); }
-.calc-saving {
-  background: var(--gold-light); border: 1px solid #F0D5A0;
-  border-radius: 10px; padding: 12px 16px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.cs-label { font-size: .83rem; color: var(--gold); font-weight: 600; }
-.cs-val { font-size: 1.2rem; font-weight: 700; color: var(--gold); }
-.calc-annual { margin-top: 10px; text-align: center; font-size: .82rem; color: var(--ink-60); padding: 8px; }
-.calc-annual strong { color: var(--green); }
+.calc-pill.active { border-color: #E8521A; background: #FFF0EB; color: #E8521A; }
 
-/* ── CONFIANZA — menta background ──────────────────────── */
-#confianza { background: rgba(173,235,179,.15); }
-.trust-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
-.trust-card {
-  background: var(--white); border-radius: var(--r-lg); padding: 28px;
-  box-shadow: var(--shadow);
+/* ── STEP CONNECTOR ── */
+.step-connector {
+  position: absolute; top: 22px; left: 44px; right: -24px; height: 1px;
+  background: repeating-linear-gradient(to right, #D1D5DB 0, #D1D5DB 4px, transparent 4px, transparent 10px);
 }
-/* Trust icons — menta circles */
-.trust-icon {
-  width: 48px; height: 48px; border-radius: 14px; background: var(--green-menta);
-  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
-}
-.trust-title { font-size: 1rem; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
-.trust-desc { font-size: .88rem; color: var(--ink-60); line-height: 1.65; }
 
-/* ── CTA BAND ───────────────────────────────────────────── */
-#cta-band {
-  background: linear-gradient(135deg, #0E3D29, #1A6B4A);
-  padding: 80px 0; text-align: center;
-}
-#cta-band h2 { color: var(--white); margin-bottom: 14px; }
-#cta-band p { color: rgba(255,255,255,.7); font-size: 1.05rem; margin-bottom: 32px; }
-.cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
+.pulse-dot { animation: pulse 2s infinite; }
 
-/* ── FOOTER ─────────────────────────────────────────────── */
-footer { background: var(--ink); padding: 48px 0 28px; }
-.footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-.footer-brand p { font-size: .85rem; color: var(--ink-60); margin-top: 12px; max-width: 240px; }
-.footer-col h4 { font-size: .85rem; font-weight: 600; color: var(--white); margin-bottom: 14px; }
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-.footer-col ul li a { font-size: .83rem; color: var(--ink-60); text-decoration: none; transition: color .2s; }
-.footer-col ul li a:hover { color: var(--ink-30); }
-.footer-bottom { border-top: 1px solid rgba(255,255,255,.07); padding-top: 24px; display: flex; justify-content: space-between; }
-.footer-bottom p { font-size: .78rem; color: var(--ink-60); }
-.footer-logo-text { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--white); }
-.footer-logo-text span { color: #5EE8A0; }
+.product-card[data-visible="false"] { display: none; }
 
-/* ── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .hero-grid, .calc-wrapper, .steps-grid, .porque-grid, .trust-grid { grid-template-columns: 1fr; }
-  .footer-inner { grid-template-columns: 1fr 1fr; }
-  .hero-stats { gap: 20px; }
-  .hero-points { gap: 8px; }
-  .hp-item { min-width: 100%; }
-  .nav-links { display: none; }
+  .hero-grid { grid-template-columns: 1fr !important; }
+  .steps-grid { grid-template-columns: 1fr 1fr !important; }
+  .trust-grid { grid-template-columns: 1fr !important; }
+  .porque-grid { grid-template-columns: 1fr !important; }
+  .calc-grid { grid-template-columns: 1fr !important; }
+  .nav-links { display: none !important; }
   .step-connector { display: none; }
-  section { padding: 56px 0; }
+  .cart-drawer { width: 100vw; }
+  .hero-blob { display: none; }
 }
 </style>
 </head>
-<body>
+<body style="background:#F9FAFB;font-family:'Inter',sans-serif;color:#1A1A2E">
+
+<!-- ── CART OVERLAY ── -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+
+<!-- ── CART DRAWER ── -->
+<div class="cart-drawer" id="cart-drawer">
+  <div style="padding:16px 20px;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#E8521A" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#E8521A" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span style="font-weight:600;color:#1A1A2E">Tu pedido</span>
+      <span id="cart-badge-drawer" style="background:#059669;color:#fff;font-size:.7rem;font-weight:700;border-radius:99px;padding:2px 8px;min-width:22px;text-align:center">0</span>
+    </div>
+    <button onclick="toggleCart()" style="background:none;border:none;cursor:pointer;font-size:1.5rem;color:#9CA3AF;line-height:1;padding:0">&times;</button>
+  </div>
+  <div id="cart-items" style="flex:1;overflow-y:auto;padding:16px 20px">
+    <div id="cart-empty-msg" style="text-align:center;padding:48px 0;color:#D1D5DB;font-size:.88rem">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" style="display:block;margin:0 auto 12px;opacity:.35">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M3 6h18" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Tu pedido está vacío
+    </div>
+  </div>
+  <div id="cart-footer" style="display:none;border-top:1px solid #F3F4F6;padding:16px 20px;flex-shrink:0">
+    <div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:6px">
+      <span style="color:#6B7280">Precio en farmacia</span>
+      <span id="cart-footer-farmacia" style="color:#EF4444;text-decoration:line-through">$0.00</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:12px">
+      <span style="color:#6B7280">Tu ahorro</span>
+      <span id="cart-footer-ahorro" style="color:#059669;font-weight:600">$0.00</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;margin-bottom:14px">
+      <span>Total MediCosto</span>
+      <span id="cart-footer-total" style="color:#E8521A">$0.00</span>
+    </div>
+    <a href="portal/pedido.html" style="display:block;text-align:center;background:#E8521A;color:#fff;font-weight:600;font-size:.95rem;padding:13px;border-radius:12px;text-decoration:none">Finalizar pedido</a>
+    <p style="text-align:center;font-size:.75rem;color:#9CA3AF;margin-top:8px">+ $8 de membresía mensual</p>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="7" fill="#059669"/>
+    <path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Producto agregado al pedido</span>
+</div>
 
 <!-- ── NAV ── -->
-<nav>
-  <div class="container nav-inner">
-    <a href="#" class="logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/>
-          <path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+<nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <div style="width:36px;height:36px;background:#E8521A;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span style="color:#fff;font-weight:700;font-size:1.2rem;line-height:1">M</span>
       </div>
-      <span class="logo-text">Medi<span>Costo</span></span>
+      <span style="font-weight:700;font-size:1.1rem;color:#1A1A2E">Medi<span style="color:#E8521A">Costo</span></span>
     </a>
-    <ul class="nav-links">
-      <li><a href="#como">Cómo funciona</a></li>
-      <li><a href="#planes">Planes</a></li>
-      <li><a href="#calculadora">Calculadora</a></li>
-      <li><a href="#confianza">Confianza</a></li>
+    <ul class="nav-links" style="display:flex;gap:26px;list-style:none;margin:0;padding:0">
+      <li><a href="#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
+      <li><a href="#categorias" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Categorías</a></li>
+      <li><a href="#membresia" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Membresía</a></li>
+      <li><a href="#calculadora" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Calcular ahorro</a></li>
     </ul>
-    <a href="registro.html" class="nav-cta">Registrarse</a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="toggleCart()" style="position:relative;background:none;border:none;cursor:pointer;padding:8px;border-radius:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#E8521A" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#E8521A" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span id="cart-badge" style="position:absolute;top:-4px;right:-4px;background:#059669;color:#fff;font-size:.65rem;font-weight:700;border-radius:99px;width:18px;height:18px;display:flex;align-items:center;justify-content:center">0</span>
+      </button>
+      <a href="portal/login.html" style="color:#E8521A;border:1.5px solid #E8521A;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#E8521A;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+    </div>
   </div>
 </nav>
 
 <!-- ── HERO ── -->
-<section id="hero">
-  <div class="container">
-    <div class="hero-grid">
+<section class="hero-bg" style="position:relative;overflow:hidden;padding:80px 0 72px">
+  <div class="hero-blob"></div>
+  <div class="hero-inner" style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div class="hero-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center">
+      <!-- Left -->
       <div>
-        <!-- Eyebrow con fondo menta -->
-        <div class="hero-eyebrow">
-          <div class="hero-dot"></div>
-          <span>Disponible en Santo Domingo, Ecuador</span>
+        <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:6px 16px;margin-bottom:22px">
+          <span class="pulse-dot" style="width:8px;height:8px;background:#059669;border-radius:50%;display:inline-block;flex-shrink:0"></span>
+          <span style="color:#fff;font-size:.78rem;font-weight:600">Disponible en Santo Domingo, Ecuador</span>
         </div>
-
-        <h1>El precio justo para <em>tu bienestar</em></h1>
-
-        <p class="hero-sub">En MediCosto no ofrecemos descuentos — te vendemos exactamente al precio que nos cuesta a nosotros. Sin margen, sin ganancia en el producto. Solo pagas $8 al mes por tu membresía familiar y accedes al costo real de medicamentos, productos de salud y bienestar.</p>
-
-        <!-- 3 puntos clave en horizontal -->
-        <div class="hero-points">
-          <div class="hp-item">
-            <span class="hp-no">❌ Sin descuentos falsos</span>
-            <span class="hp-arr">→</span>
-            <span class="hp-yes">✅ Precio al costo real</span>
+        <h1 style="color:#fff;font-size:clamp(2.2rem,4vw,3.1rem);font-weight:700;line-height:1.15;margin-bottom:18px">
+          El precio justo para<br><em style="font-style:italic;color:#F5A623">tu bienestar</em>
+        </h1>
+        <p style="color:rgba(255,255,255,.78);font-size:.97rem;line-height:1.75;margin-bottom:26px;max-width:460px">
+          No ofrecemos descuentos — te vendemos exactamente al precio que nos cuesta. Sin margen oculto, sin letra pequeña. Solo pagas $8/mes por tu membresía familiar.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px">
+          <div style="flex:1;min-width:130px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 14px">
+            <div style="font-size:.75rem;color:rgba(255,255,255,.55)">&#10060; Sin margen oculto</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.3);margin:2px 0">&#8594;</div>
+            <div style="font-size:.78rem;color:#86EFAC;font-weight:600">&#10003; Precio al costo</div>
           </div>
-          <div class="hp-item">
-            <span class="hp-no">❌ Sin margen oculto</span>
-            <span class="hp-arr">→</span>
-            <span class="hp-yes">✅ Total transparencia</span>
+          <div style="flex:1;min-width:130px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 14px">
+            <div style="font-size:.75rem;color:rgba(255,255,255,.55)">&#10060; Sin letra pequeña</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.3);margin:2px 0">&#8594;</div>
+            <div style="font-size:.78rem;color:#86EFAC;font-weight:600">&#10003; $8 fijos al mes</div>
           </div>
-          <div class="hp-item">
-            <span class="hp-no">❌ Sin letra pequeña</span>
-            <span class="hp-arr">→</span>
-            <span class="hp-yes">✅ $8 fijos al mes</span>
+          <div style="flex:1;min-width:130px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:10px 14px">
+            <div style="font-size:.75rem;color:rgba(255,255,255,.55)">&#10060; Sin descuentos falsos</div>
+            <div style="font-size:.65rem;color:rgba(255,255,255,.3);margin:2px 0">&#8594;</div>
+            <div style="font-size:.78rem;color:#86EFAC;font-weight:600">&#10003; Total transparencia</div>
           </div>
         </div>
-
-        <div class="hero-actions">
-          <a href="registro.html" class="btn-primary">Comenzar desde $8/mes</a>
-          <a href="#calculadora" class="btn-ghost">Calcular mi ahorro</a>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px">
+          <a href="#productos" style="background:#F5A623;color:#fff;font-weight:700;font-size:.95rem;padding:13px 26px;border-radius:12px;text-decoration:none">Ver productos</a>
+          <a href="#calculadora" style="border:1.5px solid rgba(255,255,255,.35);color:#fff;font-weight:500;font-size:.95rem;padding:13px 26px;border-radius:12px;text-decoration:none">Calcular mi ahorro</a>
         </div>
-
-        <div class="hero-stats">
+        <div style="display:flex;gap:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)">
           <div>
-            <div class="stat-num">40%</div>
-            <div class="stat-label">Ahorro promedio<br>por familia</div>
+            <div style="color:#fff;font-weight:700;font-size:2rem;line-height:1">40%</div>
+            <div style="color:rgba(255,255,255,.55);font-size:.75rem;margin-top:3px">Ahorro promedio</div>
           </div>
           <div>
-            <div class="stat-num">400+</div>
-            <div class="stat-label">Medicamentos<br>disponibles</div>
+            <div style="color:#fff;font-weight:700;font-size:2rem;line-height:1">400+</div>
+            <div style="color:rgba(255,255,255,.55);font-size:.75rem;margin-top:3px">Medicamentos</div>
           </div>
           <div>
-            <div class="stat-num">4</div>
-            <div class="stat-label">Personas cubiertas<br>por $8/mes</div>
+            <div style="color:#fff;font-weight:700;font-size:2rem;line-height:1">4</div>
+            <div style="color:rgba(255,255,255,.55);font-size:.75rem;margin-top:3px">Personas cubiertas</div>
           </div>
         </div>
       </div>
-
-      <!-- Mini calculadora hero -->
-      <div class="hero-card">
-        <div class="hcard-title">Selecciona tus medicamentos</div>
-        <div class="hcard-med" id="hero-meds">
-          <div class="med-row" data-farmacia="22" data-costo="18" onclick="toggleHeroMed(this)">
-            <div class="med-row-left">
-              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span class="med-name">Losartán 50mg ×30</span>
+      <!-- Right: mini calculator -->
+      <div style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#6B7280;margin-bottom:16px">Selecciona tus medicamentos</div>
+        <div id="hero-meds" style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px">
+          <div class="hero-med-row" data-farmacia="22" data-costo="18" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Losartán 50mg ×30</span>
             </div>
-            <div class="med-prices"><span class="med-old">$22</span><span class="med-new">$18</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$22</span>
+              <span style="font-size:.88rem;font-weight:600;color:#059669">$18</span>
+            </div>
           </div>
-          <div class="med-row" data-farmacia="13" data-costo="8" onclick="toggleHeroMed(this)">
-            <div class="med-row-left">
-              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span class="med-name">Metformina 850mg ×30</span>
+          <div class="hero-med-row" data-farmacia="13" data-costo="8" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Metformina 850mg ×30</span>
             </div>
-            <div class="med-prices"><span class="med-old">$13</span><span class="med-new">$8</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$13</span>
+              <span style="font-size:.88rem;font-weight:600;color:#059669">$8</span>
+            </div>
           </div>
-          <div class="med-row" data-farmacia="18" data-costo="12" onclick="toggleHeroMed(this)">
-            <div class="med-row-left">
-              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span class="med-name">Atorvastatina 20mg ×30</span>
+          <div class="hero-med-row" data-farmacia="18" data-costo="12" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Atorvastatina 20mg ×30</span>
             </div>
-            <div class="med-prices"><span class="med-old">$18</span><span class="med-new">$12</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$18</span>
+              <span style="font-size:.88rem;font-weight:600;color:#059669">$12</span>
+            </div>
           </div>
-          <div class="med-row" data-farmacia="15" data-costo="9" onclick="toggleHeroMed(this)">
-            <div class="med-row-left">
-              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span class="med-name">Levotiroxina 100mcg ×30</span>
+          <div class="hero-med-row" data-farmacia="15" data-costo="9" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Levotiroxina 100mcg ×30</span>
             </div>
-            <div class="med-prices"><span class="med-old">$15</span><span class="med-new">$9</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$15</span>
+              <span style="font-size:.88rem;font-weight:600;color:#059669">$9</span>
+            </div>
           </div>
-          <div class="med-row" data-farmacia="17" data-costo="9" onclick="toggleHeroMed(this)">
-            <div class="med-row-left">
-              <div class="med-check"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-              <span class="med-name">Omega 3 ×60 cápsulas</span>
+          <div class="hero-med-row" data-farmacia="17" data-costo="9" onclick="toggleHeroMed(this)" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div class="h-check"><svg class="h-check-icon" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <span style="font-size:.875rem;color:#1A1A2E;font-weight:500">Omega 3 ×60 cápsulas</span>
             </div>
-            <div class="med-prices"><span class="med-old">$17</span><span class="med-new">$9</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:.8rem;color:#9CA3AF;text-decoration:line-through">$17</span>
+              <span style="font-size:.88rem;font-weight:600;color:#059669">$9</span>
+            </div>
           </div>
         </div>
-        <div class="hcard-sep"></div>
-        <div class="hcard-result">
-          <div class="result-box normal">
-            <div class="rb-label">Farmacia normal</div>
-            <div class="rb-val" id="hero-farmacia">$0</div>
-            <div class="rb-sub">sin membresía</div>
+        <div style="height:1px;background:#F3F4F6;margin-bottom:14px"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+          <div style="background:#FEF2F2;border-radius:10px;padding:12px 14px">
+            <div style="font-size:.72rem;color:#6B7280;margin-bottom:3px">Farmacia normal</div>
+            <div id="hero-farmacia" style="font-size:1.4rem;font-weight:700;color:#EF4444">$0</div>
+            <div style="font-size:.7rem;color:#6B7280;margin-top:2px">sin membresía</div>
           </div>
-          <div class="result-box sub">
-            <div class="rb-label">Con MediCosto</div>
-            <div class="rb-val" id="hero-total">$8</div>
-            <div class="rb-sub">medicamentos + suscripción</div>
+          <div style="background:#ECFDF5;border-radius:10px;padding:12px 14px">
+            <div style="font-size:.72rem;color:#6B7280;margin-bottom:3px">Con MediCosto</div>
+            <div id="hero-total" style="font-size:1.4rem;font-weight:700;color:#059669">$8</div>
+            <div style="font-size:.7rem;color:#6B7280;margin-top:2px">meds + suscripción</div>
           </div>
         </div>
-        <div class="saving-banner" id="hero-saving" style="display:none">
-          <span class="sb-text">💚 Ahorras este mes</span>
-          <span class="sb-val" id="hero-saving-val">$0</span>
+        <div id="hero-saving" style="display:none;background:#FFF8ED;border:1px solid #F5D6A0;border-radius:10px;padding:10px 14px;justify-content:space-between;align-items:center">
+          <span style="font-size:.82rem;color:#E8521A;font-weight:600">&#128241; Ahorras este mes</span>
+          <span id="hero-saving-val" style="font-size:1.1rem;font-weight:700;color:#E8521A">$0</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── CÓMO FUNCIONA ── -->
-<section id="como">
-  <div class="container">
-    <div class="section-label">Proceso</div>
-    <h2>¿Cómo funciona MediCosto?</h2>
-    <p class="section-intro">No somos una farmacia tradicional. Somos una membresía que te da acceso directo al precio que pagamos nosotros a los distribuidores. Sin intermediarios, sin margen oculto.</p>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-connector"></div>
-        <div class="step-num">1</div>
-        <div class="step-title">Elige tu membresía</div>
-        <p class="step-desc">$8 al mes cubre a toda tu familia (hasta 4 personas). Un solo pago, sin costos extras ni cobros sorpresa.</p>
+<!-- ── PRODUCTOS DESTACADOS ── -->
+<section id="productos" style="padding:80px 0;background:#fff">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:48px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">Más solicitados</div>
+      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">Medicamentos más solicitados</h2>
+      <p style="color:#6B7280;font-size:.97rem;max-width:480px;margin:0 auto">Los cuatro productos más pedidos por nuestras familias suscritas cada mes.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
+
+      <!-- Card 1: Losartan -->
+      <div class="product-card" data-id="p1" data-nombre="Losartán 50mg ×30" data-farmacia="22" data-costo="18" data-categoria="hipertension" data-visible="true">
+        <div style="background:#FFF0EB;padding:28px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="8" y="20" width="32" height="14" rx="7" fill="#E8521A" opacity=".15"/>
+            <rect x="8" y="20" width="16" height="14" rx="7" fill="#E8521A" opacity=".35"/>
+            <rect x="22" y="20" width="18" height="14" rx="7" fill="#E8521A" opacity=".2"/>
+            <line x1="24" y1="20" x2="24" y2="34" stroke="#E8521A" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span style="background:#ECFDF5;color:#059669;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px">Hipertensión</span>
+            <span style="background:#FEF2F2;color:#EF4444;font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:99px">Receta</span>
+          </div>
+          <div style="font-weight:700;font-size:.95rem;color:#1A1A2E;margin-bottom:2px">Losartán 50mg ×30</div>
+          <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Losartán potásico</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
+            <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$22.00</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#E8521A">$18</span>
+            <span style="font-size:.72rem;color:#6B7280">/ mes</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-connector"></div>
-        <div class="step-num">2</div>
-        <div class="step-title">Registra a tu familia</div>
-        <p class="step-desc">Cada miembro se identifica con su cédula. Así garantizamos que el beneficio sea solo para tu hogar.</p>
+
+      <!-- Card 2: Metformina -->
+      <div class="product-card" data-id="p2" data-nombre="Metformina 850mg ×30" data-farmacia="13" data-costo="8" data-categoria="diabetes" data-visible="true">
+        <div style="background:#FFF0EB;padding:28px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="27" r="9" fill="#E8521A" opacity=".15"/>
+            <circle cx="24" cy="27" r="9" stroke="#E8521A" stroke-width="1.5"/>
+            <rect x="20" y="16" width="8" height="11" rx="4" fill="#E8521A" opacity=".25" stroke="#E8521A" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span style="background:#ECFDF5;color:#059669;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px">Diabetes</span>
+            <span style="background:#FEF2F2;color:#EF4444;font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:99px">Receta</span>
+          </div>
+          <div style="font-weight:700;font-size:.95rem;color:#1A1A2E;margin-bottom:2px">Metformina 850mg ×30</div>
+          <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Metformina clorhidrato</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
+            <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$13.00</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#E8521A">$8</span>
+            <span style="font-size:.72rem;color:#6B7280">/ mes</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-connector"></div>
-        <div class="step-num">3</div>
-        <div class="step-title">Pide lo que necesitas</div>
-        <p class="step-desc">Entra al catálogo, selecciona tus productos y asígnalos a cada miembro. Ves el precio real al lado del precio de farmacia.</p>
+
+      <!-- Card 3: Atorvastatina -->
+      <div class="product-card" data-id="p3" data-nombre="Atorvastatina 20mg ×30" data-farmacia="18" data-costo="12" data-categoria="colesterol" data-visible="true">
+        <div style="background:#FFF0EB;padding:28px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <rect x="14" y="22" width="20" height="10" rx="5" fill="#E8521A" opacity=".2" stroke="#E8521A" stroke-width="1.5"/>
+            <path d="M24 22V18M20 22V19M28 22V19" stroke="#E8521A" stroke-width="1.4" stroke-linecap="round"/>
+            <rect x="14" y="30" width="20" height="4" rx="2" fill="#E8521A" opacity=".1"/>
+          </svg>
+        </div>
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span style="background:#ECFDF5;color:#059669;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px">Colesterol</span>
+            <span style="background:#FEF2F2;color:#EF4444;font-size:.68rem;font-weight:600;padding:3px 8px;border-radius:99px">Receta</span>
+          </div>
+          <div style="font-weight:700;font-size:.95rem;color:#1A1A2E;margin-bottom:2px">Atorvastatina 20mg ×30</div>
+          <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Atorvastatina cálcica</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
+            <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$18.00</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#E8521A">$12</span>
+            <span style="font-size:.72rem;color:#6B7280">/ mes</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-num">4</div>
-        <div class="step-title">Recíbelo en casa</div>
-        <p class="step-desc">Una entrega mensual programada a tu domicilio en Santo Domingo. Sin costo adicional de envío.</p>
+
+      <!-- Card 4: Omeprazol -->
+      <div class="product-card" data-id="p4" data-nombre="Omeprazol 20mg ×30" data-farmacia="10" data-costo="6" data-categoria="digestiva" data-visible="true">
+        <div style="background:#FFF0EB;padding:28px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <ellipse cx="24" cy="24" rx="10" ry="6" fill="#E8521A" opacity=".18" stroke="#E8521A" stroke-width="1.5"/>
+            <ellipse cx="24" cy="24" rx="4" ry="6" fill="#E8521A" opacity=".3"/>
+            <line x1="14" y1="24" x2="34" y2="24" stroke="#E8521A" stroke-width="1.3"/>
+          </svg>
+        </div>
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+            <span style="background:#ECFDF5;color:#059669;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px">Digestivo</span>
+          </div>
+          <div style="font-weight:700;font-size:.95rem;color:#1A1A2E;margin-bottom:2px">Omeprazol 20mg ×30</div>
+          <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Omeprazol</div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
+            <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$10.00</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#E8521A">$6</span>
+            <span style="font-size:.72rem;color:#6B7280">/ mes</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CATEGORÍAS ── -->
+<section id="categorias" style="padding:80px 0;background:#F9FAFB">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:36px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">Catálogo</div>
+      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">Encuentra lo que necesitas</h2>
+    </div>
+    <!-- Filter bar -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:40px">
+      <button class="cat-btn active" onclick="filterCat('todos',this)">Todos</button>
+      <button class="cat-btn" onclick="filterCat('hipertension',this)">Hipertensión</button>
+      <button class="cat-btn" onclick="filterCat('diabetes',this)">Diabetes</button>
+      <button class="cat-btn" onclick="filterCat('tiroides',this)">Tiroides</button>
+      <button class="cat-btn" onclick="filterCat('colesterol',this)">Colesterol</button>
+      <button class="cat-btn" onclick="filterCat('digestiva',this)">Salud digestiva</button>
+      <button class="cat-btn" onclick="filterCat('respiratorio',this)">Salud respiratoria</button>
+      <button class="cat-btn" onclick="filterCat('vitaminas',this)">Vitaminas</button>
+      <button class="cat-btn" onclick="filterCat('sexual',this)">Salud sexual</button>
+      <button class="cat-btn" onclick="filterCat('antibiotico',this)">Antibiótico</button>
+    </div>
+    <!-- Products grid -->
+    <div id="cat-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
+
+      <div class="product-card" data-id="p1b" data-nombre="Losartán 50mg ×30" data-farmacia="22" data-costo="18" data-categoria="hipertension">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="8" y="20" width="32" height="14" rx="7" fill="#E8521A" opacity=".18"/><rect x="8" y="20" width="16" height="14" rx="7" fill="#E8521A" opacity=".35"/><line x1="24" y1="20" x2="24" y2="34" stroke="#E8521A" stroke-width="1.5"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Hipertensión</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Losartán 50mg ×30</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Losartán potásico · Receta requerida</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$22</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$18</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p2b" data-nombre="Metformina 850mg ×30" data-farmacia="13" data-costo="8" data-categoria="diabetes">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="27" r="9" fill="#E8521A" opacity=".15" stroke="#E8521A" stroke-width="1.5"/><rect x="20" y="16" width="8" height="11" rx="4" fill="#E8521A" opacity=".25" stroke="#E8521A" stroke-width="1.2"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Diabetes</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Metformina 850mg ×30</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Metformina HCl · Receta requerida</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$13</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$8</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p5" data-nombre="Levotiroxina 100mcg ×30" data-farmacia="15" data-costo="9" data-categoria="tiroides">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="28" rx="9" ry="6" fill="#E8521A" opacity=".18" stroke="#E8521A" stroke-width="1.5"/><path d="M24 16v12" stroke="#E8521A" stroke-width="1.5" stroke-linecap="round"/><path d="M20 18l4-4 4 4" stroke="#E8521A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Tiroides</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Levotiroxina 100mcg ×30</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Levotiroxina sódica · Receta requerida</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$15</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$9</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p3b" data-nombre="Atorvastatina 20mg ×30" data-farmacia="18" data-costo="12" data-categoria="colesterol">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="14" y="22" width="20" height="10" rx="5" fill="#E8521A" opacity=".2" stroke="#E8521A" stroke-width="1.5"/><path d="M24 22V18M20 22V19M28 22V19" stroke="#E8521A" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Colesterol</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Atorvastatina 20mg ×30</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Atorvastatina cálcica · Receta requerida</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$18</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$12</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p4b" data-nombre="Omeprazol 20mg ×30" data-farmacia="10" data-costo="6" data-categoria="digestiva">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="24" rx="10" ry="6" fill="#E8521A" opacity=".18" stroke="#E8521A" stroke-width="1.5"/><ellipse cx="24" cy="24" rx="4" ry="6" fill="#E8521A" opacity=".3"/><line x1="14" y1="24" x2="34" y2="24" stroke="#E8521A" stroke-width="1.3"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Digestivo</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Omeprazol 20mg ×30</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Omeprazol</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$10</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$6</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p6" data-nombre="Ibuprofeno 400mg ×20" data-farmacia="5.5" data-costo="3" data-categoria="digestiva">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="16" y="18" width="16" height="12" rx="6" fill="#E8521A" opacity=".2" stroke="#E8521A" stroke-width="1.5"/><rect x="16" y="18" width="8" height="12" rx="6" fill="#E8521A" opacity=".3"/><line x1="24" y1="18" x2="24" y2="30" stroke="#E8521A" stroke-width="1.3"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Digestivo</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Ibuprofeno 400mg ×20</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Ibuprofeno</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$5.50</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$3</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p7" data-nombre="Salbutamol Inhalador" data-farmacia="13" data-costo="8" data-categoria="respiratorio">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="20" y="14" width="8" height="20" rx="4" fill="#E8521A" opacity=".2" stroke="#E8521A" stroke-width="1.5"/><path d="M16 28h16" stroke="#E8521A" stroke-width="1.5" stroke-linecap="round"/><path d="M24 34v4" stroke="#E8521A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Respiratorio</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Salbutamol Inhalador</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Salbutamol · Receta requerida</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$13</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$8</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p8" data-nombre="Vitamina D3 1000UI ×30" data-farmacia="13" data-costo="7" data-categoria="vitaminas">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="8" fill="#E8521A" opacity=".18" stroke="#E8521A" stroke-width="1.5"/><path d="M24 14v4M24 30v4M14 24h4M30 24h4" stroke="#E8521A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Vitaminas</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Vitamina D3 1000UI ×30</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Colecalciferol</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$13</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$7</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p9" data-nombre="Omega 3 1000mg ×60" data-farmacia="17" data-costo="9" data-categoria="vitaminas">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="26" rx="9" ry="6" fill="#E8521A" opacity=".15" stroke="#E8521A" stroke-width="1.5"/><path d="M18 22c2-4 10-4 12 0" stroke="#E8521A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Vitaminas</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Omega 3 1000mg ×60</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Aceite de pescado</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$17</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$9</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p10" data-nombre="Anticonceptivo mensual" data-farmacia="11" data-costo="6" data-categoria="sexual">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="9" fill="#E8521A" opacity=".15" stroke="#E8521A" stroke-width="1.5"/><circle cx="24" cy="24" r="4" fill="#E8521A" opacity=".3"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Salud sexual</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Anticonceptivo mensual</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Anticonceptivo oral</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$11</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$6</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p11" data-nombre="Amoxicilina 500mg ×21" data-farmacia="9" data-costo="5" data-categoria="antibiotico">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="16" y="18" width="16" height="12" rx="6" fill="#E8521A" opacity=".18" stroke="#E8521A" stroke-width="1.5"/><path d="M24 14v4M24 30v4" stroke="#E8521A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Antibiótico</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Amoxicilina 500mg ×21</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Amoxicilina · Receta requerida</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$9</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$5</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-id="p12" data-nombre="Paracetamol 500mg ×20" data-farmacia="3" data-costo="1.5" data-categoria="digestiva">
+        <div style="background:#FFF0EB;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="18" y="18" width="12" height="12" rx="6" fill="#E8521A" opacity=".2" stroke="#E8521A" stroke-width="1.5"/><path d="M18 24h12" stroke="#E8521A" stroke-width="1.3"/></svg>
+        </div>
+        <div style="padding:14px">
+          <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Digestivo</span>
+          <div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">Paracetamol 500mg ×20</div>
+          <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Acetaminofén</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
+            <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$3</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#E8521A">$1.50</span>
+          </div>
+          <div class="add-wrap">
+            <button onclick="addToCart(this)" style="width:100%;background:#E8521A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── CALCULADORA ── -->
+<section id="calculadora" style="padding:80px 0;background:#fff">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div class="calc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start">
+      <div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">Calculadora</div>
+        <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">¿Cuánto ahorras realmente?</h2>
+        <p style="color:#6B7280;font-size:.95rem;line-height:1.7;margin-bottom:24px">Selecciona los medicamentos de tu familia y ve exactamente cuánto ahorras con MediCosto cada mes.</p>
+        <div id="calc-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
+          <button class="calc-pill active" data-farmacia="22" data-costo="18" data-name="Losartán 50mg" onclick="togglePill(this)">Losartán 50mg</button>
+          <button class="calc-pill" data-farmacia="13" data-costo="8" data-name="Metformina" onclick="togglePill(this)">Metformina</button>
+          <button class="calc-pill" data-farmacia="18" data-costo="12" data-name="Atorvastatina" onclick="togglePill(this)">Atorvastatina</button>
+          <button class="calc-pill" data-farmacia="10" data-costo="6" data-name="Omeprazol" onclick="togglePill(this)">Omeprazol</button>
+          <button class="calc-pill" data-farmacia="15" data-costo="9" data-name="Levotiroxina" onclick="togglePill(this)">Levotiroxina</button>
+          <button class="calc-pill" data-farmacia="9" data-costo="5" data-name="Amoxicilina" onclick="togglePill(this)">Amoxicilina</button>
+          <button class="calc-pill" data-farmacia="5.5" data-costo="3" data-name="Ibuprofeno" onclick="togglePill(this)">Ibuprofeno</button>
+          <button class="calc-pill" data-farmacia="13" data-costo="7" data-name="Vitamina D3" onclick="togglePill(this)">Vitamina D3</button>
+          <button class="calc-pill" data-farmacia="17" data-costo="9" data-name="Omega 3" onclick="togglePill(this)">Omega 3</button>
+          <button class="calc-pill" data-farmacia="11" data-costo="6" data-name="Anticonceptivo" onclick="togglePill(this)">Anticonceptivo</button>
+          <button class="calc-pill" data-farmacia="13" data-costo="8" data-name="Salbutamol" onclick="togglePill(this)">Salbutamol</button>
+          <button class="calc-pill" data-farmacia="3" data-costo="1.5" data-name="Paracetamol" onclick="togglePill(this)">Paracetamol</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px">
+          <label style="font-size:.88rem;font-weight:500;color:#1A1A2E">Personas en el grupo (máx. 4):</label>
+          <div style="display:flex;align-items:center;gap:10px">
+            <button onclick="changePersonas(-1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid #E5E7EB;background:#fff;font-size:1.1rem;color:#6B7280;cursor:pointer;display:flex;align-items:center;justify-content:center">&#8722;</button>
+            <span id="personas-val" style="font-size:1.1rem;font-weight:600;min-width:20px;text-align:center">1</span>
+            <button onclick="changePersonas(1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid #E5E7EB;background:#fff;font-size:1.1rem;color:#6B7280;cursor:pointer;display:flex;align-items:center;justify-content:center">&#43;</button>
+          </div>
+        </div>
+      </div>
+      <!-- Result panel -->
+      <div style="background:#F9FAFB;border-radius:16px;padding:24px;position:sticky;top:80px">
+        <div id="calc-empty-panel" style="text-align:center;padding:40px 0;color:#D1D5DB;font-size:.9rem">
+          &#8592; Selecciona medicamentos para ver tu ahorro
+        </div>
+        <div id="calc-result-panel" style="display:none">
+          <div id="calc-rows" style="margin-bottom:12px"></div>
+          <div style="height:1px;background:#E5E7EB;margin:8px 0 12px"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <div style="background:#FEF2F2;border-radius:10px;padding:12px">
+              <div style="font-size:.72rem;color:#6B7280;margin-bottom:3px">Farmacia normal</div>
+              <div id="ct-farmacia" style="font-size:1.4rem;font-weight:700;color:#EF4444">$0</div>
+              <div style="font-size:.7rem;color:#6B7280;margin-top:2px">sin membresía</div>
+            </div>
+            <div style="background:#ECFDF5;border-radius:10px;padding:12px">
+              <div style="font-size:.72rem;color:#6B7280;margin-bottom:3px">Con MediCosto</div>
+              <div id="ct-medicosto" style="font-size:1.4rem;font-weight:700;color:#059669">$0</div>
+              <div style="font-size:.7rem;color:#6B7280;margin-top:2px">meds + $8 membresía</div>
+            </div>
+          </div>
+          <div id="calc-saving-row" style="background:#FFF8ED;border:1px solid #F5D6A0;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:.83rem;color:#E8521A;font-weight:600">&#128176; Ahorras este mes</span>
+            <span id="ct-ahorro" style="font-size:1.2rem;font-weight:700;color:#E8521A">$0</span>
+          </div>
+          <div id="calc-annual-row" style="text-align:center;font-size:.82rem;color:#6B7280;padding:8px">
+            En 12 meses ahorras <strong id="ct-anual" style="color:#059669">$0 USD</strong>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ── POR QUÉ MEDICOSTO ── -->
-<section id="porque">
-  <div class="container">
-    <div class="section-label">La diferencia</div>
-    <h2>No son descuentos. Es el precio real.</h2>
-    <div class="porque-grid">
-      <div class="porque-card">
-        <span class="pc-tag">❌ El problema</span>
-        <h3>Las farmacias tradicionales</h3>
-        <p>Compran al distribuidor y venden con 30-40% de margen. Tú pagas ese margen cada vez que compras un medicamento, sin saberlo.</p>
+<section style="padding:80px 0;background:#FFF0EB">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:44px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">La diferencia</div>
+      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">No son descuentos. Es el precio real.</h2>
+    </div>
+    <div class="porque-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+      <div style="background:#fff;border-radius:20px;padding:32px 28px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
+        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:#FEF2F2;color:#EF4444">&#10060; El problema</span>
+        <h3 style="font-size:1.05rem;font-weight:600;color:#1A1A2E;margin-bottom:12px">Las farmacias tradicionales</h3>
+        <p style="font-size:.88rem;color:#6B7280;line-height:1.7">Compran al distribuidor y venden con 30–40% de margen. Tú pagas ese margen cada vez que compras un medicamento, sin saberlo.</p>
       </div>
-      <div class="porque-card">
-        <span class="pc-tag">❌ El engaño</span>
-        <h3>Los descuentos de siempre</h3>
-        <p>Un porcentaje de descuento sobre un precio ya inflado no es ahorro real. Es marketing. El precio base sigue siendo elevado.</p>
+      <div style="background:#fff;border-radius:20px;padding:32px 28px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
+        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:#FEF2F2;color:#EF4444">&#10060; El engaño</span>
+        <h3 style="font-size:1.05rem;font-weight:600;color:#1A1A2E;margin-bottom:12px">Los descuentos de siempre</h3>
+        <p style="font-size:.88rem;color:#6B7280;line-height:1.7">Un porcentaje de descuento sobre un precio ya inflado no es ahorro real. Es marketing. El precio base sigue siendo elevado.</p>
       </div>
-      <div class="porque-card porque-card--highlight">
-        <span class="pc-tag ok">✅ La solución</span>
-        <h3 style="color: #FFFFFF !important;">MediCosto</h3>
-        <p style="color: #FFFFFF !important; font-weight: 500;">Compramos al distribuidor y te cobramos exactamente lo mismo que pagamos. Nuestra ganancia es tu membresía de $8, no el producto.</p>
+      <div style="background:#E8521A;border-radius:20px;padding:32px 28px">
+        <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:rgba(255,255,255,.2);color:#fff">&#10003; MediCosto</span>
+        <h3 style="font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:12px">El precio que pagamos nosotros</h3>
+        <p style="font-size:.88rem;color:rgba(255,255,255,.85);line-height:1.7;font-weight:500">Compramos al distribuidor y te cobramos exactamente lo mismo que pagamos. Nuestra ganancia es tu membresía de $8, no el producto.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── PLANES ── -->
-<section id="planes">
-  <div class="container">
-    <div class="plans-header">
-      <div class="section-label">Planes</div>
-      <h2>Elige el plan de tu familia</h2>
-      <p style="color:var(--ink-60); margin-top:8px">Sin letra pequeña. Cancela cuando quieras.</p>
-    </div>
-
-    <div style="display:flex; justify-content:center;">
-      <div class="plan-card featured" style="max-width:420px; width:100%;">
-        <span class="plan-badge">Plan único</span>
-        <div class="plan-name">Familiar</div>
-        <div class="plan-price">$8</div>
-        <div class="plan-period">USD / mes · hasta 4 personas</div>
-        <div class="plan-sep"></div>
-        <ul class="plan-features">
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Medicamentos al precio de costo exacto
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Hasta 4 miembros del grupo familiar
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            1 entrega mensual a domicilio incluida
-          </li>
-          <li>
-            <svg class="feat-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="white" stroke-width="1.5"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Catálogo de 400+ medicamentos y suplementos
-          </li>
-        </ul>
-        <div style="font-size:.75rem; color:rgba(255,255,255,.65); background:rgba(0,0,0,.12); border-radius:8px; padding:10px 12px; margin-bottom:16px; line-height:1.6;">
-          <strong style="color:rgba(255,255,255,.85); display:block; margin-bottom:4px;">Términos del plan:</strong>
-          Máx. 2 dosis diarias por medicamento por persona registrada. Con receta médica validada: hasta 3 dosis diarias. Miembros pre-registrados con cédula. Cupo mensual no acumulable.
-        </div>
-        <a href="registro.html" class="plan-btn" style="display:block;text-align:center;text-decoration:none;">Comenzar</a>
-      </div>
+<!-- ── MEMBRESÍA ── -->
+<section id="membresia" style="padding:80px 0;background:linear-gradient(135deg,#FFF0EB 0%,#FFF8ED 100%)">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;text-align:center">
+    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">Plan único</div>
+    <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">Un plan, toda tu familia</h2>
+    <p style="color:#6B7280;font-size:.97rem;margin-bottom:48px">Sin letra pequeña. Cancela cuando quieras.</p>
+    <div style="max-width:420px;margin:0 auto;background:#fff;border-radius:24px;padding:36px;box-shadow:0 8px 40px rgba(232,82,26,.15);border:2px solid #E8521A">
+      <span style="background:#FFF8ED;color:#F5A623;font-size:.75rem;font-weight:600;padding:4px 14px;border-radius:99px">Plan único</span>
+      <div style="font-size:1.1rem;font-weight:600;color:#1A1A2E;margin-top:14px">Familiar</div>
+      <div style="font-size:3rem;font-weight:700;color:#E8521A;line-height:1;margin:10px 0 4px">$8</div>
+      <div style="font-size:.83rem;color:#6B7280;margin-bottom:20px">USD / mes · hasta 4 personas</div>
+      <div style="height:1px;background:#F3F4F6;margin-bottom:20px"></div>
+      <ul style="list-style:none;padding:0;margin:0 0 24px;text-align:left;display:flex;flex-direction:column;gap:10px">
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#E8521A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Medicamentos al precio de costo exacto
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#E8521A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Hasta 4 miembros del grupo familiar
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#E8521A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          1 entrega mensual a domicilio incluida
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#E8521A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Catálogo de 400+ medicamentos y suplementos
+        </li>
+      </ul>
+      <a href="registro.html" style="display:block;text-align:center;background:#F5A623;color:#fff;font-weight:700;font-size:.97rem;padding:14px;border-radius:12px;text-decoration:none">Comenzar ahora</a>
     </div>
   </div>
 </section>
 
-<!-- ── CALCULADORA ── -->
-<section id="calculadora">
-  <div class="container">
-    <div class="calc-wrapper">
-      <div class="calc-left">
-        <div class="section-label">Calculadora</div>
-        <h2>Calcula tu ahorro real</h2>
-        <p>Selecciona los medicamentos de tu familia y ve exactamente cuánto ahorras con MediCosto cada mes.</p>
-        <div class="calc-pills" id="calc-pills">
-          <div class="pill active" data-farmacia="22" data-costo="18" data-name="Losartán 50mg" onclick="togglePill(this)">Losartán 50mg</div>
-          <div class="pill" data-farmacia="13" data-costo="8" data-name="Metformina 850mg" onclick="togglePill(this)">Metformina</div>
-          <div class="pill" data-farmacia="18" data-costo="12" data-name="Atorvastatina 20mg" onclick="togglePill(this)">Atorvastatina</div>
-          <div class="pill" data-farmacia="10" data-costo="6" data-name="Omeprazol 20mg" onclick="togglePill(this)">Omeprazol</div>
-          <div class="pill" data-farmacia="15" data-costo="9" data-name="Levotiroxina" onclick="togglePill(this)">Levotiroxina</div>
-          <div class="pill" data-farmacia="9" data-costo="5" data-name="Amoxicilina" onclick="togglePill(this)">Amoxicilina</div>
-          <div class="pill" data-farmacia="5.5" data-costo="3" data-name="Ibuprofeno" onclick="togglePill(this)">Ibuprofeno</div>
-          <div class="pill" data-farmacia="13" data-costo="7" data-name="Vitamina D3" onclick="togglePill(this)">Vitamina D3</div>
-          <div class="pill" data-farmacia="17" data-costo="9" data-name="Omega 3" onclick="togglePill(this)">Omega 3</div>
-          <div class="pill" data-farmacia="11" data-costo="6" data-name="Anticonceptivo" onclick="togglePill(this)">Anticonceptivo</div>
-          <div class="pill" data-farmacia="13" data-costo="8" data-name="Salbutamol" onclick="togglePill(this)">Salbutamol</div>
-          <div class="pill" data-farmacia="3" data-costo="1.5" data-name="Paracetamol" onclick="togglePill(this)">Paracetamol</div>
+<!-- ── CÓMO FUNCIONA ── -->
+<section style="padding:80px 0;background:#F9FAFB">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:52px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">Proceso</div>
+      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">¿Cómo funciona MediCosto?</h2>
+      <p style="color:#6B7280;font-size:.97rem;max-width:560px;margin:0 auto;line-height:1.7">No somos una farmacia tradicional. Somos una membresía que te da acceso al precio que pagamos a los distribuidores. Sin intermediarios, sin margen oculto.</p>
+    </div>
+    <div class="steps-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
+      <div style="position:relative">
+        <div class="step-connector"></div>
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF0EB;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#E8521A">1</span>
         </div>
-        <div class="calc-personas">
-          <label>Personas en el grupo (máx. 4):</label>
-          <div class="counter">
-            <button class="counter-btn" onclick="changePersonas(-1)">−</button>
-            <span class="counter-val" id="personas-val">1</span>
-            <button class="counter-btn" onclick="changePersonas(1)">+</button>
-          </div>
-        </div>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Elige tu membresía</div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.65">$8 al mes cubre a toda tu familia (hasta 4 personas). Un solo pago, sin costos extras ni cobros sorpresa.</p>
       </div>
-      <div class="calc-right">
-        <div id="calc-display">
-          <div class="calc-empty">← Selecciona medicamentos para ver tu ahorro</div>
+      <div style="position:relative">
+        <div class="step-connector"></div>
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF0EB;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#E8521A">2</span>
         </div>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Registra a tu familia</div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.65">Cada miembro se identifica con su cédula. Así garantizamos que el beneficio sea solo para tu hogar.</p>
+      </div>
+      <div style="position:relative">
+        <div class="step-connector"></div>
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF0EB;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#E8521A">3</span>
+        </div>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Pide lo que necesitas</div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.65">Entra al catálogo, selecciona tus productos y ves el precio real al lado del precio de farmacia.</p>
+      </div>
+      <div style="position:relative">
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF0EB;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#E8521A">4</span>
+        </div>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Recíbelo en casa</div>
+        <p style="font-size:.875rem;color:#6B7280;line-height:1.65">Una entrega mensual programada a tu domicilio en Santo Domingo. Sin costo adicional de envío.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ── CONFIANZA ── -->
-<section id="confianza">
-  <div class="container">
-    <div style="text-align:center; margin-bottom:48px">
-      <div class="section-label" style="text-align:center">Por qué MediCosto</div>
-      <h2>Construido con responsabilidad</h2>
+<section style="padding:80px 0;background:#fff">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:48px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#E8521A;margin-bottom:8px">Por qué elegirnos</div>
+      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">Construido con responsabilidad</h2>
     </div>
-    <div class="trust-grid">
-      <div class="trust-card">
-        <div class="trust-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6.5 7 1-5 5 1.2 7L12 18l-6.2 3.5L7 14.5 2 9.5l7-1L12 2z" stroke="#1A6B4A" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    <div class="trust-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+      <div style="background:#F9FAFB;border-radius:20px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.05)">
+        <div style="width:48px;height:48px;border-radius:14px;background:#ECFDF5;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2l3 6.5 7 1-5 5 1.2 7L12 18l-6.2 3.5L7 14.5 2 9.5l7-1L12 2z" stroke="#059669" stroke-width="1.8" stroke-linejoin="round"/></svg>
         </div>
-        <div class="trust-title">Operamos bajo regulación ARCSA</div>
-        <p class="trust-desc">Trabajamos con farmacias habilitadas y un Químico Farmacéutico responsable técnico. Tu salud no es un experimento.</p>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Operamos bajo regulación ARCSA</div>
+        <p style="font-size:.88rem;color:#6B7280;line-height:1.65">Trabajamos con farmacias habilitadas y un Químico Farmacéutico responsable técnico. Tu salud no es un experimento.</p>
       </div>
-      <div class="trust-card">
-        <div class="trust-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#1A6B4A" stroke-width="1.8"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div style="background:#F9FAFB;border-radius:20px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.05)">
+        <div style="width:48px;height:48px;border-radius:14px;background:#ECFDF5;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" stroke="#059669" stroke-width="1.8"/><path d="M7 11V7a5 5 0 0110 0v4" stroke="#059669" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
-        <div class="trust-title">Precios transparentes, sin letra pequeña</div>
-        <p class="trust-desc">Lo que ves en el catálogo es lo que pagas. Sin cargos ocultos, sin "precio especial solo hoy". El ahorro es real y verificable.</p>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Precios transparentes, sin letra pequeña</div>
+        <p style="font-size:.88rem;color:#6B7280;line-height:1.65">Lo que ves en el catálogo es lo que pagas. Sin cargos ocultos, sin "precio especial solo hoy". El ahorro es real y verificable.</p>
       </div>
-      <div class="trust-card">
-        <div class="trust-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="#1A6B4A" stroke-width="1.8"/><path d="M9 22V12h6v10" stroke="#1A6B4A" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <div style="background:#F9FAFB;border-radius:20px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.05)">
+        <div style="width:48px;height:48px;border-radius:14px;background:#ECFDF5;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="#059669" stroke-width="1.8"/><path d="M9 22V12h6v10" stroke="#059669" stroke-width="1.8" stroke-linecap="round"/></svg>
         </div>
-        <div class="trust-title">Tu familia cubierta, no solo tú</div>
-        <p class="trust-desc">Un solo plan cubre a toda tu familia. Mientras más personas usen la membresía, más recuperas cada mes. Así funciona el ahorro real.</p>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Tu familia cubierta, no solo tú</div>
+        <p style="font-size:.88rem;color:#6B7280;line-height:1.65">Un solo plan cubre a toda tu familia. Mientras más personas usen la membresía, más recuperas cada mes. Así funciona el ahorro real.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── CTA ── -->
-<section id="cta-band">
-  <div class="container">
-    <h2>¿Listo para empezar?</h2>
-    <p>Activa tu membresía hoy. El primer mes lo pruebas sin compromiso.</p>
-    <div class="cta-actions">
-      <a href="registro.html" class="btn-primary">Ver planes</a>
-      <a href="https://wa.me/593XXXXXXXXX" class="btn-ghost">💬 Hablar por WhatsApp</a>
+<!-- ── CTA FINAL ── -->
+<section style="padding:80px 0;background:#E8521A;text-align:center">
+  <div style="max-width:700px;margin:0 auto;padding:0 24px">
+    <h2 style="color:#fff;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;margin-bottom:14px">¿Listo para empezar?</h2>
+    <p style="color:rgba(255,255,255,.8);font-size:1.05rem;margin-bottom:32px">Activa tu membresía hoy. El primer mes lo pruebas sin compromiso.</p>
+    <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <a href="registro.html" style="background:#F5A623;color:#fff;font-weight:700;font-size:.97rem;padding:14px 28px;border-radius:12px;text-decoration:none">Comenzar desde $8/mes</a>
+      <a href="https://wa.me/593XXXXXXXXX" style="border:2px solid rgba(255,255,255,.45);color:#fff;font-weight:500;font-size:.97rem;padding:14px 28px;border-radius:12px;text-decoration:none">Hablar por WhatsApp</a>
     </div>
   </div>
 </section>
 
 <!-- ── FOOTER ── -->
-<footer>
-  <div class="container">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <div class="footer-logo-text">Medi<span>Costo</span></div>
-        <p>La membresía de salud para familias ecuatorianas. Medicamentos al precio real, entregados a tu puerta.</p>
+<footer style="background:#1A1A2E;padding:48px 0 28px">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px">
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">Medi<span style="color:#E8521A">Costo</span></div>
+        <p style="font-size:.85rem;color:#6B7280;margin-top:12px;max-width:240px;line-height:1.6">La membresía de salud para familias ecuatorianas. Medicamentos al precio real, entregados a tu puerta.</p>
       </div>
-      <div class="footer-col">
-        <h4>Producto</h4>
-        <ul>
-          <li><a href="#como">Cómo funciona</a></li>
-          <li><a href="#planes">Planes y precios</a></li>
-          <li><a href="#calculadora">Calculadora de ahorro</a></li>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Producto</h4>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
+          <li><a href="#productos" style="font-size:.83rem;color:#6B7280;text-decoration:none">Productos</a></li>
+          <li><a href="#calculadora" style="font-size:.83rem;color:#6B7280;text-decoration:none">Calculadora de ahorro</a></li>
+          <li><a href="#membresia" style="font-size:.83rem;color:#6B7280;text-decoration:none">Planes y precios</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>Nuestra empresa</h4>
-        <ul>
-          <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-          <li><a href="terminos.html">Términos y Condiciones</a></li>
-          <li><a href="privacidad.html">Política de Privacidad</a></li>
-          <li><a href="devoluciones.html">Política de Devolución</a></li>
-          <li><a href="faq.html">Preguntas Frecuentes</a></li>
-          <li><a href="reclamos.html">Reclamos y Sugerencias</a></li>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Empresa</h4>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
+          <li><a href="quienes-somos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Quiénes Somos</a></li>
+          <li><a href="terminos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Devolución</a></li>
+          <li><a href="faq.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Reclamos y Sugerencias</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>Información regulatoria</h4>
-        <ul>
-          <li><a href="uso-racional.html">Uso Racional de Medicamentos</a></li>
-          <li><a href="desabastecimiento.html">Cartas de Desabastecimiento</a></li>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Regulatorio</h4>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
+          <li><a href="uso-racional.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Cartas de Desabastecimiento</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p>© 2025 MediCosto Ecuador. Operamos bajo normativa ARCSA.</p>
-      <p>Santo Domingo de los Tsáchilas · Ecuador</p>
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-size:.78rem;color:#6B7280">&#169; 2025 MediCosto Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p style="font-size:.78rem;color:#6B7280">Santo Domingo de los Tsáchilas &#183; Ecuador</p>
     </div>
   </div>
 </footer>
 
 <script>
-// ── HERO CALCULATOR ──────────────────────────────────────
-const SUSCRIPCION = 8;
+// ── HERO CALCULATOR ──────────────────────────────────────────────
+var SUSCRIPCION = 8;
 
 function toggleHeroMed(el) {
   el.classList.toggle('active');
@@ -745,19 +982,18 @@ function toggleHeroMed(el) {
 }
 
 function updateHeroCalc() {
-  const rows = document.querySelectorAll('#hero-meds .med-row.active');
-  let farmacia = 0, costo = 0;
-  rows.forEach(r => {
-    farmacia += parseFloat(r.dataset.farmacia);
-    costo    += parseFloat(r.dataset.costo);
-  });
-  const total = costo + SUSCRIPCION;
-  const ahorro = farmacia - total;
-
+  var rows = document.querySelectorAll('#hero-meds .hero-med-row.active');
+  var farmacia = 0;
+  var costo = 0;
+  for (var i = 0; i < rows.length; i++) {
+    farmacia += parseFloat(rows[i].dataset.farmacia);
+    costo    += parseFloat(rows[i].dataset.costo);
+  }
+  var total = costo + SUSCRIPCION;
+  var ahorro = farmacia - total;
   document.getElementById('hero-farmacia').textContent = '$' + farmacia.toFixed(0);
   document.getElementById('hero-total').textContent    = '$' + total.toFixed(0);
-
-  const banner = document.getElementById('hero-saving');
+  var banner = document.getElementById('hero-saving');
   if (ahorro > 0) {
     banner.style.display = 'flex';
     document.getElementById('hero-saving-val').textContent = '$' + ahorro.toFixed(0);
@@ -767,9 +1003,148 @@ function updateHeroCalc() {
 }
 updateHeroCalc();
 
-// ── FULL CALCULATOR ──────────────────────────────────────
-let personas = 1;
-const PLAN_PRICE = 8;
+// ── CART ─────────────────────────────────────────────────────────
+var cart = [];
+
+function toggleCart() {
+  var drawer  = document.getElementById('cart-drawer');
+  var overlay = document.getElementById('cart-overlay');
+  drawer.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+
+function addToCart(btn) {
+  var card = btn.closest('[data-id]');
+  var id   = card.dataset.id;
+  var nome = card.dataset.nombre;
+  var farm = parseFloat(card.dataset.farmacia);
+  var cost = parseFloat(card.dataset.costo);
+
+  var found = false;
+  for (var i = 0; i < cart.length; i++) {
+    if (cart[i].id === id) {
+      cart[i].qty += 1;
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    cart.push({ id: id, nombre: nome, farmacia: farm, costo: cost, qty: 1 });
+  }
+  updateCartUI();
+  showToast();
+}
+
+function removeFromCart(id) {
+  for (var i = 0; i < cart.length; i++) {
+    if (cart[i].id === id) {
+      cart.splice(i, 1);
+      break;
+    }
+  }
+  updateCartUI();
+}
+
+function updateQty(id, delta) {
+  for (var i = 0; i < cart.length; i++) {
+    if (cart[i].id === id) {
+      cart[i].qty += delta;
+      if (cart[i].qty < 1) {
+        cart.splice(i, 1);
+      }
+      break;
+    }
+  }
+  updateCartUI();
+}
+
+function updateCartUI() {
+  var container  = document.getElementById('cart-items');
+  var emptyMsg   = document.getElementById('cart-empty-msg');
+  var footer     = document.getElementById('cart-footer');
+  var badge      = document.getElementById('cart-badge');
+  var badgeDrawer = document.getElementById('cart-badge-drawer');
+
+  var oldItems = container.querySelectorAll('.c-item');
+  for (var k = 0; k < oldItems.length; k++) { oldItems[k].remove(); }
+
+  var totalF = 0;
+  var totalC = 0;
+  var count  = 0;
+
+  if (cart.length === 0) {
+    emptyMsg.style.display = 'block';
+    footer.style.display   = 'none';
+  } else {
+    emptyMsg.style.display = 'none';
+    footer.style.display   = 'block';
+
+    for (var j = 0; j < cart.length; j++) {
+      var item = cart[j];
+      count  += item.qty;
+      totalF += item.farmacia * item.qty;
+      totalC += item.costo    * item.qty;
+
+      var div = document.createElement('div');
+      div.className = 'c-item';
+      div.style.cssText = 'padding:12px 0;border-bottom:1px solid #F3F4F6;display:flex;gap:10px;align-items:flex-start';
+
+      var html = '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:.88rem;font-weight:600;color:#1A1A2E;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + item.nombre + '</div>';
+      html += '<div style="display:flex;align-items:center;gap:8px">';
+      html += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + (item.farmacia * item.qty).toFixed(2) + '</span>';
+      html += '<span style="font-size:.88rem;font-weight:600;color:#E8521A">$' + (item.costo * item.qty).toFixed(2) + '</span>';
+      html += '</div></div>';
+      html += '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">';
+      html += '<button onclick="updateQty(\'' + item.id + '\',-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;cursor:pointer">&#8722;</button>';
+      html += '<span style="font-size:.88rem;font-weight:600;min-width:20px;text-align:center">' + item.qty + '</span>';
+      html += '<button onclick="updateQty(\'' + item.id + '\',1)" style="width:24px;height:24px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;cursor:pointer">&#43;</button>';
+      html += '<button onclick="removeFromCart(\'' + item.id + '\')" style="width:24px;height:24px;border-radius:6px;border:none;background:#FEE2E2;color:#EF4444;cursor:pointer">&#215;</button>';
+      html += '</div>';
+
+      div.innerHTML = html;
+      container.appendChild(div);
+    }
+
+    var ahorro = totalF - totalC;
+    document.getElementById('cart-footer-farmacia').textContent = '$' + totalF.toFixed(2);
+    document.getElementById('cart-footer-ahorro').textContent   = '$' + ahorro.toFixed(2);
+    document.getElementById('cart-footer-total').textContent    = '$' + totalC.toFixed(2);
+  }
+
+  badge.textContent       = count;
+  badgeDrawer.textContent = count;
+}
+
+// ── TOAST ────────────────────────────────────────────────────────
+var toastTimer = null;
+
+function showToast() {
+  var el = document.getElementById('toast');
+  el.classList.add('show');
+  if (toastTimer) { clearTimeout(toastTimer); }
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+}
+
+// ── CATEGORY FILTER ──────────────────────────────────────────────
+function filterCat(cat, btn) {
+  var btns = document.querySelectorAll('.cat-btn');
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+  btn.classList.add('active');
+
+  var cards = document.querySelectorAll('#cat-grid [data-id]');
+  for (var j = 0; j < cards.length; j++) {
+    if (cat === 'todos' || cards[j].dataset.categoria === cat) {
+      cards[j].style.display = '';
+    } else {
+      cards[j].style.display = 'none';
+    }
+  }
+}
+
+// ── FULL CALCULATOR ──────────────────────────────────────────────
+var personas = 1;
+var PLAN_PRICE = 8;
 
 function changePersonas(delta) {
   personas = Math.max(1, Math.min(4, personas + delta));
@@ -783,69 +1158,57 @@ function togglePill(el) {
 }
 
 function renderCalc() {
-  const active = document.querySelectorAll('#calc-pills .pill.active');
-  const display = document.getElementById('calc-display');
+  var active  = document.querySelectorAll('#calc-pills .calc-pill.active');
+  var empty   = document.getElementById('calc-empty-panel');
+  var result  = document.getElementById('calc-result-panel');
+  var rowsDiv = document.getElementById('calc-rows');
 
   if (active.length === 0) {
-    display.innerHTML = '<div class="calc-empty">← Selecciona medicamentos para ver tu ahorro</div>';
+    empty.style.display  = 'block';
+    result.style.display = 'none';
     return;
   }
 
-  let rows = '', totalF = 0, totalC = 0;
-  active.forEach(p => {
-    const f = parseFloat(p.dataset.farmacia) * personas;
-    const c = parseFloat(p.dataset.costo)    * personas;
-    totalF += f; totalC += c;
-    rows += `<div class="calc-row">
-      <span class="cr-name">${p.dataset.name}${personas > 1 ? ' ×'+personas : ''}</span>
-      <div class="cr-prices">
-        <span class="cr-old">$${f.toFixed(0)}</span>
-        <span class="cr-new">$${c.toFixed(0)}</span>
-      </div>
-    </div>`;
-  });
+  empty.style.display  = 'none';
+  result.style.display = 'block';
 
-  const conMem = totalC + PLAN_PRICE;
-  const ahorro = totalF - conMem;
-  const pct    = totalF > 0 ? Math.round((ahorro / totalF) * 100) : 0;
-  const annual = ahorro * 12;
+  var totalF = 0;
+  var totalC = 0;
+  var html   = '';
 
-  display.innerHTML = `
-    ${rows}
-    <div class="calc-sep"></div>
-    <div class="calc-row" style="font-size:.8rem">
-      <span class="cr-name">Suscripción (grupo de ${personas} persona${personas>1?'s':''})</span>
-      <span style="font-weight:600;color:var(--ink)">+$${PLAN_PRICE.toFixed(2)}</span>
-    </div>
-    <div class="calc-row" style="font-size:.78rem; opacity:.7">
-      <span class="cr-name">Delivery incluido (MediCosto lo absorbe)</span>
-      <span style="color:var(--green)">$0 para ti</span>
-    </div>
-    <div class="calc-sep"></div>
-    <div class="calc-totals">
-      <div class="ct-box normal">
-        <div class="ct-label">Farmacia normal</div>
-        <div class="ct-val">$${totalF.toFixed(0)}</div>
-        <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">sin membresía</div>
-      </div>
-      <div class="ct-box sub">
-        <div class="ct-label">Con MediCosto</div>
-        <div class="ct-val">$${conMem.toFixed(0)}</div>
-        <div style="font-size:.7rem;color:var(--ink-60);margin-top:2px">medicamentos + $8 membresía</div>
-      </div>
-    </div>
-    ${ahorro > 0 ? `
-    <div class="calc-saving">
-      <span class="cs-label">💚 Ahorras este mes</span>
-      <span class="cs-val">$${ahorro.toFixed(0)} (${pct}%)</span>
-    </div>
-    <div class="calc-annual">En 12 meses ahorras <strong>$${annual.toFixed(0)} USD</strong></div>
-    ` : `
-    <div style="background:#FFF0F0;border-radius:10px;padding:10px 14px;font-size:.82rem;color:var(--danger);margin-top:8px">
-      Con esta selección la membresía aún no genera ahorro neto. Agrega más medicamentos o incluye a más personas.
-    </div>
-    `}
-  `;
+  for (var i = 0; i < active.length; i++) {
+    var p = active[i];
+    var f = parseFloat(p.dataset.farmacia) * personas;
+    var c = parseFloat(p.dataset.costo)    * personas;
+    totalF += f;
+    totalC += c;
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:.85rem">';
+    html += '<span style="color:#6B7280">' + p.dataset.name + (personas > 1 ? ' ×' + personas : '') + '</span>';
+    html += '<div style="display:flex;gap:8px;align-items:center">';
+    html += '<span style="color:#9CA3AF;text-decoration:line-through;font-size:.8rem">$' + f.toFixed(0) + '</span>';
+    html += '<span style="color:#E8521A;font-weight:600">$' + c.toFixed(0) + '</span>';
+    html += '</div></div>';
+  }
+
+  rowsDiv.innerHTML = html;
+
+  var conMem = totalC + PLAN_PRICE;
+  var ahorro = totalF - conMem;
+  var pct    = totalF > 0 ? Math.round((ahorro / totalF) * 100) : 0;
+  var annual = ahorro * 12;
+
+  document.getElementById('ct-farmacia').textContent  = '$' + totalF.toFixed(0);
+  document.getElementById('ct-medicosto').textContent = '$' + conMem.toFixed(0);
+
+  if (ahorro > 0) {
+    document.getElementById('calc-saving-row').style.display  = 'flex';
+    document.getElementById('calc-annual-row').style.display  = 'block';
+    document.getElementById('ct-ahorro').textContent = '$' + ahorro.toFixed(0) + ' (' + pct + '%)';
+    document.getElementById('ct-anual').textContent  = '$' + annual.toFixed(0) + ' USD';
+  } else {
+    document.getElementById('calc-saving-row').style.display = 'none';
+    document.getElementById('calc-annual-row').style.display = 'none';
+  }
 }
 renderCalc();
 </script>
