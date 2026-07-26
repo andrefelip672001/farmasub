@@ -277,9 +277,18 @@ body { font-family: 'Inter', sans-serif; }
       <div style="position:relative;display:flex;justify-content:center;align-items:center;padding:40px 20px">
         <!-- Círculo de fondo -->
         <div style="width:320px;height:320px;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,0.15),rgba(245,166,35,0.2));display:flex;align-items:center;justify-content:center;position:relative;">
-          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face"
+          <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&crop=face&auto=format"
                alt="Familia saludable MediCosto"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
                style="width:280px;height:280px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.3);">
+          <div style="display:none;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,0.15);border:4px solid rgba(255,255,255,0.3);align-items:center;justify-content:center;">
+            <svg width="120" height="140" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="60" cy="40" r="30" fill="rgba(255,255,255,0.4)"/>
+              <path d="M10 130 C10 95 25 80 60 80 C95 80 110 95 110 130" fill="rgba(255,255,255,0.4)"/>
+              <circle cx="60" cy="40" r="24" fill="rgba(255,255,255,0.6)"/>
+              <path d="M18 128 C18 96 32 86 60 86 C88 86 102 96 102 128" fill="rgba(255,255,255,0.6)"/>
+            </svg>
+          </div>
           <!-- Badge superior derecho: 24 Hrs -->
           <div style="position:absolute;top:20px;right:-20px;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:flex;align-items:center;gap:8px;">
             <div style="width:28px;height:28px;background:#ECFDF5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
@@ -727,18 +736,18 @@ body { font-family: 'Inter', sans-serif; }
         <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">¿Cuánto ahorras realmente?</h2>
         <p style="color:#6B7280;font-size:.95rem;line-height:1.7;margin-bottom:24px">Selecciona los medicamentos de tu familia y ve exactamente cuánto ahorras con MediCosto cada mes.</p>
         <div id="calc-pills" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
-          <button class="calc-pill active" data-farmacia="22" data-costo="18" data-name="Losartán 50mg" onclick="togglePill(this)">Losartán 50mg</button>
-          <button class="calc-pill" data-farmacia="13" data-costo="8" data-name="Metformina" onclick="togglePill(this)">Metformina</button>
-          <button class="calc-pill" data-farmacia="18" data-costo="12" data-name="Atorvastatina" onclick="togglePill(this)">Atorvastatina</button>
-          <button class="calc-pill" data-farmacia="10" data-costo="6" data-name="Omeprazol" onclick="togglePill(this)">Omeprazol</button>
-          <button class="calc-pill" data-farmacia="15" data-costo="9" data-name="Levotiroxina" onclick="togglePill(this)">Levotiroxina</button>
-          <button class="calc-pill" data-farmacia="9" data-costo="5" data-name="Amoxicilina" onclick="togglePill(this)">Amoxicilina</button>
-          <button class="calc-pill" data-farmacia="5.5" data-costo="3" data-name="Ibuprofeno" onclick="togglePill(this)">Ibuprofeno</button>
-          <button class="calc-pill" data-farmacia="13" data-costo="7" data-name="Vitamina D3" onclick="togglePill(this)">Vitamina D3</button>
-          <button class="calc-pill" data-farmacia="17" data-costo="9" data-name="Omega 3" onclick="togglePill(this)">Omega 3</button>
-          <button class="calc-pill" data-farmacia="11" data-costo="6" data-name="Anticonceptivo" onclick="togglePill(this)">Anticonceptivo</button>
-          <button class="calc-pill" data-farmacia="13" data-costo="8" data-name="Salbutamol" onclick="togglePill(this)">Salbutamol</button>
-          <button class="calc-pill" data-farmacia="3" data-costo="1.5" data-name="Paracetamol" onclick="togglePill(this)">Paracetamol</button>
+          <button class="calc-pill active" data-idx="0" onclick="togglePill(this)">Losartán 50mg</button>
+          <button class="calc-pill" data-idx="1" onclick="togglePill(this)">Metformina</button>
+          <button class="calc-pill" data-idx="2" onclick="togglePill(this)">Atorvastatina</button>
+          <button class="calc-pill" data-idx="3" onclick="togglePill(this)">Omeprazol</button>
+          <button class="calc-pill" data-idx="4" onclick="togglePill(this)">Levotiroxina</button>
+          <button class="calc-pill" data-idx="5" onclick="togglePill(this)">Amoxicilina</button>
+          <button class="calc-pill" data-idx="6" onclick="togglePill(this)">Ibuprofeno</button>
+          <button class="calc-pill" data-idx="7" onclick="togglePill(this)">Vitamina D3</button>
+          <button class="calc-pill" data-idx="8" onclick="togglePill(this)">Omega 3</button>
+          <button class="calc-pill" data-idx="9" onclick="togglePill(this)">Anticonceptivo</button>
+          <button class="calc-pill" data-idx="10" onclick="togglePill(this)">Salbutamol</button>
+          <button class="calc-pill" data-idx="11" onclick="togglePill(this)">Paracetamol</button>
         </div>
         <div style="display:flex;align-items:center;gap:14px">
           <label style="font-size:.88rem;font-weight:500;color:#1A1A2E">Personas en el grupo (máx. 4):</label>
@@ -766,7 +775,7 @@ body { font-family: 'Inter', sans-serif; }
             <div style="background:#ECFDF5;border-radius:10px;padding:12px">
               <div style="font-size:.72rem;color:#6B7280;margin-bottom:3px">Con MediCosto</div>
               <div id="ct-medicosto" style="font-size:1.4rem;font-weight:700;color:#059669">$0</div>
-              <div style="font-size:.7rem;color:#6B7280;margin-top:2px">meds + $8 membresía</div>
+              <div style="font-size:.7rem;color:#6B7280;margin-top:2px">precio al costo real</div>
             </div>
           </div>
           <div id="calc-saving-row" style="background:#FFF8ED;border:1px solid #F5D6A0;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1119,11 +1128,25 @@ function filterCat(cat, btn) {
 }
 
 // ── FULL CALCULATOR ──────────────────────────────────────────────
+var MEDS = [
+  { nombre: 'Losartan 50mg',   precioFarmacia: 22,  precioCosto: 18  },
+  { nombre: 'Metformina',      precioFarmacia: 13,  precioCosto: 8   },
+  { nombre: 'Atorvastatina',   precioFarmacia: 18,  precioCosto: 12  },
+  { nombre: 'Omeprazol',       precioFarmacia: 10,  precioCosto: 6   },
+  { nombre: 'Levotiroxina',    precioFarmacia: 15,  precioCosto: 9   },
+  { nombre: 'Amoxicilina',     precioFarmacia: 9,   precioCosto: 5   },
+  { nombre: 'Ibuprofeno',      precioFarmacia: 5.5, precioCosto: 3   },
+  { nombre: 'Vitamina D3',     precioFarmacia: 13,  precioCosto: 7   },
+  { nombre: 'Omega 3',         precioFarmacia: 17,  precioCosto: 9   },
+  { nombre: 'Anticonceptivo',  precioFarmacia: 11,  precioCosto: 6   },
+  { nombre: 'Salbutamol',      precioFarmacia: 13,  precioCosto: 8   },
+  { nombre: 'Paracetamol',     precioFarmacia: 3,   precioCosto: 1.5 }
+];
+
 var personas = 1;
-var PLAN_PRICE = 8;
 
 function changePersonas(delta) {
-  personas = Math.max(1, Math.min(4, personas + delta));
+  personas = Math.max(1, Math.min(3, personas + delta));
   document.getElementById('personas-val').textContent = personas;
   renderCalc();
 }
@@ -1153,13 +1176,15 @@ function renderCalc() {
   var html   = '';
 
   for (var i = 0; i < active.length; i++) {
-    var p = active[i];
-    var f = parseFloat(p.dataset.farmacia) * personas;
-    var c = parseFloat(p.dataset.costo)    * personas;
+    var p   = active[i];
+    var idx = parseInt(p.dataset.idx, 10);
+    var med = MEDS[idx];
+    var f   = med.precioFarmacia * personas;
+    var c   = med.precioCosto    * personas;
     totalF += f;
     totalC += c;
     html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:.85rem">';
-    html += '<span style="color:#6B7280">' + p.dataset.name + (personas > 1 ? ' ×' + personas : '') + '</span>';
+    html += '<span style="color:#6B7280">' + med.nombre + (personas > 1 ? ' \xd7' + personas : '') + '</span>';
     html += '<div style="display:flex;gap:8px;align-items:center">';
     html += '<span style="color:#9CA3AF;text-decoration:line-through;font-size:.8rem">$' + f.toFixed(0) + '</span>';
     html += '<span style="color:#E8521A;font-weight:600">$' + c.toFixed(0) + '</span>';
@@ -1168,13 +1193,12 @@ function renderCalc() {
 
   rowsDiv.innerHTML = html;
 
-  var conMem = totalC + PLAN_PRICE;
-  var ahorro = totalF - conMem;
+  var ahorro = totalF - totalC;
   var pct    = totalF > 0 ? Math.round((ahorro / totalF) * 100) : 0;
   var annual = ahorro * 12;
 
   document.getElementById('ct-farmacia').textContent  = '$' + totalF.toFixed(0);
-  document.getElementById('ct-medicosto').textContent = '$' + conMem.toFixed(0);
+  document.getElementById('ct-medicosto').textContent = '$' + totalC.toFixed(0);
 
   if (ahorro > 0) {
     document.getElementById('calc-saving-row').style.display  = 'flex';
