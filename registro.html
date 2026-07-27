@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Registrarse — MediCosto Ecuador</title>
+<title>Registrarse — TuCosto Ecuador</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -258,10 +258,7 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
 <nav>
   <div class="nav-inner">
     <a href="index.html" class="logo">
-      <div class="logo-mark">
-        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 6v8l7 4 7-4V6L10 2z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M7 10h6M10 7v6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <span class="logo-text">Medi<span>Costo</span></span>
+      <div style="width:36px;height:36px;background:#E8521A;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:16px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:18px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:10px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
     </a>
     <a href="index.html" class="nav-back">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -447,7 +444,7 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
 
       <div class="payment-summary">
         <div class="ps-title">Resumen de tu membresía</div>
-        <div class="ps-row"><span class="ps-key">Plan</span><span class="ps-val">Familiar MediCosto</span></div>
+        <div class="ps-row"><span class="ps-key">Plan</span><span class="ps-val">Familiar TuCosto</span></div>
         <div class="ps-row"><span class="ps-key">Miembros registrados</span><span class="ps-val" id="s3-members">1 persona</span></div>
         <div class="ps-row"><span class="ps-key">Valor mensual</span><span class="ps-val green">$8.00 USD</span></div>
         <div class="ps-row"><span class="ps-key">Próxima entrega</span><span class="ps-val" id="s3-proxima">—</span></div>
@@ -463,7 +460,7 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
         <div class="bank-row"><span class="bank-key">Banco</span><span class="bank-val">[BANCO PENDIENTE]</span></div>
         <div class="bank-row"><span class="bank-key">Tipo de cuenta</span><span class="bank-val">[PENDIENTE]</span></div>
         <div class="bank-row"><span class="bank-key">Número de cuenta</span><span class="bank-val">[PENDIENTE]</span></div>
-        <div class="bank-row"><span class="bank-key">Titular de la cuenta</span><span class="bank-val">MediCosto Ecuador</span></div>
+        <div class="bank-row"><span class="bank-key">Titular de la cuenta</span><span class="bank-val">TuCosto Ecuador</span></div>
         <div class="bank-row"><span class="bank-key">Monto exacto</span><span class="bank-val" style="color:var(--green)">$8.00 USD</span></div>
         <div class="bank-concept">
           <strong>Concepto obligatorio:</strong> Escribe en el concepto de la transferencia "Membresía " seguido del <strong>número de cédula del titular</strong>. Ej: <em>Membresía 1234567890</em>
@@ -510,7 +507,7 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
           <circle cx="40" cy="40" r="35"/>
           <path d="M24 40l11 11 21-22" class="check-anim path"/>
         </svg>
-        <div class="conf-title" id="conf-title">¡Bienvenido a MediCosto!</div>
+        <div class="conf-title" id="conf-title">¡Bienvenido a TuCosto!</div>
         <p class="conf-sub">Tu registro está completo. Estamos verificando tu pago.</p>
       </div>
       <div class="conf-cards">
@@ -556,8 +553,8 @@ input.cedula-valid{border-color:var(--green)!important;box-shadow:0 0 0 3px rgba
 
 <footer>
   <div class="footer-mini">
-    <div class="footer-logo-text">Medi<span>Costo</span></div>
-    <p>© 2025 MediCosto Ecuador · Santo Domingo de los Tsáchilas</p>
+    <div class="footer-logo-text">TuCosto</div>
+    <p>© 2025 TuCosto Ecuador · Santo Domingo de los Tsáchilas</p>
   </div>
 </footer>
 
@@ -1304,7 +1301,7 @@ async function submitRegistro() {
       if (saludErr) console.error('Error salud:', saludErr);
     }
   } catch (err) {
-    console.error('[MediCosto] submitRegistro error:', err);
+    console.error('[TuCosto] submitRegistro error:', err);
     if (!document.getElementById('submit-error').style.display || document.getElementById('submit-error').style.display === 'none') {
       _showSubmitError('Error inesperado: ' + (err.message || 'intenta de nuevo'));
     }
@@ -1313,7 +1310,7 @@ async function submitRegistro() {
 
 function buildConfirmation() {
   const nombre = S.titular.nombre || '—';
-  document.getElementById('conf-title').textContent = `¡Bienvenido/a a MediCosto, ${nombre.split(' ')[0]}!`;
+  document.getElementById('conf-title').textContent = `¡Bienvenido/a a TuCosto, ${nombre.split(' ')[0]}!`;
   document.getElementById('conf-telefono').textContent = S.titular.telefono || 'registrado';
   document.getElementById('conf-direccion').textContent = [S.titular.direccion, S.titular.barrio].filter(Boolean).join(', ') || '—';
   const list = document.getElementById('conf-members');
