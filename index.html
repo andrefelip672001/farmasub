@@ -951,36 +951,6 @@ body { font-family: 'Inter', sans-serif; }
 </footer>
 
 <script>
-// ── HERO CALCULATOR ──────────────────────────────────────────────
-var SUSCRIPCION = 8;
-
-function toggleHeroMed(el) {
-  el.classList.toggle('active');
-  updateHeroCalc();
-}
-
-function updateHeroCalc() {
-  var rows = document.querySelectorAll('#hero-meds .hero-med-row.active');
-  var farmacia = 0;
-  var costo = 0;
-  for (var i = 0; i < rows.length; i++) {
-    farmacia += parseFloat(rows[i].dataset.farmacia);
-    costo    += parseFloat(rows[i].dataset.costo);
-  }
-  var total = costo + SUSCRIPCION;
-  var ahorro = farmacia - total;
-  document.getElementById('hero-farmacia').textContent = '$' + farmacia.toFixed(0);
-  document.getElementById('hero-total').textContent    = '$' + total.toFixed(0);
-  var banner = document.getElementById('hero-saving');
-  if (ahorro > 0) {
-    banner.style.display = 'flex';
-    document.getElementById('hero-saving-val').textContent = '$' + ahorro.toFixed(0);
-  } else {
-    banner.style.display = 'none';
-  }
-}
-updateHeroCalc();
-
 // ── CART ─────────────────────────────────────────────────────────
 var cart = [];
 
@@ -1175,7 +1145,7 @@ function calcActualizar() {
   document.getElementById('calc-ahorro').textContent    = '$' + ahorro.toFixed(2);
   document.getElementById('calc-anual').textContent     = '$' + ahorroAnual.toFixed(2) + ' USD';
 }
-}
+
 
 </script>
 </body>
