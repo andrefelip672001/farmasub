@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pagos &mdash; TuCosto Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#E8521A;--naranja-d:#C94415;--naranja-light:#FFF0EB;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+
+.page-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
+.page-head-left{display:flex;flex-direction:column;gap:3px;}
+.page-title{font-size:1.4rem;font-weight:700;color:var(--ink);}
+.page-sub{font-size:.82rem;color:var(--ink-60);}
+.total-badge{background:var(--naranja);color:white;border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;white-space:nowrap;}
+.pend-pill{display:inline-flex;align-items:center;gap:5px;background:var(--amarillo-light);color:var(--warning);border-radius:20px;padding:2px 10px;font-size:.72rem;font-weight:700;}
+
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-btn{padding:8px 14px;background:var(--white);border:1.5px solid var(--ink-30);border-radius:20px;font-size:.78rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.filter-btn:hover{border-color:var(--naranja);color:var(--naranja);background:var(--naranja-light);}
+.filter-btn.active{background:var(--naranja);border-color:var(--naranja);color:white;}
+
+.table-wrap{background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;overflow:hidden;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid #F3F4F6;background:var(--bg);}
+td{padding:11px 16px;font-size:.82rem;border-bottom:1px solid #F3F4F6;vertical-align:middle;color:var(--ink);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--naranja-light);}
+
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+.badge-activa{background:var(--verde-light);color:var(--verde);}
+.badge-pend{background:var(--amarillo-light);color:var(--warning);}
+.badge-venc{background:var(--danger-light);color:var(--danger);}
+
+.btn-ver-comp{padding:5px 12px;background:var(--naranja-light);border:1px solid var(--naranja);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-ver-comp:hover{background:var(--naranja);color:white;}
+.btn-aprobar{padding:5px 12px;background:var(--verde-light);border:1px solid var(--verde);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--verde);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-right:5px;}
+.btn-aprobar:hover{background:var(--verde);color:white;}
+.btn-rechazar{padding:5px 12px;background:var(--danger-light);border:1px solid var(--danger);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-rechazar:hover{background:var(--danger);color:white;}
+
+/* MODALS */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;}
+.modal-backdrop.hidden{display:none;}
+.modal-box{background:var(--white);border-radius:var(--r);overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.15);width:100%;}
+.modal-hd{background:var(--naranja);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-hd h3{font-size:1rem;font-weight:700;color:white;}
+.btn-close-m{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:white;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.btn-close-m:hover{background:rgba(255,255,255,.35);}
+.modal-bd{padding:22px;}
+.modal-bd label{font-size:.82rem;font-weight:600;color:var(--ink);display:block;margin-bottom:6px;}
+.modal-bd textarea{width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);resize:vertical;min-height:80px;outline:none;}
+.modal-bd textarea:focus{border-color:var(--naranja);}
+.modal-foot{display:flex;gap:10px;padding-top:14px;justify-content:flex-end;}
+.btn-cancel-m{padding:9px 18px;background:none;border:1.5px solid var(--ink-30);border-radius:10px;font-size:.82rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-cancel-m:hover{border-color:var(--ink);color:var(--ink);}
+.btn-confirm-rechazo{padding:9px 18px;background:var(--danger);border:none;border-radius:10px;font-size:.82rem;font-weight:700;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.btn-confirm-rechazo:hover{background:#dc2626;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="../admin/dashboard.html" class="nav-logo">
+      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <span class="nav-tag">PANEL ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesi&oacute;n</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="../admin/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos
+    </a>
+    <a href="../admin/productos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Cat&aacute;logo
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../admin/pagos.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
+    </a>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <div class="page-head-left">
+        <h1 class="page-title">Gesti&oacute;n de pagos</h1>
+        <div style="margin-top:5px"><span class="pend-pill" id="pend-badge">0 pendientes</span></div>
+      </div>
+      <span class="total-badge" id="total-badge">0</span>
+    </div>
+    <div class="toolbar">
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('pendiente',this)">Pendientes</button>
+        <button class="filter-btn" onclick="setFilter('verificado',this)">Verificados</button>
+        <button class="filter-btn" onclick="setFilter('rechazado',this)">Rechazados</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Suscriptor</th>
+            <th>C&eacute;dula</th>
+            <th>Monto</th>
+            <th>Comprobante</th>
+            <th>Estado KYC</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL COMPROBANTE -->
+<div class="modal-backdrop hidden" id="comp-modal" onclick="closeCompClick(event)">
+  <div class="modal-box" style="max-width:600px">
+    <div class="modal-hd">
+      <h3>Comprobante de pago</h3>
+      <button class="btn-close-m" onclick="closeCompModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-bd" style="text-align:center">
+      <img id="comp-img" src="" alt="Comprobante" style="max-width:100%;max-height:65vh;object-fit:contain;border-radius:8px;"/>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RECHAZO -->
+<div class="modal-backdrop hidden" id="rechazo-modal" onclick="closeRechazoClick(event)">
+  <div class="modal-box" style="max-width:460px">
+    <div class="modal-hd">
+      <h3>Rechazar suscripcion</h3>
+      <button class="btn-close-m" onclick="closeRechazoModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-bd">
+      <label>Motivo del rechazo</label>
+      <textarea id="rechazo-motivo" placeholder="Indique el motivo del rechazo..."></textarea>
+      <div class="modal-foot">
+        <button class="btn-cancel-m" onclick="closeRechazoModal()">Cancelar</button>
+        <button class="btn-confirm-rechazo" onclick="confirmarRechazo()">Confirmar rechazo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var _todos = [], _filtro = 'todos', _rechazoCedula = null;
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = null;
+  if (user.user_metadata && user.user_metadata.rol) {
+    rol = user.user_metadata.rol;
+  } else if (user.app_metadata && user.app_metadata.rol) {
+    rol = user.app_metadata.rol;
+  }
+  if (!rol) {
+    var pRes = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email[0].toUpperCase();
+  await loadData();
+})();
+
+async function loadData() {
+  var res = await _db.from('suscriptores').select('*').order('created_at', {ascending: false});
+  _todos = res.data || [];
+  var pendientes = 0;
+  for (var i = 0; i < _todos.length; i++) {
+    var kyc = _todos[i].kyc_estado;
+    if (!kyc || kyc === 'pendiente') pendientes++;
+  }
+  document.getElementById('total-badge').textContent = _todos.length;
+  document.getElementById('pend-badge').textContent = pendientes + ' pendientes';
+  renderTable();
+}
+
+function setFilter(f, btn) {
+  _filtro = f;
+  var btns = document.querySelectorAll('.filter-btn');
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  var rows = [];
+  for (var i = 0; i < _todos.length; i++) {
+    var s = _todos[i];
+    var kyc = s.kyc_estado || 'pendiente';
+    if (_filtro !== 'todos' && kyc !== _filtro) continue;
+    rows.push(s);
+  }
+  var tbody = document.getElementById('tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var j = 0; j < rows.length; j++) {
+    var s = rows[j];
+    var kyc2 = s.kyc_estado || 'pendiente';
+    var kycCls;
+    if (kyc2 === 'verificado') kycCls = 'badge-activa';
+    else if (kyc2 === 'rechazado') kycCls = 'badge-venc';
+    else kycCls = 'badge-pend';
+    var kycLbl;
+    if (kyc2 === 'verificado') kycLbl = 'Verificado';
+    else if (kyc2 === 'rechazado') kycLbl = 'Rechazado';
+    else kycLbl = 'Pendiente';
+    var fecha = s.created_at ? new Date(s.created_at).toLocaleDateString('es-EC') : '-';
+    var cedSafe = s.cedula ? s.cedula.replace(/'/g, '') : '';
+    var compHtml;
+    if (s.comprobante_url) {
+      var urlSafe = s.comprobante_url.replace(/'/g, '').replace(/"/g, '');
+      compHtml = '<button class="btn-ver-comp" onclick="verComprobante(\'' + urlSafe + '\')">Ver comprobante</button>';
+    } else {
+      compHtml = '<span style="color:var(--ink-30);font-size:.75rem">No subido</span>';
+    }
+    html += '<tr>';
+    html += '<td>';
+    html += '<p style="font-weight:600">' + (s.nombre || '-') + '</p>';
+    if (s.email) { html += '<p style="color:var(--ink-60);font-size:.75rem">' + s.email + '</p>'; }
+    html += '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + (s.cedula || '-') + '</td>';
+    html += '<td style="font-weight:700;color:var(--naranja)">$8.00</td>';
+    html += '<td>' + compHtml + '</td>';
+    html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span>';
+    if (kyc2 === 'rechazado' && s.kyc_motivo_rechazo) {
+      html += '<p style="font-size:.72rem;color:var(--danger);margin-top:3px">' + s.kyc_motivo_rechazo + '</p>';
+    }
+    html += '</td>';
+    html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
+    html += '<td>';
+    html += '<button class="btn-aprobar" onclick="aprobar(\'' + cedSafe + '\')">Aprobar</button>';
+    html += '<button class="btn-rechazar" onclick="abrirRechazo(\'' + cedSafe + '\')">Rechazar</button>';
+    html += '</td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+async function aprobar(cedula) {
+  await _db.from('suscriptores').update({
+    estado: 'activa',
+    kyc_estado: 'verificado',
+    kyc_fecha: new Date().toISOString()
+  }).eq('cedula', cedula);
+  await loadData();
+}
+
+function abrirRechazo(cedula) {
+  _rechazoCedula = cedula;
+  document.getElementById('rechazo-motivo').value = '';
+  document.getElementById('rechazo-modal').classList.remove('hidden');
+}
+
+function closeRechazoModal() {
+  document.getElementById('rechazo-modal').classList.add('hidden');
+  _rechazoCedula = null;
+}
+
+function closeRechazoClick(e) {
+  if (e.target === document.getElementById('rechazo-modal')) closeRechazoModal();
+}
+
+async function confirmarRechazo() {
+  var motivo = document.getElementById('rechazo-motivo').value.trim();
+  if (!motivo) { document.getElementById('rechazo-motivo').focus(); return; }
+  if (!_rechazoCedula) return;
+  await _db.from('suscriptores').update({
+    kyc_estado: 'rechazado',
+    kyc_fecha: new Date().toISOString(),
+    kyc_motivo_rechazo: motivo
+  }).eq('cedula', _rechazoCedula);
+  closeRechazoModal();
+  await loadData();
+}
+
+function verComprobante(url) {
+  document.getElementById('comp-img').src = url;
+  document.getElementById('comp-modal').classList.remove('hidden');
+}
+
+function closeCompModal() {
+  document.getElementById('comp-modal').classList.add('hidden');
+  document.getElementById('comp-img').src = '';
+}
+
+function closeCompClick(e) {
+  if (e.target === document.getElementById('comp-modal')) closeCompModal();
+}
+
+function logout() {
+  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
+</script>
+</body>
+</html>
