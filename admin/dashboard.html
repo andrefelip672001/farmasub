@@ -5,251 +5,424 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Dashboard Admin — TuCosto</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --green:#1A6B4A;--green-light:#EAF4EE;--green-menta:#ADEBB3;--green-mid:#2E8A62;--gold:#C8903A;
-  --ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;
-  --danger:#C84040;--danger-bg:#FDF2F2;--border:#E8F0EC;--r:12px;
-  --shadow:0 2px 12px rgba(26,107,74,.08);
+  --naranja:#E8521A;--naranja-d:#C94415;--naranja-light:#FFF0EB;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
 .app{display:flex;flex-direction:column;height:100vh;}
 
 /* NAV */
-.top-nav{height:64px;background:var(--white);box-shadow:0 2px 8px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;z-index:10;}
+.top-nav{
+  height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;flex-shrink:0;
+  box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;
+}
 .nav-left{display:flex;align-items:center;gap:14px;}
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
-.logo-mark svg{width:20px;height:20px;}
-.logo-text{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);}
-.logo-text span{color:var(--green);}
-.nav-tag{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--white);background:var(--green);border-radius:20px;padding:5px 12px;}
-.nav-right{display:flex;align-items:center;gap:12px;}
-.nav-user{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;color:var(--ink-60);}
-.nav-avatar{width:32px;height:32px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.82rem;color:white;}
-.btn-logout{background:none;border:1.5px solid var(--ink-30);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
-.btn-logout:hover{border-color:var(--danger);color:var(--danger);}
+.nav-tag{
+  font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;
+}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{
+  width:34px;height:34px;background:var(--naranja);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-weight:700;font-size:.85rem;flex-shrink:0;
+}
+.btn-logout{
+  background:transparent;border:1.5px solid var(--naranja);border-radius:8px;
+  padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-logout:hover{background:var(--naranja-light);}
 
 /* LAYOUT */
 .layout{display:flex;flex:1;overflow:hidden;}
 
 /* SIDEBAR */
-.sidebar{width:220px;background:var(--white);border-right:1px solid #F0F4F2;flex-shrink:0;overflow-y:auto;padding:16px 10px;display:flex;flex-direction:column;gap:2px;}
-.sb-link{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;}
-.sb-link:hover{background:var(--green-light);color:var(--green);}
-.sb-link.active{background:var(--green);color:white;}
-.sb-link svg{width:17px;height:17px;flex-shrink:0;stroke-width:1.8;}
-.sb-divider{border:none;border-top:1px solid var(--border);margin:8px 0;}
+.sidebar{
+  width:220px;background:var(--white);border-right:1px solid #F3F4F6;
+  flex-shrink:0;overflow-y:auto;padding:20px 12px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;
+  color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;
+}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
 
 /* MAIN */
-.main{flex:1;overflow-y:auto;padding:28px;}
-.page-title{font-family:'DM Serif Display',serif;font-size:1.7rem;color:var(--ink);margin-bottom:24px;}
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-title{font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.page-sub{font-size:.875rem;color:var(--ink-60);margin-bottom:24px;}
 
 /* METRIC CARDS */
 .metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
-.metric-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;}
-.metric-icon{width:44px;height:44px;background:var(--green-light);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--green);flex-shrink:0;}
+.metric-card{
+  background:var(--white);border:1px solid #F3F4F6;border-radius:16px;
+  padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;
+}
+.metric-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
 .metric-icon svg{width:22px;height:22px;stroke-width:1.6;}
 .metric-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);margin-bottom:2px;}
-.metric-val{font-family:'DM Serif Display',serif;font-size:2.1rem;color:var(--green);line-height:1;}
+.metric-val{font-size:2.2rem;font-weight:700;line-height:1;}
 .metric-sub{font-size:.75rem;color:var(--ink-60);}
-.metric-card.gold .metric-icon{background:#FDF4E7;color:var(--gold);}
-.metric-card.gold .metric-val{color:var(--gold);}
-.metric-card.deep .metric-val{color:#0E3D29;}
+
+.m-naranja .metric-icon{background:var(--naranja-light);color:var(--naranja);}
+.m-naranja .metric-val{color:var(--naranja);}
+.m-warn .metric-icon{background:var(--warning-light);color:var(--warning);}
+.m-warn .metric-val{color:var(--warning);}
+.m-blue .metric-icon{background:var(--azul-light);color:var(--azul);}
+.m-blue .metric-val{color:var(--azul);}
+.m-verde .metric-icon{background:var(--verde-light);color:var(--verde);}
+.m-verde .metric-val{color:var(--verde);}
 
 /* TABLES */
-.table-block{background:var(--white);border-radius:var(--r);border:1px solid var(--border);overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);}
-.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.table-title{font-weight:600;font-size:.95rem;color:var(--ink);}
-.table-link{font-size:.78rem;color:var(--green);text-decoration:none;font-weight:600;}
+.table-block{
+  background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;
+  overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);
+}
+.table-header{
+  padding:16px 20px;border-bottom:1px solid #F3F4F6;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.table-title{font-weight:700;font-size:.95rem;color:var(--ink);}
+.table-link{font-size:.78rem;color:var(--naranja);text-decoration:none;font-weight:600;}
 .table-link:hover{text-decoration:underline;}
 table{width:100%;border-collapse:collapse;}
-th{padding:10px 20px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid var(--border);background:var(--bg);}
-td{padding:12px 20px;font-size:.82rem;border-bottom:1px solid #F0F4F2;vertical-align:middle;color:var(--ink);}
+th{
+  padding:10px 20px;text-align:left;font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);
+  border-bottom:1px solid #F3F4F6;background:var(--bg);
+}
+td{
+  padding:12px 20px;font-size:.82rem;border-bottom:1px solid #FAFAFA;
+  vertical-align:middle;color:var(--ink);
+}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:var(--green-light);}
+tr:hover td{background:var(--naranja-light);}
+.td-num{font-weight:600;color:var(--naranja);}
 
 /* BADGES */
-.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:600;}
-.badge-activa{background:#DCFCE7;color:#166534;}
-.badge-pendiente{background:#FEF9C3;color:#854D0E;}
-.badge-vencida{background:#FEE2E2;color:#991B1B;}
-.badge-entregado{background:#DBEAFE;color:#1E40AF;}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:600;}
+.badge-pendiente{background:var(--warning-light);color:var(--warning);}
+.badge-entregado{background:var(--verde-light);color:var(--verde);}
+.badge-proceso{background:var(--azul-light);color:var(--azul);}
+.badge-cancelado{background:var(--danger-light);color:var(--danger);}
 
-/* BUTTONS */
-.btn-aprobar{padding:6px 14px;background:var(--green);border:none;border-radius:8px;font-size:.78rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-right:6px;}
-.btn-aprobar:hover{background:var(--green-mid);}
-.btn-rechazar{padding:6px 14px;background:none;border:1.5px solid var(--danger);border-radius:8px;font-size:.78rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
-.btn-rechazar:hover{background:var(--danger-bg);}
+/* ACTION BUTTONS */
+.btn-aprobar{
+  padding:6px 12px;background:var(--verde);border:none;border-radius:8px;
+  font-size:.75rem;font-weight:600;color:white;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .2s;margin-right:6px;
+}
+.btn-aprobar:hover{background:#047857;}
+.btn-aprobar:disabled{opacity:.6;cursor:not-allowed;}
+.btn-rechazar{
+  padding:6px 12px;background:none;border:1.5px solid var(--danger);border-radius:8px;
+  font-size:.75rem;font-weight:600;color:var(--danger);cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-rechazar:hover{background:var(--danger-light);}
+.btn-rechazar:disabled{opacity:.6;cursor:not-allowed;}
+
+.empty-row td{
+  text-align:center;padding:28px;
+  background:var(--naranja-light);color:var(--naranja);font-weight:600;
+}
 
 @media(max-width:1100px){.metrics-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.sidebar{display:none;}.main{padding:20px;}}
 </style>
 </head>
 <body>
 <div class="app">
 
+<!-- NAV -->
 <nav class="top-nav">
   <div class="nav-left">
     <a href="../admin/dashboard.html" class="nav-logo">
-      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div>
+        <div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div>
+        <div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div>
+      </div>
     </a>
-    <span class="nav-tag">Panel Admin</span>
+    <span class="nav-tag">PANEL ADMIN</span>
   </div>
   <div class="nav-right">
     <div class="nav-user">
       <div class="nav-avatar" id="nav-avatar">A</div>
       <span id="nav-nombre">Admin</span>
     </div>
-    <button onclick="logout()" class="btn-logout">Cerrar sesión</button>
+    <button onclick="logout()" class="btn-logout">Cerrar sesion</button>
   </div>
 </nav>
 
 <div class="layout">
+
+  <!-- SIDEBAR — Inicio activo -->
   <aside class="sidebar">
-    <a href="../admin/dashboard.html" class="sb-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio</a>
-    <a href="../admin/suscriptores.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores</a>
-    <a href="../admin/pedidos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos</a>
-    <a href="../admin/productos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Catálogo</a>
+    <a href="../admin/dashboard.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Pedidos
+    </a>
+    <a href="../admin/productos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Catalogo
+    </a>
     <hr class="sb-divider"/>
-    <a href="../admin/pagos.html" class="sb-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos</a>
+    <a href="../admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Pagos
+    </a>
   </aside>
 
+  <!-- MAIN -->
   <main class="main">
     <h1 class="page-title">Panel de control</h1>
+    <p class="page-sub" id="page-date">Cargando...</p>
 
+    <!-- METRICS -->
     <div class="metrics-grid">
-      <div class="metric-card">
-        <div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+
+      <div class="metric-card m-naranja">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
         <div>
           <p class="metric-lbl">Suscriptores activos</p>
-          <p class="metric-val" id="m-activos">—</p>
-          <p class="metric-sub">membresías vigentes</p>
+          <p class="metric-val" id="m-activos">&#8212;</p>
+          <p class="metric-sub">membresias vigentes</p>
         </div>
       </div>
-      <div class="metric-card">
-        <div class="metric-icon" style="background:#FEF9C3;color:#854D0E"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+
+      <div class="metric-card m-warn">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
         <div>
-          <p class="metric-lbl">Pendientes verificación</p>
-          <p class="metric-val" id="m-pendientes" style="color:#854D0E">—</p>
-          <p class="metric-sub">esperando confirmación</p>
+          <p class="metric-lbl">Pendientes verificacion</p>
+          <p class="metric-val" id="m-pendientes">&#8212;</p>
+          <p class="metric-sub">esperando confirmacion</p>
         </div>
       </div>
-      <div class="metric-card deep">
-        <div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></div>
+
+      <div class="metric-card m-blue">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
         <div>
           <p class="metric-lbl">Pedidos del mes</p>
-          <p class="metric-val" id="m-pedidos">—</p>
+          <p class="metric-val" id="m-pedidos">&#8212;</p>
           <p class="metric-sub" id="m-pedidos-sub">este mes</p>
         </div>
       </div>
-      <div class="metric-card gold">
-        <div class="metric-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+
+      <div class="metric-card m-verde">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
         <div>
           <p class="metric-lbl">Ingresos del mes</p>
-          <p class="metric-val" id="m-ingresos">—</p>
+          <p class="metric-val" id="m-ingresos">&#8212;</p>
           <p class="metric-sub" id="m-utilidad"></p>
         </div>
       </div>
+
     </div>
 
+    <!-- PAGOS PENDIENTES -->
     <div class="table-block">
       <div class="table-header">
         <span class="table-title">Pagos pendientes de verificar</span>
-        <a href="../admin/pagos.html" class="table-link">Ver todos →</a>
+        <a href="../admin/pagos.html" class="table-link">Ver todos &#8594;</a>
       </div>
       <table>
-        <thead><tr><th>Suscriptor</th><th>Cédula</th><th>Monto</th><th>Fecha</th><th>Acciones</th></tr></thead>
-        <tbody id="pagos-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Cargando...</td></tr></tbody>
+        <thead>
+          <tr>
+            <th>Suscriptor</th><th>Cedula</th><th>Monto</th><th>Fecha</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="pagos-tbody">
+          <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
       </table>
     </div>
 
+    <!-- ULTIMOS PEDIDOS -->
     <div class="table-block">
       <div class="table-header">
-        <span class="table-title">Últimos pedidos</span>
-        <a href="../admin/pedidos.html" class="table-link">Ver todos →</a>
+        <span class="table-title">Ultimos pedidos</span>
+        <a href="../admin/pedidos.html" class="table-link">Ver todos &#8594;</a>
       </div>
       <table>
-        <thead><tr><th>Número</th><th>Suscriptor</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead>
-        <tbody id="pedidos-tbody"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Cargando...</td></tr></tbody>
+        <thead>
+          <tr>
+            <th>Numero</th><th>Suscriptor</th><th>Fecha</th><th>Total</th><th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="pedidos-tbody">
+          <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
       </table>
     </div>
+
   </main>
 </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
 
-(async()=>{
-  const {data:{session}}=await _db.auth.getSession();
-  if(!session){window.location.href='../portal/login.html';return;}
-  const user=session.user;
-  let rol=user.user_metadata?.rol||user.app_metadata?.rol||null;
-  if(!rol){const {data:p}=await _db.from('perfiles').select('rol').eq('id',user.id).single();rol=p?.rol||'suscriptor';}
-  if(rol!=='admin'){window.location.href='../portal/login.html';return;}
-  document.getElementById('nav-nombre').textContent=user.email;
-  document.getElementById('nav-avatar').textContent=user.email[0].toUpperCase();
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+
+  var rol = null;
+  if (user.user_metadata && user.user_metadata.rol) rol = user.user_metadata.rol;
+  else if (user.app_metadata && user.app_metadata.rol) rol = user.app_metadata.rol;
+  if (!rol) {
+    var pRes = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+
+  var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var now = new Date();
+  document.getElementById('page-date').textContent = months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+
   await loadMetrics();
   await loadPagosPendientes();
   await loadUltimosPedidos();
 })();
 
-async function loadMetrics(){
-  const [{count:activos},{count:pendientes},{count:pedidosMes}]=await Promise.all([
-    _db.from('suscriptores').select('*',{count:'exact',head:true}).eq('estado','activa'),
-    _db.from('suscriptores').select('*',{count:'exact',head:true}).eq('estado','pendiente'),
-    _db.from('pedidos').select('*',{count:'exact',head:true}).gte('fecha',new Date(new Date().getFullYear(),new Date().getMonth(),1).toISOString())
+async function loadMetrics() {
+  var firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+  var results = await Promise.all([
+    _db.from('suscriptores').select('*', {count: 'exact', head: true}).eq('estado', 'activa'),
+    _db.from('suscriptores').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
+    _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha', firstOfMonth)
   ]);
-  document.getElementById('m-activos').textContent=activos||0;
-  document.getElementById('m-pendientes').textContent=pendientes||0;
-  document.getElementById('m-pedidos').textContent=pedidosMes||0;
-  document.getElementById('m-ingresos').textContent=`$${((activos||0)*8).toFixed(0)}`;
-  document.getElementById('m-utilidad').textContent=`Utilidad estimada: $${((activos||0)*5.5).toFixed(0)}`;
+  var activos = results[0].count || 0;
+  var pendientes = results[1].count || 0;
+  var pedidosMes = results[2].count || 0;
+  document.getElementById('m-activos').textContent = activos;
+  document.getElementById('m-pendientes').textContent = pendientes;
+  document.getElementById('m-pedidos').textContent = pedidosMes;
+  document.getElementById('m-ingresos').textContent = '$' + (activos * 8).toFixed(0);
+  document.getElementById('m-utilidad').textContent = 'Utilidad: $' + (activos * 5.5).toFixed(0);
 }
 
-async function loadPagosPendientes(){
-  const {data}=await _db.from('pagos').select('*,suscriptores(nombre,cedula)').eq('estado','pendiente').order('created_at',{ascending:false}).limit(5);
-  const tbody=document.getElementById('pagos-tbody');
-  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--ink-60)">Sin pagos pendientes</td></tr>';return;}
-  tbody.innerHTML=data.map(p=>`<tr>
-    <td style="font-weight:500">${p.suscriptores?.nombre||'—'}</td>
-    <td style="color:var(--ink-60)">${p.suscriptores?.cedula||'—'}</td>
-    <td style="font-weight:600">$${(p.monto||8).toFixed(2)}</td>
-    <td style="color:var(--ink-60)">${new Date(p.created_at).toLocaleDateString('es-EC')}</td>
-    <td><button class="btn-aprobar" onclick="aprobarPago('${p.id}','${p.suscriptores?.cedula}',this)">Aprobar</button><button class="btn-rechazar" onclick="rechazarPago('${p.id}',this)">Rechazar</button></td>
-  </tr>`).join('');
+async function loadPagosPendientes() {
+  var res = await _db.from('pagos').select('*,suscriptores(nombre,cedula)').eq('estado', 'pendiente').order('created_at', {ascending: false}).limit(5);
+  var data = res.data;
+  var tbody = document.getElementById('pagos-tbody');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin pagos pendientes</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var p = data[i];
+    var sNom = (p.suscriptores && p.suscriptores.nombre) ? p.suscriptores.nombre : '-';
+    var sCed = (p.suscriptores && p.suscriptores.cedula) ? String(p.suscriptores.cedula) : '';
+    var pId = String(p.id);
+    html += '<tr>'
+      + '<td style="font-weight:500">' + sNom + '</td>'
+      + '<td style="color:var(--ink-60)">' + (sCed || '-') + '</td>'
+      + '<td style="font-weight:600">$' + (p.monto || 8).toFixed(2) + '</td>'
+      + '<td style="color:var(--ink-60)">' + new Date(p.created_at).toLocaleDateString('es-EC') + '</td>'
+      + '<td>'
+      + '<button class="btn-aprobar" onclick="aprobarPago(\'' + pId + '\',\'' + sCed + '\',this)">Aprobar</button>'
+      + '<button class="btn-rechazar" onclick="rechazarPago(\'' + pId + '\',this)">Rechazar</button>'
+      + '</td>'
+      + '</tr>';
+  }
+  tbody.innerHTML = html;
 }
 
-async function loadUltimosPedidos(){
-  const {data}=await _db.from('pedidos').select('numero,id,fecha,total,estado,suscriptores(nombre)').order('fecha',{ascending:false}).limit(5);
-  const tbody=document.getElementById('pedidos-tbody');
-  if(!data||!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--ink-60)">Sin pedidos aún</td></tr>';return;}
-  tbody.innerHTML=data.map(p=>{
-    const cls={pendiente:'badge-pendiente',entregado:'badge-activa',despachado:'badge-entregado','en-proceso':'badge-entregado'}[p.estado]||'badge-pendiente';
-    return `<tr><td style="font-weight:600;color:var(--green)">${p.numero||'#'+p.id}</td><td>${p.suscriptores?.nombre||'—'}</td><td style="color:var(--ink-60)">${new Date(p.fecha).toLocaleDateString('es-EC')}</td><td style="font-weight:600">$${(p.total||0).toFixed(2)}</td><td><span class="badge ${cls}">${p.estado}</span></td></tr>`;
-  }).join('');
+async function loadUltimosPedidos() {
+  var res = await _db.from('pedidos').select('numero,id,fecha,total,estado,suscriptores(nombre)').order('fecha', {ascending: false}).limit(5);
+  var data = res.data;
+  var tbody = document.getElementById('pedidos-tbody');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Sin pedidos aun</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var p = data[i];
+    var cls;
+    if (p.estado === 'pendiente') cls = 'badge-pendiente';
+    else if (p.estado === 'entregado') cls = 'badge-entregado';
+    else if (p.estado === 'despachado' || p.estado === 'en-proceso') cls = 'badge-proceso';
+    else if (p.estado === 'cancelado') cls = 'badge-cancelado';
+    else cls = 'badge-pendiente';
+    var sNom = (p.suscriptores && p.suscriptores.nombre) ? p.suscriptores.nombre : '-';
+    html += '<tr>'
+      + '<td class="td-num">' + (p.numero || '#' + p.id) + '</td>'
+      + '<td>' + sNom + '</td>'
+      + '<td style="color:var(--ink-60)">' + new Date(p.fecha).toLocaleDateString('es-EC') + '</td>'
+      + '<td style="font-weight:600">$' + (p.total || 0).toFixed(2) + '</td>'
+      + '<td><span class="badge ' + cls + '">' + (p.estado || '') + '</span></td>'
+      + '</tr>';
+  }
+  tbody.innerHTML = html;
 }
 
-async function aprobarPago(id,cedula,btn){
-  btn.disabled=true;btn.textContent='...';
-  await _db.from('pagos').update({estado:'pagado'}).eq('id',id);
-  if(cedula)await _db.from('suscriptores').update({estado:'activa'}).eq('cedula',cedula);
+async function aprobarPago(id, cedula, btn) {
+  btn.disabled = true;
+  btn.textContent = '...';
+  await _db.from('pagos').update({estado: 'pagado'}).eq('id', id);
+  if (cedula) await _db.from('suscriptores').update({estado: 'activa'}).eq('cedula', cedula);
   btn.closest('tr').remove();
-  const m=parseInt(document.getElementById('m-pendientes').textContent)-1;
-  document.getElementById('m-pendientes').textContent=Math.max(0,m);
+  var m = parseInt(document.getElementById('m-pendientes').textContent) - 1;
+  document.getElementById('m-pendientes').textContent = Math.max(0, m);
 }
 
-async function rechazarPago(id,btn){
-  if(!confirm('¿Rechazar este pago?'))return;
-  btn.disabled=true;
-  await _db.from('pagos').update({estado:'rechazado'}).eq('id',id);
+async function rechazarPago(id, btn) {
+  if (!confirm('Rechazar este pago?')) return;
+  btn.disabled = true;
+  await _db.from('pagos').update({estado: 'rechazado'}).eq('id', id);
   btn.closest('tr').remove();
 }
 
-function logout(){_db.auth.signOut().then(()=>window.location.href='../portal/login.html');}
+function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
 </script>
 </body>
 </html>
