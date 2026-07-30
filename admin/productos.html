@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Cat&aacute;logo &mdash; TuCosto Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<title>Catalogo Admin - TuCosto</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --naranja:#E8521A;--naranja-d:#C94415;--naranja-light:#FFF0EB;
@@ -80,7 +81,6 @@ tr:hover td{background:var(--naranja-light);}
 .btn-desactivar{padding:5px 11px;background:none;border:1.5px solid var(--danger);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
 .btn-desactivar:hover{background:var(--danger);color:white;}
 
-/* MODAL */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--white);border-radius:var(--r);width:100%;max-width:680px;max-height:90vh;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;}
@@ -114,7 +114,6 @@ tr:hover td{background:var(--naranja-light);}
 .btn-guardar:hover{background:#e8951f;}
 .btn-guardar:disabled{opacity:.6;cursor:not-allowed;}
 
-/* PHOTOS */
 .photo-section{margin-top:20px;padding-top:16px;border-top:1px solid #F3F4F6;}
 .photo-drop-zone{border:2px dashed var(--naranja-d);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);user-select:none;}
 .photo-drop-zone:hover,.photo-drop-zone.drag-over{border-color:var(--naranja);background:var(--naranja-light);}
@@ -131,7 +130,6 @@ tr:hover td{background:var(--naranja-light);}
 .photo-thumb.dragging{opacity:.3;}
 .photo-thumb.drag-over-thumb{border-color:var(--naranja);box-shadow:0 0 0 2px var(--naranja-light);}
 
-/* RELATED */
 .rel-section{margin-top:20px;padding-top:16px;border-top:1px solid #F3F4F6;}
 .rel-auto-box{background:var(--naranja-light);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
 .rel-auto-title{font-size:.72rem;font-weight:700;color:var(--naranja);margin-bottom:6px;}
@@ -204,7 +202,7 @@ tr:hover td{background:var(--naranja-light);}
     <div class="toolbar">
       <div class="search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="search-input" type="text" id="search" placeholder="Buscar producto o principio activo..." oninput="filterTable()"/>
+        <input class="search-input" type="text" id="search" placeholder="Buscar producto..." oninput="filterTable()"/>
       </div>
     </div>
     <div class="table-wrap">
@@ -244,15 +242,15 @@ tr:hover td{background:var(--naranja-light);}
       <input type="hidden" id="f-id"/>
       <div class="form-grid">
         <div class="field fg-full">
-          <label>Nombre del producto *</label>
+          <label>Nombre del producto</label>
           <input type="text" id="f-nombre" placeholder="Ej. Metformina 500mg"/>
         </div>
         <div class="field fg-full">
-          <label>Principio activo *</label>
+          <label>Principio activo</label>
           <input type="text" id="f-activo" placeholder="Ej. Clorhidrato de Metformina" oninput="onActivoChange()"/>
         </div>
         <div class="field">
-          <label>Categor&iacute;a *</label>
+          <label>Categoria</label>
           <select id="f-categoria"><option value="">-- Selecciona --</option></select>
           <span class="err-msg" id="err-categoria">Selecciona una categoria</span>
         </div>
@@ -261,11 +259,11 @@ tr:hover td{background:var(--naranja-light);}
           <input type="number" id="f-unidades" min="1" placeholder="30"/>
         </div>
         <div class="field">
-          <label>Precio farmacia ($) *</label>
+          <label>Precio farmacia ($)</label>
           <input type="number" id="f-pfarmacia" step="0.01" min="0" placeholder="0.00"/>
         </div>
         <div class="field">
-          <label>Precio costo ($) *</label>
+          <label>Precio costo ($)</label>
           <input type="number" id="f-pcosto" step="0.01" min="0" placeholder="0.00"/>
         </div>
         <div class="field">
@@ -296,9 +294,8 @@ tr:hover td{background:var(--naranja-light);}
         </div>
       </div>
 
-      <!-- FOTOS -->
       <div class="photo-section">
-        <div class="section-label">Fotos del producto <span style="color:var(--danger)">*</span></div>
+        <div class="section-label">Fotos del producto</div>
         <div class="photo-drop-zone" id="foto-drop-zone"
              onclick="document.getElementById('foto-input').click()"
              ondragover="fotoDragOver(event)"
@@ -306,14 +303,13 @@ tr:hover td{background:var(--naranja-light);}
              ondrop="fotoDrop(event)">
           <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="fotoFileChange(this)"/>
           <div class="photo-drop-text">Arrastra fotos aqui o haz clic para subir</div>
-          <div class="photo-drop-hint">JPG, PNG &mdash; Max. 3 fotos &mdash; La primera es la principal</div>
+          <div class="photo-drop-hint">JPG, PNG - Max. 3 fotos - La primera es la principal</div>
         </div>
         <div class="photo-counter" id="foto-counter"></div>
         <div class="photo-previews" id="foto-previews"></div>
         <span class="err-msg" id="err-fotos">Debe subir al menos 1 foto</span>
       </div>
 
-      <!-- RELACIONADOS -->
       <div class="rel-section">
         <div class="section-label" style="margin-bottom:12px">Productos relacionados</div>
         <div class="rel-auto-box" id="rel-auto-box" style="display:none">
@@ -346,156 +342,140 @@ tr:hover td{background:var(--naranja-light);}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-var sb = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var SUPA_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
+var SUPA_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
+var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 var _productos = [];
 var _categorias = [];
+var _editId = null;
 var _fotoItems = [];
-var _relManuales = [];
-var _dragSrcIdx = null;
-var _relDropTimer = null;
+var _relacionadosManuales = [];
 
-(async function() {
-  var s = await sb.auth.getSession();
-  if (!s.data.session) { location.href = '../portal/login.html'; return; }
-  var u = s.data.session.user;
-  var rol = null;
-  if (u.user_metadata && u.user_metadata.rol) {
-    rol = u.user_metadata.rol;
-  } else if (u.app_metadata && u.app_metadata.rol) {
-    rol = u.app_metadata.rol;
+async function init() {
+  var session = await sb.auth.getSession();
+  if (!session.data.session) {
+    window.location.href = '../portal/login.html';
+    return;
   }
-  if (!rol) {
-    var pr = await sb.from('perfiles').select('rol').eq('id', u.id).single();
-    rol = (pr.data && pr.data.rol) ? pr.data.rol : 'suscriptor';
+  var meta = session.data.session.user.user_metadata || {};
+  var rol = meta.rol || '';
+  if (rol !== 'admin') {
+    window.location.href = '../portal/login.html';
+    return;
   }
-  if (rol !== 'admin') { location.href = '../portal/login.html'; return; }
-  var inicial = (u.user_metadata && u.user_metadata.nombre)
-    ? u.user_metadata.nombre.charAt(0).toUpperCase()
-    : u.email.charAt(0).toUpperCase();
-  var nombre = (u.user_metadata && u.user_metadata.nombre) ? u.user_metadata.nombre : u.email;
-  document.getElementById('nav-avatar').textContent = inicial;
-  document.getElementById('nav-nombre').textContent = nombre;
+  var email = session.data.session.user.email || '';
+  document.getElementById('nav-nombre').textContent = email;
+  document.getElementById('nav-avatar').textContent = email.charAt(0).toUpperCase();
   await loadCategorias();
   await loadProductos();
-})();
+}
 
 async function loadCategorias() {
-  var res = await sb.from('categorias').select('id,nombre').order('nombre');
-  if (res.error) { console.error('categorias:', res.error); return; }
+  var res = await sb.from('categorias').select('*').order('nombre');
+  if (res.error) { console.error('Error categorias:', res.error); return; }
   _categorias = res.data || [];
   var sel = document.getElementById('f-categoria');
-  sel.innerHTML = '<option value="">-- Selecciona --</option>';
+  sel.innerHTML = '<option value="">-- Selecciona una categoria --</option>';
   for (var i = 0; i < _categorias.length; i++) {
-    var op = document.createElement('option');
-    op.value = _categorias[i].id;
-    op.textContent = _categorias[i].nombre;
-    sel.appendChild(op);
+    var opt = document.createElement('option');
+    opt.value = _categorias[i].id;
+    opt.textContent = _categorias[i].nombre;
+    sel.appendChild(opt);
   }
 }
 
 async function loadProductos() {
   var tbody = document.getElementById('tbody');
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>';
-  var res = await sb.from('productos')
-    .select('id,nombre,principio_activo,categoria_id,precio_farmacia,precio_costo,requiere_receta,activo,producto_fotos(id,url,orden)')
-    .order('nombre');
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:#9CA3AF">Cargando...</td></tr>';
+  var res = await sb.from('productos').select('*, categorias(nombre), producto_fotos(id,url,orden)').order('nombre');
   if (res.error) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--danger)">Error al cargar productos</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:red">Error: ' + res.error.message + '</td></tr>';
     return;
   }
   _productos = res.data || [];
-  renderTable(_productos);
+  renderTabla(_productos);
 }
 
 function catNombre(id) {
   for (var i = 0; i < _categorias.length; i++) {
-    if (_categorias[i].id === id) { return _categorias[i].nombre; }
+    if (_categorias[i].id === id) return _categorias[i].nombre;
   }
   return '-';
 }
 
 function fmt(n) {
-  if (n == null) { return '-'; }
-  return '$' + Number(n).toFixed(2);
+  return '$' + parseFloat(n || 0).toFixed(2);
 }
 
-function renderTable(lista) {
+function renderTabla(lista) {
   var tbody = document.getElementById('tbody');
   if (!lista || lista.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink-60)">Sin productos</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:#9CA3AF">No hay productos</td></tr>';
     return;
   }
   var html = '';
   for (var i = 0; i < lista.length; i++) {
     var p = lista[i];
-    var fotoUrl = null;
+    var foto = '';
     if (p.producto_fotos && p.producto_fotos.length > 0) {
-      var minOrden = 999;
-      for (var fi = 0; fi < p.producto_fotos.length; fi++) {
-        if (p.producto_fotos[fi].orden < minOrden) {
-          minOrden = p.producto_fotos[fi].orden;
-          fotoUrl = p.producto_fotos[fi].url;
-        }
-      }
-    }
-    var fotoHtml;
-    if (fotoUrl) {
-      fotoHtml = '<img class="td-foto-img" src="' + fotoUrl + '" alt=""/>';
+      var sorted = p.producto_fotos.slice().sort(function(a, b) { return a.orden - b.orden; });
+      foto = '<img src="' + sorted[0].url + '" style="width:48px;height:48px;border-radius:50%;object-fit:cover;" onerror="this.style.display=\'none\'">';
     } else {
-      fotoHtml = '<div class="td-foto-ph">&#128138;</div>';
+      foto = '<div style="width:48px;height:48px;border-radius:50%;background:#FFF0EB;display:flex;align-items:center;justify-content:center;font-size:20px">&#128138;</div>';
     }
-    var pfarm = (p.precio_farmacia != null)
-      ? '<span class="price-farm">$' + Number(p.precio_farmacia).toFixed(2) + '</span>'
-      : '-';
-    var pcosto = (p.precio_costo != null)
-      ? '<span class="price-cost">$' + Number(p.precio_costo).toFixed(2) + '</span>'
-      : '-';
-    var estadoBadge = p.activo
-      ? '<span class="badge badge-activo">Activo</span>'
-      : '<span class="badge badge-inactivo">Inactivo</span>';
-    var recetaBadge = p.requiere_receta
-      ? '<span class="badge badge-receta">Receta</span>'
-      : '<span class="badge badge-noreceta">Libre</span>';
-    var btnToggleLbl = p.activo ? 'Desactivar' : 'Activar';
-    var btnToggleCls = p.activo ? 'btn-desactivar' : 'btn-activar-small';
+    var catNom = (p.categorias && p.categorias.nombre) ? p.categorias.nombre : catNombre(p.categoria_id);
+    var recetaBadge = p.requiere_receta ? '<span class="badge badge-receta">Receta</span>' : '<span class="badge badge-noreceta">Libre</span>';
+    var estadoBadge = p.activo ? '<span class="badge badge-activo">Activo</span>' : '<span class="badge badge-inactivo">Inactivo</span>';
+    var toggleLabel = p.activo ? 'Desactivar' : 'Activar';
+    var toggleCls = p.activo ? 'btn-desactivar' : 'btn-activar-small';
     html += '<tr>';
-    html += '<td>' + fotoHtml + '</td>';
+    html += '<td>' + foto + '</td>';
     html += '<td style="font-weight:600">' + (p.nombre || '') + '</td>';
     html += '<td style="color:var(--ink-60)">' + (p.principio_activo || '-') + '</td>';
-    html += '<td style="color:var(--ink-60)">' + catNombre(p.categoria_id) + '</td>';
-    html += '<td>' + pfarm + '</td>';
-    html += '<td>' + pcosto + '</td>';
+    html += '<td>' + catNom + '</td>';
+    html += '<td><span class="price-farm">' + fmt(p.precio_farmacia) + '</span></td>';
+    html += '<td><span class="price-cost">' + fmt(p.precio_costo) + '</span></td>';
     html += '<td>' + recetaBadge + '</td>';
     html += '<td>' + estadoBadge + '</td>';
-    html += '<td>';
-    html += '<button class="btn-edit" onclick="editProducto(' + p.id + ')">Editar</button>';
-    html += '<button class="' + btnToggleCls + '" onclick="toggleActivo(' + p.id + ',' + (p.activo ? 'true' : 'false') + ')">' + btnToggleLbl + '</button>';
-    html += '</td>';
+    html += '<td><button class="btn-edit" onclick="editProducto(\'' + p.id + '\')">Editar</button> ';
+    html += '<button class="' + toggleCls + '" onclick="toggleActivo(\'' + p.id + '\',' + p.activo + ')">' + toggleLabel + '</button></td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
 }
 
 function filterTable() {
-  var q = document.getElementById('search').value.toLowerCase();
-  if (!q) { renderTable(_productos); return; }
+  var q = (document.getElementById('search').value || '').toLowerCase();
+  if (!q) { renderTabla(_productos); return; }
   var filtered = [];
   for (var i = 0; i < _productos.length; i++) {
     var p = _productos[i];
-    var nombre = (p.nombre || '').toLowerCase();
-    var pActivo = (p.principio_activo || '').toLowerCase();
-    if (nombre.indexOf(q) !== -1 || pActivo.indexOf(q) !== -1) {
+    if ((p.nombre || '').toLowerCase().indexOf(q) >= 0 || (p.principio_activo || '').toLowerCase().indexOf(q) >= 0) {
       filtered.push(p);
     }
   }
-  renderTable(filtered);
+  renderTabla(filtered);
 }
 
-function _resetModal() {
-  document.getElementById('f-id').value = '';
+async function toggleActivo(id, activo) {
+  var res = await sb.from('productos').update({ activo: !activo }).eq('id', id);
+  if (res.error) { alert('Error: ' + res.error.message); return; }
+  await loadProductos();
+}
+
+function logout() {
+  sb.auth.signOut().then(function() {
+    window.location.href = '../portal/login.html';
+  });
+}
+
+function openModal(modo) {
+  _editId = null;
+  _fotoItems = [];
+  _relacionadosManuales = [];
+  document.getElementById('modal-title').textContent = modo === 'editar' ? 'Editar producto' : 'Agregar producto';
   document.getElementById('f-nombre').value = '';
   document.getElementById('f-activo').value = '';
   document.getElementById('f-categoria').value = '';
@@ -508,256 +488,112 @@ function _resetModal() {
   document.getElementById('f-dosis').value = '';
   document.getElementById('f-contraindicaciones').value = '';
   document.getElementById('f-efectos').value = '';
-  document.getElementById('err-categoria').style.display = 'none';
-  document.getElementById('err-fotos').style.display = 'none';
   document.getElementById('modal-error').style.display = 'none';
-  document.getElementById('modal-error-msg').textContent = '';
-  document.getElementById('btn-guardar').disabled = false;
-  document.getElementById('btn-guardar').textContent = 'Guardar producto';
-  document.getElementById('rel-auto-box').style.display = 'none';
-  document.getElementById('rel-auto-list').innerHTML = '';
-  document.getElementById('rel-search').value = '';
-  document.getElementById('rel-dropdown').innerHTML = '';
-  document.getElementById('rel-dropdown').classList.remove('open');
-  document.getElementById('rel-manual-list').innerHTML = '';
-  document.getElementById('rel-limit-msg').style.display = 'none';
-  _fotoItems = [];
-  _relManuales = [];
   renderFotos();
-}
-
-function openModal() {
-  _resetModal();
-  document.getElementById('modal-title').textContent = 'Agregar producto';
-  document.getElementById('modal-overlay').classList.add('open');
+  renderRelacionados();
+  document.getElementById('modal-overlay').style.display = 'flex';
 }
 
 function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-overlay').style.display = 'none';
 }
 
 function closeModalClick(e) {
   if (e.target === document.getElementById('modal-overlay')) { closeModal(); }
 }
 
-async function guardarProducto() {
-  var id = document.getElementById('f-id').value;
-  var nombre = document.getElementById('f-nombre').value.trim();
-  var activoVal = document.getElementById('f-activo').value.trim();
-  var catId = document.getElementById('f-categoria').value;
-  var unidades = document.getElementById('f-unidades').value;
-  var pfarmacia = document.getElementById('f-pfarmacia').value;
-  var pcosto = document.getElementById('f-pcosto').value;
-  var stock = document.getElementById('f-stock').value;
-  var receta = document.getElementById('f-receta').checked;
-  var indicaciones = document.getElementById('f-indicaciones').value.trim();
-  var dosis = document.getElementById('f-dosis').value.trim();
-  var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
-  var efectos = document.getElementById('f-efectos').value.trim();
-
-  var valid = true;
-  if (!catId) {
-    document.getElementById('err-categoria').style.display = 'block';
-    valid = false;
-  } else {
-    document.getElementById('err-categoria').style.display = 'none';
+async function editProducto(id) {
+  var p = null;
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { p = _productos[i]; break; }
   }
-  if (_fotoItems.length === 0) {
-    document.getElementById('err-fotos').style.display = 'block';
-    valid = false;
-  } else {
-    document.getElementById('err-fotos').style.display = 'none';
-  }
-  if (!nombre || !pfarmacia || !pcosto) {
-    showModalError('Nombre, precio farmacia y precio costo son obligatorios.');
-    return;
-  }
-  if (!valid) { return; }
-
-  var btn = document.getElementById('btn-guardar');
-  btn.disabled = true;
-  btn.textContent = 'Guardando...';
-  document.getElementById('modal-error').style.display = 'none';
-
-  var payload = {
-    nombre: nombre,
-    principio_activo: activoVal || null,
-    categoria_id: catId ? Number(catId) : null,
-    unidades_por_caja: unidades ? Number(unidades) : null,
-    precio_farmacia: pfarmacia ? Number(pfarmacia) : null,
-    precio_costo: pcosto ? Number(pcosto) : null,
-    stock: stock ? Number(stock) : 0,
-    requiere_receta: receta,
-    indicaciones: indicaciones || null,
-    dosis: dosis || null,
-    contraindicaciones: contraindicaciones || null,
-    efectos_secundarios: efectos || null
-  };
-
-  var prodId;
-  if (id) {
-    var upd = await sb.from('productos').update(payload).eq('id', Number(id)).select('id').single();
-    if (upd.error) { showModalError(upd.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
-    prodId = Number(id);
-  } else {
-    payload.activo = true;
-    var ins = await sb.from('productos').insert(payload).select('id').single();
-    if (ins.error) { showModalError(ins.error.message); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
-    prodId = ins.data.id;
-  }
-
-  var fotoErr = await syncFotos(prodId);
-  if (fotoErr) { showModalError(fotoErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
-
-  var relErr = await syncRelManuales(prodId);
-  if (relErr) { showModalError(relErr); btn.disabled = false; btn.textContent = 'Guardar producto'; return; }
-
-  closeModal();
-  await loadProductos();
-}
-
-function showModalError(msg) {
-  document.getElementById('modal-error-msg').textContent = msg;
-  document.getElementById('modal-error').style.display = 'block';
-  var btn = document.getElementById('btn-guardar');
-  btn.disabled = false;
-  btn.textContent = 'Guardar producto';
-}
-
-async function editarProducto(id) {
-  _resetModal();
+  if (!p) return;
+  _editId = id;
+  _fotoItems = [];
+  _relacionadosManuales = [];
   document.getElementById('modal-title').textContent = 'Editar producto';
-  document.getElementById('modal-overlay').classList.add('open');
-  var btn = document.getElementById('btn-guardar');
-  btn.disabled = true;
-  btn.textContent = 'Cargando...';
-
-  var res = await sb.from('productos').select('*').eq('id', id).single();
-  if (res.error) { showModalError(res.error.message); return; }
-  var p = res.data;
-
-  document.getElementById('f-id').value = p.id;
   document.getElementById('f-nombre').value = p.nombre || '';
   document.getElementById('f-activo').value = p.principio_activo || '';
   document.getElementById('f-categoria').value = p.categoria_id || '';
-  document.getElementById('f-unidades').value = p.unidades_por_caja || '';
+  document.getElementById('f-unidades').value = p.unidades_caja || '';
   document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
   document.getElementById('f-pcosto').value = p.precio_costo || '';
   document.getElementById('f-stock').value = p.stock || '';
-  document.getElementById('f-receta').checked = !!p.requiere_receta;
+  document.getElementById('f-receta').checked = p.requiere_receta || false;
   document.getElementById('f-indicaciones').value = p.indicaciones || '';
   document.getElementById('f-dosis').value = p.dosis || '';
   document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
   document.getElementById('f-efectos').value = p.efectos_secundarios || '';
-
-  var fotosRes = await sb.from('producto_fotos').select('id,url,orden').eq('producto_id', id).order('orden');
+  document.getElementById('modal-error').style.display = 'none';
+  var fotosRes = await sb.from('producto_fotos').select('*').eq('producto_id', id).order('orden');
   if (!fotosRes.error && fotosRes.data) {
-    _fotoItems = [];
-    for (var i = 0; i < fotosRes.data.length; i++) {
-      _fotoItems.push({ existing: true, id: fotosRes.data[i].id, url: fotosRes.data[i].url, orden: fotosRes.data[i].orden });
+    for (var j = 0; j < fotosRes.data.length; j++) {
+      _fotoItems.push({ existing: true, id: fotosRes.data[j].id, url: fotosRes.data[j].url, orden: fotosRes.data[j].orden });
     }
-    renderFotos();
   }
-
   var relRes = await sb.from('productos_relacionados').select('relacionado_id').eq('producto_id', id).eq('tipo', 'manual');
-  if (!relRes.error && relRes.data && relRes.data.length > 0) {
-    _relManuales = [];
-    for (var ri = 0; ri < relRes.data.length; ri++) {
-      var relId = relRes.data[ri].relacionado_id;
-      for (var rj = 0; rj < _productos.length; rj++) {
-        if (_productos[rj].id === relId) {
-          _relManuales.push(_productos[rj]);
+  if (!relRes.error && relRes.data) {
+    for (var k = 0; k < relRes.data.length; k++) {
+      var relId = relRes.data[k].relacionado_id;
+      for (var m = 0; m < _productos.length; m++) {
+        if (_productos[m].id === relId) {
+          _relacionadosManuales.push({ relacionado_id: relId, productos: _productos[m] });
           break;
         }
       }
     }
-    renderRelManuales();
   }
-
-  if (p.principio_activo) { onActivoChange(); }
-
-  btn.disabled = false;
-  btn.textContent = 'Guardar producto';
-}
-
-function editProducto(id) { editarProducto(id); }
-
-async function toggleActivo(id, actual) {
-  var nuevoEstado = !actual;
-  var res = await sb.from('productos').update({ activo: nuevoEstado }).eq('id', id);
-  if (res.error) { alert('Error: ' + res.error.message); return; }
-  for (var i = 0; i < _productos.length; i++) {
-    if (_productos[i].id === id) { _productos[i].activo = nuevoEstado; break; }
-  }
-  renderTable(_productos);
+  renderFotos();
+  renderRelacionados();
+  document.getElementById('modal-overlay').style.display = 'flex';
 }
 
 function renderFotos() {
   var previews = document.getElementById('foto-previews');
   var counter = document.getElementById('foto-counter');
   var dropZone = document.getElementById('foto-drop-zone');
+  if (!previews) return;
   previews.innerHTML = '';
-  if (_fotoItems.length === 0) {
-    counter.textContent = '';
-    dropZone.classList.remove('disabled');
-    return;
-  }
-  counter.textContent = _fotoItems.length + ' / 3 foto' + (_fotoItems.length !== 1 ? 's' : '');
+  counter.textContent = _fotoItems.length + '/3 fotos';
   if (_fotoItems.length >= 3) {
-    dropZone.classList.add('disabled');
+    dropZone.style.opacity = '0.5';
+    dropZone.style.pointerEvents = 'none';
   } else {
-    dropZone.classList.remove('disabled');
+    dropZone.style.opacity = '1';
+    dropZone.style.pointerEvents = 'auto';
   }
   for (var i = 0; i < _fotoItems.length; i++) {
-    (function(idx) {
-      var item = _fotoItems[idx];
-      var div = document.createElement('div');
-      div.className = 'photo-thumb';
-      div.draggable = true;
-      var img = document.createElement('img');
-      img.src = item.previewUrl || item.url || '';
-      var del = document.createElement('button');
-      del.className = 'photo-thumb-del';
-      del.type = 'button';
-      del.innerHTML = '&#x2715;';
-      del.onclick = function() { _fotoItems.splice(idx, 1); renderFotos(); };
-      div.appendChild(img);
-      div.appendChild(del);
-      if (idx === 0) {
-        var badge = document.createElement('span');
-        badge.className = 'photo-badge-main';
-        badge.textContent = 'Principal';
-        div.appendChild(badge);
-      }
-      div.addEventListener('dragstart', function() {
-        _dragSrcIdx = idx;
-        setTimeout(function() { div.classList.add('dragging'); }, 0);
-      });
-      div.addEventListener('dragend', function() {
-        div.classList.remove('dragging');
-        _dragSrcIdx = null;
-        var thumbEls = document.querySelectorAll('.photo-thumb');
-        for (var ti = 0; ti < thumbEls.length; ti++) {
-          thumbEls[ti].classList.remove('drag-over-thumb');
-        }
-      });
-      div.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        div.classList.add('drag-over-thumb');
-      });
-      div.addEventListener('dragleave', function() {
-        div.classList.remove('drag-over-thumb');
-      });
-      div.addEventListener('drop', function(e) {
-        e.preventDefault();
-        div.classList.remove('drag-over-thumb');
-        if (_dragSrcIdx === null || _dragSrcIdx === idx) { return; }
-        var moved = _fotoItems.splice(_dragSrcIdx, 1)[0];
-        _fotoItems.splice(idx, 0, moved);
+    var item = _fotoItems[i];
+    var div = document.createElement('div');
+    div.style.cssText = 'position:relative;width:80px;height:80px;flex-shrink:0';
+    var imgSrc = item.existing ? item.url : (item.preview || '');
+    div.innerHTML = '<img src="' + imgSrc + '" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #E8521A">' +
+      (i === 0 ? '<span style="position:absolute;bottom:2px;left:2px;background:#E8521A;color:white;font-size:9px;padding:1px 5px;border-radius:4px">Principal</span>' : '') +
+      '<button onclick="removeFoto(' + i + ')" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#EF4444;color:white;border:none;font-size:12px;cursor:pointer;line-height:1">x</button>';
+    previews.appendChild(div);
+  }
+}
+
+function removeFoto(idx) {
+  _fotoItems.splice(idx, 1);
+  renderFotos();
+}
+
+function fotoFileChange(input) { handleFotoSelect(input); }
+
+function handleFotoSelect(input) {
+  var files = input.files;
+  for (var i = 0; i < files.length; i++) {
+    if (_fotoItems.length >= 3) break;
+    var file = files[i];
+    var reader = new FileReader();
+    (function(f, r) {
+      r.onload = function(e) {
+        _fotoItems.push({ existing: false, file: f, preview: e.target.result });
         renderFotos();
-      });
-      previews.appendChild(div);
-    })(i);
+      };
+      r.readAsDataURL(f);
+    })(file, reader);
   }
 }
 
@@ -766,239 +602,173 @@ function fotoDragOver(e) {
   document.getElementById('foto-drop-zone').classList.add('drag-over');
 }
 
-function fotoDragLeave(e) {
+function fotoDragLeave() {
   document.getElementById('foto-drop-zone').classList.remove('drag-over');
 }
 
 function fotoDrop(e) {
   e.preventDefault();
   document.getElementById('foto-drop-zone').classList.remove('drag-over');
-  addFotoFiles(e.dataTransfer.files);
+  handleFotoSelect({ files: e.dataTransfer.files });
 }
 
-function fotoFileChange(input) {
-  addFotoFiles(input.files);
-  input.value = '';
+function renderRelacionados() {
+  var container = document.getElementById('rel-manual-list');
+  if (!container) return;
+  container.innerHTML = '';
+  for (var i = 0; i < _relacionadosManuales.length; i++) {
+    var r = _relacionadosManuales[i];
+    var nombre = (r.productos && r.productos.nombre) ? r.productos.nombre : r.relacionado_id;
+    var precio = (r.productos && r.productos.precio_costo) ? '$' + parseFloat(r.productos.precio_costo).toFixed(2) : '';
+    var idx = i;
+    var div = document.createElement('div');
+    div.className = 'rel-manual-card';
+    var info = document.createElement('div');
+    info.className = 'rel-manual-info';
+    var nameEl = document.createElement('span');
+    nameEl.className = 'rel-manual-name';
+    nameEl.textContent = nombre;
+    var priceEl = document.createElement('span');
+    priceEl.className = 'rel-manual-price';
+    priceEl.textContent = precio;
+    info.appendChild(nameEl);
+    info.appendChild(priceEl);
+    var del = document.createElement('button');
+    del.className = 'rel-manual-del';
+    del.type = 'button';
+    del.innerHTML = '&#x2715;';
+    del.onclick = (function(n) { return function() { removeRelacionado(n); }; })(idx);
+    div.appendChild(info);
+    div.appendChild(del);
+    container.appendChild(div);
+  }
 }
 
-function addFotoFiles(files) {
-  var remaining = 3 - _fotoItems.length;
-  if (remaining <= 0) { return; }
-  var added = 0;
-  for (var i = 0; i < files.length && added < remaining; i++) {
-    var f = files[i];
-    if (!f.type.match('image.*')) { continue; }
-    var url = URL.createObjectURL(f);
-    _fotoItems.push({ existing: false, file: f, previewUrl: url });
-    added++;
-  }
-  document.getElementById('err-fotos').style.display = 'none';
-  renderFotos();
+function removeRelacionado(idx) {
+  _relacionadosManuales.splice(idx, 1);
+  renderRelacionados();
 }
 
-async function syncFotos(prodId) {
-  var BUCKET = 'producto-fotos';
-  var existingAfter = [];
-  var newItems = [];
-  for (var i = 0; i < _fotoItems.length; i++) {
-    if (_fotoItems[i].existing) {
-      existingAfter.push(_fotoItems[i]);
-    } else {
-      newItems.push({ item: _fotoItems[i], orden: i });
-    }
-  }
+function onRelSearch() { buscarRelacionado(); }
+function openRelDropdown() { if (document.getElementById('rel-search').value.trim()) { buscarRelacionado(); } }
+function blurRelDropdown() { setTimeout(function() { document.getElementById('rel-dropdown').innerHTML = ''; }, 200); }
+function onActivoChange() {}
 
-  var fotosRes = await sb.from('producto_fotos').select('id,url,orden').eq('producto_id', prodId);
-  if (fotosRes.error) { return fotosRes.error.message; }
-  var dbFotos = fotosRes.data || [];
-  var toDelete = [];
-  for (var j = 0; j < dbFotos.length; j++) {
-    var found = false;
-    for (var k = 0; k < existingAfter.length; k++) {
-      if (existingAfter[k].id === dbFotos[j].id) { found = true; break; }
-    }
-    if (!found) { toDelete.push(dbFotos[j]); }
-  }
-
-  for (var d = 0; d < toDelete.length; d++) {
-    var urlParts = toDelete[d].url.split('/producto-fotos/');
-    if (urlParts.length === 2) {
-      await sb.storage.from(BUCKET).remove([urlParts[1]]);
-    }
-    await sb.from('producto_fotos').delete().eq('id', toDelete[d].id);
-  }
-
-  for (var n = 0; n < newItems.length; n++) {
-    var ext = newItems[n].item.file.name.split('.').pop().toLowerCase();
-    var fname = prodId + '_' + Date.now() + '_' + n + '.' + ext;
-    var up = await sb.storage.from(BUCKET).upload(fname, newItems[n].item.file, { upsert: false, contentType: newItems[n].item.file.type });
-    if (up.error) { return up.error.message; }
-    var pub = sb.storage.from(BUCKET).getPublicUrl(fname);
-    var publicUrl = pub.data.publicUrl;
-    var ins2 = await sb.from('producto_fotos').insert({ producto_id: prodId, url: publicUrl, orden: newItems[n].orden });
-    if (ins2.error) { return ins2.error.message; }
-  }
-
-  for (var e2 = 0; e2 < existingAfter.length; e2++) {
-    var newOrden = -1;
-    for (var f2 = 0; f2 < _fotoItems.length; f2++) {
-      if (_fotoItems[f2].existing && _fotoItems[f2].id === existingAfter[e2].id) { newOrden = f2; break; }
-    }
-    if (newOrden !== existingAfter[e2].orden) {
-      await sb.from('producto_fotos').update({ orden: newOrden }).eq('id', existingAfter[e2].id);
-    }
-  }
-  return null;
-}
-
-function onActivoChange() {
-  var activo = document.getElementById('f-activo').value.trim().toLowerCase();
-  var autoBox = document.getElementById('rel-auto-box');
-  var autoList = document.getElementById('rel-auto-list');
-  if (!activo) { autoBox.style.display = 'none'; autoList.innerHTML = ''; return; }
-  var currentId = document.getElementById('f-id').value;
-  var matches = [];
-  for (var i = 0; i < _productos.length; i++) {
-    var p = _productos[i];
-    if (String(p.id) === String(currentId)) { continue; }
-    if (p.principio_activo && p.principio_activo.toLowerCase() === activo) {
-      matches.push(p);
-    }
-  }
-  if (matches.length === 0) { autoBox.style.display = 'none'; autoList.innerHTML = ''; return; }
-  autoList.innerHTML = '';
-  for (var j = 0; j < matches.length; j++) {
-    var div2 = document.createElement('div');
-    div2.className = 'rel-auto-item';
-    div2.textContent = matches[j].nombre;
-    autoList.appendChild(div2);
-  }
-  autoBox.style.display = 'block';
-}
-
-function onRelSearch() {
-  var q = document.getElementById('rel-search').value.trim().toLowerCase();
+async function buscarRelacionado() {
+  var q = document.getElementById('rel-search').value;
   var dd = document.getElementById('rel-dropdown');
-  if (!q) { dd.innerHTML = ''; dd.classList.remove('open'); return; }
-  var currentId = document.getElementById('f-id').value;
-  var results = [];
-  for (var i = 0; i < _productos.length; i++) {
-    var p = _productos[i];
-    if (String(p.id) === String(currentId)) { continue; }
-    var alreadyManual = false;
-    for (var m = 0; m < _relManuales.length; m++) {
-      if (_relManuales[m].id === p.id) { alreadyManual = true; break; }
-    }
-    if (alreadyManual) { continue; }
-    var nombre2 = (p.nombre || '').toLowerCase();
-    var pAct = (p.principio_activo || '').toLowerCase();
-    if (nombre2.indexOf(q) !== -1 || pAct.indexOf(q) !== -1) {
-      results.push(p);
-    }
-    if (results.length >= 8) { break; }
-  }
+  if (q.length < 2) { dd.innerHTML = ''; return; }
+  var res = await sb.from('productos').select('id,nombre,precio_costo').ilike('nombre', '%' + q + '%').limit(5);
+  if (res.error || !res.data) return;
   dd.innerHTML = '';
-  if (results.length === 0) { dd.classList.remove('open'); return; }
-  for (var r = 0; r < results.length; r++) {
+  for (var i = 0; i < res.data.length; i++) {
+    var p = res.data[i];
+    if (p.id === _editId) continue;
+    var div = document.createElement('div');
+    div.className = 'rel-drop-item';
+    var nameD = document.createElement('div');
+    nameD.className = 'rel-drop-name';
+    nameD.textContent = p.nombre;
+    var subD = document.createElement('div');
+    subD.className = 'rel-drop-sub';
+    subD.textContent = '$' + parseFloat(p.precio_costo || 0).toFixed(2);
+    div.appendChild(nameD);
+    div.appendChild(subD);
     (function(prod) {
-      var item = document.createElement('div');
-      item.className = 'rel-drop-item';
-      var nameDiv = document.createElement('div');
-      nameDiv.className = 'rel-drop-name';
-      nameDiv.textContent = prod.nombre;
-      var subDiv = document.createElement('div');
-      subDiv.className = 'rel-drop-sub';
-      subDiv.textContent = prod.principio_activo || '';
-      item.appendChild(nameDiv);
-      item.appendChild(subDiv);
-      item.addEventListener('mousedown', function(e) {
+      div.addEventListener('mousedown', function(e) {
         e.preventDefault();
-        addManualRelById(prod.id);
+        _relacionadosManuales.push({ relacionado_id: prod.id, productos: prod });
+        document.getElementById('rel-search').value = '';
+        document.getElementById('rel-dropdown').innerHTML = '';
+        renderRelacionados();
       });
-      dd.appendChild(item);
-    })(results[r]);
+    })(p);
+    dd.appendChild(div);
   }
   dd.classList.add('open');
 }
 
-function openRelDropdown() {
-  if (document.getElementById('rel-search').value.trim()) { onRelSearch(); }
-}
+async function guardarProducto() {
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var principio = document.getElementById('f-activo').value.trim();
+  var categoriaId = document.getElementById('f-categoria').value;
+  var unidades = parseInt(document.getElementById('f-unidades').value) || 0;
+  var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
+  var pcosto = parseFloat(document.getElementById('f-pcosto').value) || 0;
+  var stock = parseInt(document.getElementById('f-stock').value) || 0;
+  var receta = document.getElementById('f-receta').checked;
+  var indicaciones = document.getElementById('f-indicaciones').value.trim();
+  var dosis = document.getElementById('f-dosis').value.trim();
+  var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
+  var efectos = document.getElementById('f-efectos').value.trim();
 
-function blurRelDropdown() {
-  if (_relDropTimer) { clearTimeout(_relDropTimer); }
-  _relDropTimer = setTimeout(function() {
-    document.getElementById('rel-dropdown').classList.remove('open');
-  }, 200);
-}
+  if (!nombre) { showModalError('El nombre es obligatorio'); return; }
+  if (!categoriaId) { showModalError('Selecciona una categoria'); return; }
+  if (_fotoItems.length === 0) { showModalError('Agrega al menos una foto del producto'); return; }
 
-function addManualRelById(id) {
-  if (_relManuales.length >= 5) { return; }
-  var prod = null;
-  for (var i = 0; i < _productos.length; i++) {
-    if (_productos[i].id === id) { prod = _productos[i]; break; }
+  var payload = {
+    nombre: nombre,
+    principio_activo: principio,
+    categoria_id: categoriaId,
+    unidades_caja: unidades,
+    precio_farmacia: pfarmacia,
+    precio_costo: pcosto,
+    stock: stock,
+    requiere_receta: receta,
+    indicaciones: indicaciones,
+    dosis: dosis,
+    contraindicaciones: contraindicaciones,
+    efectos_secundarios: efectos,
+    activo: true
+  };
+
+  var productoId = _editId;
+  if (_editId) {
+    var upRes = await sb.from('productos').update(payload).eq('id', _editId);
+    if (upRes.error) { showModalError('Error: ' + upRes.error.message); return; }
+  } else {
+    var insRes = await sb.from('productos').insert(payload).select();
+    if (insRes.error) { showModalError('Error: ' + insRes.error.message); return; }
+    productoId = insRes.data[0].id;
   }
-  if (!prod) { return; }
-  for (var j = 0; j < _relManuales.length; j++) {
-    if (_relManuales[j].id === id) { return; }
+
+  await sb.from('producto_fotos').delete().eq('producto_id', productoId);
+  for (var i = 0; i < _fotoItems.length; i++) {
+    var item = _fotoItems[i];
+    var fotoUrl = item.url || '';
+    if (!item.existing && item.file) {
+      var ext = item.file.name.split('.').pop();
+      var fpath = productoId + '/' + (i + 1) + '.' + ext;
+      var upFoto = await sb.storage.from('producto-fotos').upload(fpath, item.file, { upsert: true });
+      if (upFoto.error) { console.error('Error foto:', upFoto.error); continue; }
+      var pub = sb.storage.from('producto-fotos').getPublicUrl(fpath);
+      fotoUrl = pub.data.publicUrl;
+    }
+    if (fotoUrl) {
+      await sb.from('producto_fotos').insert({ producto_id: productoId, url: fotoUrl, orden: i + 1 });
+    }
   }
-  _relManuales.push(prod);
-  document.getElementById('rel-search').value = '';
-  document.getElementById('rel-dropdown').classList.remove('open');
-  renderRelManuales();
+
+  await sb.from('productos_relacionados').delete().eq('producto_id', productoId).eq('tipo', 'manual');
+  for (var j = 0; j < _relacionadosManuales.length; j++) {
+    await sb.from('productos_relacionados').insert({
+      producto_id: productoId,
+      relacionado_id: _relacionadosManuales[j].relacionado_id,
+      tipo: 'manual'
+    });
+  }
+
+  closeModal();
+  await loadProductos();
 }
 
-function removeManualRel(id) {
-  for (var i = 0; i < _relManuales.length; i++) {
-    if (_relManuales[i].id === id) { _relManuales.splice(i, 1); break; }
-  }
-  renderRelManuales();
+function showModalError(msg) {
+  var el = document.getElementById('modal-error');
+  el.textContent = msg;
+  el.style.display = 'block';
 }
 
-function renderRelManuales() {
-  var list = document.getElementById('rel-manual-list');
-  var limitMsg = document.getElementById('rel-limit-msg');
-  list.innerHTML = '';
-  for (var i = 0; i < _relManuales.length; i++) {
-    (function(prod) {
-      var card = document.createElement('div');
-      card.className = 'rel-manual-card';
-      var info = document.createElement('div');
-      info.className = 'rel-manual-info';
-      var nameEl = document.createElement('span');
-      nameEl.className = 'rel-manual-name';
-      nameEl.textContent = prod.nombre;
-      var priceEl = document.createElement('span');
-      priceEl.className = 'rel-manual-price';
-      priceEl.textContent = fmt(prod.precio_farmacia);
-      info.appendChild(nameEl);
-      info.appendChild(priceEl);
-      var del = document.createElement('button');
-      del.className = 'rel-manual-del';
-      del.type = 'button';
-      del.innerHTML = '&#x2715;';
-      del.onclick = function() { removeManualRel(prod.id); };
-      card.appendChild(info);
-      card.appendChild(del);
-      list.appendChild(card);
-    })(_relManuales[i]);
-  }
-  limitMsg.style.display = _relManuales.length >= 5 ? 'block' : 'none';
-}
-
-async function syncRelManuales(prodId) {
-  var del3 = await sb.from('productos_relacionados').delete().eq('producto_id', prodId).eq('tipo', 'manual');
-  if (del3.error) { return del3.error.message; }
-  for (var i = 0; i < _relManuales.length; i++) {
-    var ins3 = await sb.from('productos_relacionados').insert({ producto_id: prodId, relacionado_id: _relManuales[i].id, tipo: 'manual' });
-    if (ins3.error) { return ins3.error.message; }
-  }
-  return null;
-}
-
-function logout() {
-  sb.auth.signOut().then(function() { location.href = '../portal/login.html'; });
-}
+init();
 </script>
 </body>
 </html>
