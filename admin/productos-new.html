@@ -515,7 +515,7 @@ async function editProducto(id) {
   document.getElementById('f-nombre').value = p.nombre || '';
   document.getElementById('f-activo').value = p.principio_activo || '';
   document.getElementById('f-categoria').value = p.categoria_id || '';
-  document.getElementById('f-unidades').value = p.unidades_por_caja || '';
+  document.getElementById('f-unidades').value = p.unidades_caja || '';
   document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
   document.getElementById('f-pcosto').value = p.precio_costo || '';
   document.getElementById('f-stock').value = p.stock || '';
@@ -710,7 +710,7 @@ async function guardarProducto() {
     nombre: nombre,
     principio_activo: principio,
     categoria_id: categoriaId,
-    unidades_por_caja: unidades,
+    unidades_caja: unidades,
     precio_farmacia: pfarmacia,
     precio_costo: pcosto,
     stock: stock,
