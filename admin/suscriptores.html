@@ -275,11 +275,19 @@ var _todos = [], _filtro = 'todos', _selIdx = null;
   if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
   document.getElementById('nav-nombre').textContent = user.email;
   document.getElementById('nav-avatar').textContent = user.email[0].toUpperCase();
-  await loadData();
+  await loadSuscriptores();
 })();
 
-async function loadData() {
-  var res = await _db.from('suscriptores').select('*').order('created_at', {ascending: false});
+async function loadSuscriptores() {
+  var res = await _db
+    .from('usuarios')
+    .select('*, suscripciones(id, estado, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
+    .eq('rol', 'suscriptor')
+    .order('created_at', {ascending: false});
+  if (res.error) {
+    console.error('Error cargando suscriptores:', res.error);
+    return;
+  }
   _todos = res.data || [];
   document.getElementById('total-badge').textContent = _todos.length;
   renderTable();
@@ -496,7 +504,7 @@ function closePanel() {
 
 async function cambiarEstado(cedula, estado) {
   await _db.from('suscriptores').update({estado: estado}).eq('cedula', cedula);
-  await loadData();
+  await loadSuscriptores();
   closePanel();
 }
 
@@ -575,7 +583,7 @@ async function aprobarKYC() {
     estado: 'activa'
   }).eq('cedula', s.cedula);
   closeKycModal();
-  await loadData();
+  await loadSuscriptores();
   openPanel(_selIdx);
 }
 
@@ -589,7 +597,7 @@ async function rechazarKYC() {
     kyc_motivo_rechazo: motivo
   }).eq('cedula', s.cedula);
   closeKycModal();
-  await loadData();
+  await loadSuscriptores();
   openPanel(_selIdx);
 }
 
