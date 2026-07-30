@@ -598,8 +598,8 @@ async function aprobarKYC() {
     kyc_fecha: new Date().toISOString(),
     estado: 'activa'
   }).eq('id', susId);
-  closeKycModal();
   await loadSuscriptores();
+  closeKycModal();
   openPanel(_selIdx);
 }
 
@@ -614,8 +614,8 @@ async function rechazarKYC() {
     kyc_fecha: new Date().toISOString(),
     kyc_motivo_rechazo: motivo
   }).eq('id', susId);
-  closeKycModal();
   await loadSuscriptores();
+  closeKycModal();
   openPanel(_selIdx);
 }
 
