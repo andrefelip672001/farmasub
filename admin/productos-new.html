@@ -7,14 +7,340 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --naranja:#E8521A;--naranja-d:#C94415;--naranja-light:#FFF0EB;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.page-title{font-size:1.4rem;font-weight:700;color:var(--ink);}
+.btn-nuevo{padding:10px 18px;background:var(--naranja);border:none;border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;color:white;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap;}
+.btn-nuevo:hover{background:var(--naranja-d);}
+
+.toolbar{display:flex;gap:10px;margin-bottom:16px;align-items:center;}
+.search-wrap{position:relative;flex:1;min-width:180px;}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-30);}
+.search-input{width:100%;padding:9px 12px 9px 38px;background:var(--white);border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);outline:none;transition:border .2s;}
+.search-input:focus{border-color:var(--naranja);}
+.search-input::placeholder{color:var(--ink-30);}
+
+.table-wrap{background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;overflow:hidden;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid #F3F4F6;background:var(--bg);}
+td{padding:10px 16px;font-size:.82rem;border-bottom:1px solid #F3F4F6;vertical-align:middle;color:var(--ink);}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--naranja-light);}
+
+.td-foto-img{width:48px;height:48px;border-radius:50%;object-fit:cover;display:block;}
+.td-foto-ph{width:48px;height:48px;border-radius:50%;background:var(--naranja-light);display:flex;align-items:center;justify-content:center;font-size:20px;}
+
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+.badge-activo{background:var(--verde-light);color:var(--verde);}
+.badge-inactivo{background:var(--danger-light);color:var(--danger);}
+.badge-receta{background:var(--danger-light);color:var(--danger);}
+.badge-noreceta{background:#F3F4F6;color:var(--ink-60);}
+
+.price-farm{text-decoration:line-through;color:var(--danger);font-size:.78rem;}
+.price-cost{font-weight:700;color:var(--naranja);}
+
+.btn-edit{padding:5px 11px;background:none;border:1.5px solid var(--naranja);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-right:5px;}
+.btn-edit:hover{background:var(--naranja);color:white;}
+.btn-activar-small{padding:5px 11px;background:none;border:1.5px solid var(--verde);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--verde);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-activar-small:hover{background:var(--verde);color:white;}
+.btn-desactivar{padding:5px 11px;background:none;border:1.5px solid var(--danger);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-desactivar:hover{background:var(--danger);color:white;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:var(--r);width:100%;max-width:680px;max-height:90vh;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;}
+.modal-head{background:var(--naranja);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-radius:var(--r) var(--r) 0 0;}
+.modal-title{font-size:1rem;font-weight:700;color:white;}
+.btn-close-modal{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:white;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:background .2s;flex-shrink:0;}
+.btn-close-modal:hover{background:rgba(255,255,255,.35);}
+.modal-body{padding:24px;overflow-y:auto;flex:1;}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.fg-full{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:.78rem;font-weight:700;color:var(--ink-60);text-transform:uppercase;letter-spacing:.04em;}
+.field input,.field select,.field textarea{background:var(--white);border:1.5px solid var(--ink-30);border-radius:10px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);outline:none;transition:border .2s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--naranja);}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-30);}
+.field textarea{resize:vertical;min-height:72px;}
+.check-row{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg);border-radius:10px;cursor:pointer;border:1.5px solid var(--ink-30);}
+.check-row:hover{border-color:var(--naranja);}
+.check-row input[type=checkbox]{accent-color:var(--naranja);width:16px;height:16px;cursor:pointer;}
+.check-row label{font-size:.875rem;cursor:pointer;color:var(--ink);}
+.section-label{font-size:.78rem;font-weight:700;color:var(--ink-60);text-transform:uppercase;letter-spacing:.04em;margin-bottom:10px;}
+.err-msg{font-size:.72rem;color:var(--danger);display:none;margin-top:4px;}
+
+.modal-error{display:none;background:var(--danger-light);border:1.5px solid var(--danger);border-radius:10px;padding:12px 14px;margin-top:16px;font-size:.82rem;color:var(--danger);line-height:1.5;}
+.modal-error strong{display:block;margin-bottom:2px;font-weight:700;}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:16px;border-top:1px solid #F3F4F6;}
+.btn-cancel{padding:10px 20px;background:none;border:1.5px solid var(--ink-30);border-radius:10px;font-family:'Inter',sans-serif;font-size:.875rem;font-weight:500;color:var(--ink-60);cursor:pointer;transition:all .2s;}
+.btn-cancel:hover{border-color:var(--ink);color:var(--ink);}
+.btn-guardar{padding:10px 24px;background:var(--amarillo);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:.875rem;font-weight:700;color:var(--ink);cursor:pointer;transition:all .2s;}
+.btn-guardar:hover{background:#e8951f;}
+.btn-guardar:disabled{opacity:.6;cursor:not-allowed;}
+
+.photo-section{margin-top:20px;padding-top:16px;border-top:1px solid #F3F4F6;}
+.photo-drop-zone{border:2px dashed var(--naranja-d);border-radius:var(--r);padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);user-select:none;}
+.photo-drop-zone:hover,.photo-drop-zone.drag-over{border-color:var(--naranja);background:var(--naranja-light);}
+.photo-drop-zone.disabled{opacity:.5;pointer-events:none;}
+.photo-drop-text{font-size:.82rem;color:var(--ink-60);}
+.photo-drop-hint{font-size:.72rem;color:var(--ink-30);margin-top:2px;}
+.photo-counter{font-size:.72rem;font-weight:600;color:var(--ink-60);margin-top:8px;min-height:1em;}
+.photo-previews{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;}
+.photo-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid var(--ink-30);cursor:grab;flex-shrink:0;transition:border-color .15s;}
+.photo-thumb:active{cursor:grabbing;}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none;}
+.photo-thumb-del{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.6);border:none;color:white;width:18px;height:18px;border-radius:50%;font-size:.6rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+.photo-badge-main{position:absolute;bottom:3px;left:3px;background:var(--naranja);color:white;font-size:.5rem;font-weight:700;padding:2px 5px;border-radius:4px;text-transform:uppercase;letter-spacing:.03em;}
+.photo-thumb.dragging{opacity:.3;}
+.photo-thumb.drag-over-thumb{border-color:var(--naranja);box-shadow:0 0 0 2px var(--naranja-light);}
+
+.rel-section{margin-top:20px;padding-top:16px;border-top:1px solid #F3F4F6;}
+.rel-auto-box{background:var(--naranja-light);border-radius:10px;padding:12px 14px;margin-bottom:12px;}
+.rel-auto-title{font-size:.72rem;font-weight:700;color:var(--naranja);margin-bottom:6px;}
+.rel-auto-item{font-size:.8rem;color:var(--ink);display:flex;justify-content:space-between;padding:3px 0;}
+.rel-auto-note{font-size:.72rem;color:var(--ink-60);margin-top:6px;font-style:italic;}
+.rel-search-wrap{position:relative;margin-bottom:8px;}
+.rel-search-input{width:100%;padding:9px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);outline:none;background:var(--white);transition:border .2s;}
+.rel-search-input:focus{border-color:var(--naranja);}
+.rel-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--ink-30);border-radius:10px;box-shadow:var(--shadow);z-index:300;max-height:180px;overflow-y:auto;display:none;}
+.rel-dropdown.open{display:block;}
+.rel-drop-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid #F3F4F6;}
+.rel-drop-item:last-child{border-bottom:none;}
+.rel-drop-item:hover{background:var(--naranja-light);}
+.rel-drop-name{font-size:.82rem;font-weight:600;color:var(--ink);}
+.rel-drop-sub{font-size:.72rem;color:var(--ink-60);}
+.rel-manual-list{display:flex;flex-direction:column;gap:6px;margin-bottom:6px;}
+.rel-manual-card{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:8px;padding:8px 12px;}
+.rel-manual-info{display:flex;flex-direction:column;gap:1px;}
+.rel-manual-name{font-size:.82rem;font-weight:600;color:var(--ink);}
+.rel-manual-price{font-size:.75rem;color:var(--naranja);font-weight:600;}
+.rel-manual-del{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1rem;padding:0 4px;line-height:1;}
+.rel-manual-del:hover{color:var(--danger);}
+.rel-limit-msg{font-size:.72rem;color:var(--ink-60);}
+</style>
 </head>
-<body class="bg-gray-50 font-sans">
-<h1 class="text-2xl p-8">Test productos</h1>
-<script>
-var SUPA_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
-var SUPA_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
-var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-console.log('OK');
-</script>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="../admin/dashboard.html" class="nav-logo">
+      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <span class="nav-tag">PANEL ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesi&oacute;n</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="../admin/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos
+    </a>
+    <a href="../admin/productos-new.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Cat&aacute;logo
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
+    </a>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <h1 class="page-title">Cat&aacute;logo de productos</h1>
+      <button class="btn-nuevo" onclick="openModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Agregar producto
+      </button>
+    </div>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" id="search" placeholder="Buscar producto..." oninput="filterTable()"/>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Nombre</th>
+            <th>Principio activo</th>
+            <th>Categor&iacute;a</th>
+            <th>P. Farmacia</th>
+            <th>P. Costo</th>
+            <th>Receta</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalClick(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-title">Agregar producto</span>
+      <button class="btn-close-modal" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="f-id"/>
+      <div class="form-grid">
+        <div class="field fg-full">
+          <label>Nombre del producto</label>
+          <input type="text" id="f-nombre" placeholder="Ej. Metformina 500mg"/>
+        </div>
+        <div class="field fg-full">
+          <label>Principio activo</label>
+          <input type="text" id="f-activo" placeholder="Ej. Clorhidrato de Metformina" oninput="onActivoChange()"/>
+        </div>
+        <div class="field">
+          <label>Categoria</label>
+          <select id="f-categoria"><option value="">-- Selecciona --</option></select>
+          <span class="err-msg" id="err-categoria">Selecciona una categoria</span>
+        </div>
+        <div class="field">
+          <label>Unidades por caja</label>
+          <input type="number" id="f-unidades" min="1" placeholder="30"/>
+        </div>
+        <div class="field">
+          <label>Precio farmacia ($)</label>
+          <input type="number" id="f-pfarmacia" step="0.01" min="0" placeholder="0.00"/>
+        </div>
+        <div class="field">
+          <label>Precio costo ($)</label>
+          <input type="number" id="f-pcosto" step="0.01" min="0" placeholder="0.00"/>
+        </div>
+        <div class="field">
+          <label>Stock actual</label>
+          <input type="number" id="f-stock" min="0" placeholder="0"/>
+        </div>
+        <div class="field" style="align-self:end">
+          <div class="check-row">
+            <input type="checkbox" id="f-receta"/>
+            <label for="f-receta">Requiere receta medica</label>
+          </div>
+        </div>
+        <div class="field fg-full">
+          <label>Indicaciones</label>
+          <textarea id="f-indicaciones" placeholder="Indicaciones del medicamento..."></textarea>
+        </div>
+        <div class="field fg-full">
+          <label>Dosis recomendada</label>
+          <textarea id="f-dosis" placeholder="Ej. 1 comprimido cada 12 horas..."></textarea>
+        </div>
+        <div class="field fg-full">
+          <label>Contraindicaciones</label>
+          <textarea id="f-contraindicaciones" placeholder="Contraindicado en casos de..."></textarea>
+        </div>
+        <div class="field fg-full">
+          <label>Efectos secundarios</label>
+          <textarea id="f-efectos" placeholder="Puede producir nauseas, mareos..."></textarea>
+        </div>
+      </div>
+
+      <div class="photo-section">
+        <div class="section-label">Fotos del producto</div>
+        <div class="photo-drop-zone" id="foto-drop-zone"
+             onclick="document.getElementById('foto-input').click()"
+             ondragover="fotoDragOver(event)"
+             ondragleave="fotoDragLeave(event)"
+             ondrop="fotoDrop(event)">
+          <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="fotoFileChange(this)"/>
+          <div class="photo-drop-text">Arrastra fotos aqui o haz clic para subir</div>
+          <div class="photo-drop-hint">JPG, PNG - Max. 3 fotos - La primera es la principal</div>
+        </div>
+        <div class="photo-counter" id="foto-counter"></div>
+        <div class="photo-previews" id="foto-previews"></div>
+        <span class="err-msg" id="err-fotos">Debe subir al menos 1 foto</span>
+      </div>
+
+      <div class="rel-section">
+        <div class="section-label" style="margin-bottom:12px">Productos relacionados</div>
+        <div class="rel-auto-box" id="rel-auto-box" style="display:none">
+          <div class="rel-auto-title">Relaciones automaticas por principio activo</div>
+          <div id="rel-auto-list"></div>
+          <p class="rel-auto-note">Se mostraran automaticamente al cliente cuando vea este producto</p>
+        </div>
+        <div class="rel-search-wrap">
+          <input class="rel-search-input" id="rel-search" type="text"
+                 placeholder="Buscar producto para relacionar..."
+                 oninput="onRelSearch()"
+                 onfocus="openRelDropdown()"
+                 onblur="blurRelDropdown()"
+                 autocomplete="off"/>
+          <div class="rel-dropdown" id="rel-dropdown"></div>
+        </div>
+        <div class="rel-manual-list" id="rel-manual-list"></div>
+        <div class="rel-limit-msg" id="rel-limit-msg" style="display:none">Maximo 5 relaciones manuales</div>
+      </div>
+
+      <div class="modal-error" id="modal-error">
+        <strong>Error al guardar</strong>
+        <span id="modal-error-msg"></span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar" onclick="guardarProducto()">Guardar producto</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
