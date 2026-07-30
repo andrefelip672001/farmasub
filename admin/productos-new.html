@@ -342,5 +342,136 @@ tr:hover td{background:var(--naranja-light);}
   </div>
 </div>
 
+<script>
+var SUPA_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
+var SUPA_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
+var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+var _productos = [];
+var _categorias = [];
+var _editId = null;
+var _fotoItems = [];
+var _relacionadosManuales = [];
+
+async function init() {
+  var session = await sb.auth.getSession();
+  if (!session.data.session) {
+    window.location.href = '../portal/login.html';
+    return;
+  }
+  var meta = session.data.session.user.user_metadata || {};
+  var rol = meta.rol || '';
+  if (rol !== 'admin') {
+    window.location.href = '../portal/login.html';
+    return;
+  }
+  var email = session.data.session.user.email || '';
+  document.getElementById('nav-nombre').textContent = email;
+  document.getElementById('nav-avatar').textContent = email.charAt(0).toUpperCase();
+  await loadCategorias();
+  await loadProductos();
+}
+
+async function loadCategorias() {
+  var res = await sb.from('categorias').select('*').order('nombre');
+  if (res.error) { console.error('Error categorias:', res.error); return; }
+  _categorias = res.data || [];
+  var sel = document.getElementById('f-categoria');
+  sel.innerHTML = '<option value="">-- Selecciona una categoria --</option>';
+  for (var i = 0; i < _categorias.length; i++) {
+    var opt = document.createElement('option');
+    opt.value = _categorias[i].id;
+    opt.textContent = _categorias[i].nombre;
+    sel.appendChild(opt);
+  }
+}
+
+async function loadProductos() {
+  var tbody = document.getElementById('tbody');
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:#9CA3AF">Cargando...</td></tr>';
+  var res = await sb.from('productos').select('*, categorias(nombre), producto_fotos(id,url,orden)').order('nombre');
+  if (res.error) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:red">Error: ' + res.error.message + '</td></tr>';
+    return;
+  }
+  _productos = res.data || [];
+  renderTabla(_productos);
+}
+
+function catNombre(id) {
+  for (var i = 0; i < _categorias.length; i++) {
+    if (_categorias[i].id === id) return _categorias[i].nombre;
+  }
+  return '-';
+}
+
+function fmt(n) {
+  return '$' + parseFloat(n || 0).toFixed(2);
+}
+
+function renderTabla(lista) {
+  var tbody = document.getElementById('tbody');
+  if (!lista || lista.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:#9CA3AF">No hay productos</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < lista.length; i++) {
+    var p = lista[i];
+    var foto = '';
+    if (p.producto_fotos && p.producto_fotos.length > 0) {
+      var sorted = p.producto_fotos.slice().sort(function(a, b) { return a.orden - b.orden; });
+      foto = '<img src="' + sorted[0].url + '" style="width:48px;height:48px;border-radius:50%;object-fit:cover;" onerror="this.style.display=\'none\'">';
+    } else {
+      foto = '<div style="width:48px;height:48px;border-radius:50%;background:#FFF0EB;display:flex;align-items:center;justify-content:center;font-size:20px">&#128138;</div>';
+    }
+    var catNom = (p.categorias && p.categorias.nombre) ? p.categorias.nombre : catNombre(p.categoria_id);
+    var recetaBadge = p.requiere_receta ? '<span class="badge badge-receta">Receta</span>' : '<span class="badge badge-noreceta">Libre</span>';
+    var estadoBadge = p.activo ? '<span class="badge badge-activo">Activo</span>' : '<span class="badge badge-inactivo">Inactivo</span>';
+    var toggleLabel = p.activo ? 'Desactivar' : 'Activar';
+    var toggleCls = p.activo ? 'btn-desactivar' : 'btn-activar-small';
+    html += '<tr>';
+    html += '<td>' + foto + '</td>';
+    html += '<td style="font-weight:600">' + (p.nombre || '') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + (p.principio_activo || '-') + '</td>';
+    html += '<td>' + catNom + '</td>';
+    html += '<td><span class="price-farm">' + fmt(p.precio_farmacia) + '</span></td>';
+    html += '<td><span class="price-cost">' + fmt(p.precio_costo) + '</span></td>';
+    html += '<td>' + recetaBadge + '</td>';
+    html += '<td>' + estadoBadge + '</td>';
+    html += '<td><button class="btn-edit" onclick="editProducto(\'' + p.id + '\')">Editar</button> ';
+    html += '<button class="' + toggleCls + '" onclick="toggleActivo(\'' + p.id + '\',' + p.activo + ')">' + toggleLabel + '</button></td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function filterTable() {
+  var q = (document.getElementById('search').value || '').toLowerCase();
+  if (!q) { renderTabla(_productos); return; }
+  var filtered = [];
+  for (var i = 0; i < _productos.length; i++) {
+    var p = _productos[i];
+    if ((p.nombre || '').toLowerCase().indexOf(q) >= 0 || (p.principio_activo || '').toLowerCase().indexOf(q) >= 0) {
+      filtered.push(p);
+    }
+  }
+  renderTabla(filtered);
+}
+
+async function toggleActivo(id, activo) {
+  var res = await sb.from('productos').update({ activo: !activo }).eq('id', id);
+  if (res.error) { alert('Error: ' + res.error.message); return; }
+  await loadProductos();
+}
+
+function logout() {
+  sb.auth.signOut().then(function() {
+    window.location.href = '../portal/login.html';
+  });
+}
+
+init();
+</script>
 </body>
 </html>
