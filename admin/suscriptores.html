@@ -307,7 +307,8 @@ function renderTable() {
   var origIdxs = [];
   for (var i = 0; i < _todos.length; i++) {
     var s = _todos[i];
-    if (_filtro !== 'todos' && s.estado !== _filtro) continue;
+    var sSus0 = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+    if (_filtro !== 'todos' && (sSus0 ? sSus0.estado : 'pendiente') !== _filtro) continue;
     if (q) {
       var nombre = s.nombre ? s.nombre.toLowerCase() : '';
       var cedula = s.cedula ? s.cedula : '';
@@ -326,17 +327,20 @@ function renderTable() {
   for (var j = 0; j < rows.length; j++) {
     var s = rows[j];
     var oidx = origIdxs[j];
+    var sus0 = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+    var sEstado = sus0 ? sus0.estado : 'pendiente';
+    var sKyc = sus0 ? sus0.kyc_estado : 'pendiente';
     var cls;
-    if (s.estado === 'activa') cls = 'badge-activa';
-    else if (s.estado === 'vencida') cls = 'badge-venc';
+    if (sEstado === 'activa') cls = 'badge-activa';
+    else if (sEstado === 'vencida') cls = 'badge-venc';
     else cls = 'badge-pend';
     var kycCls;
-    if (s.kyc_estado === 'verificado') kycCls = 'badge-kyc-ok';
-    else if (s.kyc_estado === 'rechazado') kycCls = 'badge-kyc-err';
+    if (sKyc === 'verificado') kycCls = 'badge-kyc-ok';
+    else if (sKyc === 'rechazado') kycCls = 'badge-kyc-err';
     else kycCls = 'badge-kyc-pend';
     var kycLbl;
-    if (s.kyc_estado === 'verificado') kycLbl = 'Verificado';
-    else if (s.kyc_estado === 'rechazado') kycLbl = 'Rechazado';
+    if (sKyc === 'verificado') kycLbl = 'Verificado';
+    else if (sKyc === 'rechazado') kycLbl = 'Rechazado';
     else kycLbl = 'Pendiente';
     var fecha = s.created_at ? new Date(s.created_at).toLocaleDateString('es-EC') : '-';
     var selClass = (_selIdx === oidx) ? ' selected' : '';
@@ -345,7 +349,7 @@ function renderTable() {
     html += '<td style="color:var(--ink-60);font-size:.78rem">' + (s.cedula || '-') + '</td>';
     html += '<td style="color:var(--ink-60);font-size:.78rem">' + (s.email || '-') + '</td>';
     html += '<td style="color:var(--ink-60)">' + (s.telefono || '-') + '</td>';
-    html += '<td><span class="badge ' + cls + '">' + (s.estado || '-') + '</span></td>';
+    html += '<td><span class="badge ' + cls + '">' + (sEstado || '-') + '</span></td>';
     html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span></td>';
     html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
     html += '<td><button class="btn-ver" onclick="openPanel(' + oidx + ')">Ver detalles</button></td>';
@@ -389,9 +393,11 @@ async function openPanel(idx) {
   var pagos = panelResults[2].data || [];
 
   // TAB DATOS
+  var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+  var sEstado2 = sus ? sus.estado : 'pendiente';
   var cls2;
-  if (s.estado === 'activa') cls2 = 'badge-activa';
-  else if (s.estado === 'vencida') cls2 = 'badge-venc';
+  if (sEstado2 === 'activa') cls2 = 'badge-activa';
+  else if (sEstado2 === 'vencida') cls2 = 'badge-venc';
   else cls2 = 'badge-pend';
   var cedSafe = s.cedula ? s.cedula.replace(/'/g, '') : '';
   var datosHtml = '';
@@ -400,13 +406,13 @@ async function openPanel(idx) {
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Telefono</span><span style="font-weight:500">' + (s.telefono || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Direccion</span><span style="font-weight:500">' + (s.direccion || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + (s.barrio || '-') + '</span></div>';
-  datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + (s.estado || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + (sEstado2 || '-') + '</span></div>';
   datosHtml += '<div class="panel-actions">';
   datosHtml += '<button class="btn-activar" onclick="cambiarEstado(\'' + cedSafe + '\',\'activa\')">Activar membresia</button>';
   datosHtml += '<button class="btn-suspender" onclick="cambiarEstado(\'' + cedSafe + '\',\'vencida\')">Suspender</button>';
   datosHtml += '</div>';
-  if (s.comprobante_url) {
-    datosHtml += '<a href="' + s.comprobante_url + '" target="_blank" class="btn-comprobante">Ver comprobante de pago</a>';
+  if (sus && sus.comprobante_url) {
+    datosHtml += '<a href="' + sus.comprobante_url + '" target="_blank" class="btn-comprobante">Ver comprobante de pago</a>';
   }
   document.getElementById('tab-datos').innerHTML = datosHtml;
 
@@ -471,23 +477,24 @@ async function openPanel(idx) {
   document.getElementById('tab-pagos').innerHTML = pagHtml;
 
   // TAB KYC
+  var kycEstado = sus ? sus.kyc_estado : 'pendiente';
   var kycCls2;
-  if (s.kyc_estado === 'verificado') kycCls2 = 'badge-kyc-ok';
-  else if (s.kyc_estado === 'rechazado') kycCls2 = 'badge-kyc-err';
+  if (kycEstado === 'verificado') kycCls2 = 'badge-kyc-ok';
+  else if (kycEstado === 'rechazado') kycCls2 = 'badge-kyc-err';
   else kycCls2 = 'badge-kyc-pend';
   var kycLbl2;
-  if (s.kyc_estado === 'verificado') kycLbl2 = 'Verificado';
-  else if (s.kyc_estado === 'rechazado') kycLbl2 = 'Rechazado';
+  if (kycEstado === 'verificado') kycLbl2 = 'Verificado';
+  else if (kycEstado === 'rechazado') kycLbl2 = 'Rechazado';
   else kycLbl2 = 'Pendiente';
   var kycHtml = '';
   kycHtml += '<div class="pfield"><span class="pfield-lbl">Estado KYC</span><span class="badge ' + kycCls2 + '">' + kycLbl2 + '</span></div>';
-  if (s.kyc_estado === 'rechazado' && s.kyc_motivo_rechazo) {
-    kycHtml += '<div class="pfield"><span class="pfield-lbl">Motivo</span><span style="font-size:.78rem;color:var(--danger)">' + s.kyc_motivo_rechazo + '</span></div>';
+  if (kycEstado === 'rechazado' && sus && sus.kyc_motivo_rechazo) {
+    kycHtml += '<div class="pfield"><span class="pfield-lbl">Motivo</span><span style="font-size:.78rem;color:var(--danger)">' + sus.kyc_motivo_rechazo + '</span></div>';
   }
-  if (s.kyc_fecha) {
-    kycHtml += '<div class="pfield"><span class="pfield-lbl">Fecha revision</span><span>' + new Date(s.kyc_fecha).toLocaleDateString('es-EC') + '</span></div>';
+  if (sus && sus.kyc_fecha) {
+    kycHtml += '<div class="pfield"><span class="pfield-lbl">Fecha revision</span><span>' + new Date(sus.kyc_fecha).toLocaleDateString('es-EC') + '</span></div>';
   }
-  if (s.cedula_frontal_url || s.cedula_posterior_url) {
+  if (sus && (sus.cedula_frontal_url || sus.cedula_posterior_url)) {
     kycHtml += '<button class="btn-comprobante" onclick="abrirModalKYC()" style="margin-top:10px">Ver documentos KYC</button>';
   } else {
     kycHtml += '<p style="font-size:.82rem;color:var(--ink-60);margin-top:6px">No hay documentos cargados.</p>';
@@ -584,11 +591,13 @@ function toggleRechazarModal() {
 
 async function aprobarKYC() {
   var s = _todos[_selIdx];
-  await _db.from('suscriptores').update({
+  var susId = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0].id : null;
+  if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
+  await _db.from('suscripciones').update({
     kyc_estado: 'verificado',
     kyc_fecha: new Date().toISOString(),
     estado: 'activa'
-  }).eq('cedula', s.cedula);
+  }).eq('id', susId);
   closeKycModal();
   await loadSuscriptores();
   openPanel(_selIdx);
@@ -596,13 +605,15 @@ async function aprobarKYC() {
 
 async function rechazarKYC() {
   var s = _todos[_selIdx];
+  var susId = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0].id : null;
+  if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
   var motivo = document.getElementById('km-motivo-text').value.trim();
   if (!motivo) { document.getElementById('km-motivo-text').focus(); return; }
-  await _db.from('suscriptores').update({
+  await _db.from('suscripciones').update({
     kyc_estado: 'rechazado',
     kyc_fecha: new Date().toISOString(),
     kyc_motivo_rechazo: motivo
-  }).eq('cedula', s.cedula);
+  }).eq('id', susId);
   closeKycModal();
   await loadSuscriptores();
   openPanel(_selIdx);
