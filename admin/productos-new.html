@@ -471,6 +471,303 @@ function logout() {
   });
 }
 
+function openModal(modo) {
+  _editId = null;
+  _fotoItems = [];
+  _relacionadosManuales = [];
+  document.getElementById('modal-title').textContent = modo === 'editar' ? 'Editar producto' : 'Agregar producto';
+  document.getElementById('f-nombre').value = '';
+  document.getElementById('f-activo').value = '';
+  document.getElementById('f-categoria').value = '';
+  document.getElementById('f-unidades').value = '';
+  document.getElementById('f-pfarmacia').value = '';
+  document.getElementById('f-pcosto').value = '';
+  document.getElementById('f-stock').value = '';
+  document.getElementById('f-receta').checked = false;
+  document.getElementById('f-indicaciones').value = '';
+  document.getElementById('f-dosis').value = '';
+  document.getElementById('f-contraindicaciones').value = '';
+  document.getElementById('f-efectos').value = '';
+  document.getElementById('modal-error').style.display = 'none';
+  renderFotos();
+  renderRelacionados();
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').style.display = 'none';
+}
+
+function closeModalClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) { closeModal(); }
+}
+
+async function editProducto(id) {
+  var p = null;
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { p = _productos[i]; break; }
+  }
+  if (!p) return;
+  _editId = id;
+  _fotoItems = [];
+  _relacionadosManuales = [];
+  document.getElementById('modal-title').textContent = 'Editar producto';
+  document.getElementById('f-nombre').value = p.nombre || '';
+  document.getElementById('f-activo').value = p.principio_activo || '';
+  document.getElementById('f-categoria').value = p.categoria_id || '';
+  document.getElementById('f-unidades').value = p.unidades_por_caja || '';
+  document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
+  document.getElementById('f-pcosto').value = p.precio_costo || '';
+  document.getElementById('f-stock').value = p.stock || '';
+  document.getElementById('f-receta').checked = p.requiere_receta || false;
+  document.getElementById('f-indicaciones').value = p.indicaciones || '';
+  document.getElementById('f-dosis').value = p.dosis || '';
+  document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
+  document.getElementById('f-efectos').value = p.efectos_secundarios || '';
+  document.getElementById('modal-error').style.display = 'none';
+  var fotosRes = await sb.from('producto_fotos').select('*').eq('producto_id', id).order('orden');
+  if (!fotosRes.error && fotosRes.data) {
+    for (var j = 0; j < fotosRes.data.length; j++) {
+      _fotoItems.push({ existing: true, id: fotosRes.data[j].id, url: fotosRes.data[j].url, orden: fotosRes.data[j].orden });
+    }
+  }
+  var relRes = await sb.from('productos_relacionados').select('relacionado_id').eq('producto_id', id).eq('tipo', 'manual');
+  if (!relRes.error && relRes.data) {
+    for (var k = 0; k < relRes.data.length; k++) {
+      var relId = relRes.data[k].relacionado_id;
+      for (var m = 0; m < _productos.length; m++) {
+        if (_productos[m].id === relId) {
+          _relacionadosManuales.push({ relacionado_id: relId, productos: _productos[m] });
+          break;
+        }
+      }
+    }
+  }
+  renderFotos();
+  renderRelacionados();
+  document.getElementById('modal-overlay').style.display = 'flex';
+}
+
+function renderFotos() {
+  var previews = document.getElementById('foto-previews');
+  var counter = document.getElementById('foto-counter');
+  var dropZone = document.getElementById('foto-drop-zone');
+  if (!previews) return;
+  previews.innerHTML = '';
+  counter.textContent = _fotoItems.length + '/3 fotos';
+  if (_fotoItems.length >= 3) {
+    dropZone.style.opacity = '0.5';
+    dropZone.style.pointerEvents = 'none';
+  } else {
+    dropZone.style.opacity = '1';
+    dropZone.style.pointerEvents = 'auto';
+  }
+  for (var i = 0; i < _fotoItems.length; i++) {
+    var item = _fotoItems[i];
+    var div = document.createElement('div');
+    div.style.cssText = 'position:relative;width:80px;height:80px;flex-shrink:0';
+    var imgSrc = item.existing ? item.url : (item.preview || '');
+    div.innerHTML = '<img src="' + imgSrc + '" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #E8521A">' +
+      (i === 0 ? '<span style="position:absolute;bottom:2px;left:2px;background:#E8521A;color:white;font-size:9px;padding:1px 5px;border-radius:4px">Principal</span>' : '') +
+      '<button onclick="removeFoto(' + i + ')" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#EF4444;color:white;border:none;font-size:12px;cursor:pointer;line-height:1">x</button>';
+    previews.appendChild(div);
+  }
+}
+
+function removeFoto(idx) {
+  _fotoItems.splice(idx, 1);
+  renderFotos();
+}
+
+function fotoFileChange(input) { handleFotoSelect(input); }
+
+function handleFotoSelect(input) {
+  var files = input.files;
+  for (var i = 0; i < files.length; i++) {
+    if (_fotoItems.length >= 3) break;
+    var file = files[i];
+    var reader = new FileReader();
+    (function(f, r) {
+      r.onload = function(e) {
+        _fotoItems.push({ existing: false, file: f, preview: e.target.result });
+        renderFotos();
+      };
+      r.readAsDataURL(f);
+    })(file, reader);
+  }
+}
+
+function fotoDragOver(e) {
+  e.preventDefault();
+  document.getElementById('foto-drop-zone').classList.add('drag-over');
+}
+
+function fotoDragLeave() {
+  document.getElementById('foto-drop-zone').classList.remove('drag-over');
+}
+
+function fotoDrop(e) {
+  e.preventDefault();
+  document.getElementById('foto-drop-zone').classList.remove('drag-over');
+  handleFotoSelect({ files: e.dataTransfer.files });
+}
+
+function renderRelacionados() {
+  var container = document.getElementById('rel-manual-list');
+  if (!container) return;
+  container.innerHTML = '';
+  for (var i = 0; i < _relacionadosManuales.length; i++) {
+    var r = _relacionadosManuales[i];
+    var nombre = (r.productos && r.productos.nombre) ? r.productos.nombre : r.relacionado_id;
+    var precio = (r.productos && r.productos.precio_costo) ? '$' + parseFloat(r.productos.precio_costo).toFixed(2) : '';
+    var idx = i;
+    var div = document.createElement('div');
+    div.className = 'rel-manual-card';
+    var info = document.createElement('div');
+    info.className = 'rel-manual-info';
+    var nameEl = document.createElement('span');
+    nameEl.className = 'rel-manual-name';
+    nameEl.textContent = nombre;
+    var priceEl = document.createElement('span');
+    priceEl.className = 'rel-manual-price';
+    priceEl.textContent = precio;
+    info.appendChild(nameEl);
+    info.appendChild(priceEl);
+    var del = document.createElement('button');
+    del.className = 'rel-manual-del';
+    del.type = 'button';
+    del.innerHTML = '&#x2715;';
+    del.onclick = (function(n) { return function() { removeRelacionado(n); }; })(idx);
+    div.appendChild(info);
+    div.appendChild(del);
+    container.appendChild(div);
+  }
+}
+
+function removeRelacionado(idx) {
+  _relacionadosManuales.splice(idx, 1);
+  renderRelacionados();
+}
+
+function onRelSearch() { buscarRelacionado(); }
+function openRelDropdown() { if (document.getElementById('rel-search').value.trim()) { buscarRelacionado(); } }
+function blurRelDropdown() { setTimeout(function() { document.getElementById('rel-dropdown').innerHTML = ''; }, 200); }
+function onActivoChange() {}
+
+async function buscarRelacionado() {
+  var q = document.getElementById('rel-search').value;
+  var dd = document.getElementById('rel-dropdown');
+  if (q.length < 2) { dd.innerHTML = ''; return; }
+  var res = await sb.from('productos').select('id,nombre,precio_costo').ilike('nombre', '%' + q + '%').limit(5);
+  if (res.error || !res.data) return;
+  dd.innerHTML = '';
+  for (var i = 0; i < res.data.length; i++) {
+    var p = res.data[i];
+    if (p.id === _editId) continue;
+    var div = document.createElement('div');
+    div.className = 'rel-drop-item';
+    var nameD = document.createElement('div');
+    nameD.className = 'rel-drop-name';
+    nameD.textContent = p.nombre;
+    var subD = document.createElement('div');
+    subD.className = 'rel-drop-sub';
+    subD.textContent = '$' + parseFloat(p.precio_costo || 0).toFixed(2);
+    div.appendChild(nameD);
+    div.appendChild(subD);
+    (function(prod) {
+      div.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        _relacionadosManuales.push({ relacionado_id: prod.id, productos: prod });
+        document.getElementById('rel-search').value = '';
+        document.getElementById('rel-dropdown').innerHTML = '';
+        renderRelacionados();
+      });
+    })(p);
+    dd.appendChild(div);
+  }
+  dd.classList.add('open');
+}
+
+async function guardarProducto() {
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var principio = document.getElementById('f-activo').value.trim();
+  var categoriaId = document.getElementById('f-categoria').value;
+  var unidades = parseInt(document.getElementById('f-unidades').value) || 0;
+  var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
+  var pcosto = parseFloat(document.getElementById('f-pcosto').value) || 0;
+  var stock = parseInt(document.getElementById('f-stock').value) || 0;
+  var receta = document.getElementById('f-receta').checked;
+  var indicaciones = document.getElementById('f-indicaciones').value.trim();
+  var dosis = document.getElementById('f-dosis').value.trim();
+  var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
+  var efectos = document.getElementById('f-efectos').value.trim();
+
+  if (!nombre) { showModalError('El nombre es obligatorio'); return; }
+  if (!categoriaId) { showModalError('Selecciona una categoria'); return; }
+  if (_fotoItems.length === 0) { showModalError('Agrega al menos una foto del producto'); return; }
+
+  var payload = {
+    nombre: nombre,
+    principio_activo: principio,
+    categoria_id: categoriaId,
+    unidades_por_caja: unidades,
+    precio_farmacia: pfarmacia,
+    precio_costo: pcosto,
+    stock: stock,
+    requiere_receta: receta,
+    indicaciones: indicaciones,
+    dosis: dosis,
+    contraindicaciones: contraindicaciones,
+    efectos_secundarios: efectos,
+    activo: true
+  };
+
+  var productoId = _editId;
+  if (_editId) {
+    var upRes = await sb.from('productos').update(payload).eq('id', _editId);
+    if (upRes.error) { showModalError('Error: ' + upRes.error.message); return; }
+  } else {
+    var insRes = await sb.from('productos').insert(payload).select();
+    if (insRes.error) { showModalError('Error: ' + insRes.error.message); return; }
+    productoId = insRes.data[0].id;
+  }
+
+  await sb.from('producto_fotos').delete().eq('producto_id', productoId);
+  for (var i = 0; i < _fotoItems.length; i++) {
+    var item = _fotoItems[i];
+    var fotoUrl = item.url || '';
+    if (!item.existing && item.file) {
+      var ext = item.file.name.split('.').pop();
+      var fpath = productoId + '/' + (i + 1) + '.' + ext;
+      var upFoto = await sb.storage.from('producto-fotos').upload(fpath, item.file, { upsert: true });
+      if (upFoto.error) { console.error('Error foto:', upFoto.error); continue; }
+      var pub = sb.storage.from('producto-fotos').getPublicUrl(fpath);
+      fotoUrl = pub.data.publicUrl;
+    }
+    if (fotoUrl) {
+      await sb.from('producto_fotos').insert({ producto_id: productoId, url: fotoUrl, orden: i + 1 });
+    }
+  }
+
+  await sb.from('productos_relacionados').delete().eq('producto_id', productoId).eq('tipo', 'manual');
+  for (var j = 0; j < _relacionadosManuales.length; j++) {
+    await sb.from('productos_relacionados').insert({
+      producto_id: productoId,
+      relacionado_id: _relacionadosManuales[j].relacionado_id,
+      tipo: 'manual'
+    });
+  }
+
+  closeModal();
+  await loadProductos();
+}
+
+function showModalError(msg) {
+  var el = document.getElementById('modal-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
 init();
 </script>
 </body>
