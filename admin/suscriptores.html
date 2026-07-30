@@ -510,34 +510,35 @@ async function cambiarEstado(cedula, estado) {
 
 async function abrirModalKYC() {
   var s = _todos[_selIdx];
-  var kmNombre = s.nombre ? s.nombre : (s.cedula ? s.cedula : '');
+  var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+  var kmNombre = s.nombre ? s.nombre : (s.email ? s.email : '');
   document.getElementById('km-nombre').textContent = kmNombre;
   document.getElementById('kyc-modal').classList.remove('hidden');
   var body = document.getElementById('kyc-modal-body');
   body.innerHTML = '<p style="color:var(--ink-60);font-size:.875rem">Cargando documentos...</p>';
 
   var frontalUrl = null, posteriorUrl = null;
-  if (s.cedula_frontal_url) {
-    var fRes = await _db.storage.from('kyc-documentos').createSignedUrl(s.cedula_frontal_url, 3600);
+  if (sus && sus.cedula_frontal_url) {
+    var fRes = await _db.storage.from('kyc-documentos').createSignedUrl(sus.cedula_frontal_url, 3600);
     frontalUrl = (fRes.data && fRes.data.signedUrl) ? fRes.data.signedUrl : null;
   }
-  if (s.cedula_posterior_url) {
-    var bRes = await _db.storage.from('kyc-documentos').createSignedUrl(s.cedula_posterior_url, 3600);
+  if (sus && sus.cedula_posterior_url) {
+    var bRes = await _db.storage.from('kyc-documentos').createSignedUrl(sus.cedula_posterior_url, 3600);
     posteriorUrl = (bRes.data && bRes.data.signedUrl) ? bRes.data.signedUrl : null;
   }
 
+  var kycEstado = (sus && sus.kyc_estado) ? sus.kyc_estado : 'pendiente';
   var kycCls3;
-  if (s.kyc_estado === 'verificado') kycCls3 = 'badge-kyc-ok';
-  else if (s.kyc_estado === 'rechazado') kycCls3 = 'badge-kyc-err';
+  if (kycEstado === 'verificado') kycCls3 = 'badge-kyc-ok';
+  else if (kycEstado === 'rechazado') kycCls3 = 'badge-kyc-err';
   else kycCls3 = 'badge-kyc-pend';
   var kycLbl3;
-  if (s.kyc_estado === 'verificado') kycLbl3 = 'Verificado';
-  else if (s.kyc_estado === 'rechazado') kycLbl3 = 'Rechazado';
+  if (kycEstado === 'verificado') kycLbl3 = 'Verificado';
+  else if (kycEstado === 'rechazado') kycLbl3 = 'Rechazado';
   else kycLbl3 = 'Pendiente';
 
   var html = '';
   html += '<div class="km-info">';
-  html += '<div class="km-info-item"><div class="km-info-lbl">Cedula</div><div class="km-info-val">' + (s.cedula || '-') + '</div></div>';
   html += '<div class="km-info-item"><div class="km-info-lbl">Estado KYC</div><div class="km-info-val"><span class="badge ' + kycCls3 + '">' + kycLbl3 + '</span></div></div>';
   html += '</div>';
   html += '<div class="km-docs">';
@@ -554,7 +555,13 @@ async function abrirModalKYC() {
   } else {
     html += '<div class="km-doc-placeholder">&#128196;</div>';
   }
-  html += '</div></div>';
+  html += '</div>';
+  if (sus && sus.comprobante_url) {
+    html += '<div class="km-doc"><div class="km-doc-lbl">Comprobante</div>';
+    html += '<img src="' + sus.comprobante_url + '" alt="Comprobante"/>';
+    html += '</div>';
+  }
+  html += '</div>';
   html += '<div class="km-motivo" id="km-motivo">';
   html += '<label>Motivo del rechazo</label>';
   html += '<textarea id="km-motivo-text" placeholder="Indique por que se rechaza la verificacion..."></textarea>';
