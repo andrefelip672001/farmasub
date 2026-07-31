@@ -377,8 +377,11 @@ var _user, _susc;
 })();
 
 async function loadDashboard() {
-  var sRes = await _db.from('suscriptores').select('*').eq('email', _user.email).single();
-  var s = sRes.data;
+  var res = await _db.from('usuarios')
+    .select('*, suscripciones(estado, kyc_estado, fecha_inicio, fecha_vencimiento)')
+    .eq('id', _user.id)
+    .single();
+  var s = res.data;
   _susc = s;
 
   var nombre = (s && s.nombre) ? s.nombre : _user.email;
@@ -389,7 +392,8 @@ async function loadDashboard() {
   var sal = h < 12 ? 'Buenos dias' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
   document.getElementById('greeting').textContent = sal + ', ' + nombre.split(' ')[0] + '!';
 
-  var estado = (s && s.estado) ? s.estado : 'pendiente';
+  var sus = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
+  var estado = sus ? sus.estado : 'pendiente';
 
   if (estado === 'activa') {
     document.getElementById('greeting-sub').textContent = 'Tu membresia esta activa. Pide tus medicamentos cuando quieras.';
