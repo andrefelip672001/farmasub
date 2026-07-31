@@ -13,9 +13,9 @@ tailwind.config = {
     extend: {
       fontFamily: { sans: ['Inter','sans-serif'] },
       colors: {
-        naranja: '#F0845A',
-        'naranja-d': '#D4622A',
-        'naranja-light': '#FFF4F0',
+        naranja: '#EF6830',
+        'naranja-d': '#C95220',
+        'naranja-light': '#FFF2EC',
         amarillo: '#F5A623',
         'amarillo-light': '#FFF8ED',
         verde: '#059669',
@@ -33,7 +33,7 @@ html { scroll-behavior: smooth; }
 body { font-family: 'Inter', sans-serif; }
 
 /* ── HERO ── */
-.hero-bg { background: linear-gradient(135deg, #D4622A 0%, #F0845A 40%, #F07040 70%, #F5A070 100%); }
+.hero-bg { background: linear-gradient(135deg, #C95220 0%, #EF6830 40%, #F07040 70%, #F5A070 100%); }
 .hero-blob {
   position: absolute; top: -80px; right: -100px;
   width: 520px; height: 520px; border-radius: 50%;
@@ -85,7 +85,7 @@ body { font-family: 'Inter', sans-serif; }
 
 /* ── HERO MED ROWS ── */
 .hero-med-row { cursor: pointer; transition: background .15s; border-radius: 10px; }
-.hero-med-row:hover { background: #FFF4F0; }
+.hero-med-row:hover { background: #FFF2EC; }
 .hero-med-row.active { background: #ECFDF5; }
 .h-check {
   width: 18px; height: 18px; border-radius: 5px;
@@ -103,15 +103,15 @@ body { font-family: 'Inter', sans-serif; }
   border: 1.5px solid #E5E7EB; background: #fff; color: #6B7280;
   cursor: pointer; white-space: nowrap; transition: all .15s;
 }
-.cat-btn:hover { border-color: #F0845A; color: #F0845A; }
-.cat-btn.active { border-color: #F0845A; background: #FFF4F0; color: #F0845A; }
+.cat-btn:hover { border-color: #EF6830; color: #EF6830; }
+.cat-btn.active { border-color: #EF6830; background: #FFF2EC; color: #EF6830; }
 
 .calc-pill {
   padding: 7px 14px; border-radius: 20px; font-size: .83rem; font-weight: 500;
   border: 1.5px solid #E5E7EB; background: #fff; color: #6B7280;
   cursor: pointer; transition: all .15s;
 }
-.active-pill { border-color: #F0845A !important; background: #FFF4F0 !important; color: #F0845A !important; }
+.active-pill { border-color: #EF6830 !important; background: #FFF2EC !important; color: #EF6830 !important; }
 
 /* ── STEP CONNECTOR ── */
 .step-connector {
@@ -147,8 +147,8 @@ body { font-family: 'Inter', sans-serif; }
   <div style="padding:16px 20px;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
     <div style="display:flex;align-items:center;gap:10px">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#F0845A" stroke-width="1.8" stroke-linejoin="round"/>
-        <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#F0845A" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#EF6830" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"/>
       </svg>
       <span style="font-weight:600;color:#1A1A2E">Tu pedido</span>
       <span id="cart-badge-drawer" style="background:#059669;color:#fff;font-size:.7rem;font-weight:700;border-radius:99px;padding:2px 8px;min-width:22px;text-align:center">0</span>
@@ -175,9 +175,9 @@ body { font-family: 'Inter', sans-serif; }
     </div>
     <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;margin-bottom:14px">
       <span>Total TuCosto</span>
-      <span id="cart-footer-total" style="color:#F0845A">$0.00</span>
+      <span id="cart-footer-total" style="color:#EF6830">$0.00</span>
     </div>
-    <a href="portal/pedido.html" style="display:block;text-align:center;background:#F0845A;color:#fff;font-weight:600;font-size:.95rem;padding:13px;border-radius:12px;text-decoration:none">Finalizar pedido</a>
+    <a href="portal/pedido.html" style="display:block;text-align:center;background:#EF6830;color:#fff;font-weight:600;font-size:.95rem;padding:13px;border-radius:12px;text-decoration:none">Finalizar pedido</a>
     <p style="text-align:center;font-size:.75rem;color:#9CA3AF;margin-top:8px">+ $8 de membresía mensual</p>
   </div>
 </div>
@@ -195,7 +195,7 @@ body { font-family: 'Inter', sans-serif; }
 <nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px">
     <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
-      <div style="width:52px;height:52px;background:#F0845A;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#F0845A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
     </a>
     <ul class="nav-links" style="display:flex;gap:26px;list-style:none;margin:0;padding:0">
       <li><a href="#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
@@ -206,13 +206,13 @@ body { font-family: 'Inter', sans-serif; }
     <div style="display:flex;align-items:center;gap:10px">
       <button onclick="toggleCart()" style="position:relative;background:none;border:none;cursor:pointer;padding:8px;border-radius:10px">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#F0845A" stroke-width="1.8" stroke-linejoin="round"/>
-          <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#F0845A" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#EF6830" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
         <span id="cart-badge" style="position:absolute;top:-4px;right:-4px;background:#059669;color:#fff;font-size:.65rem;font-weight:700;border-radius:99px;width:18px;height:18px;display:flex;align-items:center;justify-content:center">0</span>
       </button>
-      <a href="portal/login.html" style="color:#F0845A;border:1.5px solid #F0845A;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
-      <a href="registro.html" style="background:#F0845A;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+      <a href="portal/login.html" style="color:#EF6830;border:1.5px solid #EF6830;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#EF6830;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
     </div>
   </div>
 </nav>
@@ -298,8 +298,8 @@ body { font-family: 'Inter', sans-serif; }
           </div>
           <!-- Badge inferior izquierdo: Entrega -->
           <div style="position:absolute;bottom:20px;left:-30px;background:white;border-radius:12px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,0.12);display:flex;align-items:center;gap:8px;">
-            <div style="width:28px;height:28px;background:#FFF4F0;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F0845A" stroke-width="2"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+            <div style="width:28px;height:28px;background:#FFF2EC;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="2"><path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
             </div>
             <div>
               <div style="font-size:12px;font-weight:700;color:#1A1A2E;">Entrega</div>
@@ -336,7 +336,7 @@ body { font-family: 'Inter', sans-serif; }
 <section id="productos" style="padding:80px 0;background:#fff">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px">
     <div style="text-align:center;margin-bottom:48px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F0845A;margin-bottom:8px">Más solicitados</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">Más solicitados</div>
       <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">Medicamentos más solicitados</h2>
       <p style="color:#6B7280;font-size:.97rem;max-width:480px;margin:0 auto">Los cuatro productos más pedidos por nuestras familias suscritas cada mes.</p>
     </div>
@@ -344,12 +344,12 @@ body { font-family: 'Inter', sans-serif; }
 
       <!-- Card 1: Losartan -->
       <div class="product-card" data-id="p1" data-nombre="Losartán 50mg ×30" data-farmacia="22" data-costo="18" data-categoria="hipertension" data-visible="true">
-        <div style="background:#FFF4F0;padding:28px 0;display:flex;align-items:center;justify-content:center">
+        <div style="background:#FFF2EC;padding:28px 0;display:flex;align-items:center;justify-content:center">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect x="8" y="20" width="32" height="14" rx="7" fill="#F0845A" opacity=".15"/>
-            <rect x="8" y="20" width="16" height="14" rx="7" fill="#F0845A" opacity=".35"/>
-            <rect x="22" y="20" width="18" height="14" rx="7" fill="#F0845A" opacity=".2"/>
-            <line x1="24" y1="20" x2="24" y2="34" stroke="#F0845A" stroke-width="1.5"/>
+            <rect x="8" y="20" width="32" height="14" rx="7" fill="#EF6830" opacity=".15"/>
+            <rect x="8" y="20" width="16" height="14" rx="7" fill="#EF6830" opacity=".35"/>
+            <rect x="22" y="20" width="18" height="14" rx="7" fill="#EF6830" opacity=".2"/>
+            <line x1="24" y1="20" x2="24" y2="34" stroke="#EF6830" stroke-width="1.5"/>
           </svg>
         </div>
         <div style="padding:16px">
@@ -361,22 +361,22 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Losartán potásico</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
             <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$22.00</span>
-            <span style="font-size:1.5rem;font-weight:700;color:#F0845A">$18</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#EF6830">$18</span>
             <span style="font-size:.72rem;color:#6B7280">/ mes</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <!-- Card 2: Metformina -->
       <div class="product-card" data-id="p2" data-nombre="Metformina 850mg ×30" data-farmacia="13" data-costo="8" data-categoria="diabetes" data-visible="true">
-        <div style="background:#FFF4F0;padding:28px 0;display:flex;align-items:center;justify-content:center">
+        <div style="background:#FFF2EC;padding:28px 0;display:flex;align-items:center;justify-content:center">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="27" r="9" fill="#F0845A" opacity=".15"/>
-            <circle cx="24" cy="27" r="9" stroke="#F0845A" stroke-width="1.5"/>
-            <rect x="20" y="16" width="8" height="11" rx="4" fill="#F0845A" opacity=".25" stroke="#F0845A" stroke-width="1.2"/>
+            <circle cx="24" cy="27" r="9" fill="#EF6830" opacity=".15"/>
+            <circle cx="24" cy="27" r="9" stroke="#EF6830" stroke-width="1.5"/>
+            <rect x="20" y="16" width="8" height="11" rx="4" fill="#EF6830" opacity=".25" stroke="#EF6830" stroke-width="1.2"/>
           </svg>
         </div>
         <div style="padding:16px">
@@ -388,22 +388,22 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Metformina clorhidrato</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
             <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$13.00</span>
-            <span style="font-size:1.5rem;font-weight:700;color:#F0845A">$8</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#EF6830">$8</span>
             <span style="font-size:.72rem;color:#6B7280">/ mes</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <!-- Card 3: Atorvastatina -->
       <div class="product-card" data-id="p3" data-nombre="Atorvastatina 20mg ×30" data-farmacia="18" data-costo="12" data-categoria="colesterol" data-visible="true">
-        <div style="background:#FFF4F0;padding:28px 0;display:flex;align-items:center;justify-content:center">
+        <div style="background:#FFF2EC;padding:28px 0;display:flex;align-items:center;justify-content:center">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <rect x="14" y="22" width="20" height="10" rx="5" fill="#F0845A" opacity=".2" stroke="#F0845A" stroke-width="1.5"/>
-            <path d="M24 22V18M20 22V19M28 22V19" stroke="#F0845A" stroke-width="1.4" stroke-linecap="round"/>
-            <rect x="14" y="30" width="20" height="4" rx="2" fill="#F0845A" opacity=".1"/>
+            <rect x="14" y="22" width="20" height="10" rx="5" fill="#EF6830" opacity=".2" stroke="#EF6830" stroke-width="1.5"/>
+            <path d="M24 22V18M20 22V19M28 22V19" stroke="#EF6830" stroke-width="1.4" stroke-linecap="round"/>
+            <rect x="14" y="30" width="20" height="4" rx="2" fill="#EF6830" opacity=".1"/>
           </svg>
         </div>
         <div style="padding:16px">
@@ -415,22 +415,22 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Atorvastatina cálcica</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
             <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$18.00</span>
-            <span style="font-size:1.5rem;font-weight:700;color:#F0845A">$12</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#EF6830">$12</span>
             <span style="font-size:.72rem;color:#6B7280">/ mes</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <!-- Card 4: Omeprazol -->
       <div class="product-card" data-id="p4" data-nombre="Omeprazol 20mg ×30" data-farmacia="10" data-costo="6" data-categoria="digestiva" data-visible="true">
-        <div style="background:#FFF4F0;padding:28px 0;display:flex;align-items:center;justify-content:center">
+        <div style="background:#FFF2EC;padding:28px 0;display:flex;align-items:center;justify-content:center">
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <ellipse cx="24" cy="24" rx="10" ry="6" fill="#F0845A" opacity=".18" stroke="#F0845A" stroke-width="1.5"/>
-            <ellipse cx="24" cy="24" rx="4" ry="6" fill="#F0845A" opacity=".3"/>
-            <line x1="14" y1="24" x2="34" y2="24" stroke="#F0845A" stroke-width="1.3"/>
+            <ellipse cx="24" cy="24" rx="10" ry="6" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/>
+            <ellipse cx="24" cy="24" rx="4" ry="6" fill="#EF6830" opacity=".3"/>
+            <line x1="14" y1="24" x2="34" y2="24" stroke="#EF6830" stroke-width="1.3"/>
           </svg>
         </div>
         <div style="padding:16px">
@@ -441,11 +441,11 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.78rem;color:#6B7280;margin-bottom:12px">Omeprazol</div>
           <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:14px">
             <span style="font-size:.82rem;color:#EF4444;text-decoration:line-through">$10.00</span>
-            <span style="font-size:1.5rem;font-weight:700;color:#F0845A">$6</span>
+            <span style="font-size:1.5rem;font-weight:700;color:#EF6830">$6</span>
             <span style="font-size:.72rem;color:#6B7280">/ mes</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.85rem;padding:10px;border-radius:10px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
@@ -458,7 +458,7 @@ body { font-family: 'Inter', sans-serif; }
 <section id="categorias" style="padding:80px 0;background:#F9FAFB">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px">
     <div style="text-align:center;margin-bottom:36px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F0845A;margin-bottom:8px">Catálogo</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">Catálogo</div>
       <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">Encuentra lo que necesitas</h2>
     </div>
     <!-- Filter bar -->
@@ -478,8 +478,8 @@ body { font-family: 'Inter', sans-serif; }
     <div id="cat-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">
 
       <div class="product-card" data-id="p1b" data-nombre="Losartán 50mg ×30" data-farmacia="22" data-costo="18" data-categoria="hipertension">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="8" y="20" width="32" height="14" rx="7" fill="#F0845A" opacity=".18"/><rect x="8" y="20" width="16" height="14" rx="7" fill="#F0845A" opacity=".35"/><line x1="24" y1="20" x2="24" y2="34" stroke="#F0845A" stroke-width="1.5"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="8" y="20" width="32" height="14" rx="7" fill="#EF6830" opacity=".18"/><rect x="8" y="20" width="16" height="14" rx="7" fill="#EF6830" opacity=".35"/><line x1="24" y1="20" x2="24" y2="34" stroke="#EF6830" stroke-width="1.5"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Hipertensión</span>
@@ -487,17 +487,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Losartán potásico · Receta requerida</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$22</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$18</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$18</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p2b" data-nombre="Metformina 850mg ×30" data-farmacia="13" data-costo="8" data-categoria="diabetes">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="27" r="9" fill="#F0845A" opacity=".15" stroke="#F0845A" stroke-width="1.5"/><rect x="20" y="16" width="8" height="11" rx="4" fill="#F0845A" opacity=".25" stroke="#F0845A" stroke-width="1.2"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="27" r="9" fill="#EF6830" opacity=".15" stroke="#EF6830" stroke-width="1.5"/><rect x="20" y="16" width="8" height="11" rx="4" fill="#EF6830" opacity=".25" stroke="#EF6830" stroke-width="1.2"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Diabetes</span>
@@ -505,17 +505,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Metformina HCl · Receta requerida</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$13</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$8</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$8</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p5" data-nombre="Levotiroxina 100mcg ×30" data-farmacia="15" data-costo="9" data-categoria="tiroides">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="28" rx="9" ry="6" fill="#F0845A" opacity=".18" stroke="#F0845A" stroke-width="1.5"/><path d="M24 16v12" stroke="#F0845A" stroke-width="1.5" stroke-linecap="round"/><path d="M20 18l4-4 4 4" stroke="#F0845A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="28" rx="9" ry="6" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/><path d="M24 16v12" stroke="#EF6830" stroke-width="1.5" stroke-linecap="round"/><path d="M20 18l4-4 4 4" stroke="#EF6830" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Tiroides</span>
@@ -523,17 +523,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Levotiroxina sódica · Receta requerida</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$15</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$9</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$9</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p3b" data-nombre="Atorvastatina 20mg ×30" data-farmacia="18" data-costo="12" data-categoria="colesterol">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="14" y="22" width="20" height="10" rx="5" fill="#F0845A" opacity=".2" stroke="#F0845A" stroke-width="1.5"/><path d="M24 22V18M20 22V19M28 22V19" stroke="#F0845A" stroke-width="1.4" stroke-linecap="round"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="14" y="22" width="20" height="10" rx="5" fill="#EF6830" opacity=".2" stroke="#EF6830" stroke-width="1.5"/><path d="M24 22V18M20 22V19M28 22V19" stroke="#EF6830" stroke-width="1.4" stroke-linecap="round"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Colesterol</span>
@@ -541,17 +541,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Atorvastatina cálcica · Receta requerida</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$18</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$12</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$12</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p4b" data-nombre="Omeprazol 20mg ×30" data-farmacia="10" data-costo="6" data-categoria="digestiva">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="24" rx="10" ry="6" fill="#F0845A" opacity=".18" stroke="#F0845A" stroke-width="1.5"/><ellipse cx="24" cy="24" rx="4" ry="6" fill="#F0845A" opacity=".3"/><line x1="14" y1="24" x2="34" y2="24" stroke="#F0845A" stroke-width="1.3"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="24" rx="10" ry="6" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/><ellipse cx="24" cy="24" rx="4" ry="6" fill="#EF6830" opacity=".3"/><line x1="14" y1="24" x2="34" y2="24" stroke="#EF6830" stroke-width="1.3"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Digestivo</span>
@@ -559,17 +559,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Omeprazol</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$10</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$6</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$6</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p6" data-nombre="Ibuprofeno 400mg ×20" data-farmacia="5.5" data-costo="3" data-categoria="digestiva">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="16" y="18" width="16" height="12" rx="6" fill="#F0845A" opacity=".2" stroke="#F0845A" stroke-width="1.5"/><rect x="16" y="18" width="8" height="12" rx="6" fill="#F0845A" opacity=".3"/><line x1="24" y1="18" x2="24" y2="30" stroke="#F0845A" stroke-width="1.3"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="16" y="18" width="16" height="12" rx="6" fill="#EF6830" opacity=".2" stroke="#EF6830" stroke-width="1.5"/><rect x="16" y="18" width="8" height="12" rx="6" fill="#EF6830" opacity=".3"/><line x1="24" y1="18" x2="24" y2="30" stroke="#EF6830" stroke-width="1.3"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Digestivo</span>
@@ -577,17 +577,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Ibuprofeno</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$5.50</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$3</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$3</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p7" data-nombre="Salbutamol Inhalador" data-farmacia="13" data-costo="8" data-categoria="respiratorio">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="20" y="14" width="8" height="20" rx="4" fill="#F0845A" opacity=".2" stroke="#F0845A" stroke-width="1.5"/><path d="M16 28h16" stroke="#F0845A" stroke-width="1.5" stroke-linecap="round"/><path d="M24 34v4" stroke="#F0845A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="20" y="14" width="8" height="20" rx="4" fill="#EF6830" opacity=".2" stroke="#EF6830" stroke-width="1.5"/><path d="M16 28h16" stroke="#EF6830" stroke-width="1.5" stroke-linecap="round"/><path d="M24 34v4" stroke="#EF6830" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Respiratorio</span>
@@ -595,17 +595,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Salbutamol · Receta requerida</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$13</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$8</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$8</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p8" data-nombre="Vitamina D3 1000UI ×30" data-farmacia="13" data-costo="7" data-categoria="vitaminas">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="8" fill="#F0845A" opacity=".18" stroke="#F0845A" stroke-width="1.5"/><path d="M24 14v4M24 30v4M14 24h4M30 24h4" stroke="#F0845A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="8" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/><path d="M24 14v4M24 30v4M14 24h4M30 24h4" stroke="#EF6830" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Vitaminas</span>
@@ -613,17 +613,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Colecalciferol</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$13</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$7</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$7</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p9" data-nombre="Omega 3 1000mg ×60" data-farmacia="17" data-costo="9" data-categoria="vitaminas">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="26" rx="9" ry="6" fill="#F0845A" opacity=".15" stroke="#F0845A" stroke-width="1.5"/><path d="M18 22c2-4 10-4 12 0" stroke="#F0845A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><ellipse cx="24" cy="26" rx="9" ry="6" fill="#EF6830" opacity=".15" stroke="#EF6830" stroke-width="1.5"/><path d="M18 22c2-4 10-4 12 0" stroke="#EF6830" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Vitaminas</span>
@@ -631,17 +631,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Aceite de pescado</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$17</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$9</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$9</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p10" data-nombre="Anticonceptivo mensual" data-farmacia="11" data-costo="6" data-categoria="sexual">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="9" fill="#F0845A" opacity=".15" stroke="#F0845A" stroke-width="1.5"/><circle cx="24" cy="24" r="4" fill="#F0845A" opacity=".3"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="9" fill="#EF6830" opacity=".15" stroke="#EF6830" stroke-width="1.5"/><circle cx="24" cy="24" r="4" fill="#EF6830" opacity=".3"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Salud sexual</span>
@@ -649,17 +649,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Anticonceptivo oral</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$11</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$6</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$6</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p11" data-nombre="Amoxicilina 500mg ×21" data-farmacia="9" data-costo="5" data-categoria="antibiotico">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="16" y="18" width="16" height="12" rx="6" fill="#F0845A" opacity=".18" stroke="#F0845A" stroke-width="1.5"/><path d="M24 14v4M24 30v4" stroke="#F0845A" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="16" y="18" width="16" height="12" rx="6" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/><path d="M24 14v4M24 30v4" stroke="#EF6830" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Antibiótico</span>
@@ -667,17 +667,17 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Amoxicilina · Receta requerida</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$9</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$5</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$5</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
 
       <div class="product-card" data-id="p12" data-nombre="Paracetamol 500mg ×20" data-farmacia="3" data-costo="1.5" data-categoria="digestiva">
-        <div style="background:#FFF4F0;padding:20px 0;display:flex;align-items:center;justify-content:center">
-          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="18" y="18" width="12" height="12" rx="6" fill="#F0845A" opacity=".2" stroke="#F0845A" stroke-width="1.5"/><path d="M18 24h12" stroke="#F0845A" stroke-width="1.3"/></svg>
+        <div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">
+          <svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="18" y="18" width="12" height="12" rx="6" fill="#EF6830" opacity=".2" stroke="#EF6830" stroke-width="1.5"/><path d="M18 24h12" stroke="#EF6830" stroke-width="1.3"/></svg>
         </div>
         <div style="padding:14px">
           <span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">Digestivo</span>
@@ -685,10 +685,10 @@ body { font-family: 'Inter', sans-serif; }
           <div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">Acetaminofén</div>
           <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">
             <span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$3</span>
-            <span style="font-size:1.3rem;font-weight:700;color:#F0845A">$1.50</span>
+            <span style="font-size:1.3rem;font-weight:700;color:#EF6830">$1.50</span>
           </div>
           <div class="add-wrap">
-            <button onclick="addToCart(this)" style="width:100%;background:#F0845A;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
+            <button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button>
           </div>
         </div>
       </div>
@@ -698,10 +698,10 @@ body { font-family: 'Inter', sans-serif; }
 </section>
 
 <!-- ── POR QUÉ MEDICOSTO ── -->
-<section style="padding:80px 0;background:#FFF4F0">
+<section style="padding:80px 0;background:#FFF2EC">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px">
     <div style="text-align:center;margin-bottom:44px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F0845A;margin-bottom:8px">La diferencia</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">La diferencia</div>
       <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">No son descuentos. Es el precio real.</h2>
     </div>
     <div class="porque-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
@@ -715,7 +715,7 @@ body { font-family: 'Inter', sans-serif; }
         <h3 style="font-size:1.05rem;font-weight:600;color:#1A1A2E;margin-bottom:12px">Los descuentos de siempre</h3>
         <p style="font-size:.88rem;color:#6B7280;line-height:1.7">Un porcentaje de descuento sobre un precio ya inflado no es ahorro real. Es marketing. El precio base sigue siendo elevado.</p>
       </div>
-      <div style="background:#F0845A;border-radius:20px;padding:32px 28px">
+      <div style="background:#EF6830;border-radius:20px;padding:32px 28px">
         <span style="display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:4px 12px;border-radius:20px;margin-bottom:16px;background:rgba(255,255,255,.2);color:#fff">&#10003; TuCosto</span>
         <h3 style="font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:12px">El precio que pagamos nosotros</h3>
         <p style="font-size:.88rem;color:rgba(255,255,255,.85);line-height:1.7;font-weight:500">Compramos al distribuidor y te cobramos exactamente lo mismo que pagamos. Nuestra ganancia es tu membresía de $8, no el producto.</p>
@@ -729,7 +729,7 @@ body { font-family: 'Inter', sans-serif; }
   <div style="max-width:1100px;margin:0 auto;padding:0 24px">
     <div class="calc-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start">
       <div>
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F0845A;margin-bottom:8px">Calculadora</div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">Calculadora</div>
         <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">¿Cuánto ahorras realmente?</h2>
         <p style="color:#6B7280;font-size:.95rem;line-height:1.7;margin-bottom:24px">Selecciona los medicamentos de tu familia y ve exactamente cuánto ahorras con TuCosto cada mes.</p>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">
@@ -770,8 +770,8 @@ body { font-family: 'Inter', sans-serif; }
           </div>
         </div>
         <div style="background:#FFF8ED;border:1px solid #F5D6A0;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-size:.83rem;color:#F0845A;font-weight:600">&#128176; Ahorras este mes</span>
-          <span id="calc-ahorro" style="font-size:1.2rem;font-weight:700;color:#F0845A">$0.00</span>
+          <span style="font-size:.83rem;color:#EF6830;font-weight:600">&#128176; Ahorras este mes</span>
+          <span id="calc-ahorro" style="font-size:1.2rem;font-weight:700;color:#EF6830">$0.00</span>
         </div>
         <div style="text-align:center;font-size:.82rem;color:#6B7280;padding:8px">
           En 12 meses ahorras <strong id="calc-anual" style="color:#059669">$0.00 USD</strong>
@@ -782,32 +782,32 @@ body { font-family: 'Inter', sans-serif; }
 </section>
 
 <!-- ── MEMBRESÍA ── -->
-<section id="membresia" style="padding:80px 0;background:linear-gradient(135deg,#FFF4F0 0%,#FFF8ED 100%)">
+<section id="membresia" style="padding:80px 0;background:linear-gradient(135deg,#FFF2EC 0%,#FFF8ED 100%)">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px;text-align:center">
-    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F0845A;margin-bottom:8px">Plan único</div>
+    <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">Plan único</div>
     <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">Un plan, toda tu familia</h2>
     <p style="color:#6B7280;font-size:.97rem;margin-bottom:48px">Sin letra pequeña. Cancela cuando quieras.</p>
-    <div style="max-width:420px;margin:0 auto;background:#fff;border-radius:24px;padding:36px;box-shadow:0 8px 40px rgba(232,82,26,.15);border:2px solid #F0845A">
+    <div style="max-width:420px;margin:0 auto;background:#fff;border-radius:24px;padding:36px;box-shadow:0 8px 40px rgba(232,82,26,.15);border:2px solid #EF6830">
       <span style="background:#FFF8ED;color:#F5A623;font-size:.75rem;font-weight:600;padding:4px 14px;border-radius:99px">Plan único</span>
       <div style="font-size:1.1rem;font-weight:600;color:#1A1A2E;margin-top:14px">Familiar</div>
-      <div style="font-size:3rem;font-weight:700;color:#F0845A;line-height:1;margin:10px 0 4px">$8</div>
+      <div style="font-size:3rem;font-weight:700;color:#EF6830;line-height:1;margin:10px 0 4px">$8</div>
       <div style="font-size:.83rem;color:#6B7280;margin-bottom:20px">USD / mes · hasta 3 personas</div>
       <div style="height:1px;background:#F3F4F6;margin-bottom:20px"></div>
       <ul style="list-style:none;padding:0;margin:0 0 24px;text-align:left;display:flex;flex-direction:column;gap:10px">
         <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#F0845A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#EF6830"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Medicamentos al precio de costo exacto
         </li>
         <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#F0845A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#EF6830"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Hasta 3 miembros del grupo familiar
         </li>
         <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#F0845A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#EF6830"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           1 entrega mensual a domicilio incluida
         </li>
         <li style="display:flex;align-items:flex-start;gap:10px;font-size:.88rem;color:#6B7280">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#F0845A"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="8" cy="8" r="7" fill="#EF6830"/><path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Catálogo de 400+ medicamentos y suplementos
         </li>
       </ul>
@@ -820,38 +820,38 @@ body { font-family: 'Inter', sans-serif; }
 <section style="padding:80px 0;background:#F9FAFB">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px">
     <div style="text-align:center;margin-bottom:52px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F0845A;margin-bottom:8px">Proceso</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">Proceso</div>
       <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:12px">¿Cómo funciona TuCosto?</h2>
       <p style="color:#6B7280;font-size:.97rem;max-width:560px;margin:0 auto;line-height:1.7">No somos una farmacia tradicional. Somos una membresía que te da acceso al precio que pagamos a los distribuidores. Sin intermediarios, sin margen oculto.</p>
     </div>
     <div class="steps-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
       <div style="position:relative">
         <div class="step-connector"></div>
-        <div style="width:44px;height:44px;border-radius:12px;background:#FFF4F0;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
-          <span style="font-weight:700;font-size:1.2rem;color:#F0845A">1</span>
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF2EC;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#EF6830">1</span>
         </div>
         <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Elige tu membresía</div>
         <p style="font-size:.875rem;color:#6B7280;line-height:1.65">$8 al mes cubre a toda tu familia (hasta 3 personas). Un solo pago, sin costos extras ni cobros sorpresa.</p>
       </div>
       <div style="position:relative">
         <div class="step-connector"></div>
-        <div style="width:44px;height:44px;border-radius:12px;background:#FFF4F0;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
-          <span style="font-weight:700;font-size:1.2rem;color:#F0845A">2</span>
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF2EC;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#EF6830">2</span>
         </div>
         <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Registra a tu familia</div>
         <p style="font-size:.875rem;color:#6B7280;line-height:1.65">Cada miembro se identifica con su cédula. Así garantizamos que el beneficio sea solo para tu hogar.</p>
       </div>
       <div style="position:relative">
         <div class="step-connector"></div>
-        <div style="width:44px;height:44px;border-radius:12px;background:#FFF4F0;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
-          <span style="font-weight:700;font-size:1.2rem;color:#F0845A">3</span>
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF2EC;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#EF6830">3</span>
         </div>
         <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Pide lo que necesitas</div>
         <p style="font-size:.875rem;color:#6B7280;line-height:1.65">Entra al catálogo, selecciona tus productos y ves el precio real al lado del precio de farmacia.</p>
       </div>
       <div style="position:relative">
-        <div style="width:44px;height:44px;border-radius:12px;background:#FFF4F0;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
-          <span style="font-weight:700;font-size:1.2rem;color:#F0845A">4</span>
+        <div style="width:44px;height:44px;border-radius:12px;background:#FFF2EC;display:flex;align-items:center;justify-content:center;margin-bottom:16px">
+          <span style="font-weight:700;font-size:1.2rem;color:#EF6830">4</span>
         </div>
         <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Recíbelo en casa</div>
         <p style="font-size:.875rem;color:#6B7280;line-height:1.65">Una entrega mensual programada a tu domicilio en Santo Domingo. Sin costo adicional de envío.</p>
@@ -864,7 +864,7 @@ body { font-family: 'Inter', sans-serif; }
 <section style="padding:80px 0;background:#fff">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px">
     <div style="text-align:center;margin-bottom:48px">
-      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#F0845A;margin-bottom:8px">Por qué elegirnos</div>
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">Por qué elegirnos</div>
       <h2 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E">Construido con responsabilidad</h2>
     </div>
     <div class="trust-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
@@ -894,7 +894,7 @@ body { font-family: 'Inter', sans-serif; }
 </section>
 
 <!-- ── CTA FINAL ── -->
-<section style="padding:80px 0;background:#F0845A;text-align:center">
+<section style="padding:80px 0;background:#EF6830;text-align:center">
   <div style="max-width:700px;margin:0 auto;padding:0 24px">
     <h2 style="color:#fff;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;margin-bottom:14px">¿Listo para empezar?</h2>
     <p style="color:rgba(255,255,255,.8);font-size:1.05rem;margin-bottom:32px">Activa tu membresía hoy. El primer mes lo pruebas sin compromiso.</p>
@@ -1038,7 +1038,7 @@ function updateCartUI() {
       html += '<div style="font-size:.88rem;font-weight:600;color:#1A1A2E;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + item.nombre + '</div>';
       html += '<div style="display:flex;align-items:center;gap:8px">';
       html += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + (item.farmacia * item.qty).toFixed(2) + '</span>';
-      html += '<span style="font-size:.88rem;font-weight:600;color:#F0845A">$' + (item.costo * item.qty).toFixed(2) + '</span>';
+      html += '<span style="font-size:.88rem;font-weight:600;color:#EF6830">$' + (item.costo * item.qty).toFixed(2) + '</span>';
       html += '</div></div>';
       html += '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">';
       html += '<button onclick="updateQty(\'' + item.id + '\',-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;cursor:pointer">&#8722;</button>';
