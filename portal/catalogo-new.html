@@ -379,8 +379,319 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-console.log('Bloque 2 OK — CSS + HTML cargado sin JS funcional');
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+
+function getSortedFotos(p) {
+  if (!p || !p.producto_fotos || !p.producto_fotos.length) return [];
+  return p.producto_fotos.slice().sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
+}
+
+var _productos = [], _filtrados = [], _categorias = [], _catActiva = null, _modalProd = null;
+var _galleryFotos = [], _galleryIdx = 0;
+
+(function() {
+  _db.auth.getSession().then(function(sessRes) {
+    var session = sessRes.data.session;
+    if (!session) { window.location.href = '../portal/login.html'; return; }
+    document.getElementById('nav-nombre').textContent = session.user.email;
+    _db.from('suscriptores').select('nombre').eq('email', session.user.email).single().then(function(sRes) {
+      if (sRes.data) {
+        document.getElementById('nav-nombre').textContent = sRes.data.nombre;
+        document.getElementById('nav-avatar').textContent = sRes.data.nombre.charAt(0).toUpperCase();
+      }
+      loadCats().then(function() { loadProducts(); });
+      updateCartBadge();
+    });
+  });
+})();
+
+function loadCats() {
+  return _db.from('categorias').select('id,nombre').order('nombre').then(function(catRes) {
+    _categorias = catRes.data || [];
+    var wrap = document.getElementById('cats-wrap');
+    for (var ci = 0; ci < _categorias.length; ci++) {
+      var c = _categorias[ci];
+      var b = document.createElement('button');
+      b.className = 'cat-btn';
+      b.textContent = c.nombre;
+      (function(catId, btn) {
+        btn.onclick = function() { selectCat(catId, btn); };
+      })(c.id, b);
+      wrap.appendChild(b);
+    }
+  });
+}
+
+function loadProducts() {
+  return _db.from('productos')
+    .select('*, categorias(nombre), producto_fotos(url, orden)')
+    .eq('activo', true)
+    .order('nombre')
+    .then(function(prodRes) {
+      _productos = prodRes.data || [];
+      _filtrados = _productos.slice();
+      renderGrid();
+    });
+}
+
+function selectCat(id, btn) {
+  _catActiva = id;
+  var catBtns = document.querySelectorAll('.cat-btn');
+  for (var bi = 0; bi < catBtns.length; bi++) { catBtns[bi].classList.remove('active'); }
+  btn.classList.add('active');
+  filterProducts();
+}
+
+function filterProducts() {
+  var q = document.getElementById('search').value.toLowerCase();
+  _filtrados = [];
+  for (var fi = 0; fi < _productos.length; fi++) {
+    var p = _productos[fi];
+    var matchCat = _catActiva === null || (p.categoria_id === _catActiva);
+    var matchQ = !q || p.nombre.toLowerCase().indexOf(q) !== -1 || (p.principio_activo || '').toLowerCase().indexOf(q) !== -1;
+    if (matchCat && matchQ) _filtrados.push(p);
+  }
+  renderGrid();
+}
+
+function renderGrid() {
+  var grid = document.getElementById('products-grid');
+  var counter = document.getElementById('result-count');
+  if (!_filtrados.length) {
+    grid.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Sin resultados para esta busqueda</p></div>';
+    if (counter) counter.textContent = '0 productos encontrados';
+    return;
+  }
+  if (counter) counter.textContent = _filtrados.length + ' productos encontrados';
+
+  var html = '';
+  for (var i = 0; i < _filtrados.length; i++) {
+    var p = _filtrados[i];
+    var inCart = cartHas(p.id);
+    var fotos = getSortedFotos(p);
+    var f1 = fotos[0] ? fotos[0].url : null;
+    var f2 = fotos[1] ? fotos[1].url : null;
+    var imgHtml;
+    if (f1) {
+      var wc = 'prod-img-wrap' + (f2 ? ' has-hover' : '');
+      imgHtml = '<div class="' + wc + '">'
+        + '<img class="prod-img" src="' + f1 + '" alt="' + p.nombre + '" loading="lazy"/>'
+        + (f2 ? '<img class="prod-img-sec" src="' + f2 + '" alt="' + p.nombre + '" loading="lazy"/>' : '')
+        + '</div>';
+    } else {
+      imgHtml = '<div class="prod-img-wrap"><div class="prod-img-ph">&#128138;</div></div>';
+    }
+    var catNombre = (p.categorias && p.categorias.nombre) ? p.categorias.nombre : '';
+    var addBtnClass = 'btn-add' + (inCart ? ' added' : '');
+    var addBtnText = inCart ? 'Agregado' : 'Agregar al pedido';
+    html += '<div class="prod-card">'
+      + imgHtml
+      + '<div class="prod-card-body">'
+      + '<p class="prod-nombre">' + p.nombre + '</p>'
+      + '<p class="prod-activo">' + (p.principio_activo || '') + '</p>'
+      + '<div class="prod-badges">'
+      + (p.requiere_receta ? '<span class="badge-receta">Requiere receta</span>' : '')
+      + (catNombre ? '<span class="badge-cat">' + catNombre + '</span>' : '')
+      + '</div>'
+      + '<div class="prod-precios">'
+      + '<p class="precio-normal">Farmacia: $' + (p.precio_farmacia || 0).toFixed(2) + '</p>'
+      + '<p class="precio-sub">$' + (p.precio_costo || 0).toFixed(2) + '</p>'
+      + '</div>'
+      + '<div class="prod-actions">'
+      + '<button class="btn-ver" onclick="openModal(' + p.id + ')">Ver mas</button>'
+      + '<button class="' + addBtnClass + '" id="add-' + p.id + '" onclick="addToCart(' + p.id + ')">' + addBtnText + '</button>'
+      + '</div>'
+      + '</div>'
+      + '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function openModal(id) {
+  var p = null;
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { p = _productos[i]; break; }
+  }
+  if (!p) return;
+  _modalProd = p;
+  _galleryFotos = getSortedFotos(p);
+  _galleryIdx = 0;
+
+  document.getElementById('m-nombre').textContent = p.nombre;
+  document.getElementById('m-activo').textContent = p.principio_activo || '';
+  document.getElementById('m-precio-sub').textContent = '$' + (p.precio_costo || 0).toFixed(2);
+  document.getElementById('m-precio-normal').textContent = 'Precio farmacia: $' + (p.precio_farmacia || 0).toFixed(2);
+  var ahorro = (p.precio_farmacia || 0) - (p.precio_costo || 0);
+  document.getElementById('m-ahorro').textContent = ahorro > 0 ? 'Ahorras $' + ahorro.toFixed(2) : '';
+  document.getElementById('m-indicaciones').textContent = p.indicaciones || '-';
+  document.getElementById('m-dosis').textContent = p.dosis || '-';
+  document.getElementById('m-contraindicaciones').textContent = p.contraindicaciones || '-';
+  document.getElementById('m-efectos').textContent = p.efectos_secundarios || '-';
+
+  var btn = document.getElementById('btn-add-modal');
+  btn.textContent = cartHas(p.id) ? 'Ya esta en tu pedido' : 'Agregar al pedido';
+
+  renderGallery();
+  document.getElementById('modal-related').style.display = 'none';
+  document.getElementById('modal-overlay').classList.add('open');
+  var mb = document.querySelector('.modal-body');
+  if (mb) mb.scrollTop = 0;
+
+  loadRelatedProducts(p);
+}
+
+function renderGallery() {
+  var gallery = document.getElementById('modal-gallery');
+  if (!_galleryFotos.length) { gallery.style.display = 'none'; return; }
+  gallery.style.display = 'block';
+  document.getElementById('gallery-main-img').src = _galleryFotos[_galleryIdx].url;
+  var multi = _galleryFotos.length > 1;
+  document.getElementById('gallery-prev').style.display = multi ? 'flex' : 'none';
+  document.getElementById('gallery-next').style.display = multi ? 'flex' : 'none';
+  var thumbs = document.getElementById('gallery-thumbs');
+  if (multi) {
+    var th = '';
+    for (var gi = 0; gi < _galleryFotos.length; gi++) {
+      var tc = 'gallery-thumb' + (gi === _galleryIdx ? ' active' : '');
+      th += '<div class="' + tc + '" onclick="setGalleryIdx(' + gi + ')">'
+        + '<img src="' + _galleryFotos[gi].url + '" alt="Foto ' + (gi + 1) + '" loading="lazy"/>'
+        + '</div>';
+    }
+    thumbs.innerHTML = th;
+  } else {
+    thumbs.innerHTML = '';
+  }
+}
+
+function galleryNav(dir) {
+  if (!_galleryFotos.length) return;
+  _galleryIdx = (_galleryIdx + dir + _galleryFotos.length) % _galleryFotos.length;
+  renderGallery();
+}
+
+function setGalleryIdx(idx) { _galleryIdx = idx; renderGallery(); }
+
+function loadRelatedProducts(p) {
+  var autoPromise = p.principio_activo
+    ? _db.from('productos').select('id,nombre,principio_activo,precio_costo,precio_farmacia').eq('principio_activo', p.principio_activo).eq('activo', true).neq('id', p.id).limit(5)
+    : Promise.resolve({ data: [] });
+  var manualPromise = _db.from('productos_relacionados').select('relacionado_id').eq('producto_id', p.id).eq('tipo', 'manual');
+
+  autoPromise.then(function(autoRes) {
+    manualPromise.then(function(manualRes) {
+      var autoRels = autoRes.data || [];
+      var manualRaw = manualRes.data || [];
+      var manualIds = [];
+      for (var mi = 0; mi < manualRaw.length; mi++) { manualIds.push(manualRaw[mi].relacionado_id); }
+
+      if (manualIds.length) {
+        _db.from('productos').select('id,nombre,principio_activo,precio_costo,precio_farmacia').in('id', manualIds).eq('activo', true).then(function(mpRes) {
+          var manualProds = mpRes.data || [];
+          buildRelated(p, autoRels, manualProds);
+        });
+      } else {
+        buildRelated(p, autoRels, []);
+      }
+    });
+  });
+}
+
+function buildRelated(p, autoRels, manualProds) {
+  var seen = {};
+  seen[p.id] = true;
+  var combined = [];
+  var allRels = autoRels.concat(manualProds);
+  for (var ri = 0; ri < allRels.length; ri++) {
+    if (!seen[allRels[ri].id]) { seen[allRels[ri].id] = true; combined.push(allRels[ri]); }
+  }
+  if (!combined.length) return;
+
+  for (var ci = 0; ci < combined.length; ci++) {
+    var prod = null;
+    for (var pi2 = 0; pi2 < _productos.length; pi2++) {
+      if (_productos[pi2].id === combined[ci].id) { prod = _productos[pi2]; break; }
+    }
+    combined[ci].producto_fotos = (prod && prod.producto_fotos) ? prod.producto_fotos : [];
+  }
+
+  var relHtml = '';
+  for (var rj = 0; rj < combined.length; rj++) {
+    var r = combined[rj];
+    var rSorted = getSortedFotos(r);
+    var rImg = rSorted[0]
+      ? '<img class="rel-prod-img" src="' + rSorted[0].url + '" alt="' + r.nombre + '" loading="lazy"/>'
+      : '<div class="rel-prod-img-ph">&#128138;</div>';
+    relHtml += '<div class="rel-prod-card" onclick="openModal(' + r.id + ')">'
+      + rImg
+      + '<div class="rel-prod-info">'
+      + '<div class="rel-prod-name">' + r.nombre + '</div>'
+      + '<div class="rel-prod-lab">' + (r.principio_activo || '') + '</div>'
+      + '</div>'
+      + '<div class="rel-prod-prices">'
+      + '<span class="rel-prod-normal">$' + (r.precio_farmacia || 0).toFixed(2) + '</span>'
+      + '<span class="rel-prod-sub">$' + (r.precio_costo || 0).toFixed(2) + '</span>'
+      + '</div>'
+      + '</div>';
+  }
+  document.getElementById('rel-prod-list').innerHTML = relHtml;
+  document.getElementById('modal-related').style.display = 'block';
+}
+
+function closeModal(e) { if (e.target === document.getElementById('modal-overlay')) closeModalBtn(); }
+function closeModalBtn() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+function addFromModal() {
+  if (_modalProd) addToCart(_modalProd.id);
+  document.getElementById('btn-add-modal').textContent = 'Ya esta en tu pedido';
+}
+
+function addToCart(id) {
+  var p = null;
+  for (var i = 0; i < _productos.length; i++) {
+    if (_productos[i].id === id) { p = _productos[i]; break; }
+  }
+  if (!p) return;
+  var cart = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var alreadyIn = false;
+  for (var ci2 = 0; ci2 < cart.length; ci2++) { if (cart[ci2].id === id) { alreadyIn = true; break; } }
+  if (!alreadyIn) {
+    cart.push({
+      id: p.id, nombre: p.nombre, principio_activo: p.principio_activo,
+      precio_costo: p.precio_costo, precio_farmacia: p.precio_farmacia,
+      requiere_receta: p.requiere_receta, unidades_caja: p.unidades_caja || 30, cantidad: 1
+    });
+    localStorage.setItem('farmasub_cart', JSON.stringify(cart));
+    showToast(p.nombre + ' agregado al pedido');
+  }
+  updateCartBadge();
+  var btn = document.getElementById('add-' + id);
+  if (btn) { btn.textContent = 'Agregado'; btn.classList.add('added'); }
+}
+
+function cartHas(id) {
+  var cart = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  for (var i = 0; i < cart.length; i++) { if (cart[i].id === id) return true; }
+  return false;
+}
+
+function updateCartBadge() {
+  var c = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var b = document.getElementById('cart-badge');
+  if (c.length) { b.style.display = 'flex'; b.textContent = c.length; } else { b.style.display = 'none'; }
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0"><circle cx="9" cy="9" r="9" fill="#059669"/><path d="M5.5 9l2.5 2.5 4.5-5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>' + msg + '</span>';
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2800);
+}
+
+function logout() {
+  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
 </script>
 </body>
 </html>
