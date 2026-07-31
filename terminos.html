@@ -3,104 +3,99 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Términos y Condiciones — TuCosto Ecuador</title>
+<title>Términos y condiciones — TuCosto Ecuador</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'] },
+      colors: {
+        naranja: '#E8521A',
+        'naranja-d': '#C94415',
+        'naranja-light': '#FFF0EB',
+        amarillo: '#F5A623',
+      }
+    }
+  }
+}
+</script>
 <style>
-:root{--green:#1A6B4A;--green-light:#EAF4EE;--green-menta:#ADEBB3;--green-mid:#2E8A62;--gold:#C8903A;--gold-light:#FDF4E7;--ink:#12201A;--ink-60:#5A7065;--ink-30:#B0C4BB;--white:#FFFFFF;--bg:#F7FAF8;--card:#FFFFFF;--r:14px;--r-lg:20px;--shadow:0 2px 16px rgba(26,107,74,.10);--shadow-lg:0 8px 40px rgba(26,107,74,.14);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{font-family:'Inter',sans-serif;background:var(--white);color:var(--ink);line-height:1.6;}
-h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,4vw,3rem);line-height:1.1;}
-h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,2.5vw,1.9rem);line-height:1.2;}
-h3{font-size:1.05rem;font-weight:600;color:var(--ink);}
-p{color:var(--ink-60);}
-.container{max-width:1080px;margin:0 auto;padding:0 24px;}
-section{padding:72px 0;}
-nav{position:sticky;top:0;z-index:100;background:rgba(247,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(26,107,74,.10);}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.logo-mark{width:36px;height:36px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;}
-.logo-mark svg{width:20px;height:20px;}
-.logo-text{font-family:'DM Serif Display',serif;font-size:1.25rem;color:var(--ink);}
-.logo-text span{color:var(--green);}
-.nav-links{display:flex;gap:28px;list-style:none;}
-.nav-links a{text-decoration:none;color:var(--ink-60);font-size:.9rem;font-weight:500;transition:color .2s;}
-.nav-links a:hover{color:var(--green);}
-.nav-cta{background:var(--green);color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:background .2s;}
-.nav-cta:hover{background:var(--green-mid);}
-.page-header{background:var(--white);padding:60px 0 48px;border-bottom:2px solid var(--green-light);}
-.ph-label{font-size:.78rem;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;display:block;}
-.page-header h1{margin-bottom:12px;}
-.ph-sub{font-size:.95rem;color:var(--ink-60);max-width:600px;}
-.ph-meta{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;}
-.ph-tag{display:inline-flex;align-items:center;gap:6px;background:var(--green-light);color:var(--green);font-size:.8rem;font-weight:500;padding:4px 12px;border-radius:20px;}
-.content-wrap{max-width:800px;padding:0 24px;}
-.terms-section{padding:40px 0;border-bottom:1px solid var(--green-light);}
-.terms-section:last-of-type{border-bottom:none;}
+body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height:1.6;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+.nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.content-col{max-width:800px;}
+.ts-section{padding:36px 0;border-bottom:1px solid #FFF0EB;}
+.ts-section:last-of-type{border-bottom:none;}
 .ts-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px;}
-.ts-num{min-width:36px;height:36px;background:var(--green);color:#fff;border-radius:10px;font-family:'DM Serif Display',serif;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.ts-title{font-family:'DM Serif Display',serif;font-size:1.2rem;color:var(--ink);line-height:1.3;padding-top:4px;}
-.ts-body{font-size:.92rem;color:var(--ink-60);line-height:1.75;padding-left:50px;}
+.ts-num{min-width:36px;height:36px;background:#E8521A;color:#fff;border-radius:10px;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ts-title{font-size:1.1rem;font-weight:700;color:#E8521A;line-height:1.3;padding-top:6px;}
+.ts-body{font-size:.92rem;color:#6B7280;line-height:1.75;padding-left:50px;}
 .ts-body p{margin-bottom:10px;}
 .ts-body p:last-child{margin-bottom:0;}
 .ts-body ul{padding-left:20px;margin:8px 0;}
 .ts-body ul li{margin-bottom:6px;}
-.ts-body strong{color:var(--ink);}
-.ts-body .highlight{background:var(--green-light);border-left:3px solid var(--green);padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.88rem;}
-.toc-card{background:var(--bg);border-radius:var(--r-lg);padding:28px;margin-bottom:48px;border:1px solid var(--green-light);}
-.toc-card h3{margin-bottom:16px;color:var(--ink);font-size:.95rem;text-transform:uppercase;letter-spacing:.05em;}
+.ts-body strong{color:#1A1A2E;}
+.ts-body a{color:#E8521A;text-decoration:none;}
+.highlight{background:#FFF0EB;border-left:3px solid #E8521A;padding:10px 14px;border-radius:0 8px 8px 0;margin:12px 0;font-size:.88rem;}
+.toc-card{background:#fff;border-radius:16px;padding:28px;margin-bottom:48px;border:1px solid #FFF0EB;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.toc-card h3{font-size:.85rem;font-weight:600;color:#1A1A2E;text-transform:uppercase;letter-spacing:.05em;margin-bottom:16px;}
 .toc-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
-.toc-list a{font-size:.88rem;color:var(--green);text-decoration:none;font-weight:500;}
+.toc-list a{font-size:.88rem;color:#E8521A;text-decoration:none;font-weight:500;}
 .toc-list a:hover{text-decoration:underline;}
-.toc-list span{color:var(--ink-30);margin-right:8px;font-size:.82rem;}
-footer{background:var(--ink);padding:48px 0 28px;}
-.footer-inner{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
-.footer-brand p{font-size:.85rem;color:var(--ink-60);margin-top:12px;max-width:240px;}
-.footer-col h4{font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px;}
-.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:8px;}
-.footer-col ul li a{font-size:.83rem;color:var(--ink-60);text-decoration:none;transition:color .2s;}
-.footer-col ul li a:hover{color:var(--ink-30);}
-.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;}
-.footer-bottom p{font-size:.78rem;color:var(--ink-60);}
-.footer-logo-text{font-family:'DM Serif Display',serif;font-size:1.1rem;color:#fff;}
-.footer-logo-text span{color:#5EE8A0;}
-@media(max-width:768px){.footer-inner{grid-template-columns:1fr 1fr;}.nav-links{display:none;}.content-wrap{padding:0 20px;}.ts-body{padding-left:0;}.ph-meta{gap:12px;}section{padding:52px 0;}}
+.toc-list span{color:#9CA3AF;margin-right:8px;font-size:.82rem;}
+@media(max-width:768px){
+  .nav-links{display:none !important;}
+  .footer-grid{grid-template-columns:1fr 1fr !important;}
+  .ts-body{padding-left:0 !important;}
+  .section{padding:52px 0 !important;}
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="container nav-inner">
-    <a href="index.html" class="logo">
-      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+<nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;height:64px">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
     </a>
     <ul class="nav-links">
-      <li><a href="index.html#como">Cómo funciona</a></li>
-      <li><a href="index.html#planes">Planes</a></li>
-      <li><a href="index.html#calculadora">Calculadora</a></li>
-      <li><a href="index.html#confianza">Confianza</a></li>
+      <li><a href="index.html#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
+      <li><a href="index.html#membresia" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Membresía</a></li>
+      <li><a href="quienes-somos.html" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Quiénes somos</a></li>
     </ul>
-    <a href="registro.html" class="nav-cta">Registrarse</a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="portal/login.html" style="color:#E8521A;border:1.5px solid #E8521A;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#E8521A;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+    </div>
   </div>
 </nav>
 
-<div class="page-header">
-  <div class="container">
-    <span class="ph-label">Legal</span>
-    <h1>Términos y Condiciones</h1>
-    <p class="ph-sub">Condiciones de uso del servicio TuCosto para residentes de Ecuador. Léalos antes de suscribirse.</p>
-    <div class="ph-meta">
-      <span class="ph-tag">Vigencia: julio 2025</span>
-      <span class="ph-tag">Ley ecuatoriana</span>
-      <span class="ph-tag">Santo Domingo de los Tsáchilas</span>
+<div style="background:linear-gradient(135deg,#C94415 0%,#E8521A 50%,#F07040 100%);padding:64px 0 56px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-40%;right:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);pointer-events:none"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;margin-bottom:18px">
+      <span style="font-size:.75rem;color:rgba(255,255,255,.9);font-weight:500">Legal</span>
+    </div>
+    <h1 style="color:#fff;font-size:clamp(1.9rem,3.5vw,2.7rem);font-weight:700;line-height:1.15;margin-bottom:14px">Términos y condiciones</h1>
+    <p style="color:rgba(255,255,255,.78);font-size:.97rem;max-width:540px;line-height:1.7">Condiciones de uso del servicio TuCosto para residentes de Ecuador. Léalos antes de suscribirse.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+      <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.75rem;font-weight:500;padding:4px 12px;border-radius:20px">Vigencia: julio 2025</span>
+      <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.75rem;font-weight:500;padding:4px 12px;border-radius:20px">Ley ecuatoriana</span>
+      <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.75rem;font-weight:500;padding:4px 12px;border-radius:20px">Santo Domingo de los Tsáchilas</span>
     </div>
   </div>
 </div>
 
-<section style="padding:56px 0 0;">
+<section class="section" style="padding:64px 0;background:#fff">
   <div class="container">
-    <div class="content-wrap">
+    <div class="content-col">
 
       <div class="toc-card">
         <h3>Índice de secciones</h3>
@@ -120,11 +115,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </ol>
       </div>
 
-      <div class="terms-section" id="s1">
-        <div class="ts-header">
-          <div class="ts-num">1</div>
-          <div class="ts-title">Descripción del servicio</div>
-        </div>
+      <div class="ts-section" id="s1">
+        <div class="ts-header"><div class="ts-num">1</div><div class="ts-title">Descripción del servicio</div></div>
         <div class="ts-body">
           <p>TuCosto es un servicio de membresía farmacéutica que permite a sus suscriptores acceder a medicamentos al precio de costo exacto del distribuidor, sin márgenes comerciales. El servicio opera exclusivamente en la ciudad de <strong>Santo Domingo de los Tsáchilas, Ecuador</strong>.</p>
           <p>La membresía tiene un valor de <strong>$8,00 USD mensuales</strong> por grupo familiar y cubre a hasta <strong>cuatro (4) personas</strong> registradas en la misma cuenta. Este valor corresponde exclusivamente a la suscripción; los medicamentos se facturan de forma adicional al costo exacto del distribuidor.</p>
@@ -132,11 +124,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s2">
-        <div class="ts-header">
-          <div class="ts-num">2</div>
-          <div class="ts-title">Requisitos de membresía</div>
-        </div>
+      <div class="ts-section" id="s2">
+        <div class="ts-header"><div class="ts-num">2</div><div class="ts-title">Requisitos de membresía</div></div>
         <div class="ts-body">
           <p>Para contratar el servicio TuCosto, el titular de la cuenta debe cumplir con los siguientes requisitos:</p>
           <ul>
@@ -149,11 +138,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s3">
-        <div class="ts-header">
-          <div class="ts-num">3</div>
-          <div class="ts-title">Registro de miembros del grupo familiar</div>
-        </div>
+      <div class="ts-section" id="s3">
+        <div class="ts-header"><div class="ts-num">3</div><div class="ts-title">Registro de miembros del grupo familiar</div></div>
         <div class="ts-body">
           <p>La membresía cubre a un grupo familiar compuesto por un máximo de <strong>cuatro (4) personas</strong>, incluyendo al titular. Para registrar a los miembros adicionales se deberá proporcionar:</p>
           <ul>
@@ -165,11 +151,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s4">
-        <div class="ts-header">
-          <div class="ts-num">4</div>
-          <div class="ts-title">Venta de medicamentos bajo receta</div>
-        </div>
+      <div class="ts-section" id="s4">
+        <div class="ts-header"><div class="ts-num">4</div><div class="ts-title">Venta de medicamentos bajo receta</div></div>
         <div class="ts-body">
           <p>TuCosto opera bajo los lineamientos del <strong>Código Orgánico de la Salud del Ecuador</strong> y la normativa emitida por la <strong>Agencia Nacional de Regulación, Control y Vigilancia Sanitaria (ARCSA)</strong>. Los medicamentos que requieren receta médica serán dispensados únicamente previa presentación y validación de la misma.</p>
           <p>El proceso de validación de recetas es responsabilidad del <strong>Químico Farmacéutico (QF) Responsable Técnico</strong> de TuCosto, quien verificará:</p>
@@ -183,11 +166,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s5">
-        <div class="ts-header">
-          <div class="ts-num">5</div>
-          <div class="ts-title">Control de dosis</div>
-        </div>
+      <div class="ts-section" id="s5">
+        <div class="ts-header"><div class="ts-num">5</div><div class="ts-title">Control de dosis</div></div>
         <div class="ts-body">
           <p>Con el objetivo de promover el uso racional de medicamentos según las directrices de la Organización Mundial de la Salud (OMS), TuCosto establece los siguientes límites de dispensación:</p>
           <ul>
@@ -199,22 +179,16 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s6">
-        <div class="ts-header">
-          <div class="ts-num">6</div>
-          <div class="ts-title">Cupo mensual</div>
-        </div>
+      <div class="ts-section" id="s6">
+        <div class="ts-header"><div class="ts-num">6</div><div class="ts-title">Cupo mensual</div></div>
         <div class="ts-body">
           <p>El cupo de medicamentos habilitado por la membresía corresponde al mes calendario en curso. El cupo <strong>no es acumulable</strong>: los medicamentos no solicitados durante un mes no se trasladan al mes siguiente ni generan crédito alguno.</p>
           <p>El cupo se renueva automáticamente con cada pago mensual exitoso de la suscripción. Si el pago no se efectúa, el acceso al cupo queda suspendido hasta que se regularice la suscripción.</p>
         </div>
       </div>
 
-      <div class="terms-section" id="s7">
-        <div class="ts-header">
-          <div class="ts-num">7</div>
-          <div class="ts-title">Precio y métodos de pago</div>
-        </div>
+      <div class="ts-section" id="s7">
+        <div class="ts-header"><div class="ts-num">7</div><div class="ts-title">Precio y métodos de pago</div></div>
         <div class="ts-body">
           <p>Los precios de los medicamentos corresponden al <strong>costo exacto del distribuidor</strong>, sin ningún margen comercial adicional. TuCosto se compromete a mantener la transparencia en la facturación y a poner a disposición del suscriptor los documentos de compra al distribuidor cuando se lo solicite.</p>
           <p><strong>Métodos de pago aceptados:</strong></p>
@@ -228,11 +202,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s8">
-        <div class="ts-header">
-          <div class="ts-num">8</div>
-          <div class="ts-title">Entrega de medicamentos</div>
-        </div>
+      <div class="ts-section" id="s8">
+        <div class="ts-header"><div class="ts-num">8</div><div class="ts-title">Entrega de medicamentos</div></div>
         <div class="ts-body">
           <p>TuCosto contempla <strong>una (1) entrega mensual programada</strong> por grupo familiar. Las condiciones de entrega son:</p>
           <ul>
@@ -246,11 +217,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s9">
-        <div class="ts-header">
-          <div class="ts-num">9</div>
-          <div class="ts-title">Cancelación y devoluciones</div>
-        </div>
+      <div class="ts-section" id="s9">
+        <div class="ts-header"><div class="ts-num">9</div><div class="ts-title">Cancelación y devoluciones</div></div>
         <div class="ts-body">
           <p>El suscriptor puede cancelar su membresía en cualquier momento. No obstante, las condiciones para devolución del valor pagado son las siguientes:</p>
           <ul>
@@ -258,15 +226,12 @@ footer{background:var(--ink);padding:48px 0 28px;}
             <li>La devolución se procesará mediante <strong>transferencia bancaria</strong> al titular de la cuenta en un plazo máximo de <strong>72 horas hábiles</strong> desde la aprobación de la solicitud.</li>
             <li>Los medicamentos ya entregados no son objeto de devolución económica, salvo error comprobado de TuCosto en el pedido.</li>
           </ul>
-          <p>Para más detalles, consulte la <a href="devoluciones.html" style="color:var(--green)">Política de Devoluciones</a> completa.</p>
+          <p>Para más detalles, consulte la <a href="devoluciones.html">Política de Devoluciones</a> completa.</p>
         </div>
       </div>
 
-      <div class="terms-section" id="s10">
-        <div class="ts-header">
-          <div class="ts-num">10</div>
-          <div class="ts-title">Fuerza mayor y desabastecimiento</div>
-        </div>
+      <div class="ts-section" id="s10">
+        <div class="ts-header"><div class="ts-num">10</div><div class="ts-title">Fuerza mayor y desabastecimiento</div></div>
         <div class="ts-body">
           <p>TuCosto no será responsable por el incumplimiento parcial o total de sus obligaciones cuando este derive de situaciones de <strong>fuerza mayor</strong>, caso fortuito, o desabastecimiento nacional o regional de medicamentos, incluyendo restricciones de importación, contingencias sanitarias declaradas por el Ministerio de Salud Pública del Ecuador, o problemas en la cadena de distribución fuera del control de TuCosto.</p>
           <p>Sin perjuicio de lo anterior, TuCosto se compromete a:</p>
@@ -274,16 +239,13 @@ footer{background:var(--ink);padding:48px 0 28px;}
             <li>Comunicar al suscriptor de forma <strong>proactiva y oportuna</strong> cuando un medicamento no esté disponible.</li>
             <li>Buscar una <strong>alternativa terapéutica equivalente</strong> en un plazo máximo de 2 horas hábiles.</li>
             <li>Derivar al suscriptor a una farmacia aliada en caso de que no exista alternativa disponible.</li>
-            <li>Publicar las alertas de desabastecimiento activas en la sección <a href="desabastecimiento.html" style="color:var(--green)">Cartas de Desabastecimiento</a> del sitio web.</li>
+            <li>Publicar las alertas de desabastecimiento activas en la sección <a href="desabastecimiento.html">Cartas de Desabastecimiento</a> del sitio web.</li>
           </ul>
         </div>
       </div>
 
-      <div class="terms-section" id="s11">
-        <div class="ts-header">
-          <div class="ts-num">11</div>
-          <div class="ts-title">Prohibiciones</div>
-        </div>
+      <div class="ts-section" id="s11">
+        <div class="ts-header"><div class="ts-num">11</div><div class="ts-title">Prohibiciones</div></div>
         <div class="ts-body">
           <p>Quedan expresamente prohibidas las siguientes conductas, bajo pena de cancelación inmediata de la membresía sin derecho a devolución y posibles acciones legales:</p>
           <ul>
@@ -297,11 +259,8 @@ footer{background:var(--ink);padding:48px 0 28px;}
         </div>
       </div>
 
-      <div class="terms-section" id="s12">
-        <div class="ts-header">
-          <div class="ts-num">12</div>
-          <div class="ts-title">Ley aplicable y jurisdicción</div>
-        </div>
+      <div class="ts-section" id="s12">
+        <div class="ts-header"><div class="ts-num">12</div><div class="ts-title">Ley aplicable y jurisdicción</div></div>
         <div class="ts-body">
           <p>Estos Términos y Condiciones se rigen íntegramente por la <strong>legislación de la República del Ecuador</strong>, incluyendo, de manera enunciativa y no limitativa:</p>
           <ul>
@@ -319,45 +278,45 @@ footer{background:var(--ink);padding:48px 0 28px;}
   </div>
 </section>
 
-<div style="height:56px;"></div>
+<div style="height:40px;background:#fff"></div>
 
-<footer>
+<footer style="background:#1A1A2E;padding:48px 0 28px">
   <div class="container">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <div class="footer-logo-text">TuCosto</div>
-        <p>La membresía de salud para familias ecuatorianas. Medicamentos al costo, entregados a tu puerta.</p>
+    <div class="footer-grid">
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">TuCosto</div>
+        <p style="font-size:.85rem;color:#6B7280;margin-top:12px;max-width:240px;line-height:1.6">La membresía de salud para familias ecuatorianas. Ahorro a un clic.</p>
       </div>
-      <div class="footer-col">
-        <h4>Producto</h4>
-        <ul>
-          <li><a href="index.html#como">Cómo funciona</a></li>
-          <li><a href="index.html#planes">Planes y precios</a></li>
-          <li><a href="index.html#calculadora">Calculadora de ahorro</a></li>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Producto</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="index.html#productos" style="font-size:.83rem;color:#6B7280;text-decoration:none">Productos</a></li>
+          <li><a href="index.html#calculadora" style="font-size:.83rem;color:#6B7280;text-decoration:none">Calculadora de ahorro</a></li>
+          <li><a href="index.html#membresia" style="font-size:.83rem;color:#6B7280;text-decoration:none">Planes y precios</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>Nuestra empresa</h4>
-        <ul>
-          <li><a href="quienes-somos.html">Quiénes Somos</a></li>
-          <li><a href="terminos.html">Términos y Condiciones</a></li>
-          <li><a href="privacidad.html">Política de Privacidad</a></li>
-          <li><a href="devoluciones.html">Política de Devolución</a></li>
-          <li><a href="faq.html">Preguntas Frecuentes</a></li>
-          <li><a href="reclamos.html">Reclamos y Sugerencias</a></li>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Empresa</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="quienes-somos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Quiénes Somos</a></li>
+          <li><a href="terminos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Devolución</a></li>
+          <li><a href="faq.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Reclamos y Sugerencias</a></li>
         </ul>
       </div>
-      <div class="footer-col">
-        <h4>Información regulatoria</h4>
-        <ul>
-          <li><a href="uso-racional.html">Uso Racional de Medicamentos</a></li>
-          <li><a href="desabastecimiento.html">Cartas de Desabastecimiento</a></li>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Regulatorio</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="uso-racional.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Cartas de Desabastecimiento</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p>© 2025 TuCosto Ecuador. Operamos bajo normativa ARCSA.</p>
-      <p>Santo Domingo de los Tsáchilas · Ecuador</p>
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-size:.78rem;color:#6B7280">&#169; 2025 TuCosto Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p style="font-size:.78rem;color:#6B7280">Santo Domingo de los Ts&#225;chilas &#183; Ecuador</p>
     </div>
   </div>
 </footer>
