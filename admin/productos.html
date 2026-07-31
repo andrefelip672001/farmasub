@@ -9,7 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
-  --naranja:#E8521A;--naranja-d:#C94415;--naranja-light:#FFF0EB;
+  --naranja:#F0845A;--naranja-d:#D4622A;--naranja-light:#FFF4F0;
   --amarillo:#F5A623;--amarillo-light:#FFF8ED;
   --verde:#059669;--verde-light:#ECFDF5;
   --azul:#3B82F6;--azul-light:#EFF6FF;
@@ -161,7 +161,7 @@ tr:hover td{background:var(--naranja-light);}
 <nav class="top-nav">
   <div class="nav-left">
     <a href="../admin/dashboard.html" class="nav-logo">
-      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+      <div style="width:52px;height:52px;background:#F0845A;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#F0845A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
     </a>
     <span class="nav-tag">PANEL ADMIN</span>
   </div>
@@ -423,7 +423,7 @@ function renderTabla(lista) {
       var sorted = p.producto_fotos.slice().sort(function(a, b) { return a.orden - b.orden; });
       foto = '<img src="' + sorted[0].url + '" style="width:48px;height:48px;border-radius:50%;object-fit:cover;" onerror="this.style.display=\'none\'">';
     } else {
-      foto = '<div style="width:48px;height:48px;border-radius:50%;background:#FFF0EB;display:flex;align-items:center;justify-content:center;font-size:20px">&#128138;</div>';
+      foto = '<div style="width:48px;height:48px;border-radius:50%;background:#FFF4F0;display:flex;align-items:center;justify-content:center;font-size:20px">&#128138;</div>';
     }
     var catNom = (p.categorias && p.categorias.nombre) ? p.categorias.nombre : catNombre(p.categoria_id);
     var recetaBadge = p.requiere_receta ? '<span class="badge badge-receta">Receta</span>' : '<span class="badge badge-noreceta">Libre</span>';
@@ -567,8 +567,8 @@ function renderFotos() {
     var div = document.createElement('div');
     div.style.cssText = 'position:relative;width:80px;height:80px;flex-shrink:0';
     var imgSrc = item.existing ? item.url : (item.preview || '');
-    div.innerHTML = '<img src="' + imgSrc + '" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #E8521A">' +
-      (i === 0 ? '<span style="position:absolute;bottom:2px;left:2px;background:#E8521A;color:white;font-size:9px;padding:1px 5px;border-radius:4px">Principal</span>' : '') +
+    div.innerHTML = '<img src="' + imgSrc + '" style="width:80px;height:80px;border-radius:8px;object-fit:cover;border:2px solid #F0845A">' +
+      (i === 0 ? '<span style="position:absolute;bottom:2px;left:2px;background:#F0845A;color:white;font-size:9px;padding:1px 5px;border-radius:4px">Principal</span>' : '') +
       '<button onclick="removeFoto(' + i + ')" style="position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;background:#EF4444;color:white;border:none;font-size:12px;cursor:pointer;line-height:1">x</button>';
     previews.appendChild(div);
   }

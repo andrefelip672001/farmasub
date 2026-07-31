@@ -13,9 +13,9 @@ tailwind.config = {
     extend: {
       fontFamily: { sans: ['Inter','sans-serif'] },
       colors: {
-        naranja: '#E8521A',
-        'naranja-d': '#C94415',
-        'naranja-light': '#FFF0EB',
+        naranja: '#F0845A',
+        'naranja-d': '#D4622A',
+        'naranja-light': '#FFF4F0',
       }
     }
   }
@@ -51,27 +51,27 @@ body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height
 }
 .field-group input:focus,
 .field-group select:focus,
-.field-group textarea:focus{border-color:#E8521A;box-shadow:0 0 0 3px rgba(232,82,26,.1);}
+.field-group textarea:focus{border-color:#F0845A;box-shadow:0 0 0 3px rgba(232,82,26,.1);}
 .field-group textarea{resize:vertical;min-height:110px;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.btn-submit{width:100%;background:#E8521A;color:#fff;font-weight:700;font-size:.88rem;padding:14px;border:none;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
-.btn-submit:hover{background:#C94415;}
+.btn-submit{width:100%;background:#F0845A;color:#fff;font-weight:700;font-size:.88rem;padding:14px;border:none;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.btn-submit:hover{background:#D4622A;}
 .success-card{display:none;text-align:center;padding:40px 20px;}
 .success-icon{font-size:3rem;margin-bottom:14px;}
 .success-title{font-size:1.1rem;font-weight:700;color:#1A1A2E;margin-bottom:8px;}
 .success-desc{font-size:.85rem;color:#6B7280;line-height:1.65;}
 .sidebar-card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:18px;}
-.sidebar-card h3{font-size:.88rem;font-weight:700;color:#E8521A;margin-bottom:12px;}
+.sidebar-card h3{font-size:.88rem;font-weight:700;color:#F0845A;margin-bottom:12px;}
 .sidebar-card p{font-size:.8rem;color:#6B7280;line-height:1.65;}
-.sidebar-card a{color:#E8521A;font-weight:500;text-decoration:none;}
+.sidebar-card a{color:#F0845A;font-weight:500;text-decoration:none;}
 .contact-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F3F4F6;font-size:.8rem;color:#6B7280;}
 .contact-item:last-child{border-bottom:none;}
-.contact-icon{width:28px;height:28px;background:#FFF0EB;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem;}
-.tipo-badge{display:inline-block;background:#FFF0EB;color:#E8521A;font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:20px;margin-bottom:6px;}
+.contact-icon{width:28px;height:28px;background:#FFF4F0;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem;}
+.tipo-badge{display:inline-block;background:#FFF4F0;color:#F0845A;font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:20px;margin-bottom:6px;}
 .plazo-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #F3F4F6;font-size:.78rem;}
 .plazo-item:last-child{border-bottom:none;}
 .plazo-label{color:#6B7280;}
-.plazo-val{color:#E8521A;font-weight:600;}
+.plazo-val{color:#F0845A;font-weight:600;}
 @media(max-width:768px){
   .nav-links{display:none !important;}
   .footer-grid{grid-template-columns:1fr 1fr !important;}
@@ -85,8 +85,8 @@ body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height
 <nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
   <div class="container" style="display:flex;align-items:center;justify-content:space-between;height:64px">
     <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
-      <div style="width:44px;height:44px;background:#E8521A;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
-      <div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:11px;color:#E8521A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+      <div style="width:52px;height:52px;background:#F0845A;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#F0845A;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
     </a>
     <ul class="nav-links">
       <li><a href="index.html#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
@@ -94,13 +94,13 @@ body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height
       <li><a href="quienes-somos.html" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Quiénes somos</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:10px">
-      <a href="portal/login.html" style="color:#E8521A;border:1.5px solid #E8521A;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
-      <a href="registro.html" style="background:#E8521A;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+      <a href="portal/login.html" style="color:#F0845A;border:1.5px solid #F0845A;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#F0845A;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
     </div>
   </div>
 </nav>
 
-<div style="background:linear-gradient(135deg,#C94415 0%,#E8521A 50%,#F07040 100%);padding:64px 0 56px;position:relative;overflow:hidden">
+<div style="background:linear-gradient(135deg,#D4622A 0%,#F0845A 50%,#F07040 100%);padding:64px 0 56px;position:relative;overflow:hidden">
   <div style="position:absolute;top:-40%;right:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);pointer-events:none"></div>
   <div class="container" style="position:relative;z-index:1">
     <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;margin-bottom:18px">
