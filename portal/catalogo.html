@@ -381,7 +381,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
-var FOTO_URL_BASE = 'https://cjimcldhoglgqachcimm.supabase.co/storage/v1/object/public/producto-fotos/';
+
+function getSortedFotos(p) {
+  if (!p || !p.producto_fotos || !p.producto_fotos.length) return [];
+  return p.producto_fotos.slice().sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
+}
 
 var _productos = [], _filtrados = [], _categorias = [], _catActiva = null, _modalProd = null;
 var _galleryFotos = [], _galleryIdx = 0;
@@ -418,23 +422,11 @@ async function loadCats() {
 }
 
 async function loadProducts() {
-  var results = await Promise.all([
-    _db.from('productos').select('*,categorias(nombre)').eq('activo', true).order('nombre'),
-    _db.from('producto_fotos').select('*').order('orden')
-  ]);
-  var prods = results[0].data;
-  var fotas = results[1].data;
-  _productos = prods || [];
-  var fotaMap = {};
-  var fotaArr = fotas || [];
-  for (var fi = 0; fi < fotaArr.length; fi++) {
-    var f = fotaArr[fi];
-    if (!fotaMap[f.producto_id]) fotaMap[f.producto_id] = [];
-    fotaMap[f.producto_id].push(f);
-  }
-  for (var pi = 0; pi < _productos.length; pi++) {
-    _productos[pi].fotos = fotaMap[_productos[pi].id] || [];
-  }
+  var prodRes = await _db.from('productos')
+    .select('*, categorias(nombre), producto_fotos(url, orden)')
+    .eq('activo', true)
+    .order('nombre');
+  _productos = prodRes.data || [];
   _filtrados = _productos.slice();
   renderGrid();
 }
@@ -473,9 +465,9 @@ function renderGrid() {
   for (var i = 0; i < _filtrados.length; i++) {
     var p = _filtrados[i];
     var inCart = cartHas(p.id);
-    var fotos = p.fotos || [];
-    var f1 = fotos[0] ? FOTO_URL_BASE + fotos[0].path : null;
-    var f2 = fotos[1] ? FOTO_URL_BASE + fotos[1].path : null;
+    var fotos = getSortedFotos(p);
+    var f1 = fotos[0] ? fotos[0].url : null;
+    var f2 = fotos[1] ? fotos[1].url : null;
     var imgHtml;
     if (f1) {
       var wc = 'prod-img-wrap' + (f2 ? ' has-hover' : '');
@@ -520,7 +512,7 @@ async function openModal(id) {
   }
   if (!p) return;
   _modalProd = p;
-  _galleryFotos = p.fotos || [];
+  _galleryFotos = getSortedFotos(p);
   _galleryIdx = 0;
 
   document.getElementById('m-nombre').textContent = p.nombre;
@@ -550,7 +542,7 @@ function renderGallery() {
   var gallery = document.getElementById('modal-gallery');
   if (!_galleryFotos.length) { gallery.style.display = 'none'; return; }
   gallery.style.display = 'block';
-  document.getElementById('gallery-main-img').src = FOTO_URL_BASE + _galleryFotos[_galleryIdx].path;
+  document.getElementById('gallery-main-img').src = _galleryFotos[_galleryIdx].url;
   var multi = _galleryFotos.length > 1;
   document.getElementById('gallery-prev').style.display = multi ? 'flex' : 'none';
   document.getElementById('gallery-next').style.display = multi ? 'flex' : 'none';
@@ -560,7 +552,7 @@ function renderGallery() {
     for (var gi = 0; gi < _galleryFotos.length; gi++) {
       var tc = 'gallery-thumb' + (gi === _galleryIdx ? ' active' : '');
       th += '<div class="' + tc + '" onclick="setGalleryIdx(' + gi + ')">'
-        + '<img src="' + FOTO_URL_BASE + _galleryFotos[gi].path + '" alt="Foto ' + (gi + 1) + '" loading="lazy"/>'
+        + '<img src="' + _galleryFotos[gi].url + '" alt="Foto ' + (gi + 1) + '" loading="lazy"/>'
         + '</div>';
     }
     thumbs.innerHTML = th;
@@ -611,14 +603,15 @@ async function loadRelatedProducts(p) {
     for (var pi2 = 0; pi2 < _productos.length; pi2++) {
       if (_productos[pi2].id === combined[ci].id) { prod = _productos[pi2]; break; }
     }
-    combined[ci].fotos = (prod && prod.fotos) ? prod.fotos : [];
+    combined[ci].producto_fotos = (prod && prod.producto_fotos) ? prod.producto_fotos : [];
   }
 
   var relHtml = '';
   for (var rj = 0; rj < combined.length; rj++) {
     var r = combined[rj];
-    var rImg = r.fotos[0]
-      ? '<img class="rel-prod-img" src="' + FOTO_URL_BASE + r.fotos[0].path + '" alt="' + r.nombre + '" loading="lazy"/>'
+    var rSorted = getSortedFotos(r);
+    var rImg = rSorted[0]
+      ? '<img class="rel-prod-img" src="' + rSorted[0].url + '" alt="' + r.nombre + '" loading="lazy"/>'
       : '<div class="rel-prod-img-ph">&#128138;</div>';
     relHtml += '<div class="rel-prod-card" onclick="openModal(' + r.id + ')">'
       + rImg
