@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Catalogo - TuCosto Ecuador</title>
+<title>Catalogo — TuCosto Ecuador</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
@@ -281,7 +281,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>
       Inicio
     </a>
-    <a href="../portal/catalogo-new.html" class="sb-link active">
+    <a href="../portal/catalogo.html" class="sb-link active">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
       Catalogo
     </a>
@@ -390,49 +390,45 @@ function getSortedFotos(p) {
 var _productos = [], _filtrados = [], _categorias = [], _catActiva = null, _modalProd = null;
 var _galleryFotos = [], _galleryIdx = 0;
 
-(function() {
-  _db.auth.getSession().then(function(sessRes) {
-    var session = sessRes.data.session;
-    if (!session) { window.location.href = '../portal/login.html'; return; }
-    document.getElementById('nav-nombre').textContent = session.user.email;
-    _db.from('suscriptores').select('nombre').eq('email', session.user.email).single().then(function(sRes) {
-      if (sRes.data) {
-        document.getElementById('nav-nombre').textContent = sRes.data.nombre;
-        document.getElementById('nav-avatar').textContent = sRes.data.nombre.charAt(0).toUpperCase();
-      }
-      loadCats().then(function() { loadProducts(); });
-      updateCartBadge();
-    });
-  });
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  document.getElementById('nav-nombre').textContent = session.user.email;
+  var sRes = await _db.from('suscriptores').select('nombre').eq('email', session.user.email).single();
+  if (sRes.data) {
+    document.getElementById('nav-nombre').textContent = sRes.data.nombre;
+    document.getElementById('nav-avatar').textContent = sRes.data.nombre.charAt(0).toUpperCase();
+  }
+  await loadCats();
+  await loadProducts();
+  updateCartBadge();
 })();
 
-function loadCats() {
-  return _db.from('categorias').select('id,nombre').order('nombre').then(function(catRes) {
-    _categorias = catRes.data || [];
-    var wrap = document.getElementById('cats-wrap');
-    for (var ci = 0; ci < _categorias.length; ci++) {
-      var c = _categorias[ci];
-      var b = document.createElement('button');
-      b.className = 'cat-btn';
-      b.textContent = c.nombre;
-      (function(catId, btn) {
-        btn.onclick = function() { selectCat(catId, btn); };
-      })(c.id, b);
-      wrap.appendChild(b);
-    }
-  });
+async function loadCats() {
+  var catRes = await _db.from('categorias').select('id,nombre').order('nombre');
+  _categorias = catRes.data || [];
+  var wrap = document.getElementById('cats-wrap');
+  for (var ci = 0; ci < _categorias.length; ci++) {
+    var c = _categorias[ci];
+    var b = document.createElement('button');
+    b.className = 'cat-btn';
+    b.textContent = c.nombre;
+    (function(catId, btn) {
+      btn.onclick = function() { selectCat(catId, btn); };
+    })(c.id, b);
+    wrap.appendChild(b);
+  }
 }
 
-function loadProducts() {
-  return _db.from('productos')
+async function loadProducts() {
+  var prodRes = await _db.from('productos')
     .select('*, categorias(nombre), producto_fotos(url, orden)')
     .eq('activo', true)
-    .order('nombre')
-    .then(function(prodRes) {
-      _productos = prodRes.data || [];
-      _filtrados = _productos.slice();
-      renderGrid();
-    });
+    .order('nombre');
+  _productos = prodRes.data || [];
+  _filtrados = _productos.slice();
+  renderGrid();
 }
 
 function selectCat(id, btn) {
@@ -459,7 +455,7 @@ function renderGrid() {
   var grid = document.getElementById('products-grid');
   var counter = document.getElementById('result-count');
   if (!_filtrados.length) {
-    grid.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Sin resultados para esta busqueda</p></div>';
+    grid.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/></svg><p>Sin resultados para esta busqueda</p></div>';
     if (counter) counter.textContent = '0 productos encontrados';
     return;
   }
@@ -499,8 +495,8 @@ function renderGrid() {
       + '<p class="precio-sub">$' + (p.precio_costo || 0).toFixed(2) + '</p>'
       + '</div>'
       + '<div class="prod-actions">'
-      + '<button class="btn-ver" onclick="openModal(\'' + p.id + '\')">Ver mas</button>'
-      + '<button class="' + addBtnClass + '" id="add-' + p.id + '" onclick="addToCart(\'' + p.id + '\')">' + addBtnText + '</button>'
+      + '<button class="btn-ver" onclick="openModal(' + p.id + ')">Ver mas</button>'
+      + '<button class="' + addBtnClass + '" id="add-' + p.id + '" onclick="addToCart(' + p.id + ')">' + addBtnText + '</button>'
       + '</div>'
       + '</div>'
       + '</div>';
@@ -508,7 +504,8 @@ function renderGrid() {
   grid.innerHTML = html;
 }
 
-function openModal(id) {
+// MODAL
+async function openModal(id) {
   var p = null;
   for (var i = 0; i < _productos.length; i++) {
     if (_productos[i].id === id) { p = _productos[i]; break; }
@@ -535,7 +532,7 @@ function openModal(id) {
   renderGallery();
   document.getElementById('modal-related').style.display = 'none';
   document.getElementById('modal-overlay').classList.add('open');
-  var mb = document.querySelector('.modal-body');
+  var mb = document.getElementById('modal-body');
   if (mb) mb.scrollTop = 0;
 
   loadRelatedProducts(p);
@@ -569,35 +566,29 @@ function galleryNav(dir) {
   _galleryIdx = (_galleryIdx + dir + _galleryFotos.length) % _galleryFotos.length;
   renderGallery();
 }
-
 function setGalleryIdx(idx) { _galleryIdx = idx; renderGallery(); }
 
-function loadRelatedProducts(p) {
-  var autoPromise = p.principio_activo
-    ? _db.from('productos').select('id,nombre,principio_activo,precio_costo,precio_farmacia').eq('principio_activo', p.principio_activo).eq('activo', true).neq('id', p.id).limit(5)
-    : Promise.resolve({ data: [] });
-  var manualPromise = _db.from('productos_relacionados').select('relacionado_id').eq('producto_id', p.id).eq('tipo', 'manual');
+async function loadRelatedProducts(p) {
+  var promises = [
+    p.principio_activo
+      ? _db.from('productos').select('id,nombre,principio_activo,precio_costo,precio_farmacia').eq('principio_activo', p.principio_activo).eq('activo', true).neq('id', p.id).limit(5)
+      : Promise.resolve({ data: [] }),
+    _db.from('productos_relacionados').select('relacionado_id').eq('producto_id', p.id).eq('tipo', 'manual')
+  ];
+  var rlResults = await Promise.all(promises);
+  var autoRes = rlResults[0];
+  var manualRes = rlResults[1];
+  var autoRels = autoRes.data || [];
+  var manualRaw = manualRes.data || [];
+  var manualIds = [];
+  for (var mi = 0; mi < manualRaw.length; mi++) { manualIds.push(manualRaw[mi].relacionado_id); }
 
-  autoPromise.then(function(autoRes) {
-    manualPromise.then(function(manualRes) {
-      var autoRels = autoRes.data || [];
-      var manualRaw = manualRes.data || [];
-      var manualIds = [];
-      for (var mi = 0; mi < manualRaw.length; mi++) { manualIds.push(manualRaw[mi].relacionado_id); }
+  var manualProds = [];
+  if (manualIds.length) {
+    var mpRes = await _db.from('productos').select('id,nombre,principio_activo,precio_costo,precio_farmacia').in('id', manualIds).eq('activo', true);
+    manualProds = mpRes.data || [];
+  }
 
-      if (manualIds.length) {
-        _db.from('productos').select('id,nombre,principio_activo,precio_costo,precio_farmacia').in('id', manualIds).eq('activo', true).then(function(mpRes) {
-          var manualProds = mpRes.data || [];
-          buildRelated(p, autoRels, manualProds);
-        });
-      } else {
-        buildRelated(p, autoRels, []);
-      }
-    });
-  });
-}
-
-function buildRelated(p, autoRels, manualProds) {
   var seen = {};
   seen[p.id] = true;
   var combined = [];
@@ -622,7 +613,7 @@ function buildRelated(p, autoRels, manualProds) {
     var rImg = rSorted[0]
       ? '<img class="rel-prod-img" src="' + rSorted[0].url + '" alt="' + r.nombre + '" loading="lazy"/>'
       : '<div class="rel-prod-img-ph">&#128138;</div>';
-    relHtml += '<div class="rel-prod-card" onclick="openModal(\'' + r.id + '\')">'
+    relHtml += '<div class="rel-prod-card" onclick="openModal(' + r.id + ')">'
       + rImg
       + '<div class="rel-prod-info">'
       + '<div class="rel-prod-name">' + r.nombre + '</div>'
@@ -688,9 +679,7 @@ function showToast(msg) {
   setTimeout(function() { t.classList.remove('show'); }, 2800);
 }
 
-function logout() {
-  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
-}
+function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
 </script>
 </body>
 </html>
