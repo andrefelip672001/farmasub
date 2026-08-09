@@ -353,6 +353,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 
         <div class="order-summary" id="order-summary">
           <p class="summary-title">Resumen del pedido</p>
+          <div id="cupo-banner" style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.8rem;color:#6B7280">Cargando cupo mensual...</div>
           <div id="summary-rows"></div>
 
           <div class="delivery-info">
@@ -405,6 +406,10 @@ var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_p
 var FOTO_URL_BASE = 'https://cjimcldhoglgqachcimm.supabase.co/storage/v1/object/public/producto-fotos/';
 
 var _user, _susc, _miembros = [], _cart = [], _recetas = {};
+var PLANS = { ahorro: { nombre: 'Plan Ahorro', limite: 90 }, familiar: { nombre: 'Plan Familiar', limite: 190 } };
+var _cupoMensual = 190;
+var _yaGastado = 0;
+var _planNombre = 'Plan Familiar';
 
 (async function() {
   var sessRes = await _db.auth.getSession();
@@ -412,7 +417,7 @@ var _user, _susc, _miembros = [], _cart = [], _recetas = {};
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('*').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('*, suscripciones(plan, estado)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
 
@@ -423,6 +428,19 @@ var _user, _susc, _miembros = [], _cart = [], _recetas = {};
     document.getElementById('addr-input').value = (s.direccion || '') + (s.barrio ? ', ' + s.barrio : '');
     var mRes = await _db.from('miembros').select('*').eq('titular_id', s.id);
     _miembros = mRes.data || [];
+
+    var suscRow = (s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
+    var planKey = (suscRow && suscRow.plan && PLANS[suscRow.plan]) ? suscRow.plan : 'familiar';
+    _cupoMensual = PLANS[planKey].limite;
+    _planNombre = PLANS[planKey].nombre;
+
+    var hoy = new Date();
+    var inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString();
+    var finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 1).toISOString();
+    var gastoRes = await _db.from('pedidos').select('total_costo').eq('titular_id', s.id).neq('estado', 'cancelado').gte('fecha_pedido', inicioMes).lt('fecha_pedido', finMes);
+    var pedidosMes = gastoRes.data || [];
+    _yaGastado = 0;
+    for (var gi = 0; gi < pedidosMes.length; gi++) { _yaGastado += (pedidosMes[gi].total_costo || 0); }
   }
 
   _cart = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
@@ -471,8 +489,6 @@ function renderCart() {
   var html = '';
   for (var i = 0; i < _cart.length; i++) {
     var item = _cart[i];
-    var dosisMax = item.requiere_receta ? 3 : 2;
-    var maxCajas = Math.ceil((dosisMax * 30) / (item.unidades_caja || 30));
     var imgHtml = item.foto_path
       ? '<img class="item-img" src="' + FOTO_URL_BASE + item.foto_path + '" alt="' + item.nombre + '"/>'
       : '<div class="item-img-ph">&#128138;</div>';
@@ -518,7 +534,6 @@ function renderCart() {
       + '<button class="qty-btn" onclick="changeQty(' + i + ',1)">&#43;</button>'
       + '<input type="hidden" id="qty-' + i + '" value="' + item.cantidad + '"/>'
       + '</div>'
-      + '<span class="qty-note">Max. ' + maxCajas + ' caj. (' + dosisMax + ' dosis/dia)</span>'
       + '</div>'
       + recetaHtml
       + '<div class="ctrl-group" style="margin-left:auto;align-items:flex-end">'
@@ -537,11 +552,9 @@ function changeQty(i, delta) {
   var display = document.getElementById('qty-display-' + i);
   var priceEl = document.getElementById('item-price-' + i);
   if (!input) return;
-  var dosisMax = _cart[i].requiere_receta ? 3 : 2;
-  var maxCajas = Math.ceil((dosisMax * 30) / (_cart[i].unidades_caja || 30));
   var val = parseInt(input.value) + delta;
   if (val < 1) val = 1;
-  if (val > maxCajas) val = maxCajas;
+  if (val > 99) val = 99;
   input.value = val;
   if (display) display.textContent = val;
   _cart[i].cantidad = val;
@@ -587,20 +600,40 @@ function renderSummary() {
       + '<span class="sr-val">$' + lineTotal.toFixed(2) + '</span>'
       + '</div>';
   }
-  rows += '<div class="summary-row">'
-    + '<span>Suscripcion</span>'
-    + '<span class="sr-val sr-included">$8.00 incluida</span>'
-    + '</div>';
   rows += '<div class="summary-row sr-total">'
     + '<span>Total al costo</span>'
     + '<span class="sr-val" style="color:var(--naranja);font-size:1.05rem;">$' + subtotal.toFixed(2) + '</span>'
     + '</div>';
   document.getElementById('summary-rows').innerHTML = rows;
+
+  var disponible = _cupoMensual - _yaGastado;
+  var banner = document.getElementById('cupo-banner');
+  var btn = document.getElementById('btn-confirm');
+  var excede = subtotal > disponible;
+  if (excede) {
+    banner.style.background = '#FEF2F2';
+    banner.style.borderColor = '#FCA5A5';
+    banner.style.color = '#991B1B';
+    banner.innerHTML = '<strong>' + _planNombre + ':</strong> superaste tu cupo mensual de $' + _cupoMensual.toFixed(2) + '. Te quedan $' + Math.max(disponible, 0).toFixed(2) + ' disponibles este mes.';
+    if (btn) btn.disabled = true;
+  } else {
+    banner.style.background = '#F9FAFB';
+    banner.style.borderColor = '#E5E7EB';
+    banner.style.color = '#6B7280';
+    banner.innerHTML = '<strong>' + _planNombre + ':</strong> $' + disponible.toFixed(2) + ' disponibles de $' + _cupoMensual.toFixed(2) + ' este mes.';
+    if (btn) btn.disabled = false;
+  }
   updateCartBadge();
 }
 
 async function confirmarPedido() {
   if (!_cart.length) return;
+  var cartTotal = 0;
+  for (var vi = 0; vi < _cart.length; vi++) { cartTotal += _cart[vi].precio_costo * _cart[vi].cantidad; }
+  if (cartTotal > (_cupoMensual - _yaGastado)) {
+    alert('Tu pedido supera el cupo mensual disponible de tu ' + _planNombre + '. Ajusta las cantidades antes de confirmar.');
+    return;
+  }
   var sinReceta = [];
   for (var si = 0; si < _cart.length; si++) {
     if (_cart[si].requiere_receta && !_recetas[si]) sinReceta.push(_cart[si]);
