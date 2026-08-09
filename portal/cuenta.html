@@ -367,9 +367,10 @@ var FIELDS = [
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('suscriptores').select('*').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('*, suscripciones(estado, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
+  var _suscRow = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
 
   var nombre = (s && s.nombre) ? s.nombre : _user.email;
   var initial = nombre.charAt(0).toUpperCase();
@@ -381,7 +382,7 @@ var FIELDS = [
   document.getElementById('hero-email').textContent = _user.email;
 
   var estadoBadge = document.getElementById('badge-estado');
-  var estado = (s && s.estado) ? s.estado : 'pendiente';
+  var estado = (_suscRow && _suscRow.estado) ? _suscRow.estado : 'pendiente';
   var estadoCls = {activa: 'badge-activa', pendiente: 'badge-pend', vencida: 'badge-venc'};
   var estadoLbl = {activa: 'Activa', pendiente: 'Pendiente', vencida: 'Vencida'};
   estadoBadge.className = 'badge-estado ' + (estadoCls[estado] || 'badge-pend');
@@ -437,7 +438,7 @@ async function saveProfile() {
     var f = FIELDS[fi];
     updates[f.k] = document.getElementById('fi-' + f.k).value.trim();
   }
-  var saveRes = await _db.from('suscriptores').update(updates).eq('cedula', _susc.cedula);
+  var saveRes = await _db.from('usuarios').update(updates).eq('id', _susc.id);
   if (!saveRes.error) {
     for (var k in updates) {
       if (Object.prototype.hasOwnProperty.call(updates, k)) { _susc[k] = updates[k]; }
@@ -451,8 +452,8 @@ async function saveProfile() {
 }
 
 async function loadMembers() {
-  var suscCedula = (_susc && _susc.cedula) ? _susc.cedula : null;
-  var mRes = await _db.from('miembros').select('*').eq('suscriptor_cedula', suscCedula);
+  var titularId = (_susc && _susc.id) ? _susc.id : null;
+  var mRes = await _db.from('miembros').select('*').eq('titular_id', titularId);
   var m = mRes.data;
   var list = document.getElementById('members-list');
   if (!m || !m.length) {
@@ -473,7 +474,7 @@ async function loadMembers() {
       + '<p class="member-rel">' + (mb.relacion || 'Familiar') + ' - C.I. ' + (mb.cedula || '') + '</p>'
       + '</div>'
       + '</div>'
-      + '<button class="btn-salud" onclick="verSalud(\'' + cedSafe + '\',\'' + nomSafe + '\')">Ver cuestionario de salud</button>'
+      + '<button class="btn-salud" onclick="verSalud(\'' + mb.id + '\',\'' + nomSafe + '\')">Ver cuestionario de salud</button>'
       + '</div>';
   }
   list.innerHTML = html;
@@ -507,16 +508,23 @@ async function loadPagos() {
   list.innerHTML = html;
 }
 
-async function verSalud(cedula, nombre) {
-  var sRes = await _db.from('salud').select('*').eq('persona_cedula', cedula).single();
+async function verSalud(miembroId, nombre) {
+  var sRes = await _db.from('cuestionarios').select('*').eq('miembro_id', miembroId).single();
   var s = sRes.data;
   if (!s) { alert('No hay cuestionario de salud registrado para: ' + nombre); return; }
   var conds = Array.isArray(s.condiciones) ? s.condiciones.join(', ') : (s.condiciones || '-');
+  var medsTxt = '-';
+  if (s.medicamentos) {
+    medsTxt = (typeof s.medicamentos === 'string') ? s.medicamentos : JSON.stringify(s.medicamentos);
+  }
   alert('Cuestionario de salud - ' + nombre
     + '\n\nCondiciones: ' + conds
-    + '\nMedicamentos: ' + (s.no_toma_medicamentos ? 'No toma' : 'Si toma')
+    + '\nMedicamentos: ' + medsTxt
+    + '\nMedico tratante: ' + (s.medico_tratante || '-')
     + '\nTiempo de tratamiento: ' + (s.tiempo_tratamiento || '-')
-    + '\nAlergias: ' + (s.alergico === 'si' ? (s.alergia_detalle || 'Si') : 'No'));
+    + '\nRecetas vigentes: ' + (s.recetas_vigentes ? 'Si' : 'No')
+    + '\nAlergias: ' + (s.alergias || 'No reporta')
+    + '\nObservaciones: ' + (s.observaciones || '-'));
 }
 
 function togglePassForm() {
