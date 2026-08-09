@@ -481,10 +481,13 @@ async function loadMembers() {
 }
 
 async function loadPagos() {
-  var suscCedula = (_susc && _susc.cedula) ? _susc.cedula : null;
-  var pagosRes = await _db.from('pagos').select('*').eq('suscriptor_cedula', suscCedula).order('created_at', {ascending: false});
-  var pagos = pagosRes.data;
+  // TODO: tabla 'pagos' aun no existe en la base de datos - pendiente de diseno
+  // junto con el flujo de pago. Por ahora se muestra vacio sin consultar nada.
   var list = document.getElementById('pagos-list');
+  list.innerHTML = '<p class="list-empty">Sin historial de pagos.</p>';
+  return;
+  var pagosRes = await _db.from('pagos').select('*').eq('titular_id', _susc.id).order('created_at', {ascending: false});
+  var pagos = pagosRes.data;
   if (!pagos || !pagos.length) {
     list.innerHTML = '<p class="list-empty">Sin historial de pagos.</p>';
     return;
