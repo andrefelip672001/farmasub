@@ -412,7 +412,7 @@ async function loadDashboard() {
   document.getElementById('card-estado').innerHTML = '<span class="badge ' + cls + '"><span class="badge-dot"></span>' + lbl + '</span>';
 
   var cedula = (s && s.cedula) ? s.cedula : '';
-  var countRes = await _db.from('miembros').select('*', { count: 'exact', head: true }).eq('suscriptor_cedula', cedula);
+  var countRes = await _db.from('miembros').select('*', { count: 'exact', head: true }).eq('titular_id', s.id);
   document.getElementById('card-miembros').textContent = (countRes.count || 0) + 1;
 
   var now = new Date();
@@ -422,12 +422,12 @@ async function loadDashboard() {
   var barEl = document.getElementById('dias-bar');
   if (barEl) { barEl.style.width = Math.round(daysLeft / daysInMonth * 100) + '%'; }
 
-  var pedRes = await _db.from('pedidos').select('id,fecha,estado,total').eq('suscriptor_cedula', cedula).order('fecha', { ascending: false }).limit(1);
+  var pedRes = await _db.from('pedidos').select('id,fecha_pedido,estado,total_costo').eq('titular_id', s.id).order('fecha_pedido', { ascending: false }).limit(1);
   var ped = pedRes.data;
 
   if (ped && ped.length) {
     var p = ped[0];
-    document.getElementById('card-pedido-fecha').textContent = new Date(p.fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'short', year: 'numeric' });
+    document.getElementById('card-pedido-fecha').textContent = new Date(p.fecha_pedido).toLocaleDateString('es-EC', { day: 'numeric', month: 'short', year: 'numeric' });
     var eclsMap = { pendiente: 'badge-pendiente', despachado: 'badge-despachado', entregado: 'badge-activa' };
     var ecls = eclsMap[p.estado] || 'badge-pendiente';
     document.getElementById('card-pedido-estado').innerHTML = '<span class="badge ' + ecls + '" style="font-size:.7rem;padding:2px 8px">' + p.estado + '</span>';
@@ -437,9 +437,9 @@ async function loadDashboard() {
     var items = itemsRes.data;
     var rows = [];
     rows.push('<div class="order-row"><span class="order-lbl">Numero de pedido</span><span class="order-val">#' + p.id + '</span></div>');
-    rows.push('<div class="order-row"><span class="order-lbl">Fecha</span><span class="order-val">' + new Date(p.fecha).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' }) + '</span></div>');
+    rows.push('<div class="order-row"><span class="order-lbl">Fecha</span><span class="order-val">' + new Date(p.fecha_pedido).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' }) + '</span></div>');
     rows.push('<div class="order-row"><span class="order-lbl">Estado</span><span class="order-val"><span class="badge ' + ecls + '">' + p.estado + '</span></span></div>');
-    rows.push('<div class="order-row"><span class="order-lbl">Total</span><span class="order-val">$' + (p.total || 0).toFixed(2) + '</span></div>');
+    rows.push('<div class="order-row"><span class="order-lbl">Total</span><span class="order-val">$' + (p.total_costo || 0).toFixed(2) + '</span></div>');
     var itemsList = items || [];
     for (var k = 0; k < itemsList.length; k++) {
       var iname = (itemsList[k].productos && itemsList[k].productos.nombre) ? itemsList[k].productos.nombre : 'Producto';
