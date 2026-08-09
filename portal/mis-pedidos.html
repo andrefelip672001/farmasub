@@ -106,74 +106,98 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-const _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
-let _cedula;
+var _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var _titularId;
 
-(async()=>{
-  const {data:{session}}=await _db.auth.getSession();
-  if(!session){window.location.href='../portal/login.html';return;}
-  const {data:s}=await _db.from('suscriptores').select('nombre,cedula').eq('email',session.user.email).single();
-  _cedula=s?.cedula;
-  document.getElementById('nav-nombre').textContent=s?.nombre||session.user.email;
-  document.getElementById('nav-avatar').textContent=(s?.nombre||session.user.email)[0].toUpperCase();
-  await loadPedidos();
-  updateCartBadge();
+(function(){
+  _db.auth.getSession().then(function(sessRes){
+    var session=sessRes.data.session;
+    if(!session){window.location.href='../portal/login.html';return;}
+    _db.from('usuarios').select('nombre,id').eq('email',session.user.email).single().then(function(sRes){
+      var s=sRes.data;
+      _titularId=s?s.id:null;
+      document.getElementById('nav-nombre').textContent=(s&&s.nombre)?s.nombre:session.user.email;
+      document.getElementById('nav-avatar').textContent=((s&&s.nombre)?s.nombre:session.user.email).charAt(0).toUpperCase();
+      loadPedidos();
+      updateCartBadge();
+    });
+  });
 })();
 
-async function loadPedidos(){
-  const {data:pedidos}=await _db.from('pedidos').select('id,numero,fecha,estado,total').eq('suscriptor_cedula',_cedula).order('fecha',{ascending:false});
-  const list=document.getElementById('pedidos-list');
-  if(!pedidos||!pedidos.length){
-    list.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>Aún no tienes pedidos.</p><a href="../portal/catalogo.html" style="display:inline-block;margin-top:12px;padding:10px 20px;background:var(--green);color:white;border-radius:10px;text-decoration:none;font-weight:600;font-size:.875rem">Ver catálogo</a></div>';
-    return;
-  }
-  list.innerHTML=pedidos.map((p,i)=>{
-    const cls=badgeCls(p.estado);
-    const fecha=new Date(p.fecha).toLocaleDateString('es-EC',{day:'numeric',month:'long',year:'numeric'});
-    return `<div class="pedido-card">
-      <div class="pedido-header" onclick="togglePedido(${i},${p.id})">
-        <div class="ped-info">
-          <span class="ped-num">${p.numero||'#'+p.id}</span>
-          <span class="ped-fecha">${fecha}</span>
-          <span class="badge ${cls}">${p.estado}</span>
-        </div>
-        <span class="ped-total">$${(p.total||0).toFixed(2)}</span>
-        <svg class="ped-chevron" id="chev-${i}" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="pedido-detail" id="detail-${i}">
-        <p class="detail-title">Cargando productos...</p>
-      </div>
-    </div>`;
-  }).join('');
+function loadPedidos(){
+  return _db.from('pedidos').select('id,estado,fecha_pedido,total_costo').eq('titular_id',_titularId).order('fecha_pedido',{ascending:false}).then(function(pedRes){
+    var pedidos=pedRes.data;
+    var list=document.getElementById('pedidos-list');
+    if(!pedidos||!pedidos.length){
+      list.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><p>Aun no tienes pedidos.</p><a href="../portal/catalogo.html" style="display:inline-block;margin-top:12px;padding:10px 20px;background:var(--green);color:white;border-radius:10px;text-decoration:none;font-weight:600;font-size:.875rem">Ver catalogo</a></div>';
+      return;
+    }
+    var html='';
+    for(var i=0;i<pedidos.length;i++){
+      var p=pedidos[i];
+      var cls=badgeCls(p.estado);
+      var fecha=new Date(p.fecha_pedido).toLocaleDateString('es-EC',{day:'numeric',month:'long',year:'numeric'});
+      html+='<div class="pedido-card">'
+        +'<div class="pedido-header" onclick="togglePedido('+i+',\''+p.id+'\')">'
+        +'<div class="ped-info">'
+        +'<span class="ped-num">#'+p.id.slice(0,8)+'</span>'
+        +'<span class="ped-fecha">'+fecha+'</span>'
+        +'<span class="badge '+cls+'">'+p.estado+'</span>'
+        +'</div>'
+        +'<span class="ped-total">$'+(p.total_costo||0).toFixed(2)+'</span>'
+        +'<svg class="ped-chevron" id="chev-'+i+'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
+        +'</div>'
+        +'<div class="pedido-detail" id="detail-'+i+'">'
+        +'<p class="detail-title">Cargando productos...</p>'
+        +'</div>'
+        +'</div>';
+    }
+    list.innerHTML=html;
+  });
 }
 
-async function togglePedido(idx,pedidoId){
-  const det=document.getElementById('detail-'+idx);
-  const chev=document.getElementById('chev-'+idx);
+function togglePedido(idx,pedidoId){
+  var det=document.getElementById('detail-'+idx);
+  var chev=document.getElementById('chev-'+idx);
   if(det.classList.contains('open')){
     det.classList.remove('open');chev.classList.remove('open');return;
   }
   det.classList.add('open');chev.classList.add('open');
   if(det.dataset.loaded)return;
   det.dataset.loaded='1';
-  const {data:items}=await _db.from('pedido_items').select('cantidad,precio_unitario,productos(nombre),suscriptores(nombre),miembros(nombre)').eq('pedido_id',pedidoId);
-  if(!items||!items.length){det.innerHTML='<p class="detail-title">Sin productos</p>';return;}
-  det.innerHTML=`<p class="detail-title">Productos</p>`+items.map(i=>`
-    <div class="detail-item">
-      <div>
-        <span class="detail-item-name">${i.productos?.nombre||'Producto'}</span>
-        <p class="detail-item-meta">Para: ${i.miembros?.nombre||'Titular'}</p>
-      </div>
-      <div style="text-align:right">
-        <span>×${i.cantidad}</span>
-        <p class="detail-item-meta">$${((i.precio_unitario||0)*i.cantidad).toFixed(2)}</p>
-      </div>
-    </div>`).join('');
+  _db.from('pedido_items').select('cantidad,precio_unitario,productos(nombre),miembros(nombre)').eq('pedido_id',pedidoId).then(function(itemsRes){
+    var items=itemsRes.data;
+    if(!items||!items.length){det.innerHTML='<p class="detail-title">Sin productos</p>';return;}
+    var html='<p class="detail-title">Productos</p>';
+    for(var j=0;j<items.length;j++){
+      var it=items[j];
+      var prodNombre=(it.productos&&it.productos.nombre)?it.productos.nombre:'Producto';
+      var miembroNombre=(it.miembros&&it.miembros.nombre)?it.miembros.nombre:'Titular';
+      html+='<div class="detail-item">'
+        +'<div>'
+        +'<span class="detail-item-name">'+prodNombre+'</span>'
+        +'<p class="detail-item-meta">Para: '+miembroNombre+'</p>'
+        +'</div>'
+        +'<div style="text-align:right">'
+        +'<span>x'+it.cantidad+'</span>'
+        +'<p class="detail-item-meta">$'+((it.precio_unitario||0)*it.cantidad).toFixed(2)+'</p>'
+        +'</div>'
+        +'</div>';
+    }
+    det.innerHTML=html;
+  });
 }
 
-function badgeCls(e){return{'pendiente':'badge-pendiente','en-proceso':'badge-en-proceso','despachado':'badge-despachado','entregado':'badge-entregado','cancelado':'badge-cancelado'}[e]||'badge-pendiente';}
-function updateCartBadge(){const c=JSON.parse(localStorage.getItem('farmasub_cart')||'[]');const b=document.getElementById('cart-badge');if(c.length){b.style.display='flex';b.textContent=c.length;}else b.style.display='none';}
-function logout(){_db.auth.signOut().then(()=>window.location.href='../portal/login.html');}
+function badgeCls(e){
+  var map={'pendiente':'badge-pendiente','en-proceso':'badge-en-proceso','despachado':'badge-despachado','entregado':'badge-entregado','cancelado':'badge-cancelado'};
+  return map[e]||'badge-pendiente';
+}
+function updateCartBadge(){
+  var c=JSON.parse(localStorage.getItem('farmasub_cart')||'[]');
+  var b=document.getElementById('cart-badge');
+  if(c.length){b.style.display='flex';b.textContent=c.length;}else{b.style.display='none';}
+}
+function logout(){_db.auth.signOut().then(function(){window.location.href='../portal/login.html';});}
 </script>
 </body>
 </html>
