@@ -499,8 +499,8 @@ function renderGrid() {
       + '<p class="precio-sub">$' + (p.precio_costo || 0).toFixed(2) + '</p>'
       + '</div>'
       + '<div class="prod-actions">'
-      + '<button class="btn-ver" onclick="openModal(' + p.id + ')">Ver mas</button>'
-      + '<button class="' + addBtnClass + '" id="add-' + p.id + '" onclick="addToCart(' + p.id + ')">' + addBtnText + '</button>'
+      + '<button class="btn-ver" onclick="openModal(\'' + p.id + '\')">Ver mas</button>'
+      + '<button class="' + addBtnClass + '" id="add-' + p.id + '" onclick="addToCart(\'' + p.id + '\')">' + addBtnText + '</button>'
       + '</div>'
       + '</div>'
       + '</div>';
@@ -622,7 +622,7 @@ function buildRelated(p, autoRels, manualProds) {
     var rImg = rSorted[0]
       ? '<img class="rel-prod-img" src="' + rSorted[0].url + '" alt="' + r.nombre + '" loading="lazy"/>'
       : '<div class="rel-prod-img-ph">&#128138;</div>';
-    relHtml += '<div class="rel-prod-card" onclick="openModal(' + r.id + ')">'
+    relHtml += '<div class="rel-prod-card" onclick="openModal(\'' + r.id + '\')">'
       + rImg
       + '<div class="rel-prod-info">'
       + '<div class="rel-prod-name">' + r.nombre + '</div>'
