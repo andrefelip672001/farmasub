@@ -412,7 +412,7 @@ var _user, _susc, _miembros = [], _cart = [], _recetas = {};
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('suscriptores').select('*').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('*').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
 
@@ -421,7 +421,7 @@ var _user, _susc, _miembros = [], _cart = [], _recetas = {};
 
   if (s) {
     document.getElementById('addr-input').value = (s.direccion || '') + (s.barrio ? ', ' + s.barrio : '');
-    var mRes = await _db.from('miembros').select('*').eq('suscriptor_cedula', s.cedula);
+    var mRes = await _db.from('miembros').select('*').eq('titular_id', s.id);
     _miembros = mRes.data || [];
   }
 
@@ -623,15 +623,14 @@ async function confirmarPedido() {
     var mo = String(now2.getMonth() + 1);
     if (mo.length === 1) mo = '0' + mo;
     var num = 'PED-' + yr + mo + '-' + String(Math.floor(1000 + Math.random() * 9000));
-    var suscCedula = (_susc && _susc.cedula) ? _susc.cedula : null;
+    var titularId = (_susc && _susc.id) ? _susc.id : null;
 
     var pedRes = await _db.from('pedidos').insert({
-      suscriptor_cedula: suscCedula,
-      numero: num,
       estado: 'pendiente',
-      total: total,
+      total_costo: total,
       direccion_entrega: addr,
-      fecha: new Date().toISOString()
+      fecha_pedido: new Date().toISOString(),
+      titular_id: titularId
     }).select().single();
     if (pedRes.error) throw pedRes.error;
     var pedido = pedRes.data;
@@ -639,18 +638,23 @@ async function confirmarPedido() {
     for (var i = 0; i < _cart.length; i++) {
       var recetaUrl = null;
       if (_recetas[i]) {
-        var rpath = (suscCedula || 'anon') + '/' + pedido.id + '_' + i + '_' + _recetas[i].name;
+        var rpath = (titularId || 'anon') + '/' + pedido.id + '_' + i + '_' + _recetas[i].name;
         var ueRes = await _db.storage.from('recetas').upload(rpath, _recetas[i]);
         if (!ueRes.error) {
           var uRes = _db.storage.from('recetas').getPublicUrl(rpath);
           recetaUrl = (uRes.data && uRes.data.publicUrl) ? uRes.data.publicUrl : null;
         }
       }
-      var miembroCedula = (_cart[i].miembro === 'titular') ? suscCedula : _cart[i].miembro;
+      var miembroId = null;
+      if (_cart[i].miembro && _cart[i].miembro !== 'titular') {
+        for (var mk = 0; mk < _miembros.length; mk++) {
+          if (_miembros[mk].cedula === _cart[i].miembro) { miembroId = _miembros[mk].id; break; }
+        }
+      }
       await _db.from('pedido_items').insert({
         pedido_id: pedido.id,
         producto_id: _cart[i].id,
-        miembro_cedula: miembroCedula,
+        miembro_id: miembroId,
         cantidad: _cart[i].cantidad,
         precio_unitario: _cart[i].precio_costo,
         receta_url: recetaUrl
