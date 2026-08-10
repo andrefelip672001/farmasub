@@ -1351,11 +1351,11 @@ async function submitRegistro() {
           titular_id: userId,
           nombre: m.nombre,
           cedula: m.cedula,
-          fecha_nac: m.fechaNac || null,
+          fecha_nacimiento: m.fechaNac || null,
           relacion: m.relacion
         }))
       );
-      if (membErr) console.error('Error miembros:', membErr);
+      if (membErr) { console.error('Error miembros:', membErr); _showSubmitError('Tu cuenta se creo, pero hubo un problema guardando los miembros de familia. Contacta soporte para agregarlos manualmente.'); }
     }
 
     const allPersons = [
