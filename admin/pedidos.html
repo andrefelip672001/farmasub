@@ -334,7 +334,15 @@ async function toggleDetail(rowIdx) {
 }
 
 async function cambiarEstado(id, estado) {
-  await _db.from('pedidos').update({estado: estado}).eq('id', id);
+  var res = await _db.from('pedidos').update({estado: estado}).eq('id', id).select();
+  if (res.error) {
+    alert('No se pudo actualizar el estado: ' + res.error.message);
+    await loadData();
+    return;
+  }
+  if (!res.data || !res.data.length) {
+    alert('No se pudo actualizar el estado (posible permiso de base de datos). Verifica las politicas RLS de la tabla pedidos.');
+  }
   await loadData();
 }
 
