@@ -35,6 +35,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .layout{display:flex;flex:1;overflow:hidden;}
 
 .sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .nav-tag{display:none;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+}
+
 .sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
 .sb-link:hover{background:#FFF8F5;color:var(--naranja);}
 .sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
@@ -184,7 +193,7 @@ var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'
     rol = user.app_metadata.rol;
   }
   if (!rol) {
-    var pRes = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
     rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
   }
   if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
@@ -194,7 +203,7 @@ var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'
 })();
 
 async function loadData() {
-  var res = await _db.from('pedidos').select('*,suscriptores(nombre,cedula)').order('fecha', {ascending: false});
+  var res = await _db.from('pedidos').select('*,usuarios(nombre,cedula)').order('fecha_pedido', {ascending: false});
   _todos = res.data || [];
   document.getElementById('total-badge').textContent = _todos.length;
   renderTable();
@@ -226,8 +235,8 @@ function renderTable() {
     var p = _todos[i];
     if (_filtro !== 'todos' && p.estado !== _filtro) continue;
     if (q) {
-      var num2 = p.numero ? p.numero.toLowerCase() : '';
-      var susc = (p.suscriptores && p.suscriptores.nombre) ? p.suscriptores.nombre.toLowerCase() : '';
+      var num2 = String(p.id).toLowerCase();
+      var susc = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre.toLowerCase() : '';
       if (!num2.includes(q) && !susc.includes(q)) continue;
     }
     rows.push(p);
@@ -241,10 +250,10 @@ function renderTable() {
   for (var j = 0; j < rows.length; j++) {
     var p = rows[j];
     var cls = badgeCls(p.estado);
-    var fecha = p.fecha ? new Date(p.fecha).toLocaleDateString('es-EC') : '-';
-    var total = '$' + (p.total || 0).toFixed(2);
-    var pedNum = p.numero ? p.numero : ('#' + p.id);
-    var suscNombre = (p.suscriptores && p.suscriptores.nombre) ? p.suscriptores.nombre : '-';
+    var fecha = p.fecha_pedido ? new Date(p.fecha_pedido).toLocaleDateString('es-EC') : '-';
+    var total = '$' + (p.total_costo || 0).toFixed(2);
+    var pedNum = '#' + String(p.id).slice(0, 8);
+    var suscNombre = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
     var selHtml = '<select class="status-select" onchange="cambiarEstado(\'' + p.id + '\',this.value)">';
     for (var ei = 0; ei < ESTADOS.length; ei++) {
       var est = ESTADOS[ei];
@@ -314,11 +323,11 @@ async function toggleDetail(rowIdx) {
     }
   }
   if (pedidoData) {
-    if (pedidoData.direccion) {
-      html += '<div class="detail-extra"><span class="di-extra-lbl">Direccion de entrega:</span><span class="di-extra-val">' + pedidoData.direccion + '</span></div>';
+    if (pedidoData.direccion_entrega) {
+      html += '<div class="detail-extra"><span class="di-extra-lbl">Direccion de entrega:</span><span class="di-extra-val">' + pedidoData.direccion_entrega + '</span></div>';
     }
-    if (pedidoData.fecha_estimada) {
-      html += '<div class="detail-extra"><span class="di-extra-lbl">Fecha estimada:</span><span class="di-extra-val">' + new Date(pedidoData.fecha_estimada).toLocaleDateString('es-EC') + '</span></div>';
+    if (pedidoData.fecha_entrega_estimada) {
+      html += '<div class="detail-extra"><span class="di-extra-lbl">Fecha estimada:</span><span class="di-extra-val">' + new Date(pedidoData.fecha_entrega_estimada).toLocaleDateString('es-EC') + '</span></div>';
     }
   }
   det.innerHTML = html;

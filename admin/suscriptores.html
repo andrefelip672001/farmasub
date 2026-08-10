@@ -35,6 +35,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .layout{display:flex;flex:1;overflow:hidden;}
 
 .sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .nav-tag{display:none;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+}
+
 .sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
 .sb-link:hover{background:#FFF8F5;color:var(--naranja);}
 .sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
@@ -269,7 +278,7 @@ var _todos = [], _filtro = 'todos', _selIdx = null;
     rol = user.app_metadata.rol;
   }
   if (!rol) {
-    var pRes = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
     rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
   }
   if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
@@ -384,13 +393,11 @@ async function openPanel(idx) {
   document.getElementById('tab-kyc').innerHTML = '';
 
   var panelResults = await Promise.all([
-    _db.from('miembros').select('*').eq('suscriptor_cedula', s.cedula),
-    _db.from('pedidos').select('id,numero,fecha,estado,total').eq('suscriptor_cedula', s.cedula).order('fecha', {ascending: false}).limit(5),
-    _db.from('pagos').select('*').eq('suscriptor_cedula', s.cedula).order('created_at', {ascending: false}).limit(5)
+    _db.from('miembros').select('*').eq('titular_id', s.id),
+    _db.from('pedidos').select('id,fecha_pedido,estado,total_costo').eq('titular_id', s.id).order('fecha_pedido', {ascending: false}).limit(5)
   ]);
   var miembros = panelResults[0].data || [];
   var pedidos = panelResults[1].data || [];
-  var pagos = panelResults[2].data || [];
 
   // TAB DATOS
   var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
@@ -399,7 +406,7 @@ async function openPanel(idx) {
   if (sEstado2 === 'activa') cls2 = 'badge-activa';
   else if (sEstado2 === 'vencida') cls2 = 'badge-venc';
   else cls2 = 'badge-pend';
-  var cedSafe = s.cedula ? s.cedula.replace(/'/g, '') : '';
+  var susIdSafe = sus ? sus.id : '';
   var datosHtml = '';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Cedula</span><span style="font-weight:500">' + (s.cedula || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Email</span><span style="font-weight:500">' + (s.email || '-') + '</span></div>';
@@ -408,8 +415,8 @@ async function openPanel(idx) {
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + (s.barrio || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + (sEstado2 || '-') + '</span></div>';
   datosHtml += '<div class="panel-actions">';
-  datosHtml += '<button class="btn-activar" onclick="cambiarEstado(\'' + cedSafe + '\',\'activa\')">Activar membresia</button>';
-  datosHtml += '<button class="btn-suspender" onclick="cambiarEstado(\'' + cedSafe + '\',\'vencida\')">Suspender</button>';
+  datosHtml += '<button class="btn-activar" onclick="cambiarEstado(\'' + susIdSafe + '\',\'activa\')">Activar membresia</button>';
+  datosHtml += '<button class="btn-suspender" onclick="cambiarEstado(\'' + susIdSafe + '\',\'vencida\')">Suspender</button>';
   datosHtml += '</div>';
   if (sus && sus.comprobante_url) {
     datosHtml += '<a href="' + sus.comprobante_url + '" target="_blank" class="btn-comprobante">Ver comprobante de pago</a>';
@@ -445,7 +452,7 @@ async function openPanel(idx) {
       if (ped.estado === 'entregado') pc = 'badge-activa';
       else if (ped.estado === 'cancelado') pc = 'badge-venc';
       else pc = 'badge-pend';
-      var pedNum = ped.numero ? ped.numero : ('#' + ped.id);
+      var pedNum = '#' + String(ped.id).slice(0, 8);
       pedHtml += '<div class="pfield">';
       pedHtml += '<span style="font-size:.82rem;font-weight:500">' + pedNum + '</span>';
       pedHtml += '<span class="badge ' + pc + '">' + ped.estado + '</span>';
@@ -456,23 +463,26 @@ async function openPanel(idx) {
   }
   document.getElementById('tab-pedidos').innerHTML = pedHtml;
 
-  // TAB PAGOS
+  // TAB PAGOS (info del pago de membresia registrado en la suscripcion)
   var pagHtml = '';
-  if (pagos.length) {
-    for (var pgi = 0; pgi < pagos.length; pgi++) {
-      var pago = pagos[pgi];
-      var pgc;
-      if (pago.estado === 'pagado') pgc = 'badge-activa';
-      else if (pago.estado === 'rechazado') pgc = 'badge-venc';
-      else pgc = 'badge-pend';
-      var pagFecha = new Date(pago.created_at).toLocaleDateString('es-EC', {month: 'long', year: 'numeric'});
-      pagHtml += '<div class="pfield">';
-      pagHtml += '<span style="font-size:.82rem">' + pagFecha + '</span>';
-      pagHtml += '<span class="badge ' + pgc + '">' + pago.estado + '</span>';
-      pagHtml += '</div>';
+  if (sus) {
+    var metodoLbl = sus.metodo_pago === 'deuna' ? 'QR De Una' : (sus.metodo_pago === 'transferencia' ? 'Transferencia bancaria' : 'No especificado');
+    var planLbl = (sus.plan === 'ahorro') ? 'Plan Ahorro ($8.99)' : (sus.plan === 'familiar' ? 'Plan Familiar ($12.99)' : 'Sin plan asignado');
+    pagHtml += '<div class="pfield"><span class="pfield-lbl">Plan</span><span style="font-weight:500">' + planLbl + '</span></div>';
+    pagHtml += '<div class="pfield"><span class="pfield-lbl">Metodo de pago</span><span style="font-weight:500">' + metodoLbl + '</span></div>';
+    if (sus.fecha_inicio) {
+      pagHtml += '<div class="pfield"><span class="pfield-lbl">Inicio membresia</span><span>' + new Date(sus.fecha_inicio).toLocaleDateString('es-EC') + '</span></div>';
+    }
+    if (sus.fecha_vencimiento) {
+      pagHtml += '<div class="pfield"><span class="pfield-lbl">Vence</span><span>' + new Date(sus.fecha_vencimiento).toLocaleDateString('es-EC') + '</span></div>';
+    }
+    if (sus.comprobante_url) {
+      pagHtml += '<a href="' + sus.comprobante_url + '" target="_blank" class="btn-comprobante" style="margin-top:10px">Ver comprobante de pago</a>';
+    } else {
+      pagHtml += '<p style="font-size:.82rem;color:var(--ink-60);margin-top:6px">Sin comprobante cargado.</p>';
     }
   } else {
-    pagHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin pagos registrados.</p>';
+    pagHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin registro de membresia.</p>';
   }
   document.getElementById('tab-pagos').innerHTML = pagHtml;
 
@@ -509,8 +519,9 @@ function closePanel() {
   renderTable();
 }
 
-async function cambiarEstado(cedula, estado) {
-  await _db.from('suscriptores').update({estado: estado}).eq('cedula', cedula);
+async function cambiarEstado(susId, estado) {
+  if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
+  await _db.from('suscripciones').update({estado: estado}).eq('id', susId);
   await loadSuscriptores();
   closePanel();
 }
