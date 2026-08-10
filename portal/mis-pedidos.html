@@ -19,12 +19,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .logo-text span{color:var(--naranja);}
 .nav-right{display:flex;align-items:center;gap:16px;}
 .nav-user{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;color:var(--ink-60);}
-@media(max-width:700px){
-  .sidebar{display:none;}
-  #nav-nombre{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .top-nav{padding:0 14px;}
-  .btn-logout{padding:6px 10px;font-size:.75rem;}
-}
 .nav-avatar{width:32px;height:32px;background:var(--naranja-light);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--naranja);font-weight:700;font-size:.82rem;}
 .btn-logout{background:none;border:1.5px solid var(--ink-30);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
 .btn-logout:hover{border-color:var(--danger);color:var(--danger);}
@@ -71,6 +65,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 
 .empty{text-align:center;padding:60px 20px;color:var(--ink-60);}
 .empty svg{width:48px;height:48px;color:var(--ink-30);margin-bottom:12px;}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  #nav-nombre{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+  .main{padding:20px;}
+  .page-title{font-size:1.4rem;}
+  .pedido-header{padding:14px 16px;flex-wrap:wrap;}
+  .ped-info{flex-wrap:wrap;gap:6px;}
+}
 </style>
 </head>
 <body>
