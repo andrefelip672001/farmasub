@@ -152,7 +152,12 @@ tr:hover td{background:var(--naranja-light);}
 }
 
 @media(max-width:1100px){.metrics-grid{grid-template-columns:1fr 1fr;}}
-@media(max-width:700px){.sidebar{display:none;}.main{padding:20px;}}
+@media(max-width:700px){.sidebar{display:none;}.main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .nav-tag{display:none;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+}
 </style>
 </head>
 <body>
@@ -314,7 +319,7 @@ var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_p
   if (user.user_metadata && user.user_metadata.rol) rol = user.user_metadata.rol;
   else if (user.app_metadata && user.app_metadata.rol) rol = user.app_metadata.rol;
   if (!rol) {
-    var pRes = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
     rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
   }
   if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
@@ -331,25 +336,33 @@ var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_p
   await loadUltimosPedidos();
 })();
 
+var PLANS = { ahorro: { precio: 8.99 }, familiar: { precio: 12.99 } };
+
 async function loadMetrics() {
   var firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
   var results = await Promise.all([
-    _db.from('suscriptores').select('*', {count: 'exact', head: true}).eq('estado', 'activa'),
-    _db.from('suscriptores').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
-    _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha', firstOfMonth)
+    _db.from('suscripciones').select('plan', {count: 'exact'}).eq('estado', 'activa'),
+    _db.from('suscripciones').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
+    _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha_pedido', firstOfMonth)
   ]);
+  var activasRows = results[0].data || [];
   var activos = results[0].count || 0;
   var pendientes = results[1].count || 0;
   var pedidosMes = results[2].count || 0;
+  var ingresos = 0;
+  for (var i = 0; i < activasRows.length; i++) {
+    var planKey = (activasRows[i].plan && PLANS[activasRows[i].plan]) ? activasRows[i].plan : 'familiar';
+    ingresos += PLANS[planKey].precio;
+  }
   document.getElementById('m-activos').textContent = activos;
   document.getElementById('m-pendientes').textContent = pendientes;
   document.getElementById('m-pedidos').textContent = pedidosMes;
-  document.getElementById('m-ingresos').textContent = '$' + (activos * 8).toFixed(0);
-  document.getElementById('m-utilidad').textContent = 'Utilidad: $' + (activos * 5.5).toFixed(0);
+  document.getElementById('m-ingresos').textContent = '$' + ingresos.toFixed(2);
+  document.getElementById('m-utilidad').textContent = 'Utilidad: $' + ingresos.toFixed(2) + ' (100% membresia, medicamentos al costo)';
 }
 
 async function loadPagosPendientes() {
-  var res = await _db.from('pagos').select('*,suscriptores(nombre,cedula)').eq('estado', 'pendiente').order('created_at', {ascending: false}).limit(5);
+  var res = await _db.from('suscripciones').select('id,plan,metodo_pago,comprobante_url,created_at,usuarios(nombre,cedula)').eq('estado', 'pendiente').order('created_at', {ascending: false}).limit(5);
   var data = res.data;
   var tbody = document.getElementById('pagos-tbody');
   if (!data || !data.length) {
@@ -359,17 +372,19 @@ async function loadPagosPendientes() {
   var html = '';
   for (var i = 0; i < data.length; i++) {
     var p = data[i];
-    var sNom = (p.suscriptores && p.suscriptores.nombre) ? p.suscriptores.nombre : '-';
-    var sCed = (p.suscriptores && p.suscriptores.cedula) ? String(p.suscriptores.cedula) : '';
-    var pId = String(p.id);
+    var sNom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
+    var sCed = (p.usuarios && p.usuarios.cedula) ? String(p.usuarios.cedula) : '';
+    var planKey = (p.plan && PLANS[p.plan]) ? p.plan : 'familiar';
+    var monto = PLANS[planKey].precio;
+    var comprobanteLink = p.comprobante_url ? '<a href="' + p.comprobante_url + '" target="_blank" style="color:var(--naranja);font-size:.78rem;display:block;margin-top:2px">Ver comprobante</a>' : '';
     html += '<tr>'
-      + '<td style="font-weight:500">' + sNom + '</td>'
+      + '<td style="font-weight:500">' + sNom + comprobanteLink + '</td>'
       + '<td style="color:var(--ink-60)">' + (sCed || '-') + '</td>'
-      + '<td style="font-weight:600">$' + (p.monto || 8).toFixed(2) + '</td>'
+      + '<td style="font-weight:600">$' + monto.toFixed(2) + '</td>'
       + '<td style="color:var(--ink-60)">' + new Date(p.created_at).toLocaleDateString('es-EC') + '</td>'
       + '<td>'
-      + '<button class="btn-aprobar" onclick="aprobarPago(\'' + pId + '\',\'' + sCed + '\',this)">Aprobar</button>'
-      + '<button class="btn-rechazar" onclick="rechazarPago(\'' + pId + '\',this)">Rechazar</button>'
+      + '<button class="btn-aprobar" onclick="aprobarPago(\'' + p.id + '\',this)">Aprobar</button>'
+      + '<button class="btn-rechazar" onclick="rechazarPago(\'' + p.id + '\',this)">Rechazar</button>'
       + '</td>'
       + '</tr>';
   }
@@ -377,7 +392,7 @@ async function loadPagosPendientes() {
 }
 
 async function loadUltimosPedidos() {
-  var res = await _db.from('pedidos').select('numero,id,fecha,total,estado,suscriptores(nombre)').order('fecha', {ascending: false}).limit(5);
+  var res = await _db.from('pedidos').select('id,fecha_pedido,total_costo,estado,usuarios(nombre)').order('fecha_pedido', {ascending: false}).limit(5);
   var data = res.data;
   var tbody = document.getElementById('pedidos-tbody');
   if (!data || !data.length) {
@@ -393,33 +408,38 @@ async function loadUltimosPedidos() {
     else if (p.estado === 'despachado' || p.estado === 'en-proceso') cls = 'badge-proceso';
     else if (p.estado === 'cancelado') cls = 'badge-cancelado';
     else cls = 'badge-pendiente';
-    var sNom = (p.suscriptores && p.suscriptores.nombre) ? p.suscriptores.nombre : '-';
+    var sNom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
     html += '<tr>'
-      + '<td class="td-num">' + (p.numero || '#' + p.id) + '</td>'
+      + '<td class="td-num">#' + String(p.id).slice(0,8) + '</td>'
       + '<td>' + sNom + '</td>'
-      + '<td style="color:var(--ink-60)">' + new Date(p.fecha).toLocaleDateString('es-EC') + '</td>'
-      + '<td style="font-weight:600">$' + (p.total || 0).toFixed(2) + '</td>'
+      + '<td style="color:var(--ink-60)">' + new Date(p.fecha_pedido).toLocaleDateString('es-EC') + '</td>'
+      + '<td style="font-weight:600">$' + (p.total_costo || 0).toFixed(2) + '</td>'
       + '<td><span class="badge ' + cls + '">' + (p.estado || '') + '</span></td>'
       + '</tr>';
   }
   tbody.innerHTML = html;
 }
 
-async function aprobarPago(id, cedula, btn) {
+async function aprobarPago(suscripcionId, btn) {
   btn.disabled = true;
   btn.textContent = '...';
-  await _db.from('pagos').update({estado: 'pagado'}).eq('id', id);
-  if (cedula) await _db.from('suscriptores').update({estado: 'activa'}).eq('cedula', cedula);
+  var fechaInicio = new Date().toISOString().slice(0,10);
+  var venc = new Date();
+  venc.setMonth(venc.getMonth() + 1);
+  await _db.from('suscripciones').update({estado: 'activa', fecha_inicio: fechaInicio, fecha_vencimiento: venc.toISOString().slice(0,10)}).eq('id', suscripcionId);
   btn.closest('tr').remove();
   var m = parseInt(document.getElementById('m-pendientes').textContent) - 1;
   document.getElementById('m-pendientes').textContent = Math.max(0, m);
+  loadMetrics();
 }
 
-async function rechazarPago(id, btn) {
+async function rechazarPago(suscripcionId, btn) {
   if (!confirm('Rechazar este pago?')) return;
   btn.disabled = true;
-  await _db.from('pagos').update({estado: 'rechazado'}).eq('id', id);
+  await _db.from('suscripciones').update({estado: 'rechazada'}).eq('id', suscripcionId);
   btn.closest('tr').remove();
+  var m = parseInt(document.getElementById('m-pendientes').textContent) - 1;
+  document.getElementById('m-pendientes').textContent = Math.max(0, m);
 }
 
 function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
