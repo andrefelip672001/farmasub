@@ -92,6 +92,12 @@ tr:hover td{background:var(--naranja-light);}
 .btn-cancel-m:hover{border-color:var(--ink);color:var(--ink);}
 .btn-confirm-rechazo{padding:9px 18px;background:var(--danger);border:none;border-radius:10px;font-size:.82rem;font-weight:700;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
 .btn-confirm-rechazo:hover{background:#dc2626;}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+}
 </style>
 </head>
 <body>
@@ -205,7 +211,8 @@ tr:hover td{background:var(--naranja-light);}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
-var _todos = [], _filtro = 'todos', _rechazoCedula = null;
+var _todos = [], _filtro = 'todos', _rechazoId = null;
+var PLANS = { ahorro: { nombre: 'Plan Ahorro', precio: 8.99 }, familiar: { nombre: 'Plan Familiar', precio: 12.99 } };
 
 (async function() {
   var sessRes = await _db.auth.getSession();
@@ -219,7 +226,7 @@ var _todos = [], _filtro = 'todos', _rechazoCedula = null;
     rol = user.app_metadata.rol;
   }
   if (!rol) {
-    var pRes = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
     rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
   }
   if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
@@ -229,7 +236,7 @@ var _todos = [], _filtro = 'todos', _rechazoCedula = null;
 })();
 
 async function loadData() {
-  var res = await _db.from('suscriptores').select('*').order('created_at', {ascending: false});
+  var res = await _db.from('suscripciones').select('*, usuarios(nombre,cedula,email)').order('created_at', {ascending: false});
   _todos = res.data || [];
   var pendientes = 0;
   for (var i = 0; i < _todos.length; i++) {
@@ -275,7 +282,10 @@ function renderTable() {
     else if (kyc2 === 'rechazado') kycLbl = 'Rechazado';
     else kycLbl = 'Pendiente';
     var fecha = s.created_at ? new Date(s.created_at).toLocaleDateString('es-EC') : '-';
-    var cedSafe = s.cedula ? s.cedula.replace(/'/g, '') : '';
+    var u = s.usuarios || {};
+    var susIdSafe = s.id;
+    var planKey = (s.plan && PLANS[s.plan]) ? s.plan : 'familiar';
+    var precioTxt = '$' + PLANS[planKey].precio.toFixed(2);
     var compHtml;
     if (s.comprobante_url) {
       var urlSafe = s.comprobante_url.replace(/'/g, '').replace(/"/g, '');
@@ -285,11 +295,11 @@ function renderTable() {
     }
     html += '<tr>';
     html += '<td>';
-    html += '<p style="font-weight:600">' + (s.nombre || '-') + '</p>';
-    if (s.email) { html += '<p style="color:var(--ink-60);font-size:.75rem">' + s.email + '</p>'; }
+    html += '<p style="font-weight:600">' + (u.nombre || '-') + '</p>';
+    if (u.email) { html += '<p style="color:var(--ink-60);font-size:.75rem">' + u.email + '</p>'; }
     html += '</td>';
-    html += '<td style="color:var(--ink-60);font-size:.78rem">' + (s.cedula || '-') + '</td>';
-    html += '<td style="font-weight:700;color:var(--naranja)">$8.00</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + (u.cedula || '-') + '</td>';
+    html += '<td style="font-weight:700;color:var(--naranja)">' + precioTxt + '</td>';
     html += '<td>' + compHtml + '</td>';
     html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span>';
     if (kyc2 === 'rechazado' && s.kyc_motivo_rechazo) {
@@ -298,32 +308,37 @@ function renderTable() {
     html += '</td>';
     html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
     html += '<td>';
-    html += '<button class="btn-aprobar" onclick="aprobar(\'' + cedSafe + '\')">Aprobar</button>';
-    html += '<button class="btn-rechazar" onclick="abrirRechazo(\'' + cedSafe + '\')">Rechazar</button>';
+    html += '<button class="btn-aprobar" onclick="aprobar(\'' + susIdSafe + '\')">Aprobar</button>';
+    html += '<button class="btn-rechazar" onclick="abrirRechazo(\'' + susIdSafe + '\')">Rechazar</button>';
     html += '</td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
 }
 
-async function aprobar(cedula) {
-  await _db.from('suscriptores').update({
+async function aprobar(susId) {
+  var fechaInicio = new Date().toISOString().slice(0, 10);
+  var venc = new Date();
+  venc.setMonth(venc.getMonth() + 1);
+  await _db.from('suscripciones').update({
     estado: 'activa',
     kyc_estado: 'verificado',
-    kyc_fecha: new Date().toISOString()
-  }).eq('cedula', cedula);
+    kyc_fecha: new Date().toISOString(),
+    fecha_inicio: fechaInicio,
+    fecha_vencimiento: venc.toISOString().slice(0, 10)
+  }).eq('id', susId);
   await loadData();
 }
 
-function abrirRechazo(cedula) {
-  _rechazoCedula = cedula;
+function abrirRechazo(susId) {
+  _rechazoId = susId;
   document.getElementById('rechazo-motivo').value = '';
   document.getElementById('rechazo-modal').classList.remove('hidden');
 }
 
 function closeRechazoModal() {
   document.getElementById('rechazo-modal').classList.add('hidden');
-  _rechazoCedula = null;
+  _rechazoId = null;
 }
 
 function closeRechazoClick(e) {
@@ -333,12 +348,13 @@ function closeRechazoClick(e) {
 async function confirmarRechazo() {
   var motivo = document.getElementById('rechazo-motivo').value.trim();
   if (!motivo) { document.getElementById('rechazo-motivo').focus(); return; }
-  if (!_rechazoCedula) return;
-  await _db.from('suscriptores').update({
+  if (!_rechazoId) return;
+  await _db.from('suscripciones').update({
+    estado: 'rechazada',
     kyc_estado: 'rechazado',
     kyc_fecha: new Date().toISOString(),
     kyc_motivo_rechazo: motivo
-  }).eq('cedula', _rechazoCedula);
+  }).eq('id', _rechazoId);
   closeRechazoModal();
   await loadData();
 }
