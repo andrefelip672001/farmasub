@@ -290,7 +290,7 @@ var _todos = [], _filtro = 'todos', _selIdx = null;
 async function loadSuscriptores() {
   var res = await _db
     .from('usuarios')
-    .select('*, suscripciones(id, estado, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
+    .select('*, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
     .eq('rol', 'suscriptor')
     .order('created_at', {ascending: false});
   if (res.error) {
@@ -415,7 +415,17 @@ async function openPanel(idx) {
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Telefono</span><span style="font-weight:500">' + (s.telefono || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Direccion</span><span style="font-weight:500">' + (s.direccion || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + (s.barrio || '-') + '</span></div>';
+  var planLbl2 = (sus && sus.plan === 'ahorro') ? 'Plan Ahorro ($8.99)' : (sus && sus.plan === 'familiar') ? 'Plan Familiar ($12.99)' : 'Sin plan asignado';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Plan</span><span style="font-weight:500">' + planLbl2 + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + (sEstado2 || '-') + '</span></div>';
+  if (sus && sus.fecha_inicio) {
+    datosHtml += '<div class="pfield"><span class="pfield-lbl">Inicio membresia</span><span style="font-weight:500">' + new Date(sus.fecha_inicio).toLocaleDateString('es-EC') + '</span></div>';
+  }
+  if (sus && sus.fecha_vencimiento) {
+    var venceDate = new Date(sus.fecha_vencimiento);
+    var venceVencida = venceDate < new Date();
+    datosHtml += '<div class="pfield"><span class="pfield-lbl">Vence</span><span style="font-weight:500' + (venceVencida ? ';color:var(--danger)' : '') + '">' + venceDate.toLocaleDateString('es-EC') + (venceVencida ? ' (vencida)' : '') + '</span></div>';
+  }
   datosHtml += '<div class="panel-actions">';
   datosHtml += '<button class="btn-activar" onclick="cambiarEstado(\'' + susIdSafe + '\',\'activa\')">Activar membresia</button>';
   datosHtml += '<button class="btn-suspender" onclick="cambiarEstado(\'' + susIdSafe + '\',\'vencida\')">Suspender</button>';
