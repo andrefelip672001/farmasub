@@ -315,8 +315,46 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
     <div class="section-block">
       <div class="section-header">
         <h2 class="section-title">Grupo familiar</h2>
+        <button class="btn-edit" id="btn-add-member" onclick="openAddMemberModal()">+ Agregar miembro</button>
       </div>
       <div id="members-list"><p class="list-empty">Cargando...</p></div>
+    </div>
+
+    <!-- MODAL AGREGAR MIEMBRO -->
+    <div class="modal-overlay" id="add-member-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px" onclick="closeAddMemberOnBg(event)">
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px">Agregar miembro</h3>
+        <p id="add-member-cupo-txt" style="font-size:.82rem;color:var(--ink-60);margin-bottom:18px">Cargando cupo...</p>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Nombre completo</label>
+            <input type="text" id="am-nombre" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem"/>
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Cedula</label>
+            <input type="text" id="am-cedula" maxlength="10" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem"/>
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Fecha de nacimiento</label>
+            <input type="date" id="am-fecha" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem"/>
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Relacion</label>
+            <select id="am-relacion" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem">
+              <option value="Conyuge">Conyuge</option>
+              <option value="Hijo/a">Hijo/a</option>
+              <option value="Padre/Madre">Padre/Madre</option>
+              <option value="Hermano/a">Hermano/a</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+        <p id="am-error" style="color:var(--danger);font-size:.82rem;margin-top:10px;display:none"></p>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button onclick="closeAddMemberModal()" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid var(--ink-30);background:#fff;color:var(--ink-60);font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit">Cancelar</button>
+          <button onclick="submitAddMember()" id="am-submit-btn" style="flex:1;padding:11px;border-radius:10px;border:none;background:var(--naranja);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit">Guardar</button>
+        </div>
+      </div>
     </div>
 
     <!-- HISTORIAL DE PAGOS -->
@@ -358,6 +396,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
 var _user, _susc, _editMode = false;
+var PLANS = { ahorro: { nombre: 'Plan Ahorro', cupo: 2 }, familiar: { nombre: 'Plan Familiar', cupo: 4 } };
+var _planKey = 'familiar';
 
 var FIELDS = [
   {k: 'nombre',    l: 'Nombre completo'},
@@ -374,10 +414,11 @@ var FIELDS = [
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('*, suscripciones(estado, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('*, suscripciones(estado, plan, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
   var _suscRow = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
+  _planKey = (_suscRow && _suscRow.plan && PLANS[_suscRow.plan]) ? _suscRow.plan : 'familiar';
 
   var nombre = (s && s.nombre) ? s.nombre : _user.email;
   var initial = nombre.charAt(0).toUpperCase();
@@ -458,10 +499,13 @@ async function saveProfile() {
   }
 }
 
+var _miembrosActuales = [];
+
 async function loadMembers() {
   var titularId = (_susc && _susc.id) ? _susc.id : null;
   var mRes = await _db.from('miembros').select('*').eq('titular_id', titularId);
-  var m = mRes.data;
+  var m = mRes.data || [];
+  _miembrosActuales = m;
   var list = document.getElementById('members-list');
   if (!m || !m.length) {
     list.innerHTML = '<p class="list-empty">No tienes miembros adicionales registrados.</p>';
@@ -485,6 +529,81 @@ async function loadMembers() {
       + '</div>';
   }
   list.innerHTML = html;
+}
+
+function openAddMemberModal() {
+  var maxExtra = PLANS[_planKey].cupo - 1;
+  var cupoTxt = document.getElementById('add-member-cupo-txt');
+  if (_miembrosActuales.length >= maxExtra) {
+    cupoTxt.innerHTML = '<span style="color:var(--danger)">Ya alcanzaste el maximo de ' + PLANS[_planKey].cupo + ' personas de tu ' + PLANS[_planKey].nombre + '.</span>';
+    document.getElementById('am-submit-btn').disabled = true;
+  } else {
+    var restantes = maxExtra - _miembrosActuales.length;
+    cupoTxt.textContent = 'Puedes agregar ' + restantes + ' persona' + (restantes === 1 ? '' : 's') + ' mas en tu ' + PLANS[_planKey].nombre + '.';
+    document.getElementById('am-submit-btn').disabled = false;
+  }
+  document.getElementById('am-nombre').value = '';
+  document.getElementById('am-cedula').value = '';
+  document.getElementById('am-fecha').value = '';
+  document.getElementById('am-relacion').value = 'Conyuge';
+  document.getElementById('am-error').style.display = 'none';
+  document.getElementById('add-member-overlay').style.display = 'flex';
+}
+
+function closeAddMemberModal() {
+  document.getElementById('add-member-overlay').style.display = 'none';
+}
+
+function closeAddMemberOnBg(e) {
+  if (e.target === document.getElementById('add-member-overlay')) closeAddMemberModal();
+}
+
+async function submitAddMember() {
+  var errEl = document.getElementById('am-error');
+  errEl.style.display = 'none';
+
+  var maxExtra = PLANS[_planKey].cupo - 1;
+  if (_miembrosActuales.length >= maxExtra) {
+    errEl.textContent = 'Ya alcanzaste el cupo de personas de tu plan.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var nombre = document.getElementById('am-nombre').value.trim();
+  var cedula = document.getElementById('am-cedula').value.trim();
+  var fecha = document.getElementById('am-fecha').value;
+  var relacion = document.getElementById('am-relacion').value;
+
+  if (!nombre) { errEl.textContent = 'Ingresa el nombre completo.'; errEl.style.display = 'block'; return; }
+  if (!cedula || cedula.length !== 10 || !/^[0-9]+$/.test(cedula)) { errEl.textContent = 'Ingresa una cedula valida de 10 digitos.'; errEl.style.display = 'block'; return; }
+  if (cedula === (_susc && _susc.cedula ? _susc.cedula : '')) { errEl.textContent = 'Esa cedula ya es la del titular.'; errEl.style.display = 'block'; return; }
+  for (var ci = 0; ci < _miembrosActuales.length; ci++) {
+    if (_miembrosActuales[ci].cedula === cedula) { errEl.textContent = 'Ese miembro ya esta registrado.'; errEl.style.display = 'block'; return; }
+  }
+
+  var btn = document.getElementById('am-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  var insRes = await _db.from('miembros').insert({
+    titular_id: _susc.id,
+    nombre: nombre,
+    cedula: cedula,
+    fecha_nacimiento: fecha || null,
+    relacion: relacion
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Guardar';
+
+  if (insRes.error) {
+    errEl.textContent = 'Error al guardar: ' + insRes.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  closeAddMemberModal();
+  await loadMembers();
 }
 
 async function loadPagos() {
