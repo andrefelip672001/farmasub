@@ -414,6 +414,19 @@ async function confirmarRenovacion() {
     }).eq('id', _susc.id);
     if (updRes.error) throw updRes.error;
 
+    var planKeyPago = (_susc.plan && PLANS[_susc.plan]) ? _susc.plan : 'familiar';
+    var pagoRes = await _db.from('pagos').insert({
+      titular_id: _user.id,
+      suscripcion_id: _susc.id,
+      tipo: 'renovacion',
+      plan: planKeyPago,
+      monto: PLANS[planKeyPago].precio,
+      metodo_pago: _metodo,
+      comprobante_url: comprobanteUrl,
+      estado: 'pendiente'
+    });
+    if (pagoRes.error) { console.error('Error registrando pago:', pagoRes.error); }
+
     document.getElementById('pago-wrap').style.display = 'none';
     document.getElementById('pendiente-box').style.display = 'block';
     document.getElementById('page-sub').textContent = 'Tu pago esta siendo verificado.';

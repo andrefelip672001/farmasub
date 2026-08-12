@@ -488,12 +488,8 @@ async function loadMembers() {
 }
 
 async function loadPagos() {
-  // TODO: tabla 'pagos' aun no existe en la base de datos - pendiente de diseno
-  // junto con el flujo de pago. Por ahora se muestra vacio sin consultar nada.
   var list = document.getElementById('pagos-list');
-  list.innerHTML = '<p class="list-empty">Sin historial de pagos.</p>';
-  return;
-  var pagosRes = await _db.from('pagos').select('*').eq('titular_id', _susc.id).order('created_at', {ascending: false});
+  var pagosRes = await _db.from('pagos').select('*').eq('titular_id', _susc.id).order('fecha_pago', {ascending: false});
   var pagos = pagosRes.data;
   if (!pagos || !pagos.length) {
     list.innerHTML = '<p class="list-empty">Sin historial de pagos.</p>';
@@ -503,15 +499,20 @@ async function loadPagos() {
   for (var pi = 0; pi < pagos.length; pi++) {
     var p = pagos[pi];
     var cls;
-    if (p.estado === 'pagado' || p.estado === 'verificado') cls = 'badge-pagado';
-    else if (p.estado === 'vencido') cls = 'badge-vencido';
+    if (p.estado === 'aprobado') cls = 'badge-pagado';
+    else if (p.estado === 'rechazado') cls = 'badge-vencido';
     else cls = 'badge-pendiente';
-    var mesTxt = p.mes || new Date(p.created_at).toLocaleDateString('es-EC', {month: 'long', year: 'numeric'});
-    var fechaTxt = p.created_at ? new Date(p.created_at).toLocaleDateString('es-EC') : '-';
+    var lbl;
+    if (p.estado === 'aprobado') lbl = 'Aprobado';
+    else if (p.estado === 'rechazado') lbl = 'Rechazado';
+    else lbl = 'En revision';
+    var tipoTxt = p.tipo === 'renovacion' ? 'Renovacion' : 'Registro';
+    var mesTxt = tipoTxt + ' - ' + (p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC', {month: 'long', year: 'numeric'}) : '');
+    var fechaTxt = p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC') : '-';
     html += '<div class="pay-row">'
       + '<span class="pay-mes">' + mesTxt + '</span>'
-      + '<span class="pay-monto">$' + (p.monto || 8).toFixed(2) + '</span>'
-      + '<span class="badge ' + cls + '">' + (p.estado || 'pendiente') + '</span>'
+      + '<span class="pay-monto">$' + (p.monto || 0).toFixed(2) + '</span>'
+      + '<span class="badge ' + cls + '">' + lbl + '</span>'
       + '<span class="pay-fecha">' + fechaTxt + '</span>'
       + '</div>';
   }

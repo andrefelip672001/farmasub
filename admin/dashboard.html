@@ -342,7 +342,7 @@ async function loadMetrics() {
   var firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
   var results = await Promise.all([
     _db.from('suscripciones').select('plan', {count: 'exact'}).eq('estado', 'activa'),
-    _db.from('suscripciones').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
+    _db.from('pagos').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
     _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha_pedido', firstOfMonth)
   ]);
   var activasRows = results[0].data || [];
@@ -362,7 +362,7 @@ async function loadMetrics() {
 }
 
 async function loadPagosPendientes() {
-  var res = await _db.from('suscripciones').select('id,plan,metodo_pago,comprobante_url,created_at,usuarios(nombre,cedula)').eq('estado', 'pendiente').order('created_at', {ascending: false}).limit(5);
+  var res = await _db.from('pagos').select('id,suscripcion_id,tipo,monto,comprobante_url,fecha_pago,usuarios(nombre,cedula)').eq('estado', 'pendiente').order('fecha_pago', {ascending: false}).limit(5);
   var data = res.data;
   var tbody = document.getElementById('pagos-tbody');
   if (!data || !data.length) {
@@ -374,16 +374,15 @@ async function loadPagosPendientes() {
     var p = data[i];
     var sNom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
     var sCed = (p.usuarios && p.usuarios.cedula) ? String(p.usuarios.cedula) : '';
-    var planKey = (p.plan && PLANS[p.plan]) ? p.plan : 'familiar';
-    var monto = PLANS[planKey].precio;
+    var tipoTxt = p.tipo === 'renovacion' ? ' (renovacion)' : ' (registro)';
     var comprobanteLink = p.comprobante_url ? '<a href="' + p.comprobante_url + '" target="_blank" style="color:var(--naranja);font-size:.78rem;display:block;margin-top:2px">Ver comprobante</a>' : '';
     html += '<tr>'
-      + '<td style="font-weight:500">' + sNom + comprobanteLink + '</td>'
+      + '<td style="font-weight:500">' + sNom + tipoTxt + comprobanteLink + '</td>'
       + '<td style="color:var(--ink-60)">' + (sCed || '-') + '</td>'
-      + '<td style="font-weight:600">$' + monto.toFixed(2) + '</td>'
-      + '<td style="color:var(--ink-60)">' + new Date(p.created_at).toLocaleDateString('es-EC') + '</td>'
+      + '<td style="font-weight:600">$' + (p.monto || 0).toFixed(2) + '</td>'
+      + '<td style="color:var(--ink-60)">' + new Date(p.fecha_pago).toLocaleDateString('es-EC') + '</td>'
       + '<td>'
-      + '<button class="btn-aprobar" onclick="aprobarPago(\'' + p.id + '\',this)">Aprobar</button>'
+      + '<button class="btn-aprobar" onclick="aprobarPago(\'' + p.id + '\',\'' + (p.suscripcion_id || '') + '\',this)">Aprobar</button>'
       + '<button class="btn-rechazar" onclick="rechazarPago(\'' + p.id + '\',this)">Rechazar</button>'
       + '</td>'
       + '</tr>';
@@ -420,23 +419,27 @@ async function loadUltimosPedidos() {
   tbody.innerHTML = html;
 }
 
-async function aprobarPago(suscripcionId, btn) {
+async function aprobarPago(pagoId, suscripcionId, btn) {
   btn.disabled = true;
   btn.textContent = '...';
-  var fechaInicio = new Date().toISOString().slice(0,10);
-  var venc = new Date();
-  venc.setMonth(venc.getMonth() + 1);
-  await _db.from('suscripciones').update({estado: 'activa', fecha_inicio: fechaInicio, fecha_vencimiento: venc.toISOString().slice(0,10)}).eq('id', suscripcionId);
+  var ahora = new Date().toISOString();
+  await _db.from('pagos').update({estado: 'aprobado', fecha_revision: ahora}).eq('id', pagoId);
+  if (suscripcionId) {
+    var fechaInicio = new Date().toISOString().slice(0,10);
+    var venc = new Date();
+    venc.setMonth(venc.getMonth() + 1);
+    await _db.from('suscripciones').update({estado: 'activa', kyc_estado: 'verificado', kyc_fecha: ahora, fecha_inicio: fechaInicio, fecha_vencimiento: venc.toISOString().slice(0,10)}).eq('id', suscripcionId);
+  }
   btn.closest('tr').remove();
   var m = parseInt(document.getElementById('m-pendientes').textContent) - 1;
   document.getElementById('m-pendientes').textContent = Math.max(0, m);
   loadMetrics();
 }
 
-async function rechazarPago(suscripcionId, btn) {
+async function rechazarPago(pagoId, btn) {
   if (!confirm('Rechazar este pago?')) return;
   btn.disabled = true;
-  await _db.from('suscripciones').update({estado: 'rechazada'}).eq('id', suscripcionId);
+  await _db.from('pagos').update({estado: 'rechazado', fecha_revision: new Date().toISOString()}).eq('id', pagoId);
   btn.closest('tr').remove();
   var m = parseInt(document.getElementById('m-pendientes').textContent) - 1;
   document.getElementById('m-pendientes').textContent = Math.max(0, m);

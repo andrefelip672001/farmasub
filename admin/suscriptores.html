@@ -394,10 +394,12 @@ async function openPanel(idx) {
 
   var panelResults = await Promise.all([
     _db.from('miembros').select('*').eq('titular_id', s.id),
-    _db.from('pedidos').select('id,fecha_pedido,estado,total_costo').eq('titular_id', s.id).order('fecha_pedido', {ascending: false}).limit(5)
+    _db.from('pedidos').select('id,fecha_pedido,estado,total_costo').eq('titular_id', s.id).order('fecha_pedido', {ascending: false}).limit(5),
+    _db.from('pagos').select('*').eq('titular_id', s.id).order('fecha_pago', {ascending: false}).limit(10)
   ]);
   var miembros = panelResults[0].data || [];
   var pedidos = panelResults[1].data || [];
+  var pagos = panelResults[2].data || [];
 
   // TAB DATOS
   var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
@@ -463,26 +465,30 @@ async function openPanel(idx) {
   }
   document.getElementById('tab-pedidos').innerHTML = pedHtml;
 
-  // TAB PAGOS (info del pago de membresia registrado en la suscripcion)
+  // TAB PAGOS (historial real de la tabla pagos)
   var pagHtml = '';
-  if (sus) {
-    var metodoLbl = sus.metodo_pago === 'deuna' ? 'QR De Una' : (sus.metodo_pago === 'transferencia' ? 'Transferencia bancaria' : 'No especificado');
-    var planLbl = (sus.plan === 'ahorro') ? 'Plan Ahorro ($8.99)' : (sus.plan === 'familiar' ? 'Plan Familiar ($12.99)' : 'Sin plan asignado');
-    pagHtml += '<div class="pfield"><span class="pfield-lbl">Plan</span><span style="font-weight:500">' + planLbl + '</span></div>';
-    pagHtml += '<div class="pfield"><span class="pfield-lbl">Metodo de pago</span><span style="font-weight:500">' + metodoLbl + '</span></div>';
-    if (sus.fecha_inicio) {
-      pagHtml += '<div class="pfield"><span class="pfield-lbl">Inicio membresia</span><span>' + new Date(sus.fecha_inicio).toLocaleDateString('es-EC') + '</span></div>';
-    }
-    if (sus.fecha_vencimiento) {
-      pagHtml += '<div class="pfield"><span class="pfield-lbl">Vence</span><span>' + new Date(sus.fecha_vencimiento).toLocaleDateString('es-EC') + '</span></div>';
-    }
-    if (sus.comprobante_url) {
-      pagHtml += '<a href="' + sus.comprobante_url + '" target="_blank" class="btn-comprobante" style="margin-top:10px">Ver comprobante de pago</a>';
-    } else {
-      pagHtml += '<p style="font-size:.82rem;color:var(--ink-60);margin-top:6px">Sin comprobante cargado.</p>';
+  if (pagos.length) {
+    for (var pgi = 0; pgi < pagos.length; pgi++) {
+      var pg = pagos[pgi];
+      var pgCls;
+      if (pg.estado === 'aprobado') pgCls = 'badge-activa';
+      else if (pg.estado === 'rechazado') pgCls = 'badge-venc';
+      else pgCls = 'badge-pend';
+      var pgTipo = pg.tipo === 'renovacion' ? 'Renovacion' : 'Registro';
+      var pgFecha = pg.fecha_pago ? new Date(pg.fecha_pago).toLocaleDateString('es-EC') : '-';
+      pagHtml += '<div class="pfield" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid #F3F4F6">';
+      pagHtml += '<div style="display:flex;justify-content:space-between;width:100%"><span style="font-weight:600;font-size:.85rem">' + pgTipo + ' &middot; $' + (pg.monto || 0).toFixed(2) + '</span><span class="badge ' + pgCls + '">' + pg.estado + '</span></div>';
+      pagHtml += '<span style="color:var(--ink-60);font-size:.78rem">' + pgFecha + '</span>';
+      if (pg.comprobante_url) {
+        pagHtml += '<a href="' + pg.comprobante_url + '" target="_blank" style="color:var(--naranja);font-size:.78rem">Ver comprobante</a>';
+      }
+      if (pg.estado === 'rechazado' && pg.motivo_rechazo) {
+        pagHtml += '<span style="color:var(--danger);font-size:.75rem">' + pg.motivo_rechazo + '</span>';
+      }
+      pagHtml += '</div>';
     }
   } else {
-    pagHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin registro de membresia.</p>';
+    pagHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin pagos registrados.</p>';
   }
   document.getElementById('tab-pagos').innerHTML = pagHtml;
 

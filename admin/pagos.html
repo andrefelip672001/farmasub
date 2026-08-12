@@ -148,7 +148,7 @@ tr:hover td{background:var(--naranja-light);}
       <div class="filter-btns">
         <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
         <button class="filter-btn" onclick="setFilter('pendiente',this)">Pendientes</button>
-        <button class="filter-btn" onclick="setFilter('verificado',this)">Verificados</button>
+        <button class="filter-btn" onclick="setFilter('aprobado',this)">Aprobados</button>
         <button class="filter-btn" onclick="setFilter('rechazado',this)">Rechazados</button>
       </div>
     </div>
@@ -236,12 +236,11 @@ var PLANS = { ahorro: { nombre: 'Plan Ahorro', precio: 8.99 }, familiar: { nombr
 })();
 
 async function loadData() {
-  var res = await _db.from('suscripciones').select('*, usuarios(nombre,cedula,email)').order('created_at', {ascending: false});
+  var res = await _db.from('pagos').select('*, usuarios(nombre,cedula,email)').order('fecha_pago', {ascending: false});
   _todos = res.data || [];
   var pendientes = 0;
   for (var i = 0; i < _todos.length; i++) {
-    var kyc = _todos[i].kyc_estado;
-    if (!kyc || kyc === 'pendiente') pendientes++;
+    if (_todos[i].estado === 'pendiente') pendientes++;
   }
   document.getElementById('total-badge').textContent = _todos.length;
   document.getElementById('pend-badge').textContent = pendientes + ' pendientes';
@@ -259,10 +258,10 @@ function setFilter(f, btn) {
 function renderTable() {
   var rows = [];
   for (var i = 0; i < _todos.length; i++) {
-    var s = _todos[i];
-    var kyc = s.kyc_estado || 'pendiente';
-    if (_filtro !== 'todos' && kyc !== _filtro) continue;
-    rows.push(s);
+    var p = _todos[i];
+    var estado = p.estado || 'pendiente';
+    if (_filtro !== 'todos' && estado !== _filtro) continue;
+    rows.push(p);
   }
   var tbody = document.getElementById('tbody');
   if (!rows.length) {
@@ -271,24 +270,22 @@ function renderTable() {
   }
   var html = '';
   for (var j = 0; j < rows.length; j++) {
-    var s = rows[j];
-    var kyc2 = s.kyc_estado || 'pendiente';
-    var kycCls;
-    if (kyc2 === 'verificado') kycCls = 'badge-activa';
-    else if (kyc2 === 'rechazado') kycCls = 'badge-venc';
-    else kycCls = 'badge-pend';
-    var kycLbl;
-    if (kyc2 === 'verificado') kycLbl = 'Verificado';
-    else if (kyc2 === 'rechazado') kycLbl = 'Rechazado';
-    else kycLbl = 'Pendiente';
-    var fecha = s.created_at ? new Date(s.created_at).toLocaleDateString('es-EC') : '-';
-    var u = s.usuarios || {};
-    var susIdSafe = s.id;
-    var planKey = (s.plan && PLANS[s.plan]) ? s.plan : 'familiar';
-    var precioTxt = '$' + PLANS[planKey].precio.toFixed(2);
+    var p = rows[j];
+    var estado2 = p.estado || 'pendiente';
+    var cls;
+    if (estado2 === 'aprobado') cls = 'badge-activa';
+    else if (estado2 === 'rechazado') cls = 'badge-venc';
+    else cls = 'badge-pend';
+    var lbl;
+    if (estado2 === 'aprobado') lbl = 'Aprobado';
+    else if (estado2 === 'rechazado') lbl = 'Rechazado';
+    else lbl = 'Pendiente';
+    var fecha = p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC') : '-';
+    var u = p.usuarios || {};
+    var tipoLbl = p.tipo === 'renovacion' ? ' (renovacion)' : ' (registro)';
     var compHtml;
-    if (s.comprobante_url) {
-      var urlSafe = s.comprobante_url.replace(/'/g, '').replace(/"/g, '');
+    if (p.comprobante_url) {
+      var urlSafe = p.comprobante_url.replace(/'/g, '').replace(/"/g, '');
       compHtml = '<button class="btn-ver-comp" onclick="verComprobante(\'' + urlSafe + '\')">Ver comprobante</button>';
     } else {
       compHtml = '<span style="color:var(--ink-30);font-size:.75rem">No subido</span>';
@@ -296,37 +293,52 @@ function renderTable() {
     html += '<tr>';
     html += '<td>';
     html += '<p style="font-weight:600">' + (u.nombre || '-') + '</p>';
-    if (u.email) { html += '<p style="color:var(--ink-60);font-size:.75rem">' + u.email + '</p>'; }
+    if (u.email) { html += '<p style="color:var(--ink-60);font-size:.75rem">' + u.email + tipoLbl + '</p>'; }
     html += '</td>';
     html += '<td style="color:var(--ink-60);font-size:.78rem">' + (u.cedula || '-') + '</td>';
-    html += '<td style="font-weight:700;color:var(--naranja)">' + precioTxt + '</td>';
+    html += '<td style="font-weight:700;color:var(--naranja)">$' + (p.monto || 0).toFixed(2) + '</td>';
     html += '<td>' + compHtml + '</td>';
-    html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span>';
-    if (kyc2 === 'rechazado' && s.kyc_motivo_rechazo) {
-      html += '<p style="font-size:.72rem;color:var(--danger);margin-top:3px">' + s.kyc_motivo_rechazo + '</p>';
+    html += '<td><span class="badge ' + cls + '">' + lbl + '</span>';
+    if (estado2 === 'rechazado' && p.motivo_rechazo) {
+      html += '<p style="font-size:.72rem;color:var(--danger);margin-top:3px">' + p.motivo_rechazo + '</p>';
     }
     html += '</td>';
     html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
     html += '<td>';
-    html += '<button class="btn-aprobar" onclick="aprobar(\'' + susIdSafe + '\')">Aprobar</button>';
-    html += '<button class="btn-rechazar" onclick="abrirRechazo(\'' + susIdSafe + '\')">Rechazar</button>';
+    if (estado2 === 'pendiente') {
+      html += '<button class="btn-aprobar" onclick="aprobar(\'' + p.id + '\')">Aprobar</button>';
+      html += '<button class="btn-rechazar" onclick="abrirRechazo(\'' + p.id + '\')">Rechazar</button>';
+    } else {
+      html += '<span style="color:var(--ink-30);font-size:.78rem">—</span>';
+    }
     html += '</td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
 }
 
-async function aprobar(susId) {
-  var fechaInicio = new Date().toISOString().slice(0, 10);
-  var venc = new Date();
-  venc.setMonth(venc.getMonth() + 1);
-  await _db.from('suscripciones').update({
-    estado: 'activa',
-    kyc_estado: 'verificado',
-    kyc_fecha: new Date().toISOString(),
-    fecha_inicio: fechaInicio,
-    fecha_vencimiento: venc.toISOString().slice(0, 10)
-  }).eq('id', susId);
+function findPago(pagoId) {
+  for (var i = 0; i < _todos.length; i++) { if (_todos[i].id === pagoId) return _todos[i]; }
+  return null;
+}
+
+async function aprobar(pagoId) {
+  var pago = findPago(pagoId);
+  if (!pago) return;
+  var ahora = new Date().toISOString();
+  await _db.from('pagos').update({ estado: 'aprobado', fecha_revision: ahora }).eq('id', pagoId);
+  if (pago.suscripcion_id) {
+    var fechaInicio = new Date().toISOString().slice(0, 10);
+    var venc = new Date();
+    venc.setMonth(venc.getMonth() + 1);
+    await _db.from('suscripciones').update({
+      estado: 'activa',
+      kyc_estado: 'verificado',
+      kyc_fecha: ahora,
+      fecha_inicio: fechaInicio,
+      fecha_vencimiento: venc.toISOString().slice(0, 10)
+    }).eq('id', pago.suscripcion_id);
+  }
   await loadData();
 }
 
@@ -349,12 +361,20 @@ async function confirmarRechazo() {
   var motivo = document.getElementById('rechazo-motivo').value.trim();
   if (!motivo) { document.getElementById('rechazo-motivo').focus(); return; }
   if (!_rechazoId) return;
-  await _db.from('suscripciones').update({
-    estado: 'rechazada',
-    kyc_estado: 'rechazado',
-    kyc_fecha: new Date().toISOString(),
-    kyc_motivo_rechazo: motivo
+  var pago = findPago(_rechazoId);
+  await _db.from('pagos').update({
+    estado: 'rechazado',
+    motivo_rechazo: motivo,
+    fecha_revision: new Date().toISOString()
   }).eq('id', _rechazoId);
+  if (pago && pago.tipo === 'registro' && pago.suscripcion_id) {
+    await _db.from('suscripciones').update({
+      estado: 'rechazada',
+      kyc_estado: 'rechazado',
+      kyc_fecha: new Date().toISOString(),
+      kyc_motivo_rechazo: motivo
+    }).eq('id', pago.suscripcion_id);
+  }
   closeRechazoModal();
   await loadData();
 }

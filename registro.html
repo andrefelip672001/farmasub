@@ -1330,7 +1330,7 @@ async function submitRegistro() {
       throw new Error('Error guardando usuario: ' + userErr.message + ' | code: ' + userErr.code);
     }
 
-    const { error: suscErr } = await _db.from('suscripciones').insert({
+    const { data: suscData, error: suscErr } = await _db.from('suscripciones').insert({
       titular_id: userId,
       estado: 'pendiente',
       comprobante_url: comprobanteUrl,
@@ -1339,11 +1339,23 @@ async function submitRegistro() {
       kyc_estado: 'pendiente',
       cedula_frontal_url: kycFrontalPath,
       cedula_posterior_url: kycPosteriorPath
-    });
+    }).select().single();
     if (suscErr) {
       _showSubmitError('Error al guardar datos: ' + suscErr.message + (suscErr.details ? ' - ' + suscErr.details : ''));
       throw suscErr;
     }
+
+    const { error: pagoErr } = await _db.from('pagos').insert({
+      titular_id: userId,
+      suscripcion_id: suscData.id,
+      tipo: 'registro',
+      plan: S.plan,
+      monto: PLANS[S.plan].precio,
+      metodo_pago: S.payment.metodo,
+      comprobante_url: comprobanteUrl,
+      estado: 'pendiente'
+    });
+    if (pagoErr) { console.error('Error registrando pago:', pagoErr); }
 
     if (S.members.length > 0) {
       const { error: membErr } = await _db.from('miembros').insert(
