@@ -180,12 +180,14 @@ tr.clickable:hover td{background:var(--naranja-light);}
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
 var _todos = [], _filtro = 'todos';
 var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'];
+var _adminUserId = null;
 
 (async function() {
   var sessRes = await _db.auth.getSession();
   var session = sessRes.data.session;
   if (!session) { window.location.href = '../portal/login.html'; return; }
   var user = session.user;
+  _adminUserId = user.id;
   var rol = null;
   if (user.user_metadata && user.user_metadata.rol) {
     rol = user.user_metadata.rol;
@@ -343,7 +345,33 @@ async function cambiarEstado(id, estado) {
   if (!res.data || !res.data.length) {
     alert('No se pudo actualizar el estado (posible permiso de base de datos). Verifica las politicas RLS de la tabla pedidos.');
   }
+  if (estado === 'entregado') {
+    await descontarStockPedido(id);
+  }
   await loadData();
+}
+
+async function descontarStockPedido(pedidoId) {
+  var yaRes = await _db.from('movimientos_inventario').select('id', {count: 'exact', head: true}).eq('referencia_pedido_id', pedidoId);
+  if (yaRes.count && yaRes.count > 0) return;
+
+  var itemsRes = await _db.from('pedido_items').select('producto_id, cantidad').eq('pedido_id', pedidoId);
+  var items = itemsRes.data || [];
+  if (!items.length) return;
+
+  var movimientos = [];
+  for (var i = 0; i < items.length; i++) {
+    movimientos.push({
+      producto_id: items[i].producto_id,
+      tipo: 'salida',
+      cantidad: items[i].cantidad,
+      motivo: 'Entrega de pedido',
+      referencia_pedido_id: pedidoId,
+      usuario_id: _adminUserId
+    });
+  }
+  var insRes = await _db.from('movimientos_inventario').insert(movimientos);
+  if (insRes.error) { console.error('Error descontando stock:', insRes.error); }
 }
 
 function logout() {

@@ -222,6 +222,7 @@ tr:hover td{background:var(--naranja-light);}
             <th>Categor&iacute;a</th>
             <th>P. Farmacia</th>
             <th>P. Costo</th>
+            <th>Stock</th>
             <th>Receta</th>
             <th>Estado</th>
             <th>Acciones</th>
@@ -349,12 +350,46 @@ tr:hover td{background:var(--naranja-light);}
   </div>
 </div>
 
+<!-- MODAL REGISTRAR ENTRADA DE STOCK -->
+<div class="modal-overlay" id="stock-modal-overlay" onclick="closeStockModalClick(event)">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head">
+      <h2 style="font-size:1rem">Registrar entrada de stock</h2>
+      <button onclick="closeStockModal()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:#6B7280">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p id="stock-modal-prod" style="font-weight:600;margin-bottom:16px"></p>
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Cantidad que ingresa</label>
+        <input type="number" id="stock-cantidad" min="1" style="width:100%;padding:10px 12px;border:1.5px solid #D1D5DB;border-radius:10px;font-family:inherit;font-size:.9rem"/>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Costo unitario pagado al distribuidor (opcional)</label>
+        <input type="number" id="stock-costo" min="0" step="0.01" placeholder="0.00" style="width:100%;padding:10px 12px;border:1.5px solid #D1D5DB;border-radius:10px;font-family:inherit;font-size:.9rem"/>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:4px">Motivo / referencia</label>
+        <input type="text" id="stock-motivo" placeholder="Ej: Compra a distribuidor 12/08" style="width:100%;padding:10px 12px;border:1.5px solid #D1D5DB;border-radius:10px;font-family:inherit;font-size:.9rem"/>
+      </div>
+      <div class="modal-error" id="stock-modal-error" style="display:none">
+        <span id="stock-modal-error-msg"></span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeStockModal()">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar-stock" onclick="guardarEntradaStock()">Registrar entrada</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 var SUPA_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
 var SUPA_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
 var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 var _productos = [];
+var _adminUserId = null;
+var _stockProductoId = null;
 var _categorias = [];
 var _editId = null;
 var _fotoItems = [];
@@ -373,6 +408,7 @@ async function init() {
     return;
   }
   var email = session.data.session.user.email || '';
+  _adminUserId = session.data.session.user.id;
   document.getElementById('nav-nombre').textContent = email;
   document.getElementById('nav-avatar').textContent = email.charAt(0).toUpperCase();
   await loadCategorias();
@@ -444,9 +480,13 @@ function renderTabla(lista) {
     html += '<td>' + catNom + '</td>';
     html += '<td><span class="price-farm">' + fmt(p.precio_farmacia) + '</span></td>';
     html += '<td><span class="price-cost">' + fmt(p.precio_costo) + '</span></td>';
+    var stockVal = (p.stock_actual !== null && p.stock_actual !== undefined) ? p.stock_actual : 0;
+    var stockColor = stockVal <= 0 ? 'color:#EF4444;font-weight:700' : (stockVal <= 5 ? 'color:#D97706;font-weight:700' : 'color:#1A1A2E;font-weight:600');
+    html += '<td><span style="' + stockColor + '">' + stockVal + '</span></td>';
     html += '<td>' + recetaBadge + '</td>';
     html += '<td>' + estadoBadge + '</td>';
     html += '<td><button class="btn-edit" onclick="editProducto(\'' + p.id + '\')">Editar</button> ';
+    html += '<button class="btn-edit" onclick="abrirStockModal(\'' + p.id + '\',\'' + (p.nombre || '').replace(/'/g, '') + '\')" style="margin-left:4px">+ Stock</button> ';
     html += '<button class="' + toggleCls + '" onclick="toggleActivo(\'' + p.id + '\',' + p.activo + ')">' + toggleLabel + '</button></td>';
     html += '</tr>';
   }
@@ -469,6 +509,66 @@ function filterTable() {
 async function toggleActivo(id, activo) {
   var res = await sb.from('productos').update({ activo: !activo }).eq('id', id);
   if (res.error) { alert('Error: ' + res.error.message); return; }
+  await loadProductos();
+}
+
+function abrirStockModal(productoId, nombre) {
+  _stockProductoId = productoId;
+  document.getElementById('stock-modal-prod').textContent = nombre;
+  document.getElementById('stock-cantidad').value = '';
+  document.getElementById('stock-costo').value = '';
+  document.getElementById('stock-motivo').value = 'Compra a distribuidor';
+  document.getElementById('stock-modal-error').style.display = 'none';
+  document.getElementById('stock-modal-overlay').classList.add('open');
+}
+
+function closeStockModal() {
+  document.getElementById('stock-modal-overlay').classList.remove('open');
+  _stockProductoId = null;
+}
+
+function closeStockModalClick(e) {
+  if (e.target === document.getElementById('stock-modal-overlay')) closeStockModal();
+}
+
+async function guardarEntradaStock() {
+  var errEl = document.getElementById('stock-modal-error');
+  var errMsg = document.getElementById('stock-modal-error-msg');
+  errEl.style.display = 'none';
+
+  var cantidad = parseInt(document.getElementById('stock-cantidad').value);
+  if (!cantidad || cantidad <= 0) {
+    errMsg.textContent = 'Ingresa una cantidad valida mayor a 0.';
+    errEl.style.display = 'block';
+    return;
+  }
+  var costoVal = document.getElementById('stock-costo').value;
+  var costo = costoVal ? parseFloat(costoVal) : null;
+  var motivo = document.getElementById('stock-motivo').value.trim() || 'Compra a distribuidor';
+
+  var btn = document.getElementById('btn-guardar-stock');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  var res = await sb.from('movimientos_inventario').insert({
+    producto_id: _stockProductoId,
+    tipo: 'entrada',
+    cantidad: cantidad,
+    costo_unitario: costo,
+    motivo: motivo,
+    usuario_id: _adminUserId
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Registrar entrada';
+
+  if (res.error) {
+    errMsg.textContent = 'Error al guardar: ' + res.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  closeStockModal();
   await loadProductos();
 }
 
