@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Finanzas Admin - TuCosto</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;margin-right:-2px;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-title{font-size:1.5rem;font-weight:700;margin-bottom:4px;}
+.page-sub{color:var(--ink-60);font-size:.9rem;margin-bottom:20px;}
+
+.mes-selector{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+.mes-selector select{padding:9px 14px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.875rem;background:var(--white);cursor:pointer;}
+.btn-export{padding:9px 16px;background:var(--white);border:1.5px solid var(--naranja);border-radius:10px;color:var(--naranja);font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit;margin-left:auto;}
+.btn-export:hover{background:var(--naranja-light);}
+
+.fin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.fin-card{background:var(--white);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);}
+.fin-lbl{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-60);margin-bottom:8px;}
+.fin-val{font-size:1.5rem;font-weight:700;}
+.fin-sub{font-size:.78rem;color:var(--ink-60);margin-top:4px;}
+.fin-val.verde{color:var(--verde);}
+.fin-val.azul{color:var(--azul);}
+.fin-val.naranja{color:var(--naranja);}
+.fin-val.ink{color:var(--ink);}
+
+.section-title{font-size:1.05rem;font-weight:700;margin-bottom:14px;}
+.table-wrap{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:28px;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-60);padding:12px 16px;border-bottom:1px solid #F3F4F6;background:#FAFAFB;}
+td{padding:12px 16px;border-bottom:1px solid #F3F4F6;font-size:.85rem;}
+tr:last-child td{border-bottom:none;}
+.empty-row td{text-align:center;padding:24px;color:var(--ink-60);}
+
+@media(max-width:1100px){.fin-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .fin-grid{grid-template-columns:1fr;}
+  .mes-selector{flex-wrap:wrap;}
+  .btn-export{margin-left:0;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="../admin/dashboard.html" class="nav-logo">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <span class="nav-tag">PANEL ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesion</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="../admin/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos
+    </a>
+    <a href="../admin/productos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Catalogo
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
+    </a>
+    <a href="../admin/finanzas.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finanzas
+    </a>
+  </aside>
+
+  <main class="main">
+    <h1 class="page-title">Finanzas</h1>
+    <p class="page-sub">Ingresos por membresia separados del costo de medicamentos, y valor de tu inventario.</p>
+
+    <div class="mes-selector">
+      <select id="mes-select" onchange="cambiarMes()"></select>
+      <button class="btn-export" onclick="exportarCSV()">Descargar reporte del mes (CSV)</button>
+    </div>
+
+    <div class="fin-grid">
+      <div class="fin-card">
+        <div class="fin-lbl">Ingresos por membresia</div>
+        <div class="fin-val verde" id="f-ingresos">$0.00</div>
+        <div class="fin-sub">Tu ganancia real este mes</div>
+      </div>
+      <div class="fin-card">
+        <div class="fin-lbl">Medicamentos vendidos</div>
+        <div class="fin-val azul" id="f-medicamentos">$0.00</div>
+        <div class="fin-sub">Al costo, sin margen (pass-through)</div>
+      </div>
+      <div class="fin-card">
+        <div class="fin-lbl">Comprado al distribuidor</div>
+        <div class="fin-val naranja" id="f-compras">$0.00</div>
+        <div class="fin-sub">Entradas de inventario este mes</div>
+      </div>
+      <div class="fin-card">
+        <div class="fin-lbl">Valor de inventario actual</div>
+        <div class="fin-val ink" id="f-inventario">$0.00</div>
+        <div class="fin-sub" id="f-inventario-sub">A precio de costo</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Pagos de membresia del mes</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Suscriptor</th><th>Tipo</th><th>Plan</th><th>Monto</th><th>Fecha</th></tr></thead>
+        <tbody id="pagos-tbody"><tr class="empty-row"><td colspan="5">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+
+    <h2 class="section-title">Compras a distribuidor del mes</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Producto</th><th>Cantidad</th><th>Costo unitario</th><th>Total</th><th>Fecha</th></tr></thead>
+        <tbody id="compras-tbody"><tr class="empty-row"><td colspan="5">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var _pagosMes = [], _comprasMes = [], _mesActual = '';
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = null;
+  if (user.user_metadata && user.user_metadata.rol) rol = user.user_metadata.rol;
+  else if (user.app_metadata && user.app_metadata.rol) rol = user.app_metadata.rol;
+  if (!rol) {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+
+  poblarSelectorMeses();
+  await cargarMes(_mesActual);
+})();
+
+function poblarSelectorMeses() {
+  var meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var sel = document.getElementById('mes-select');
+  var now = new Date();
+  var html = '';
+  for (var i = 0; i < 12; i++) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    var val = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    var lbl = meses[d.getMonth()] + ' ' + d.getFullYear();
+    html += '<option value="' + val + '"' + (i === 0 ? ' selected' : '') + '>' + lbl + '</option>';
+  }
+  sel.innerHTML = html;
+  var d0 = new Date(now.getFullYear(), now.getMonth(), 1);
+  _mesActual = d0.getFullYear() + '-' + String(d0.getMonth() + 1).padStart(2, '0');
+}
+
+function cambiarMes() {
+  var val = document.getElementById('mes-select').value;
+  cargarMes(val);
+}
+
+function rangoDelMes(mesStr) {
+  var parts = mesStr.split('-');
+  var y = parseInt(parts[0]);
+  var m = parseInt(parts[1]) - 1;
+  var inicio = new Date(y, m, 1).toISOString();
+  var fin = new Date(y, m + 1, 1).toISOString();
+  return { inicio: inicio, fin: fin };
+}
+
+async function cargarMes(mesStr) {
+  _mesActual = mesStr;
+  var r = rangoDelMes(mesStr);
+
+  var results = await Promise.all([
+    _db.from('pagos').select('*, usuarios(nombre)').eq('estado', 'aprobado').gte('fecha_pago', r.inicio).lt('fecha_pago', r.fin).order('fecha_pago', {ascending: false}),
+    _db.from('pedidos').select('total_costo').neq('estado', 'cancelado').gte('fecha_pedido', r.inicio).lt('fecha_pedido', r.fin),
+    _db.from('movimientos_inventario').select('*, productos(nombre)').eq('tipo', 'entrada').gte('created_at', r.inicio).lt('created_at', r.fin).order('created_at', {ascending: false}),
+    _db.from('productos').select('stock_actual, precio_costo').eq('activo', true)
+  ]);
+
+  _pagosMes = results[0].data || [];
+  var pedidosMes = results[1].data || [];
+  _comprasMes = results[2].data || [];
+  var productosActivos = results[3].data || [];
+
+  var ingresos = 0;
+  for (var i = 0; i < _pagosMes.length; i++) { ingresos += (_pagosMes[i].monto || 0); }
+
+  var medicamentos = 0;
+  for (var j = 0; j < pedidosMes.length; j++) { medicamentos += (pedidosMes[j].total_costo || 0); }
+
+  var compras = 0;
+  for (var k = 0; k < _comprasMes.length; k++) {
+    if (_comprasMes[k].costo_unitario) { compras += (_comprasMes[k].cantidad * _comprasMes[k].costo_unitario); }
+  }
+
+  var valorInventario = 0;
+  var itemsInventario = 0;
+  for (var p = 0; p < productosActivos.length; p++) {
+    var stock = productosActivos[p].stock_actual || 0;
+    valorInventario += stock * (productosActivos[p].precio_costo || 0);
+    itemsInventario += stock;
+  }
+
+  document.getElementById('f-ingresos').textContent = '$' + ingresos.toFixed(2);
+  document.getElementById('f-medicamentos').textContent = '$' + medicamentos.toFixed(2);
+  document.getElementById('f-compras').textContent = '$' + compras.toFixed(2);
+  document.getElementById('f-inventario').textContent = '$' + valorInventario.toFixed(2);
+  document.getElementById('f-inventario-sub').textContent = itemsInventario + ' unidades en stock, a precio de costo';
+
+  renderPagosTabla();
+  renderComprasTabla();
+}
+
+function renderPagosTabla() {
+  var tbody = document.getElementById('pagos-tbody');
+  if (!_pagosMes.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin pagos este mes</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _pagosMes.length; i++) {
+    var p = _pagosMes[i];
+    var nom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
+    var tipoTxt = p.tipo === 'renovacion' ? 'Renovacion' : 'Registro';
+    var planTxt = p.plan === 'ahorro' ? 'Ahorro' : 'Familiar';
+    var fecha = p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC') : '-';
+    html += '<tr><td>' + nom + '</td><td>' + tipoTxt + '</td><td>' + planTxt + '</td><td style="font-weight:600;color:var(--verde)">$' + (p.monto || 0).toFixed(2) + '</td><td style="color:var(--ink-60)">' + fecha + '</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function renderComprasTabla() {
+  var tbody = document.getElementById('compras-tbody');
+  if (!_comprasMes.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin compras registradas este mes</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _comprasMes.length; i++) {
+    var c = _comprasMes[i];
+    var nom = (c.productos && c.productos.nombre) ? c.productos.nombre : '-';
+    var costoU = c.costo_unitario ? '$' + c.costo_unitario.toFixed(2) : '-';
+    var total = c.costo_unitario ? '$' + (c.cantidad * c.costo_unitario).toFixed(2) : '-';
+    var fecha = c.created_at ? new Date(c.created_at).toLocaleDateString('es-EC') : '-';
+    html += '<tr><td>' + nom + '</td><td>' + c.cantidad + '</td><td>' + costoU + '</td><td style="font-weight:600">' + total + '</td><td style="color:var(--ink-60)">' + fecha + '</td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function exportarCSV() {
+  var lines = [];
+  lines.push('TuCosto - Reporte financiero - ' + _mesActual);
+  lines.push('');
+  lines.push('PAGOS DE MEMBRESIA');
+  lines.push('Suscriptor,Tipo,Plan,Monto,Fecha');
+  for (var i = 0; i < _pagosMes.length; i++) {
+    var p = _pagosMes[i];
+    var nom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
+    var fecha = p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC') : '-';
+    lines.push('"' + nom + '","' + p.tipo + '","' + p.plan + '",' + (p.monto || 0).toFixed(2) + ',' + fecha);
+  }
+  lines.push('');
+  lines.push('COMPRAS A DISTRIBUIDOR');
+  lines.push('Producto,Cantidad,Costo unitario,Total,Fecha');
+  for (var j = 0; j < _comprasMes.length; j++) {
+    var c = _comprasMes[j];
+    var nom2 = (c.productos && c.productos.nombre) ? c.productos.nombre : '-';
+    var fecha2 = c.created_at ? new Date(c.created_at).toLocaleDateString('es-EC') : '-';
+    var cu = c.costo_unitario || 0;
+    lines.push('"' + nom2 + '",' + c.cantidad + ',' + cu.toFixed(2) + ',' + (c.cantidad * cu).toFixed(2) + ',' + fecha2);
+  }
+
+  var csv = lines.join('\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'tucosto-finanzas-' + _mesActual + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function logout() {
+  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
+</script>
+</body>
+</html>
