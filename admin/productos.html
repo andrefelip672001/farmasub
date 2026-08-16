@@ -283,10 +283,6 @@ tr:hover td{background:var(--naranja-light);}
           <label>Precio costo ($)</label>
           <input type="number" id="f-pcosto" step="0.01" min="0" placeholder="0.00"/>
         </div>
-        <div class="field">
-          <label>Stock actual</label>
-          <input type="number" id="f-stock" min="0" placeholder="0"/>
-        </div>
         <div class="field" style="align-self:end">
           <div class="check-row">
             <input type="checkbox" id="f-receta"/>
@@ -600,7 +596,6 @@ function openModal(modo) {
   document.getElementById('f-unidades').value = '';
   document.getElementById('f-pfarmacia').value = '';
   document.getElementById('f-pcosto').value = '';
-  document.getElementById('f-stock').value = '';
   document.getElementById('f-receta').checked = false;
   document.getElementById('f-indicaciones').value = '';
   document.getElementById('f-dosis').value = '';
@@ -637,7 +632,6 @@ async function editProducto(id) {
   document.getElementById('f-unidades').value = p.unidades_caja || '';
   document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
   document.getElementById('f-pcosto').value = p.precio_costo || '';
-  document.getElementById('f-stock').value = p.stock || '';
   document.getElementById('f-receta').checked = p.requiere_receta || false;
   document.getElementById('f-indicaciones').value = p.indicaciones || '';
   document.getElementById('f-dosis').value = p.dosis || '';
@@ -815,7 +809,6 @@ async function guardarProducto() {
   var unidades = parseInt(document.getElementById('f-unidades').value) || 0;
   var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
   var pcosto = parseFloat(document.getElementById('f-pcosto').value) || 0;
-  var stock = parseInt(document.getElementById('f-stock').value) || 0;
   var receta = document.getElementById('f-receta').checked;
   var indicaciones = document.getElementById('f-indicaciones').value.trim();
   var dosis = document.getElementById('f-dosis').value.trim();
@@ -834,7 +827,6 @@ async function guardarProducto() {
     unidades_caja: unidades,
     precio_farmacia: pfarmacia,
     precio_costo: pcosto,
-    stock: stock,
     requiere_receta: receta,
     indicaciones: indicaciones,
     dosis: dosis,
