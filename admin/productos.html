@@ -223,6 +223,7 @@ tr:hover td{background:var(--naranja-light);}
             <th>Foto</th>
             <th>Nombre</th>
             <th>Principio activo</th>
+            <th>Laboratorio</th>
             <th>Categor&iacute;a</th>
             <th>P. Farmacia</th>
             <th>P. Costo</th>
@@ -260,6 +261,10 @@ tr:hover td{background:var(--naranja-light);}
         <div class="field fg-full">
           <label>Principio activo</label>
           <input type="text" id="f-activo" placeholder="Ej. Clorhidrato de Metformina" oninput="onActivoChange()"/>
+        </div>
+        <div class="field">
+          <label>Laboratorio</label>
+          <input type="text" id="f-laboratorio" placeholder="Ej. Laboratorio Chile"/>
         </div>
         <div class="field">
           <label>Categoria</label>
@@ -481,6 +486,7 @@ function renderTabla(lista) {
     html += '<td>' + foto + '</td>';
     html += '<td style="font-weight:600">' + (p.nombre || '') + '</td>';
     html += '<td style="color:var(--ink-60)">' + (p.principio_activo || '-') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + (p.laboratorio || '-') + '</td>';
     html += '<td>' + catNom + '</td>';
     html += '<td><span class="price-farm">' + fmt(p.precio_farmacia) + '</span></td>';
     html += '<td><span class="price-cost">' + fmt(p.precio_costo) + '</span></td>';
@@ -588,6 +594,7 @@ function openModal(modo) {
   _relacionadosManuales = [];
   document.getElementById('modal-title').textContent = modo === 'editar' ? 'Editar producto' : 'Agregar producto';
   document.getElementById('f-nombre').value = '';
+  document.getElementById('f-laboratorio').value = '';
   document.getElementById('f-activo').value = '';
   document.getElementById('f-categoria').value = '';
   document.getElementById('f-unidades').value = '';
@@ -625,6 +632,7 @@ async function editProducto(id) {
   document.getElementById('modal-title').textContent = 'Editar producto';
   document.getElementById('f-nombre').value = p.nombre || '';
   document.getElementById('f-activo').value = p.principio_activo || '';
+  document.getElementById('f-laboratorio').value = p.laboratorio || '';
   document.getElementById('f-categoria').value = p.categoria_id || '';
   document.getElementById('f-unidades').value = p.unidades_caja || '';
   document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
@@ -802,6 +810,7 @@ async function buscarRelacionado() {
 async function guardarProducto() {
   var nombre = document.getElementById('f-nombre').value.trim();
   var principio = document.getElementById('f-activo').value.trim();
+  var laboratorio = document.getElementById('f-laboratorio').value.trim();
   var categoriaId = document.getElementById('f-categoria').value;
   var unidades = parseInt(document.getElementById('f-unidades').value) || 0;
   var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
@@ -820,6 +829,7 @@ async function guardarProducto() {
   var payload = {
     nombre: nombre,
     principio_activo: principio,
+    laboratorio: laboratorio,
     categoria_id: categoriaId,
     unidades_caja: unidades,
     precio_farmacia: pfarmacia,

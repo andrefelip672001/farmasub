@@ -360,6 +360,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       </div>
 
       <p class="modal-activo" id="m-activo"></p>
+      <p class="modal-activo" id="m-laboratorio" style="margin-top:-8px;font-size:.78rem"></p>
 
       <div class="modal-precios">
         <div>
@@ -529,6 +530,7 @@ function openModal(id) {
 
   document.getElementById('m-nombre').textContent = p.nombre;
   document.getElementById('m-activo').textContent = p.principio_activo || '';
+  document.getElementById('m-laboratorio').textContent = p.laboratorio ? 'Laboratorio: ' + p.laboratorio : '';
   document.getElementById('m-precio-sub').textContent = '$' + (p.precio_costo || 0).toFixed(2);
   document.getElementById('m-precio-normal').textContent = 'Precio farmacia: $' + (p.precio_farmacia || 0).toFixed(2);
   var ahorro = (p.precio_farmacia || 0) - (p.precio_costo || 0);
