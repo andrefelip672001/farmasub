@@ -75,7 +75,30 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
   .pedido-header{padding:14px 16px;flex-wrap:wrap;}
   .ped-info{flex-wrap:wrap;gap:6px;}
 }
+/* MOBILE BOTTOM NAV */
+.mobile-nav{display:none;}
+@media(max-width:700px){
+  .mobile-nav{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:100;
+    background:var(--white);border-top:1px solid #F3F4F6;
+    box-shadow:0 -2px 12px rgba(0,0,0,.06);height:60px;
+  }
+  .mn-link{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;text-decoration:none;color:var(--ink-60);font-size:.62rem;font-weight:600;
+    position:relative;
+  }
+  .mn-link.active{color:var(--naranja);}
+  .mn-link svg{width:20px;height:20px;stroke-width:1.8;}
+  .mn-badge{
+    position:absolute;top:2px;right:24%;background:var(--naranja);color:#fff;
+    font-size:.6rem;font-weight:700;border-radius:99px;min-width:16px;height:16px;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;
+  }
+  .main{padding-bottom:82px!important;}
+}
 </style>
+
 </head>
 <body>
 <div class="app">
@@ -112,6 +135,28 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
     </div>
   </main>
 </div>
+<nav class="mobile-nav">
+  <a href="../portal/dashboard.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>
+    <span>Inicio</span>
+  </a>
+  <a href="../portal/catalogo.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    <span>Catalogo</span>
+  </a>
+  <a href="../portal/pedido.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    <span>Pedido</span><span class="mn-badge" id="cart-badge-mobile" style="display:none">0</span>
+  </a>
+  <a href="../portal/mis-pedidos.html" class="mn-link active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span>Historial</span>
+  </a>
+  <a href="../portal/cuenta.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Cuenta</span>
+  </a>
+</nav>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -202,10 +247,12 @@ function badgeCls(e){
   var map={'pendiente':'badge-pendiente','en-proceso':'badge-en-proceso','despachado':'badge-despachado','entregado':'badge-entregado','cancelado':'badge-cancelado'};
   return map[e]||'badge-pendiente';
 }
-function updateCartBadge(){
-  var c=JSON.parse(localStorage.getItem('farmasub_cart')||'[]');
-  var b=document.getElementById('cart-badge');
-  if(c.length){b.style.display='flex';b.textContent=c.length;}else{b.style.display='none';}
+function updateCartBadge() {
+  var c = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var b = document.getElementById('cart-badge');
+  if (b) { if (c.length) { b.style.display = 'flex'; b.textContent = c.length; } else { b.style.display = 'none'; } }
+  var mb = document.getElementById('cart-badge-mobile');
+  if (mb) { if (c.length) { mb.style.display = 'flex'; mb.textContent = c.length; } else { mb.style.display = 'none'; } }
 }
 function logout(){_db.auth.signOut().then(function(){window.location.href='../portal/login.html';});}
 </script>
