@@ -119,7 +119,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .prod-nombre{font-weight:600;font-size:.93rem;color:var(--ink);line-height:1.3;}
 .prod-activo{font-size:.78rem;color:var(--ink-60);}
 .prod-badges{display:flex;gap:6px;flex-wrap:wrap;}
-.badge-receta{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--danger-light);border-radius:20px;font-size:.7rem;font-weight:600;color:var(--danger);}
 .badge-cat{padding:3px 8px;background:var(--naranja-light);border-radius:20px;font-size:.7rem;font-weight:500;color:var(--naranja);}
 .prod-precios{margin-top:2px;}
 .precio-normal{font-size:.8rem;color:var(--danger);text-decoration:line-through;}
@@ -370,7 +369,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
         <div style="margin-left:auto"><span class="modal-ahorro" id="m-ahorro"></span></div>
       </div>
 
-      <div class="modal-section"><p class="modal-section-title">Indicaciones</p><p id="m-indicaciones"></p></div>
+      <div class="modal-section"><p class="modal-section-title">Presentación</p><p id="m-indicaciones"></p></div>
       <div class="modal-section"><p class="modal-section-title">Dosis recomendada</p><p id="m-dosis"></p></div>
       <div class="modal-section"><p class="modal-section-title">Contraindicaciones</p><p id="m-contraindicaciones"></p></div>
       <div class="modal-section"><p class="modal-section-title">Efectos secundarios</p><p id="m-efectos"></p></div>
@@ -501,7 +500,6 @@ function renderGrid() {
       + '<p class="prod-nombre">' + p.nombre + '</p>'
       + '<p class="prod-activo">' + (p.principio_activo || '') + '</p>'
       + '<div class="prod-badges">'
-      + (p.requiere_receta ? '<span class="badge-receta">Requiere receta</span>' : '')
       + (catNombre ? '<span class="badge-cat">' + catNombre + '</span>' : '')
       + '</div>'
       + '<div class="prod-precios">'
@@ -670,7 +668,7 @@ function addToCart(id) {
     cart.push({
       id: p.id, nombre: p.nombre, principio_activo: p.principio_activo,
       precio_costo: p.precio_costo, precio_farmacia: p.precio_farmacia,
-      requiere_receta: p.requiere_receta, unidades_caja: p.unidades_caja || 30, cantidad: 1
+      unidades_caja: p.unidades_caja || 30, cantidad: 1
     });
     localStorage.setItem('farmasub_cart', JSON.stringify(cart));
     showToast(p.nombre + ' agregado al pedido');

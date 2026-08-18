@@ -68,8 +68,6 @@ tr:hover td{background:var(--naranja-light);}
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
 .badge-activo{background:var(--verde-light);color:var(--verde);}
 .badge-inactivo{background:var(--danger-light);color:var(--danger);}
-.badge-receta{background:var(--danger-light);color:var(--danger);}
-.badge-noreceta{background:#F3F4F6;color:var(--ink-60);}
 
 .price-farm{text-decoration:line-through;color:var(--danger);font-size:.78rem;}
 .price-cost{font-weight:700;color:var(--naranja);}
@@ -229,7 +227,6 @@ tr:hover td{background:var(--naranja-light);}
             <th>P. Farmacia</th>
             <th>P. Costo</th>
             <th>Stock</th>
-            <th>Receta</th>
             <th>Estado</th>
             <th>Acciones</th>
           </tr>
@@ -288,15 +285,9 @@ tr:hover td{background:var(--naranja-light);}
           <label>Precio costo ($)</label>
           <input type="number" id="f-pcosto" step="0.01" min="0" placeholder="0.00"/>
         </div>
-        <div class="field" style="align-self:end">
-          <div class="check-row">
-            <input type="checkbox" id="f-receta"/>
-            <label for="f-receta">Requiere receta medica</label>
-          </div>
-        </div>
         <div class="field fg-full">
-          <label>Indicaciones</label>
-          <textarea id="f-indicaciones" placeholder="Indicaciones del medicamento..."></textarea>
+          <label>Presentación</label>
+          <textarea id="f-indicaciones" placeholder="Presentacion del producto..."></textarea>
         </div>
         <div class="field fg-full">
           <label>Dosis recomendada</label>
@@ -479,7 +470,6 @@ function renderTabla(lista) {
       foto = '<div style="width:48px;height:48px;border-radius:50%;background:#FFF2EC;display:flex;align-items:center;justify-content:center;font-size:20px">&#128138;</div>';
     }
     var catNom = (p.categorias && p.categorias.nombre) ? p.categorias.nombre : catNombre(p.categoria_id);
-    var recetaBadge = p.requiere_receta ? '<span class="badge badge-receta">Receta</span>' : '<span class="badge badge-noreceta">Libre</span>';
     var estadoBadge = p.activo ? '<span class="badge badge-activo">Activo</span>' : '<span class="badge badge-inactivo">Inactivo</span>';
     var toggleLabel = p.activo ? 'Desactivar' : 'Activar';
     var toggleCls = p.activo ? 'btn-desactivar' : 'btn-activar-small';
@@ -509,7 +499,6 @@ function renderTabla(lista) {
     var stockVal = (p.stock_actual !== null && p.stock_actual !== undefined) ? p.stock_actual : 0;
     var stockColor = stockVal <= 0 ? 'color:#EF4444;font-weight:700' : (stockVal <= 5 ? 'color:#D97706;font-weight:700' : 'color:#1A1A2E;font-weight:600');
     html += '<td><span style="' + stockColor + '">' + stockVal + '</span></td>';
-    html += '<td>' + recetaBadge + '</td>';
     html += '<td>' + estadoBadge + '</td>';
     html += '<td><button class="btn-edit" onclick="editProducto(\'' + p.id + '\')">Editar</button> ';
     html += '<button class="btn-edit" onclick="abrirStockModal(\'' + p.id + '\',\'' + (p.nombre || '').replace(/'/g, '') + '\')" style="margin-left:4px">+ Stock</button> ';
@@ -617,7 +606,6 @@ function openModal(modo) {
   document.getElementById('f-caducidad').value = '';
   document.getElementById('f-pfarmacia').value = '';
   document.getElementById('f-pcosto').value = '';
-  document.getElementById('f-receta').checked = false;
   document.getElementById('f-indicaciones').value = '';
   document.getElementById('f-dosis').value = '';
   document.getElementById('f-contraindicaciones').value = '';
@@ -654,7 +642,6 @@ async function editProducto(id) {
   document.getElementById('f-caducidad').value = p.fecha_caducidad || '';
   document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
   document.getElementById('f-pcosto').value = p.precio_costo || '';
-  document.getElementById('f-receta').checked = p.requiere_receta || false;
   document.getElementById('f-indicaciones').value = p.indicaciones || '';
   document.getElementById('f-dosis').value = p.dosis || '';
   document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
@@ -832,7 +819,6 @@ async function guardarProducto() {
   var caducidad = document.getElementById('f-caducidad').value || null;
   var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
   var pcosto = parseFloat(document.getElementById('f-pcosto').value) || 0;
-  var receta = document.getElementById('f-receta').checked;
   var indicaciones = document.getElementById('f-indicaciones').value.trim();
   var dosis = document.getElementById('f-dosis').value.trim();
   var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
@@ -851,7 +837,6 @@ async function guardarProducto() {
     fecha_caducidad: caducidad,
     precio_farmacia: pfarmacia,
     precio_costo: pcosto,
-    requiere_receta: receta,
     indicaciones: indicaciones,
     dosis: dosis,
     contraindicaciones: contraindicaciones,

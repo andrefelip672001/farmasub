@@ -126,11 +126,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .item-info{flex:1;min-width:0;}
 .item-nombre{font-weight:600;font-size:.95rem;color:var(--ink);margin-bottom:3px;}
 .item-activo{font-size:.8rem;color:var(--ink-60);}
-.badge-receta{
-  display:inline-flex;align-items:center;padding:3px 8px;
-  background:var(--danger-light);border-radius:20px;font-size:.7rem;font-weight:600;
-  color:var(--danger);margin-top:5px;
-}
 .btn-del{
   background:none;border:none;color:var(--ink-30);
   cursor:pointer;padding:6px;border-radius:8px;transition:color .2s;flex-shrink:0;
@@ -166,16 +161,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
   padding:0 4px;
 }
 .qty-note{font-size:.7rem;color:var(--ink-60);}
-
-/* RECETA */
-.receta-label{
-  display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;
-  color:var(--naranja);cursor:pointer;padding:8px 12px;
-  border:1.5px dashed var(--naranja);border-radius:8px;
-  background:var(--naranja-light);transition:all .2s;
-}
-.receta-label:hover{background:#FFE0D4;}
-.receta-ok{color:var(--verde);font-size:.8rem;font-weight:600;display:none;}
 
 /* ITEM PRICE */
 .item-price{font-size:1.05rem;font-weight:700;color:var(--naranja);}
@@ -414,7 +399,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
 var FOTO_URL_BASE = 'https://cjimcldhoglgqachcimm.supabase.co/storage/v1/object/public/producto-fotos/';
 
-var _user, _susc, _miembros = [], _cart = [], _recetas = {};
+var _user, _susc, _miembros = [], _cart = [];
 var PLANS = { ahorro: { nombre: 'Plan Ahorro', limite: 90 }, familiar: { nombre: 'Plan Familiar', limite: 190 } };
 var _cupoMensual = 190;
 var _yaGastado = 0;
@@ -506,25 +491,12 @@ function renderCart() {
     for (var mj = 0; mj < _miembros.length; mj++) {
       mopts += '<option value="' + _miembros[mj].cedula + '"' + (selectedMiembro === _miembros[mj].cedula ? ' selected' : '') + '>' + _miembros[mj].nombre + '</option>';
     }
-    var recetaHtml = '';
-    if (item.requiere_receta) {
-      recetaHtml = '<div class="ctrl-group">'
-        + '<span class="ctrl-label">Receta medica</span>'
-        + '<label class="receta-label">'
-        + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>'
-        + 'Subir receta'
-        + '<input type="file" accept="image/*,.pdf" style="display:none" onchange="handleReceta(' + i + ',this)"/>'
-        + '</label>'
-        + '<span class="receta-ok" id="receta-ok-' + i + '">&#10003; Receta cargada</span>'
-        + '</div>';
-    }
     html += '<div class="cart-item">'
       + '<div class="item-top">'
       + imgHtml
       + '<div class="item-info">'
       + '<p class="item-nombre">' + item.nombre + '</p>'
       + '<p class="item-activo">' + (item.principio_activo || '') + '</p>'
-      + (item.requiere_receta ? '<span class="badge-receta">Requiere receta</span>' : '')
       + '</div>'
       + '<button class="btn-del" onclick="removeItem(' + i + ')" title="Eliminar">'
       + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>'
@@ -544,7 +516,6 @@ function renderCart() {
       + '<input type="hidden" id="qty-' + i + '" value="' + item.cantidad + '"/>'
       + '</div>'
       + '</div>'
-      + recetaHtml
       + '<div class="ctrl-group" style="margin-left:auto;align-items:flex-end">'
       + '<span class="ctrl-label">Precio TuCosto</span>'
       + '<span class="item-price" id="item-price-' + i + '">$' + (item.precio_costo * item.cantidad).toFixed(2) + '</span>'
@@ -588,14 +559,6 @@ function removeItem(i) {
   localStorage.setItem('farmasub_cart', JSON.stringify(_cart));
   renderCart();
   updateCartBadge();
-}
-
-function handleReceta(i, input) {
-  if (input.files[0]) {
-    _recetas[i] = input.files[0];
-    var ok = document.getElementById('receta-ok-' + i);
-    if (ok) ok.style.display = 'block';
-  }
 }
 
 function renderSummary() {
@@ -643,16 +606,6 @@ async function confirmarPedido() {
     alert('Tu pedido supera el cupo mensual disponible de tu ' + _planNombre + '. Ajusta las cantidades antes de confirmar.');
     return;
   }
-  var sinReceta = [];
-  for (var si = 0; si < _cart.length; si++) {
-    if (_cart[si].requiere_receta && !_recetas[si]) sinReceta.push(_cart[si]);
-  }
-  if (sinReceta.length) {
-    var names = '';
-    for (var ni = 0; ni < sinReceta.length; ni++) { names += (ni > 0 ? ', ' : '') + sinReceta[ni].nombre; }
-    alert('Debes subir la receta medica para: ' + names);
-    return;
-  }
   var btn = document.getElementById('btn-confirm');
   btn.disabled = true;
   btn.classList.add('loading');
@@ -678,15 +631,6 @@ async function confirmarPedido() {
     var pedido = pedRes.data;
 
     for (var i = 0; i < _cart.length; i++) {
-      var recetaUrl = null;
-      if (_recetas[i]) {
-        var rpath = (titularId || 'anon') + '/' + pedido.id + '_' + i + '_' + _recetas[i].name;
-        var ueRes = await _db.storage.from('recetas').upload(rpath, _recetas[i]);
-        if (!ueRes.error) {
-          var uRes = _db.storage.from('recetas').getPublicUrl(rpath);
-          recetaUrl = (uRes.data && uRes.data.publicUrl) ? uRes.data.publicUrl : null;
-        }
-      }
       var miembroId = null;
       if (_cart[i].miembro && _cart[i].miembro !== 'titular') {
         for (var mk = 0; mk < _miembros.length; mk++) {
@@ -698,8 +642,7 @@ async function confirmarPedido() {
         producto_id: _cart[i].id,
         miembro_id: miembroId,
         cantidad: _cart[i].cantidad,
-        precio_unitario: _cart[i].precio_costo,
-        receta_url: recetaUrl
+        precio_unitario: _cart[i].precio_costo
       });
     }
 
