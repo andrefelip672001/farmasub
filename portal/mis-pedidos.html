@@ -162,6 +162,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db=supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s){
+  return String(s===null||s===undefined?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 var _titularId;
 
 (function(){
@@ -226,8 +229,8 @@ function togglePedido(idx,pedidoId){
     var html='<p class="detail-title">Productos</p>';
     for(var j=0;j<items.length;j++){
       var it=items[j];
-      var prodNombre=(it.productos&&it.productos.nombre)?it.productos.nombre:'Producto';
-      var miembroNombre=(it.miembros&&it.miembros.nombre)?it.miembros.nombre:'Titular';
+      var prodNombre=(it.productos&&it.productos.nombre)?esc(it.productos.nombre):'Producto';
+      var miembroNombre=(it.miembros&&it.miembros.nombre)?esc(it.miembros.nombre):'Titular';
       html+='<div class="detail-item">'
         +'<div>'
         +'<span class="detail-item-name">'+prodNombre+'</span>'

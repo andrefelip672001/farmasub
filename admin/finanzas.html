@@ -172,6 +172,9 @@ tr:last-child td{border-bottom:none;}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 var _pagosMes = [], _comprasMes = [], _mesActual = '';
 
 (async function() {
@@ -278,7 +281,7 @@ function renderPagosTabla() {
   var html = '';
   for (var i = 0; i < _pagosMes.length; i++) {
     var p = _pagosMes[i];
-    var nom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
+    var nom = (p.usuarios && p.usuarios.nombre) ? esc(p.usuarios.nombre) : '-';
     var tipoTxt = p.tipo === 'renovacion' ? 'Renovacion' : 'Registro';
     var planTxt = p.plan === 'ahorro' ? 'Ahorro' : 'Familiar';
     var fecha = p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC') : '-';
@@ -296,7 +299,7 @@ function renderComprasTabla() {
   var html = '';
   for (var i = 0; i < _comprasMes.length; i++) {
     var c = _comprasMes[i];
-    var nom = (c.productos && c.productos.nombre) ? c.productos.nombre : '-';
+    var nom = (c.productos && c.productos.nombre) ? esc(c.productos.nombre) : '-';
     var costoU = c.costo_unitario ? '$' + c.costo_unitario.toFixed(2) : '-';
     var total = c.costo_unitario ? '$' + (c.cantidad * c.costo_unitario).toFixed(2) : '-';
     var fecha = c.created_at ? new Date(c.created_at).toLocaleDateString('es-EC') : '-';

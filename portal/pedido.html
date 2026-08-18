@@ -442,6 +442,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 var FOTO_URL_BASE = 'https://cjimcldhoglgqachcimm.supabase.co/storage/v1/object/public/producto-fotos/';
 
 var _user, _susc, _miembros = [], _cart = [];
@@ -520,28 +523,28 @@ function renderCart() {
   document.getElementById('cart-empty').style.display = 'none';
   document.getElementById('cart-grid').style.display = 'grid';
 
-  var memberOpts = '<option value="titular">' + ((_susc && _susc.nombre) ? _susc.nombre : 'Titular') + '</option>';
+  var memberOpts = '<option value="titular">' + esc((_susc && _susc.nombre) ? _susc.nombre : 'Titular') + '</option>';
   for (var mi = 0; mi < _miembros.length; mi++) {
-    memberOpts += '<option value="' + _miembros[mi].cedula + '">' + _miembros[mi].nombre + '</option>';
+    memberOpts += '<option value="' + esc(_miembros[mi].cedula) + '">' + esc(_miembros[mi].nombre) + '</option>';
   }
 
   var html = '';
   for (var i = 0; i < _cart.length; i++) {
     var item = _cart[i];
     var imgHtml = item.foto_path
-      ? '<img class="item-img" src="' + FOTO_URL_BASE + item.foto_path + '" alt="' + item.nombre + '"/>'
+      ? '<img class="item-img" src="' + FOTO_URL_BASE + item.foto_path + '" alt="' + esc(item.nombre) + '"/>'
       : '<div class="item-img-ph">&#128138;</div>';
     var selectedMiembro = item.miembro || 'titular';
-    var mopts = '<option value="titular"' + (selectedMiembro === 'titular' ? ' selected' : '') + '>' + ((_susc && _susc.nombre) ? _susc.nombre : 'Titular') + '</option>';
+    var mopts = '<option value="titular"' + (selectedMiembro === 'titular' ? ' selected' : '') + '>' + esc((_susc && _susc.nombre) ? _susc.nombre : 'Titular') + '</option>';
     for (var mj = 0; mj < _miembros.length; mj++) {
-      mopts += '<option value="' + _miembros[mj].cedula + '"' + (selectedMiembro === _miembros[mj].cedula ? ' selected' : '') + '>' + _miembros[mj].nombre + '</option>';
+      mopts += '<option value="' + esc(_miembros[mj].cedula) + '"' + (selectedMiembro === _miembros[mj].cedula ? ' selected' : '') + '>' + esc(_miembros[mj].nombre) + '</option>';
     }
     html += '<div class="cart-item">'
       + '<div class="item-top">'
       + imgHtml
       + '<div class="item-info">'
-      + '<p class="item-nombre">' + item.nombre + '</p>'
-      + '<p class="item-activo">' + (item.principio_activo || '') + '</p>'
+      + '<p class="item-nombre">' + esc(item.nombre) + '</p>'
+      + '<p class="item-activo">' + esc(item.principio_activo || '') + '</p>'
       + '</div>'
       + '<button class="btn-del" onclick="removeItem(' + i + ')" title="Eliminar">'
       + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>'
@@ -613,7 +616,7 @@ function renderSummary() {
     var lineTotal = _cart[ri].precio_costo * _cart[ri].cantidad;
     subtotal += lineTotal;
     rows += '<div class="summary-row">'
-      + '<span>' + _cart[ri].nombre + ' x' + _cart[ri].cantidad + '</span>'
+      + '<span>' + esc(_cart[ri].nombre) + ' x' + _cart[ri].cantidad + '</span>'
       + '<span class="sr-val">$' + lineTotal.toFixed(2) + '</span>'
       + '</div>';
   }

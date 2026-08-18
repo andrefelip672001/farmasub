@@ -387,6 +387,9 @@ tr:hover td{background:var(--naranja-light);}
 var SUPA_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
 var SUPA_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
 var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 var _productos = [];
 var _adminUserId = null;
@@ -469,15 +472,15 @@ function renderTabla(lista) {
     } else {
       foto = '<div style="width:48px;height:48px;border-radius:50%;background:#FFF2EC;display:flex;align-items:center;justify-content:center;font-size:20px">&#128138;</div>';
     }
-    var catNom = (p.categorias && p.categorias.nombre) ? p.categorias.nombre : catNombre(p.categoria_id);
+    var catNom = esc((p.categorias && p.categorias.nombre) ? p.categorias.nombre : catNombre(p.categoria_id));
     var estadoBadge = p.activo ? '<span class="badge badge-activo">Activo</span>' : '<span class="badge badge-inactivo">Inactivo</span>';
     var toggleLabel = p.activo ? 'Desactivar' : 'Activar';
     var toggleCls = p.activo ? 'btn-desactivar' : 'btn-activar-small';
     html += '<tr>';
     html += '<td>' + foto + '</td>';
-    html += '<td style="font-weight:600">' + (p.nombre || '') + '</td>';
-    html += '<td style="color:var(--ink-60)">' + (p.principio_activo || '-') + '</td>';
-    html += '<td style="color:var(--ink-60)">' + (p.laboratorio || '-') + '</td>';
+    html += '<td style="font-weight:600">' + esc(p.nombre || '') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + esc(p.principio_activo || '-') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + esc(p.laboratorio || '-') + '</td>';
     var caducidadHtml = '-';
     if (p.fecha_caducidad) {
       var fCad = new Date(p.fecha_caducidad + 'T00:00:00');

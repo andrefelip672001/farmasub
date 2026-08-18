@@ -630,6 +630,10 @@ const _db = supabase.createClient(
   'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC'
 );
 
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 // ESTADO GLOBAL
 const PLANS = {
   ahorro:   { nombre: 'Plan Ahorro',   precio: 8.99,  cupo: 2, limite: 90  },
@@ -1168,10 +1172,12 @@ function buildHealthStep() {
           </div>
         </div>
       </div>`;
+    var pNombreSafe = esc(p.nombre);
+    var pRelacionSafe = esc(p.relacion || '');
     if (isTitular) {
-      div.innerHTML = `<div class="hp-header"><div class="hp-person"><div class="hp-avatar gold">${p.nombre.charAt(0).toUpperCase()}</div><div><div class="hp-name">${p.nombre}</div><div class="hp-role">Titular \u2014 Seccion obligatoria</div></div></div></div>${formHtml}`;
+      div.innerHTML = `<div class="hp-header"><div class="hp-person"><div class="hp-avatar gold">${esc(p.nombre.charAt(0).toUpperCase())}</div><div><div class="hp-name">${pNombreSafe}</div><div class="hp-role">Titular \u2014 Seccion obligatoria</div></div></div></div>${formHtml}`;
     } else {
-      div.innerHTML = `<div class="hp-header"><div class="hp-person"><div class="hp-avatar">${p.nombre.charAt(0).toUpperCase()}</div><div><div class="hp-name">${p.nombre}</div><div class="hp-role">${p.relacion} \u2014 Opcional</div></div></div><div class="toggle-wrap"><span class="toggle-lbl">Completar informacion de salud</span><label class="toggle"><input type="checkbox" onchange="toggleHealthForm(${p.idx},this)"/><span class="toggle-sl"></span></label></div></div><div id="hp-body-${p.idx}" style="display:none">${formHtml.replace(`<div class="hp-body" id="hp-body-${p.idx}">`,`<div style="padding:20px">`)}</div>`;
+      div.innerHTML = `<div class="hp-header"><div class="hp-person"><div class="hp-avatar">${esc(p.nombre.charAt(0).toUpperCase())}</div><div><div class="hp-name">${pNombreSafe}</div><div class="hp-role">${pRelacionSafe} \u2014 Opcional</div></div></div><div class="toggle-wrap"><span class="toggle-lbl">Completar informacion de salud</span><label class="toggle"><input type="checkbox" onchange="toggleHealthForm(${p.idx},this)"/><span class="toggle-sl"></span></label></div></div><div id="hp-body-${p.idx}" style="display:none">${formHtml.replace(`<div class="hp-body" id="hp-body-${p.idx}">`,`<div style="padding:20px">`)}</div>`;
     }
     container.appendChild(div);
   });
@@ -1409,10 +1415,10 @@ function buildConfirmation() {
   document.getElementById('conf-telefono').textContent = S.titular.telefono || 'registrado';
   document.getElementById('conf-direccion').textContent = [S.titular.direccion, S.titular.barrio].filter(Boolean).join(', ') || '\u2014';
   const list = document.getElementById('conf-members');
-  list.innerHTML = `<li><span>${S.titular.nombre || '\u2014'}</span><span class="cc-badge gold" style="margin-left:6px">Titular</span></li>`;
+  list.innerHTML = `<li><span>${esc(S.titular.nombre || '\u2014')}</span><span class="cc-badge gold" style="margin-left:6px">Titular</span></li>`;
   S.members.forEach(m => {
     const li = document.createElement('li');
-    li.innerHTML = `<span>${m.nombre}</span><span class="cc-badge green" style="margin-left:6px">${m.relacion}</span>`;
+    li.innerHTML = `<span>${esc(m.nombre)}</span><span class="cc-badge green" style="margin-left:6px">${esc(m.relacion)}</span>`;
     list.appendChild(li);
   });
 }

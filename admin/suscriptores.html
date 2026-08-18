@@ -270,6 +270,10 @@ tr.selected td{background:var(--naranja-light);}
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
 var _todos = [], _filtro = 'todos', _selIdx = null;
 
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
 (async function() {
   var sessRes = await _db.auth.getSession();
   var session = sessRes.data.session;
@@ -358,9 +362,9 @@ function renderTable() {
     var fecha = s.created_at ? new Date(s.created_at).toLocaleDateString('es-EC') : '-';
     var selClass = (_selIdx === oidx) ? ' selected' : '';
     html += '<tr class="clickable' + selClass + '">';
-    html += '<td style="font-weight:600">' + (s.nombre || '-') + '</td>';
-    html += '<td style="color:var(--ink-60);font-size:.78rem">' + (s.cedula || '-') + '</td>';
-    html += '<td style="color:var(--ink-60);font-size:.78rem">' + (s.email || '-') + '</td>';
+    html += '<td style="font-weight:600">' + esc(s.nombre || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.cedula || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.email || '-') + '</td>';
     html += '<td style="color:var(--ink-60)">' + (s.telefono || '-') + '</td>';
     html += '<td><span class="badge ' + cls + '">' + (sEstado || '-') + '</span></td>';
     html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span></td>';
@@ -414,11 +418,11 @@ async function openPanel(idx) {
   else cls2 = 'badge-pend';
   var susIdSafe = sus ? sus.id : '';
   var datosHtml = '';
-  datosHtml += '<div class="pfield"><span class="pfield-lbl">Cedula</span><span style="font-weight:500">' + (s.cedula || '-') + '</span></div>';
-  datosHtml += '<div class="pfield"><span class="pfield-lbl">Email</span><span style="font-weight:500">' + (s.email || '-') + '</span></div>';
-  datosHtml += '<div class="pfield"><span class="pfield-lbl">Telefono</span><span style="font-weight:500">' + (s.telefono || '-') + '</span></div>';
-  datosHtml += '<div class="pfield"><span class="pfield-lbl">Direccion</span><span style="font-weight:500">' + (s.direccion || '-') + '</span></div>';
-  datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + (s.barrio || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Cedula</span><span style="font-weight:500">' + esc(s.cedula || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Email</span><span style="font-weight:500">' + esc(s.email || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Telefono</span><span style="font-weight:500">' + esc(s.telefono || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Direccion</span><span style="font-weight:500">' + esc(s.direccion || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + esc(s.barrio || '-') + '</span></div>';
   var planLbl2 = (sus && sus.plan === 'ahorro') ? 'Plan Ahorro ($8.99)' : (sus && sus.plan === 'familiar') ? 'Plan Familiar ($12.99)' : 'Sin plan asignado';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Plan</span><span style="font-weight:500">' + planLbl2 + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + (sEstado2 || '-') + '</span></div>';
@@ -445,13 +449,13 @@ async function openPanel(idx) {
     for (var mi = 0; mi < miembros.length; mi++) {
       var m = miembros[mi];
       var mNombre = m.nombre ? m.nombre : '?';
-      var mIni = mNombre[0].toUpperCase();
+      var mIni = esc(mNombre.charAt(0).toUpperCase());
       var mRel = m.relacion ? m.relacion : 'Familiar';
       var mCed = m.cedula ? m.cedula : '';
       membHtml += '<div class="member-row">';
       membHtml += '<div class="m-av">' + mIni + '</div>';
-      membHtml += '<div><p style="font-weight:600;font-size:.875rem">' + mNombre + '</p>';
-      membHtml += '<p style="color:var(--ink-60);font-size:.78rem">' + mRel + ' &middot; ' + mCed + '</p></div>';
+      membHtml += '<div><p style="font-weight:600;font-size:.875rem">' + esc(mNombre) + '</p>';
+      membHtml += '<p style="color:var(--ink-60);font-size:.78rem">' + esc(mRel) + ' &middot; ' + esc(mCed) + '</p></div>';
       membHtml += '</div>';
     }
   } else {
@@ -497,7 +501,7 @@ async function openPanel(idx) {
         pagHtml += '<a href="' + pg.comprobante_url + '" target="_blank" style="color:var(--naranja);font-size:.78rem">Ver comprobante</a>';
       }
       if (pg.estado === 'rechazado' && pg.motivo_rechazo) {
-        pagHtml += '<span style="color:var(--danger);font-size:.75rem">' + pg.motivo_rechazo + '</span>';
+        pagHtml += '<span style="color:var(--danger);font-size:.75rem">' + esc(pg.motivo_rechazo) + '</span>';
       }
       pagHtml += '</div>';
     }
@@ -519,7 +523,7 @@ async function openPanel(idx) {
   var kycHtml = '';
   kycHtml += '<div class="pfield"><span class="pfield-lbl">Estado KYC</span><span class="badge ' + kycCls2 + '">' + kycLbl2 + '</span></div>';
   if (kycEstado === 'rechazado' && sus && sus.kyc_motivo_rechazo) {
-    kycHtml += '<div class="pfield"><span class="pfield-lbl">Motivo</span><span style="font-size:.78rem;color:var(--danger)">' + sus.kyc_motivo_rechazo + '</span></div>';
+    kycHtml += '<div class="pfield"><span class="pfield-lbl">Motivo</span><span style="font-size:.78rem;color:var(--danger)">' + esc(sus.kyc_motivo_rechazo) + '</span></div>';
   }
   if (sus && sus.kyc_fecha) {
     kycHtml += '<div class="pfield"><span class="pfield-lbl">Fecha revision</span><span>' + new Date(sus.kyc_fecha).toLocaleDateString('es-EC') + '</span></div>';

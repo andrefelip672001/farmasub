@@ -440,6 +440,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 var _user, _susc, _editMode = false;
 var PLANS = { ahorro: { nombre: 'Plan Ahorro', cupo: 2 }, familiar: { nombre: 'Plan Familiar', cupo: 4 } };
 var _planKey = 'familiar';
@@ -494,7 +497,7 @@ function renderFields() {
     var val = (_susc && _susc[f.k]) ? String(_susc[f.k]) : '';
     html += '<div class="field-group">'
       + '<span class="field-label">' + f.l + '</span>'
-      + '<div class="field-value" id="fv-' + f.k + '">' + (val || '&#8212;') + '</div>'
+      + '<div class="field-value" id="fv-' + f.k + '">' + (val ? esc(val) : '&#8212;') + '</div>'
       + '<input class="field-input" id="fi-' + f.k + '" type="text" value="' + val.replace(/"/g, '&quot;') + '"/>'
       + '</div>';
   }
@@ -564,10 +567,10 @@ async function loadMembers() {
     var nomSafe = String(mb.nombre || '').replace(/'/g, '').replace(/"/g, '');
     html += '<div class="member-card">'
       + '<div class="member-info">'
-      + '<div class="member-avatar">' + ini + '</div>'
+      + '<div class="member-avatar">' + esc(ini) + '</div>'
       + '<div>'
-      + '<p class="member-nombre">' + (mb.nombre || '') + '</p>'
-      + '<p class="member-rel">' + (mb.relacion || 'Familiar') + ' - C.I. ' + (mb.cedula || '') + '</p>'
+      + '<p class="member-nombre">' + esc(mb.nombre || '') + '</p>'
+      + '<p class="member-rel">' + esc(mb.relacion || 'Familiar') + ' - C.I. ' + esc(mb.cedula || '') + '</p>'
       + '</div>'
       + '</div>'
       + '<button class="btn-salud" onclick="verSalud(\'' + mb.id + '\',\'' + nomSafe + '\')">Ver cuestionario de salud</button>'

@@ -215,6 +215,9 @@ tr:hover td{background:var(--naranja-light);}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 var _todos = [], _filtro = 'todos', _rechazoId = null;
 var PLANS = { ahorro: { nombre: 'Plan Ahorro', precio: 8.99 }, familiar: { nombre: 'Plan Familiar', precio: 12.99 } };
 
@@ -296,15 +299,15 @@ function renderTable() {
     }
     html += '<tr>';
     html += '<td>';
-    html += '<p style="font-weight:600">' + (u.nombre || '-') + '</p>';
-    if (u.email) { html += '<p style="color:var(--ink-60);font-size:.75rem">' + u.email + tipoLbl + '</p>'; }
+    html += '<p style="font-weight:600">' + esc(u.nombre || '-') + '</p>';
+    if (u.email) { html += '<p style="color:var(--ink-60);font-size:.75rem">' + esc(u.email) + tipoLbl + '</p>'; }
     html += '</td>';
-    html += '<td style="color:var(--ink-60);font-size:.78rem">' + (u.cedula || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(u.cedula || '-') + '</td>';
     html += '<td style="font-weight:700;color:var(--naranja)">$' + (p.monto || 0).toFixed(2) + '</td>';
     html += '<td>' + compHtml + '</td>';
     html += '<td><span class="badge ' + cls + '">' + lbl + '</span>';
     if (estado2 === 'rechazado' && p.motivo_rechazo) {
-      html += '<p style="font-size:.72rem;color:var(--danger);margin-top:3px">' + p.motivo_rechazo + '</p>';
+      html += '<p style="font-size:.72rem;color:var(--danger);margin-top:3px">' + esc(p.motivo_rechazo) + '</p>';
     }
     html += '</td>';
     html += '<td style="color:var(--ink-60)">' + fecha + '</td>';

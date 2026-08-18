@@ -182,6 +182,9 @@ tr.clickable:hover td{background:var(--naranja-light);}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 var _todos = [], _filtro = 'todos';
 var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'];
 var _adminUserId = null;
@@ -259,7 +262,7 @@ function renderTable() {
     var fecha = p.fecha_pedido ? new Date(p.fecha_pedido).toLocaleDateString('es-EC') : '-';
     var total = '$' + (p.total_costo || 0).toFixed(2);
     var pedNum = '#' + String(p.id).slice(0, 8);
-    var suscNombre = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
+    var suscNombre = (p.usuarios && p.usuarios.nombre) ? esc(p.usuarios.nombre) : '-';
     var selHtml = '<select class="status-select" onchange="cambiarEstado(\'' + p.id + '\',this.value)">';
     for (var ei = 0; ei < ESTADOS.length; ei++) {
       var est = ESTADOS[ei];
@@ -305,8 +308,8 @@ async function toggleDetail(rowIdx) {
   if (items.length) {
     for (var ii = 0; ii < items.length; ii++) {
       var item = items[ii];
-      var prodNombre = (item.productos && item.productos.nombre) ? item.productos.nombre : 'Producto';
-      var miemNombre = (item.miembros && item.miembros.nombre) ? item.miembros.nombre : 'Titular';
+      var prodNombre = (item.productos && item.productos.nombre) ? esc(item.productos.nombre) : 'Producto';
+      var miemNombre = (item.miembros && item.miembros.nombre) ? esc(item.miembros.nombre) : 'Titular';
       var precio = ((item.precio_unitario || 0) * item.cantidad).toFixed(2);
       html += '<div class="di-row">';
       html += '<span class="di-name">' + prodNombre + '</span>';
@@ -330,7 +333,7 @@ async function toggleDetail(rowIdx) {
   }
   if (pedidoData) {
     if (pedidoData.direccion_entrega) {
-      html += '<div class="detail-extra"><span class="di-extra-lbl">Direccion de entrega:</span><span class="di-extra-val">' + pedidoData.direccion_entrega + '</span></div>';
+      html += '<div class="detail-extra"><span class="di-extra-lbl">Direccion de entrega:</span><span class="di-extra-val">' + esc(pedidoData.direccion_entrega) + '</span></div>';
     }
     if (pedidoData.fecha_entrega_estimada) {
       html += '<div class="detail-extra"><span class="di-extra-lbl">Fecha estimada:</span><span class="di-extra-val">' + new Date(pedidoData.fecha_entrega_estimada).toLocaleDateString('es-EC') + '</span></div>';

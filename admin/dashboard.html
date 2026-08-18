@@ -326,6 +326,9 @@ tr:hover td{background:var(--naranja-light);}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 (async function() {
   var sessRes = await _db.auth.getSession();
@@ -400,8 +403,8 @@ async function loadPagosPendientes() {
   var html = '';
   for (var i = 0; i < data.length; i++) {
     var p = data[i];
-    var sNom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
-    var sCed = (p.usuarios && p.usuarios.cedula) ? String(p.usuarios.cedula) : '';
+    var sNom = (p.usuarios && p.usuarios.nombre) ? esc(p.usuarios.nombre) : '-';
+    var sCed = (p.usuarios && p.usuarios.cedula) ? esc(String(p.usuarios.cedula)) : '';
     var tipoTxt = p.tipo === 'renovacion' ? ' (renovacion)' : ' (registro)';
     var comprobanteLink = p.comprobante_url ? '<a href="' + p.comprobante_url + '" target="_blank" style="color:var(--naranja);font-size:.78rem;display:block;margin-top:2px">Ver comprobante</a>' : '';
     html += '<tr>'
@@ -435,7 +438,7 @@ async function loadUltimosPedidos() {
     else if (p.estado === 'despachado' || p.estado === 'en-proceso') cls = 'badge-proceso';
     else if (p.estado === 'cancelado') cls = 'badge-cancelado';
     else cls = 'badge-pendiente';
-    var sNom = (p.usuarios && p.usuarios.nombre) ? p.usuarios.nombre : '-';
+    var sNom = (p.usuarios && p.usuarios.nombre) ? esc(p.usuarios.nombre) : '-';
     html += '<tr>'
       + '<td class="td-num">#' + String(p.id).slice(0,8) + '</td>'
       + '<td>' + sNom + '</td>'

@@ -435,6 +435,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 function getSortedFotos(p) {
   if (!p || !p.producto_fotos || !p.producto_fotos.length) return [];
@@ -530,19 +533,19 @@ function renderGrid() {
     if (f1) {
       var wc = 'prod-img-wrap' + (f2 ? ' has-hover' : '');
       imgHtml = '<div class="' + wc + '">'
-        + '<img class="prod-img" src="' + f1 + '" alt="' + p.nombre + '" loading="lazy"/>'
-        + (f2 ? '<img class="prod-img-sec" src="' + f2 + '" alt="' + p.nombre + '" loading="lazy"/>' : '')
+        + '<img class="prod-img" src="' + f1 + '" alt="' + esc(p.nombre) + '" loading="lazy"/>'
+        + (f2 ? '<img class="prod-img-sec" src="' + f2 + '" alt="' + esc(p.nombre) + '" loading="lazy"/>' : '')
         + '</div>';
     } else {
       imgHtml = '<div class="prod-img-wrap"><div class="prod-img-ph">&#128138;</div></div>';
     }
-    var catNombre = (p.categorias && p.categorias.nombre) ? p.categorias.nombre : '';
+    var catNombre = (p.categorias && p.categorias.nombre) ? esc(p.categorias.nombre) : '';
     var addBtnClass = 'btn-add' + (inCart ? ' added' : '');
     var addBtnText = inCart ? 'Agregado' : 'Agregar al pedido';
     html += '<div class="prod-card">'
       + imgHtml
       + '<div class="prod-card-body">'
-      + '<p class="prod-nombre">' + p.nombre + '</p>'
+      + '<p class="prod-nombre">' + esc(p.nombre) + '</p>'
       + '<p class="prod-activo">' + (p.principio_activo || '') + '</p>'
       + '<div class="prod-badges">'
       + (catNombre ? '<span class="badge-cat">' + catNombre + '</span>' : '')
@@ -674,13 +677,13 @@ function buildRelated(p, autoRels, manualProds) {
     var r = combined[rj];
     var rSorted = getSortedFotos(r);
     var rImg = rSorted[0]
-      ? '<img class="rel-prod-img" src="' + rSorted[0].url + '" alt="' + r.nombre + '" loading="lazy"/>'
+      ? '<img class="rel-prod-img" src="' + rSorted[0].url + '" alt="' + esc(r.nombre) + '" loading="lazy"/>'
       : '<div class="rel-prod-img-ph">&#128138;</div>';
     relHtml += '<div class="rel-prod-card" onclick="openModal(\'' + r.id + '\')">'
       + rImg
       + '<div class="rel-prod-info">'
-      + '<div class="rel-prod-name">' + r.nombre + '</div>'
-      + '<div class="rel-prod-lab">' + (r.principio_activo || '') + '</div>'
+      + '<div class="rel-prod-name">' + esc(r.nombre) + '</div>'
+      + '<div class="rel-prod-lab">' + esc(r.principio_activo || '') + '</div>'
       + '</div>'
       + '<div class="rel-prod-prices">'
       + '<span class="rel-prod-normal">$' + (r.precio_farmacia || 0).toFixed(2) + '</span>'
