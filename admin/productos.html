@@ -224,6 +224,7 @@ tr:hover td{background:var(--naranja-light);}
             <th>Nombre</th>
             <th>Principio activo</th>
             <th>Laboratorio</th>
+            <th>Caducidad</th>
             <th>Categor&iacute;a</th>
             <th>P. Farmacia</th>
             <th>P. Costo</th>
@@ -274,6 +275,10 @@ tr:hover td{background:var(--naranja-light);}
         <div class="field">
           <label>Unidades por caja</label>
           <input type="number" id="f-unidades" min="1" placeholder="30"/>
+        </div>
+        <div class="field">
+          <label>Fecha de caducidad</label>
+          <input type="date" id="f-caducidad"/>
         </div>
         <div class="field">
           <label>Precio farmacia ($)</label>
@@ -483,6 +488,21 @@ function renderTabla(lista) {
     html += '<td style="font-weight:600">' + (p.nombre || '') + '</td>';
     html += '<td style="color:var(--ink-60)">' + (p.principio_activo || '-') + '</td>';
     html += '<td style="color:var(--ink-60)">' + (p.laboratorio || '-') + '</td>';
+    var caducidadHtml = '-';
+    if (p.fecha_caducidad) {
+      var fCad = new Date(p.fecha_caducidad + 'T00:00:00');
+      var hoy = new Date();
+      var seisAntes = new Date(); seisAntes.setMonth(seisAntes.getMonth() + 6);
+      var fCadTxt = fCad.toLocaleDateString('es-EC');
+      if (fCad < hoy) {
+        caducidadHtml = '<span style="color:#EF4444;font-weight:700">' + fCadTxt + ' (vencido)</span>';
+      } else if (fCad < seisAntes) {
+        caducidadHtml = '<span style="color:#D97706;font-weight:700">' + fCadTxt + '</span>';
+      } else {
+        caducidadHtml = '<span style="color:#1A1A2E">' + fCadTxt + '</span>';
+      }
+    }
+    html += '<td>' + caducidadHtml + '</td>';
     html += '<td>' + catNom + '</td>';
     html += '<td><span class="price-farm">' + fmt(p.precio_farmacia) + '</span></td>';
     html += '<td><span class="price-cost">' + fmt(p.precio_costo) + '</span></td>';
@@ -594,6 +614,7 @@ function openModal(modo) {
   document.getElementById('f-activo').value = '';
   document.getElementById('f-categoria').value = '';
   document.getElementById('f-unidades').value = '';
+  document.getElementById('f-caducidad').value = '';
   document.getElementById('f-pfarmacia').value = '';
   document.getElementById('f-pcosto').value = '';
   document.getElementById('f-receta').checked = false;
@@ -630,6 +651,7 @@ async function editProducto(id) {
   document.getElementById('f-laboratorio').value = p.laboratorio || '';
   document.getElementById('f-categoria').value = p.categoria_id || '';
   document.getElementById('f-unidades').value = p.unidades_caja || '';
+  document.getElementById('f-caducidad').value = p.fecha_caducidad || '';
   document.getElementById('f-pfarmacia').value = p.precio_farmacia || '';
   document.getElementById('f-pcosto').value = p.precio_costo || '';
   document.getElementById('f-receta').checked = p.requiere_receta || false;
@@ -807,6 +829,7 @@ async function guardarProducto() {
   var laboratorio = document.getElementById('f-laboratorio').value.trim();
   var categoriaId = document.getElementById('f-categoria').value;
   var unidades = parseInt(document.getElementById('f-unidades').value) || 0;
+  var caducidad = document.getElementById('f-caducidad').value || null;
   var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
   var pcosto = parseFloat(document.getElementById('f-pcosto').value) || 0;
   var receta = document.getElementById('f-receta').checked;
@@ -825,6 +848,7 @@ async function guardarProducto() {
     laboratorio: laboratorio,
     categoria_id: categoriaId,
     unidades_caja: unidades,
+    fecha_caducidad: caducidad,
     precio_farmacia: pfarmacia,
     precio_costo: pcosto,
     requiere_receta: receta,

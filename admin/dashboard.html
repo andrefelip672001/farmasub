@@ -96,6 +96,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .m-blue .metric-val{color:var(--azul);}
 .m-verde .metric-icon{background:var(--verde-light);color:var(--verde);}
 .m-verde .metric-val{color:var(--verde);}
+.m-danger .metric-icon{background:var(--danger-light);color:var(--danger);}
+.m-danger .metric-val{color:var(--danger);}
 
 /* TABLES */
 .table-block{
@@ -268,6 +270,17 @@ tr:hover td{background:var(--naranja-light);}
         </div>
       </div>
 
+      <a href="../admin/productos.html" class="metric-card m-danger" style="text-decoration:none;display:flex">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Por caducar (6 meses)</p>
+          <p class="metric-val" id="m-caducar">&#8212;</p>
+          <p class="metric-sub" id="m-caducar-sub">revisar catalogo</p>
+        </div>
+      </a>
+
     </div>
 
     <!-- PAGOS PENDIENTES -->
@@ -339,6 +352,7 @@ var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_p
   await loadMetrics();
   await loadPagosPendientes();
   await loadUltimosPedidos();
+  await loadCaducidad();
 })();
 
 var PLANS = { ahorro: { precio: 8.99 }, familiar: { precio: 12.99 } };
@@ -364,6 +378,15 @@ async function loadMetrics() {
   document.getElementById('m-pedidos').textContent = pedidosMes;
   document.getElementById('m-ingresos').textContent = '$' + ingresos.toFixed(2);
   document.getElementById('m-utilidad').textContent = 'Utilidad: $' + ingresos.toFixed(2) + ' (100% membresia, medicamentos al costo)';
+}
+
+async function loadCaducidad() {
+  var seisMeses = new Date();
+  seisMeses.setMonth(seisMeses.getMonth() + 6);
+  var res = await _db.from('productos').select('id', {count: 'exact', head: true}).eq('activo', true).not('fecha_caducidad', 'is', null).lte('fecha_caducidad', seisMeses.toISOString().slice(0,10));
+  var count = res.count || 0;
+  document.getElementById('m-caducar').textContent = count;
+  document.getElementById('m-caducar-sub').textContent = count === 1 ? '1 producto necesita revision' : count + ' productos necesitan revision';
 }
 
 async function loadPagosPendientes() {
