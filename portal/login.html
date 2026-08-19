@@ -258,6 +258,14 @@ body::after{
 
   </form>
 
+  <div id="mfa-box" style="display:none">
+    <p style="font-size:.85rem;color:#6B7280;margin-bottom:14px;text-align:center">Ingresa el codigo de 6 digitos de tu app de autenticacion</p>
+    <input type="text" id="mfa-code" maxlength="6" inputmode="numeric" placeholder="000000" style="width:100%;padding:12px 14px;border:1.5px solid #D1D5DB;border-radius:10px;font-family:inherit;font-size:1.1rem;letter-spacing:.3em;text-align:center;margin-bottom:12px"/>
+    <button type="button" id="btn-mfa-verify" class="btn-login" onclick="verificarMfaLogin()">
+      <span class="btn-label">Verificar</span>
+    </button>
+  </div>
+
   <div class="divider">No tienes cuenta?</div>
 
   <a href="../registro.html" class="btn-register">Registrarse gratis</a>
@@ -304,7 +312,54 @@ async function handleLogin(e) {
     return;
   }
 
+  var aalRes = await _db.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalRes.data && aalRes.data.nextLevel === 'aal2' && aalRes.data.currentLevel !== aalRes.data.nextLevel) {
+    var factorsRes = await _db.auth.mfa.listFactors();
+    var totpFactors = (factorsRes.data && factorsRes.data.totp) ? factorsRes.data.totp : [];
+    var verified = totpFactors.filter(function(f) { return f.status === 'verified'; });
+    if (verified.length > 0) {
+      _mfaFactorId = verified[0].id;
+      var challengeRes = await _db.auth.mfa.challenge({ factorId: _mfaFactorId });
+      if (!challengeRes.error) {
+        _mfaChallengeId = challengeRes.data.id;
+        _pendingUser = result.data.user;
+        setLoading(false);
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('mfa-box').style.display = 'block';
+        return;
+      }
+    }
+  }
+
   redirectByRole(result.data.user);
+}
+
+var _mfaFactorId = null;
+var _mfaChallengeId = null;
+var _pendingUser = null;
+
+async function verificarMfaLogin() {
+  var code = document.getElementById('mfa-code').value.trim();
+  if (!code || code.length !== 6) {
+    showError('Ingresa el codigo de 6 digitos completo.');
+    return;
+  }
+  var btn = document.getElementById('btn-mfa-verify');
+  btn.disabled = true;
+
+  var verifyRes = await _db.auth.mfa.verify({
+    factorId: _mfaFactorId,
+    challengeId: _mfaChallengeId,
+    code: code
+  });
+
+  if (verifyRes.error) {
+    btn.disabled = false;
+    showError('Codigo incorrecto o vencido. Intenta de nuevo.');
+    return;
+  }
+
+  redirectByRole(_pendingUser);
 }
 
 // Rol y redireccion
@@ -317,7 +372,7 @@ async function redirectByRole(user) {
   }
 
   if (!rol) {
-    var perfilRes = await _db.from('perfiles').select('rol').eq('id', user.id).single();
+    var perfilRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
     rol = (perfilRes.data && perfilRes.data.rol) ? perfilRes.data.rol : 'suscriptor';
   }
 
