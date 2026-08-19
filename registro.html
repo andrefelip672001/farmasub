@@ -1320,7 +1320,7 @@ async function submitRegistro() {
       if (!kycBErr) kycPosteriorPath = path;
     }
 
-    var { error: userErr } = await _db.from('usuarios').insert({
+    var { error: userErr } = await _db.from('usuarios').upsert({
       id: userId,
       nombre: S.titular.nombre,
       cedula: S.titular.cedula,
