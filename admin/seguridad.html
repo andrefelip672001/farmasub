@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Seguridad Admin — TuCosto</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;margin-right:-2px;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-title{font-size:1.5rem;font-weight:700;margin-bottom:4px;}
+.page-sub{color:var(--ink-60);font-size:.9rem;margin-bottom:24px;max-width:560px;}
+
+.card{background:var(--white);border-radius:var(--r);padding:24px;box-shadow:var(--shadow);max-width:520px;margin-bottom:20px;}
+.card-title{font-size:1rem;font-weight:700;margin-bottom:4px;}
+.card-sub{color:var(--ink-60);font-size:.85rem;margin-bottom:18px;}
+
+.status-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg);border-radius:10px;margin-bottom:16px;}
+.status-lbl{font-size:.85rem;font-weight:600;}
+.status-badge{font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:99px;}
+.status-badge.on{background:var(--verde-light);color:var(--verde);}
+.status-badge.off{background:var(--danger-light);color:var(--danger);}
+
+.btn-primary{background:var(--naranja);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;}
+.btn-primary:hover{background:var(--naranja-d);}
+.btn-danger-outline{background:transparent;border:1.5px solid var(--danger);color:var(--danger);border-radius:10px;padding:9px 16px;font-weight:600;font-size:.82rem;cursor:pointer;font-family:inherit;}
+.btn-danger-outline:hover{background:var(--danger-light);}
+
+.enroll-box{margin-top:18px;padding-top:18px;border-top:1px solid #F3F4F6;}
+.qr-wrap{display:flex;justify-content:center;padding:16px;background:var(--bg);border-radius:10px;margin-bottom:14px;}
+.qr-wrap svg{width:180px;height:180px;}
+.secret-txt{font-size:.78rem;color:var(--ink-60);text-align:center;margin-bottom:16px;word-break:break-all;font-family:monospace;}
+.code-input{width:100%;padding:12px 14px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:1.1rem;letter-spacing:.3em;text-align:center;margin-bottom:12px;}
+.msg-err{color:var(--danger);font-size:.82rem;margin-top:10px;display:none;}
+.msg-ok{color:var(--verde);font-size:.82rem;margin-top:10px;display:none;}
+.hint-box{background:var(--azul-light);color:#1D4ED8;font-size:.8rem;padding:12px 14px;border-radius:10px;max-width:520px;line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-nav">
+    <div class="nav-left">
+      <a href="../admin/dashboard.html" class="nav-logo">
+        <span class="nav-tag">Panel Admin</span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+      <button class="btn-logout" onclick="logout()">Cerrar sesion</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <a href="../admin/dashboard.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        Inicio
+      </a>
+      <a href="../admin/suscriptores.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Suscriptores
+      </a>
+      <a href="../admin/pedidos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Pedidos
+      </a>
+      <a href="../admin/productos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Catalogo
+      </a>
+      <hr class="sb-divider"/>
+      <a href="../admin/pagos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Pagos
+      </a>
+      <a href="../admin/finanzas.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Finanzas
+      </a>
+      <a href="../admin/seguridad.html" class="sb-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Seguridad
+      </a>
+    </aside>
+
+    <main class="main">
+      <h1 class="page-title">Seguridad de tu cuenta</h1>
+      <p class="page-sub">Activa la verificacion en dos pasos (2FA) para proteger tu acceso al panel de administracion. Cada administrador debe activarla desde su propia cuenta.</p>
+
+      <div class="card">
+        <div class="card-title">Verificacion en dos pasos</div>
+        <div class="card-sub">Con 2FA activo, ademas de tu contrasena vas a necesitar un codigo de tu app de autenticacion (Google Authenticator, Authy, etc.) para entrar al panel.</div>
+
+        <div class="status-row">
+          <span class="status-lbl">Estado actual</span>
+          <span class="status-badge off" id="mfa-status-badge">Cargando...</span>
+        </div>
+
+        <div id="mfa-action-area"></div>
+      </div>
+
+      <div class="hint-box">
+        Este panel solo controla tu propia verificacion en dos pasos. Como sesion es individual, cada uno de los administradores necesita entrar aqui con su propia cuenta y activarla — no se puede activar en nombre de otra persona.
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var _pendingFactorId = null;
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = null;
+  if (user.user_metadata && user.user_metadata.rol) { rol = user.user_metadata.rol; }
+  if (rol !== 'admin') {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : null;
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+
+  await refreshMfaStatus();
+})();
+
+function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
+
+async function refreshMfaStatus() {
+  var res = await _db.auth.mfa.listFactors();
+  var badge = document.getElementById('mfa-status-badge');
+  var area = document.getElementById('mfa-action-area');
+  if (res.error) {
+    badge.textContent = 'Error';
+    area.innerHTML = '<p class="msg-err" style="display:block">No se pudo cargar el estado de 2FA: ' + res.error.message + '</p>';
+    return;
+  }
+  var totpFactors = (res.data && res.data.totp) ? res.data.totp : [];
+  var verified = totpFactors.filter(function(f) { return f.status === 'verified'; });
+
+  if (verified.length > 0) {
+    badge.textContent = 'Activado';
+    badge.className = 'status-badge on';
+    var factorId = verified[0].id;
+    area.innerHTML = '<button class="btn-danger-outline" id="btn-unenroll">Desactivar verificacion en dos pasos</button>';
+    document.getElementById('btn-unenroll').onclick = function() { desactivarMfa(factorId); };
+  } else {
+    badge.textContent = 'No activado';
+    badge.className = 'status-badge off';
+    area.innerHTML = '<button class="btn-primary" id="btn-enroll">Activar verificacion en dos pasos</button>';
+    document.getElementById('btn-enroll').onclick = iniciarEnroll;
+  }
+}
+
+async function iniciarEnroll() {
+  var area = document.getElementById('mfa-action-area');
+  area.innerHTML = '<p style="font-size:.85rem;color:var(--ink-60)">Generando codigo...</p>';
+
+  var res = await _db.auth.mfa.enroll({ factorType: 'totp' });
+  if (res.error) {
+    area.innerHTML = '<p class="msg-err" style="display:block">Error: ' + res.error.message + '</p><button class="btn-primary" onclick="refreshMfaStatus()" style="margin-top:10px">Reintentar</button>';
+    return;
+  }
+
+  _pendingFactorId = res.data.id;
+  var qrSvg = res.data.totp.qr_code;
+  var secret = res.data.totp.secret;
+
+  area.innerHTML = ''
+    + '<div class="enroll-box">'
+    + '<p style="font-size:.85rem;font-weight:600;margin-bottom:12px">1. Escanea este codigo con tu app de autenticacion</p>'
+    + '<div class="qr-wrap" id="qr-container"></div>'
+    + '<p class="secret-txt">O ingresa manualmente: ' + secret + '</p>'
+    + '<p style="font-size:.85rem;font-weight:600;margin-bottom:8px">2. Ingresa el codigo de 6 digitos que te muestra la app</p>'
+    + '<input type="text" class="code-input" id="mfa-code-input" maxlength="6" placeholder="000000" inputmode="numeric"/>'
+    + '<button class="btn-primary" id="btn-verify" style="width:100%">Confirmar y activar</button>'
+    + '<p class="msg-err" id="enroll-err"></p>'
+    + '</div>';
+
+  document.getElementById('qr-container').innerHTML = qrSvg;
+  document.getElementById('btn-verify').onclick = confirmarEnroll;
+}
+
+async function confirmarEnroll() {
+  var code = document.getElementById('mfa-code-input').value.trim();
+  var errEl = document.getElementById('enroll-err');
+  errEl.style.display = 'none';
+
+  if (!code || code.length !== 6) {
+    errEl.textContent = 'Ingresa el codigo de 6 digitos completo.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var challengeRes = await _db.auth.mfa.challenge({ factorId: _pendingFactorId });
+  if (challengeRes.error) {
+    errEl.textContent = 'Error: ' + challengeRes.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var verifyRes = await _db.auth.mfa.verify({
+    factorId: _pendingFactorId,
+    challengeId: challengeRes.data.id,
+    code: code
+  });
+
+  if (verifyRes.error) {
+    errEl.textContent = 'Codigo incorrecto o vencido. Intenta de nuevo.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  await refreshMfaStatus();
+}
+
+async function desactivarMfa(factorId) {
+  if (!confirm('Si desactivas la verificacion en dos pasos, tu cuenta quedara protegida solo con contrasena. Continuar?')) return;
+  var res = await _db.auth.mfa.unenroll({ factorId: factorId });
+  if (res.error) {
+    alert('No se pudo desactivar: ' + res.error.message);
+    return;
+  }
+  await refreshMfaStatus();
+}
+</script>
+</body>
+</html>

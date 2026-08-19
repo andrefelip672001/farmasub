@@ -138,6 +138,10 @@ tr:hover td{background:var(--naranja-light);}
     <a href="../admin/finanzas.html" class="sb-link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finanzas
     </a>
+    <a href="../admin/seguridad.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Seguridad
+    </a>
   </aside>
 
   <main class="main">
@@ -237,6 +241,8 @@ var PLANS = { ahorro: { nombre: 'Plan Ahorro', precio: 8.99 }, familiar: { nombr
     rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
   }
   if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  var aalRes = await _db.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalRes.data && aalRes.data.nextLevel === 'aal2' && aalRes.data.currentLevel !== aalRes.data.nextLevel) { window.location.href = '../portal/login.html?mfa=1'; return; }
   document.getElementById('nav-nombre').textContent = user.email;
   document.getElementById('nav-avatar').textContent = user.email[0].toUpperCase();
   await loadData();
