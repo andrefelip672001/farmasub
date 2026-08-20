@@ -7,6 +7,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <style>
 :root{
   --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
@@ -207,10 +208,16 @@ tr:hover td{background:var(--naranja-light);}
   <main class="main">
     <div class="page-head">
       <h1 class="page-title">Cat&aacute;logo de productos</h1>
-      <button class="btn-nuevo" onclick="openModal()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Agregar producto
-      </button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-nuevo" style="background:#fff;color:var(--naranja);border:1.5px solid var(--naranja)" onclick="openBulkModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Carga masiva
+        </button>
+        <button class="btn-nuevo" onclick="openModal()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Agregar producto
+        </button>
+      </div>
     </div>
     <div class="toolbar">
       <div class="search-wrap">
@@ -382,6 +389,68 @@ tr:hover td{background:var(--naranja-light);}
       <div class="modal-actions">
         <button class="btn-cancel" onclick="closeStockModal()">Cancelar</button>
         <button class="btn-guardar" id="btn-guardar-stock" onclick="guardarEntradaStock()">Registrar entrada</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CARGA MASIVA -->
+<div class="modal-overlay" id="bulk-modal-overlay" onclick="closeBulkModalClick(event)">
+  <div class="modal" style="max-width:820px">
+    <div class="modal-head">
+      <h2 style="font-size:1rem">Carga masiva de productos</h2>
+      <button onclick="closeBulkModal()" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:#6B7280">&times;</button>
+    </div>
+    <div class="modal-body">
+
+      <div id="bulk-step-upload">
+        <p style="font-size:.85rem;color:#6B7280;margin-bottom:14px;line-height:1.5">
+          Sube un archivo CSV con varios productos a la vez. Los productos se crean <strong>inactivos</strong> (no visibles para los suscriptores) hasta que les agregues al menos una foto y los actives manualmente desde la tabla.
+        </p>
+        <button type="button" onclick="descargarPlantillaCsv()" style="background:none;border:1.5px solid var(--naranja);color:var(--naranja);border-radius:10px;padding:9px 16px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:18px">
+          &#8595; Descargar plantilla CSV
+        </button>
+        <div style="margin-bottom:14px">
+          <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Archivo CSV</label>
+          <input type="file" id="bulk-file-input" accept=".csv" onchange="handleBulkFile(this)" style="font-size:.85rem"/>
+        </div>
+        <div class="modal-error" id="bulk-upload-error" style="display:none">
+          <span id="bulk-upload-error-msg"></span>
+        </div>
+      </div>
+
+      <div id="bulk-step-preview" style="display:none">
+        <p style="font-size:.85rem;margin-bottom:10px">
+          <span id="bulk-summary-ok" style="color:#059669;font-weight:700"></span> &nbsp;
+          <span id="bulk-summary-err" style="color:#EF4444;font-weight:700"></span>
+        </p>
+        <div style="max-height:340px;overflow-y:auto;border:1.5px solid #F3F4F6;border-radius:10px">
+          <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+            <thead style="position:sticky;top:0;background:#F9FAFB">
+              <tr>
+                <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">#</th>
+                <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Nombre</th>
+                <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Categoria</th>
+                <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Precio costo</th>
+                <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="bulk-preview-tbody"></tbody>
+          </table>
+        </div>
+        <div class="modal-error" id="bulk-confirm-error" style="display:none;margin-top:12px">
+          <span id="bulk-confirm-error-msg"></span>
+        </div>
+      </div>
+
+      <div id="bulk-step-done" style="display:none;text-align:center;padding:20px 0">
+        <div style="font-size:2rem;margin-bottom:8px">&#9989;</div>
+        <p id="bulk-done-msg" style="font-weight:600"></p>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeBulkModal()">Cerrar</button>
+        <button class="btn-guardar" id="btn-confirmar-bulk" onclick="confirmarCargaMasiva()" style="display:none">Confirmar carga</button>
       </div>
     </div>
   </div>
@@ -900,6 +969,175 @@ function showModalError(msg) {
   var el = document.getElementById('modal-error');
   el.textContent = msg;
   el.style.display = 'block';
+}
+
+// ===== CARGA MASIVA =====
+var _bulkValidRows = [];
+
+var BULK_CSV_HEADERS = ['nombre','principio_activo','laboratorio','categoria','unidades_caja','precio_farmacia','precio_costo','indicaciones','dosis','contraindicaciones','efectos_secundarios'];
+
+function openBulkModal() {
+  document.getElementById('bulk-file-input').value = '';
+  document.getElementById('bulk-upload-error').style.display = 'none';
+  document.getElementById('bulk-confirm-error').style.display = 'none';
+  document.getElementById('bulk-step-upload').style.display = '';
+  document.getElementById('bulk-step-preview').style.display = 'none';
+  document.getElementById('bulk-step-done').style.display = 'none';
+  document.getElementById('btn-confirmar-bulk').style.display = 'none';
+  _bulkValidRows = [];
+  document.getElementById('bulk-modal-overlay').classList.add('open');
+}
+
+function closeBulkModal() {
+  document.getElementById('bulk-modal-overlay').classList.remove('open');
+}
+
+function closeBulkModalClick(e) {
+  if (e.target.id === 'bulk-modal-overlay') closeBulkModal();
+}
+
+function descargarPlantillaCsv() {
+  var headerLine = BULK_CSV_HEADERS.join(',');
+  var exampleLine = 'Ibuprofeno 400mg,Ibuprofeno,Laboratorio Chile,Antiinflamatorios,20,7.50,5.30,Alivio de dolor e inflamacion,1 tableta cada 8 horas,Ulcera gastrica activa,Molestias gastrointestinales';
+  var csv = headerLine + '\n' + exampleLine + '\n';
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'plantilla_productos_tucosto.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function handleBulkFile(inputEl) {
+  var errBox = document.getElementById('bulk-upload-error');
+  var errMsg = document.getElementById('bulk-upload-error-msg');
+  errBox.style.display = 'none';
+
+  var file = inputEl.files[0];
+  if (!file) return;
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      if (!results.data || results.data.length === 0) {
+        errMsg.textContent = 'El archivo esta vacio o no tiene el formato correcto.';
+        errBox.style.display = 'block';
+        return;
+      }
+      procesarFilasBulk(results.data);
+    },
+    error: function(err) {
+      errMsg.textContent = 'No se pudo leer el archivo: ' + err.message;
+      errBox.style.display = 'block';
+    }
+  });
+}
+
+function procesarFilasBulk(rows) {
+  _bulkValidRows = [];
+  var tbody = document.getElementById('bulk-preview-tbody');
+  tbody.innerHTML = '';
+  var okCount = 0, errCount = 0;
+
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var nombre = (r.nombre || '').trim();
+    var categoriaNombre = (r.categoria || '').trim();
+    var precioCostoRaw = (r.precio_costo || '').toString().trim();
+    var precioCosto = parseFloat(precioCostoRaw);
+    var precioFarmacia = parseFloat((r.precio_farmacia || '0').toString().trim()) || 0;
+    var unidades = parseInt((r.unidades_caja || '0').toString().trim()) || 0;
+
+    var errorMsg = null;
+    var categoriaMatch = null;
+    if (!nombre) {
+      errorMsg = 'Falta el nombre';
+    } else if (!categoriaNombre) {
+      errorMsg = 'Falta la categoria';
+    } else {
+      for (var ci = 0; ci < _categorias.length; ci++) {
+        if (_categorias[ci].nombre.toLowerCase() === categoriaNombre.toLowerCase()) { categoriaMatch = _categorias[ci]; break; }
+      }
+      if (!categoriaMatch) {
+        errorMsg = 'Categoria "' + esc(categoriaNombre) + '" no existe';
+      }
+    }
+    if (!errorMsg && (isNaN(precioCosto) || precioCosto <= 0)) {
+      errorMsg = 'Precio costo invalido (debe ser mayor a 0)';
+    }
+
+    var tr = document.createElement('tr');
+    var estadoHtml = errorMsg
+      ? '<span style="color:#EF4444;font-weight:600">&#10007; ' + esc(errorMsg) + '</span>'
+      : '<span style="color:#059669;font-weight:600">&#10003; Lista para cargar</span>';
+
+    tr.innerHTML = '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + (i + 1) + '</td>'
+      + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + esc(nombre || '(sin nombre)') + '</td>'
+      + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + esc(categoriaNombre || '-') + '</td>'
+      + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + (isNaN(precioCosto) ? '-' : '$' + precioCosto.toFixed(2)) + '</td>'
+      + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + estadoHtml + '</td>';
+    tbody.appendChild(tr);
+
+    if (errorMsg) {
+      errCount++;
+    } else {
+      okCount++;
+      _bulkValidRows.push({
+        nombre: nombre,
+        principio_activo: (r.principio_activo || '').trim(),
+        laboratorio: (r.laboratorio || '').trim(),
+        categoria_id: categoriaMatch.id,
+        unidades_caja: unidades,
+        precio_farmacia: precioFarmacia,
+        precio_costo: precioCosto,
+        indicaciones: (r.indicaciones || '').trim(),
+        dosis: (r.dosis || '').trim(),
+        contraindicaciones: (r.contraindicaciones || '').trim(),
+        efectos_secundarios: (r.efectos_secundarios || '').trim(),
+        activo: false
+      });
+    }
+  }
+
+  document.getElementById('bulk-summary-ok').textContent = okCount + ' lista' + (okCount === 1 ? '' : 's') + ' para cargar';
+  document.getElementById('bulk-summary-err').textContent = errCount > 0 ? (errCount + ' con errores (no se cargaran)') : '';
+  document.getElementById('bulk-step-upload').style.display = 'none';
+  document.getElementById('bulk-step-preview').style.display = '';
+  document.getElementById('btn-confirmar-bulk').style.display = okCount > 0 ? '' : 'none';
+}
+
+async function confirmarCargaMasiva() {
+  var errBox = document.getElementById('bulk-confirm-error');
+  var errMsg = document.getElementById('bulk-confirm-error-msg');
+  errBox.style.display = 'none';
+
+  if (_bulkValidRows.length === 0) return;
+
+  var btn = document.getElementById('btn-confirmar-bulk');
+  btn.disabled = true;
+  btn.textContent = 'Cargando...';
+
+  var res = await sb.from('productos').insert(_bulkValidRows);
+
+  btn.disabled = false;
+  btn.textContent = 'Confirmar carga';
+
+  if (res.error) {
+    errMsg.textContent = 'Error al cargar: ' + res.error.message;
+    errBox.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('bulk-step-preview').style.display = 'none';
+  document.getElementById('btn-confirmar-bulk').style.display = 'none';
+  document.getElementById('bulk-step-done').style.display = '';
+  document.getElementById('bulk-done-msg').textContent = _bulkValidRows.length + ' producto' + (_bulkValidRows.length === 1 ? '' : 's') + ' cargado' + (_bulkValidRows.length === 1 ? '' : 's') + ' como inactivo' + (_bulkValidRows.length === 1 ? '' : 's') + '. Agregales fotos y activalos desde la tabla.';
+
+  await loadProductos();
 }
 
 init();
