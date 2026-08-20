@@ -221,6 +221,9 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
 .wb-sub{font-size:.82rem;color:var(--ink-60);margin-top:2px;}
 .btn-home{display:inline-block;background:var(--naranja);color:#fff;padding:13px 32px;border-radius:var(--r);font-size:.95rem;font-weight:600;text-decoration:none;transition:all .2s;margin-top:8px;}
 .btn-home:hover{background:var(--naranja-d);transform:translateY(-1px);}
+.btn-home.btn-outline{background:#fff;color:var(--naranja);border:1.5px solid var(--naranja);}
+.spinner{width:44px;height:44px;border:4px solid #F3F4F6;border-top-color:var(--naranja);border-radius:50%;margin:0 auto;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
 /* WIZARD BOTTOM NAV */
 .wizard-nav-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid #F3F4F6;padding:14px 24px;z-index:50;}
@@ -545,6 +548,13 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
 
     <!-- PASO 5 — CONFIRMACION -->
     <div class="step-panel" id="panel-5">
+      <div id="conf-loading" style="text-align:center;padding:60px 0">
+        <div class="spinner"></div>
+        <p style="margin-top:18px;color:var(--ink-60);font-weight:600">Procesando tu registro...</p>
+        <p style="margin-top:4px;color:var(--ink-60);font-size:.85rem">No cierres esta pagina</p>
+      </div>
+
+      <div id="conf-success-block" style="display:none">
       <div class="confirm-hero">
         <svg class="check-anim" viewBox="0 0 80 80">
           <circle cx="40" cy="40" r="35"/>
@@ -575,10 +585,24 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
         <div style="font-size:.85rem;font-weight:700;color:#EF6830;margin-bottom:4px">&#128273; Tu contrasena temporal</div>
         <div style="font-size:.9rem;color:#1A1A2E">Tu contrasena es tu <strong>numero de cedula</strong>. Cambiala despues de tu primer ingreso al portal.</div>
       </div>
-      <div id="submit-error" style="display:none;background:#FEE2E2;border:1.5px solid #EF4444;border-radius:12px;padding:14px 18px;margin:12px 0;font-size:.85rem;color:#EF4444"></div>
+      <div id="submit-error" style="display:none;background:#FFFBEB;border:1.5px solid #F5A623;border-radius:12px;padding:14px 18px;margin:12px 0;font-size:.85rem;color:#92400E"></div>
       <div style="text-align:center;margin-top:24px">
         <a href="index.html" class="btn-home">Volver al inicio</a>
         <p style="margin-top:16px;font-size:.8rem">Tienes dudas? <a href="https://wa.me/593XXXXXXXXX" style="color:#EF6830;font-weight:500">Escribenos por WhatsApp</a></p>
+      </div>
+      </div>
+
+      <div id="conf-error-block" style="display:none;text-align:center;padding:20px 0">
+        <svg viewBox="0 0 80 80" style="width:64px;height:64px;margin:0 auto 16px">
+          <circle cx="40" cy="40" r="35" stroke="#EF4444" stroke-width="3" fill="none"/>
+          <path d="M28 28l24 24M52 28l-24 24" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div style="font-size:1.15rem;font-weight:700;color:#1A1A2E;margin-bottom:8px">No pudimos completar tu registro</div>
+        <p id="conf-error-msg" style="color:var(--ink-60);font-size:.88rem;max-width:440px;margin:0 auto 24px;line-height:1.5"></p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button type="button" class="btn-home" onclick="retryRegistro()">Reintentar</button>
+          <a href="index.html" class="btn-home btn-outline">Volver al inicio</a>
+        </div>
       </div>
     </div>
 
@@ -723,7 +747,7 @@ function navigate(dir) {
 
   if (S.step === 3) updatePaymentSummary();
   if (S.step === 4 && !S.healthBuilt) { buildHealthStep(); S.healthBuilt = true; }
-  if (S.step === 5) { buildConfirmation(); submitRegistro(); }
+  if (S.step === 5) { submitRegistro(); }
 
   renderUI();
 }
@@ -1301,7 +1325,27 @@ function _showSubmitError(msg) {
   el.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+function _showFatalError(msg) {
+  document.getElementById('conf-loading').style.display = 'none';
+  document.getElementById('conf-success-block').style.display = 'none';
+  document.getElementById('conf-error-block').style.display = '';
+  document.getElementById('conf-error-msg').textContent = msg;
+}
+
+function retryRegistro() {
+  _turnstileToken = null;
+  if (window.turnstile) { try { window.turnstile.reset(); } catch (e) {} }
+  document.getElementById('conf-error-block').style.display = 'none';
+  document.getElementById('conf-loading').style.display = 'none';
+  S.step = 4;
+  renderUI();
+}
+
 async function submitRegistro() {
+  document.getElementById('conf-loading').style.display = '';
+  document.getElementById('conf-success-block').style.display = 'none';
+  document.getElementById('conf-error-block').style.display = 'none';
+  let _userCreatedOk = false;
   try {
     const authRes = await _db.auth.signUp({
       email: S.titular.email,
@@ -1309,10 +1353,11 @@ async function submitRegistro() {
       options: { data: { rol: 'suscriptor' }, captchaToken: _turnstileToken }
     });
     if (authRes.error) {
-      _showSubmitError('Error al crear cuenta: ' + authRes.error.message);
-      throw authRes.error;
+      _showFatalError('No se pudo crear tu cuenta: ' + authRes.error.message + '. Por favor intenta de nuevo.');
+      return;
     }
     const userId = authRes.data.user.id;
+    _userCreatedOk = true;
 
     let comprobanteUrl = null;
     if (S.payment.file) {
@@ -1352,8 +1397,8 @@ async function submitRegistro() {
       rol: 'suscriptor'
     });
     if (userErr) {
-      _showSubmitError('Error guardando usuario: ' + userErr.message + ' | code: ' + userErr.code);
-      throw new Error('Error guardando usuario: ' + userErr.message + ' | code: ' + userErr.code);
+      _showFatalError('No se pudo guardar tu perfil: ' + userErr.message + '. Intenta de nuevo; si el problema persiste, contactanos por WhatsApp.');
+      return;
     }
 
     const { data: suscData, error: suscErr } = await _db.from('suscripciones').insert({
@@ -1367,8 +1412,8 @@ async function submitRegistro() {
       cedula_posterior_url: kycPosteriorPath
     }).select().single();
     if (suscErr) {
-      _showSubmitError('Error al guardar datos: ' + suscErr.message + (suscErr.details ? ' - ' + suscErr.details : ''));
-      throw suscErr;
+      _showFatalError('No se pudo guardar tu membresia: ' + suscErr.message + '. Intenta de nuevo; si el problema persiste, contactanos por WhatsApp.');
+      return;
     }
 
     const { error: pagoErr } = await _db.from('pagos').insert({
@@ -1421,10 +1466,19 @@ async function submitRegistro() {
       });
       if (saludErr) console.error('Error salud:', saludErr);
     }
+
+    buildConfirmation();
+    document.getElementById('conf-loading').style.display = 'none';
+    document.getElementById('conf-success-block').style.display = '';
   } catch (err) {
     console.error('[TuCosto] submitRegistro error:', err);
-    if (!document.getElementById('submit-error').style.display || document.getElementById('submit-error').style.display === 'none') {
-      _showSubmitError('Error inesperado: ' + (err.message || 'intenta de nuevo'));
+    if (_userCreatedOk) {
+      buildConfirmation();
+      document.getElementById('conf-loading').style.display = 'none';
+      document.getElementById('conf-success-block').style.display = '';
+      _showSubmitError('Tu cuenta se creo, pero hubo un problema con un paso adicional (' + (err.message || 'error desconocido') + '). Contactanos por WhatsApp para confirmar que todo quedo bien.');
+    } else {
+      _showFatalError('Ocurrio un error inesperado: ' + (err.message || 'intenta de nuevo') + '.');
     }
   }
 }
