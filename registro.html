@@ -246,6 +246,7 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
   .footer-grid{grid-template-columns:1fr!important;}
 }
 </style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -536,6 +537,10 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
       </div>
       <div class="health-note">El cuestionario del titular es <strong>obligatorio</strong>. Para los demas miembros es opcional: activa el interruptor si deseas completarlo.</div>
       <div id="health-persons"></div>
+      <div style="display:flex;justify-content:center;margin-top:24px">
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAAEWKakLBmN11CvI1" data-callback="onTurnstileOk" data-expired-callback="onTurnstileExpired"></div>
+      </div>
+      <p id="err-turnstile" style="display:none;color:#EF4444;font-size:.82rem;text-align:center;margin-top:8px">Completa la verificacion para continuar</p>
     </div>
 
     <!-- PASO 5 — CONFIRMACION -->
@@ -632,6 +637,16 @@ const _db = supabase.createClient(
 
 function esc(s) {
   return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+var _turnstileToken = null;
+function onTurnstileOk(token) {
+  _turnstileToken = token;
+  var err = document.getElementById('err-turnstile');
+  if (err) err.style.display = 'none';
+}
+function onTurnstileExpired() {
+  _turnstileToken = null;
 }
 
 // ESTADO GLOBAL
@@ -899,6 +914,11 @@ function validateStep4() {
     const el = document.getElementById('err-cond-0');
     if (el) el.textContent = 'Seleccione al menos una condicion de salud para el titular';
     document.getElementById('hp-body-0').scrollIntoView({ behavior: 'smooth' });
+    return false;
+  }
+  if (!_turnstileToken) {
+    const errT = document.getElementById('err-turnstile');
+    if (errT) { errT.style.display = 'block'; errT.scrollIntoView({ behavior: 'smooth' }); }
     return false;
   }
   return true;
@@ -1286,7 +1306,7 @@ async function submitRegistro() {
     const authRes = await _db.auth.signUp({
       email: S.titular.email,
       password: S.titular.cedula,
-      options: { data: { rol: 'suscriptor' } }
+      options: { data: { rol: 'suscriptor' }, captchaToken: _turnstileToken }
     });
     if (authRes.error) {
       _showSubmitError('Error al crear cuenta: ' + authRes.error.message);
