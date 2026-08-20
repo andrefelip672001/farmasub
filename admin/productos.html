@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{
   --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
@@ -405,14 +406,14 @@ tr:hover td{background:var(--naranja-light);}
 
       <div id="bulk-step-upload">
         <p style="font-size:.85rem;color:#6B7280;margin-bottom:14px;line-height:1.5">
-          Sube un archivo CSV con varios productos a la vez. Los productos se crean <strong>inactivos</strong> (no visibles para los suscriptores) hasta que les agregues al menos una foto y los actives manualmente desde la tabla.
+          Sube un archivo Excel con varios productos a la vez. Los productos se crean <strong>inactivos</strong> (no visibles para los suscriptores) hasta que les agregues al menos una foto y los actives manualmente desde la tabla.
         </p>
-        <button type="button" onclick="descargarPlantillaCsv()" style="background:none;border:1.5px solid var(--naranja);color:var(--naranja);border-radius:10px;padding:9px 16px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:18px">
-          &#8595; Descargar plantilla CSV
+        <button type="button" onclick="descargarPlantilla()" style="background:none;border:1.5px solid var(--naranja);color:var(--naranja);border-radius:10px;padding:9px 16px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:18px">
+          &#8595; Descargar plantilla Excel
         </button>
         <div style="margin-bottom:14px">
-          <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Archivo CSV</label>
-          <input type="file" id="bulk-file-input" accept=".csv" onchange="handleBulkFile(this)" style="font-size:.85rem"/>
+          <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Archivo Excel (.xlsx) o CSV</label>
+          <input type="file" id="bulk-file-input" accept=".xlsx,.xls,.csv" onchange="handleBulkFile(this)" style="font-size:.85rem"/>
         </div>
         <div class="modal-error" id="bulk-upload-error" style="display:none">
           <span id="bulk-upload-error-msg"></span>
@@ -996,19 +997,14 @@ function closeBulkModalClick(e) {
   if (e.target.id === 'bulk-modal-overlay') closeBulkModal();
 }
 
-function descargarPlantillaCsv() {
-  var headerLine = BULK_CSV_HEADERS.join(',');
-  var exampleLine = 'Ibuprofeno 400mg,Ibuprofeno,Laboratorio Chile,Antiinflamatorios,20,7.50,5.30,Alivio de dolor e inflamacion,1 tableta cada 8 horas,Ulcera gastrica activa,Molestias gastrointestinales';
-  var csv = headerLine + '\n' + exampleLine + '\n';
-  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'plantilla_productos_tucosto.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+function descargarPlantilla() {
+  var exampleRow = ['Ibuprofeno 400mg','Ibuprofeno','Laboratorio Chile','Antiinflamatorios',20,7.50,5.30,'Alivio de dolor e inflamacion','1 tableta cada 8 horas','Ulcera gastrica activa','Molestias gastrointestinales'];
+  var data = [BULK_CSV_HEADERS, exampleRow];
+  var ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = BULK_CSV_HEADERS.map(function(h) { return { wch: Math.max(h.length + 2, 16) }; });
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Productos');
+  XLSX.writeFile(wb, 'plantilla_productos_tucosto.xlsx');
 }
 
 function handleBulkFile(inputEl) {
@@ -1019,22 +1015,51 @@ function handleBulkFile(inputEl) {
   var file = inputEl.files[0];
   if (!file) return;
 
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: function(results) {
-      if (!results.data || results.data.length === 0) {
+  var esCsv = file.name.toLowerCase().indexOf('.csv') !== -1;
+
+  if (esCsv) {
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        if (!results.data || results.data.length === 0) {
+          errMsg.textContent = 'El archivo esta vacio o no tiene el formato correcto.';
+          errBox.style.display = 'block';
+          return;
+        }
+        procesarFilasBulk(results.data);
+      },
+      error: function(err) {
+        errMsg.textContent = 'No se pudo leer el archivo: ' + err.message;
+        errBox.style.display = 'block';
+      }
+    });
+    return;
+  }
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = new Uint8Array(e.target.result);
+      var wb = XLSX.read(data, { type: 'array' });
+      var ws = wb.Sheets[wb.SheetNames[0]];
+      var rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      if (!rows || rows.length === 0) {
         errMsg.textContent = 'El archivo esta vacio o no tiene el formato correcto.';
         errBox.style.display = 'block';
         return;
       }
-      procesarFilasBulk(results.data);
-    },
-    error: function(err) {
+      procesarFilasBulk(rows);
+    } catch (err) {
       errMsg.textContent = 'No se pudo leer el archivo: ' + err.message;
       errBox.style.display = 'block';
     }
-  });
+  };
+  reader.onerror = function() {
+    errMsg.textContent = 'No se pudo leer el archivo.';
+    errBox.style.display = 'block';
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 function procesarFilasBulk(rows) {
