@@ -188,6 +188,7 @@ body::after{
   .card-title{font-size:1.4rem;}
 }
 </style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -251,6 +252,10 @@ body::after{
       <a href="../portal/recuperar.html">Olvidaste tu contrasena?</a>
     </div>
 
+    <div style="display:flex;justify-content:center;margin-bottom:14px">
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAAEWKakLBmN11CvI1" data-callback="onTurnstileOkLogin" data-expired-callback="onTurnstileExpiredLogin"></div>
+    </div>
+
     <button type="submit" id="btn-submit" class="btn-login">
       <span class="btn-label">Ingresar</span>
       <span class="spinner"></span>
@@ -288,6 +293,10 @@ var _db = supabase.createClient(
 })();
 
 // Login
+var _loginTurnstileToken = null;
+function onTurnstileOkLogin(token) { _loginTurnstileToken = token; }
+function onTurnstileExpiredLogin() { _loginTurnstileToken = null; }
+
 async function handleLogin(e) {
   e.preventDefault();
   clearError();
@@ -300,12 +309,19 @@ async function handleLogin(e) {
     return;
   }
 
+  if (!_loginTurnstileToken) {
+    showError('Completa la verificacion de seguridad antes de continuar.');
+    return;
+  }
+
   setLoading(true);
 
-  var result = await _db.auth.signInWithPassword({ email: email, password: password });
+  var result = await _db.auth.signInWithPassword({ email: email, password: password, options: { captchaToken: _loginTurnstileToken } });
 
   if (result.error) {
     setLoading(false);
+    if (window.turnstile) { try { window.turnstile.reset(); } catch (e2) {} }
+    _loginTurnstileToken = null;
     showError(translateError(result.error.message));
     document.getElementById('email').classList.add('error');
     document.getElementById('password').classList.add('error');
