@@ -975,7 +975,7 @@ function showModalError(msg) {
 // ===== CARGA MASIVA =====
 var _bulkValidRows = [];
 
-var BULK_CSV_HEADERS = ['nombre','principio_activo','laboratorio','categoria','unidades_caja','precio_farmacia','precio_costo','indicaciones','dosis','contraindicaciones','efectos_secundarios'];
+var BULK_CSV_HEADERS = ['nombre','principio_activo','laboratorio','categoria','unidades_caja','precio_farmacia','precio_costo','presentacion','dosis','contraindicaciones','efectos_secundarios'];
 
 function openBulkModal() {
   document.getElementById('bulk-file-input').value = '';
@@ -1119,7 +1119,7 @@ function procesarFilasBulk(rows) {
         unidades_caja: unidades,
         precio_farmacia: precioFarmacia,
         precio_costo: precioCosto,
-        indicaciones: (r.indicaciones || '').trim(),
+        indicaciones: (r.presentacion || '').trim(),
         dosis: (r.dosis || '').trim(),
         contraindicaciones: (r.contraindicaciones || '').trim(),
         efectos_secundarios: (r.efectos_secundarios || '').trim(),
