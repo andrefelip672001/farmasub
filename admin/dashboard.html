@@ -334,6 +334,24 @@ function esc(s) {
   return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+async function _signedComprobante(storedUrl) {
+  if (!storedUrl) return null;
+  var parts = storedUrl.split('/comprobantes/');
+  var path = parts.length > 1 ? parts[1] : storedUrl;
+  var res = await _db.storage.from('comprobantes').createSignedUrl(path, 300);
+  return (res.data && res.data.signedUrl) ? res.data.signedUrl : null;
+}
+
+async function verComprobanteAdmin(event, storedUrl) {
+  event.preventDefault();
+  var signedUrl = await _signedComprobante(storedUrl);
+  if (signedUrl) {
+    window.open(signedUrl, '_blank');
+  } else {
+    alert('No se pudo abrir el comprobante.');
+  }
+}
+
 (async function() {
   var sessRes = await _db.auth.getSession();
   var session = sessRes.data.session;
@@ -412,7 +430,7 @@ async function loadPagosPendientes() {
     var sNom = (p.usuarios && p.usuarios.nombre) ? esc(p.usuarios.nombre) : '-';
     var sCed = (p.usuarios && p.usuarios.cedula) ? esc(String(p.usuarios.cedula)) : '';
     var tipoTxt = p.tipo === 'renovacion' ? ' (renovacion)' : ' (registro)';
-    var comprobanteLink = p.comprobante_url ? '<a href="' + p.comprobante_url + '" target="_blank" style="color:var(--naranja);font-size:.78rem;display:block;margin-top:2px">Ver comprobante</a>' : '';
+    var comprobanteLink = p.comprobante_url ? '<a href="#" onclick="verComprobanteAdmin(event, \'' + p.comprobante_url.replace(/'/g, '') + '\')" style="color:var(--naranja);font-size:.78rem;display:block;margin-top:2px">Ver comprobante</a>' : '';
     html += '<tr>'
       + '<td style="font-weight:500">' + sNom + tipoTxt + comprobanteLink + '</td>'
       + '<td style="color:var(--ink-60)">' + (sCed || '-') + '</td>'

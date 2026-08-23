@@ -222,6 +222,15 @@ var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_p
 function esc(s) {
   return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+
+async function _signedComprobante(storedUrl) {
+  if (!storedUrl) return null;
+  var parts = storedUrl.split('/comprobantes/');
+  var path = parts.length > 1 ? parts[1] : storedUrl;
+  var res = await _db.storage.from('comprobantes').createSignedUrl(path, 300);
+  return (res.data && res.data.signedUrl) ? res.data.signedUrl : null;
+}
+
 var _todos = [], _filtro = 'todos', _rechazoId = null;
 var PLANS = { ahorro: { nombre: 'Plan Ahorro', precio: 8.99 }, familiar: { nombre: 'Plan Familiar', precio: 12.99 } };
 
@@ -393,8 +402,16 @@ async function confirmarRechazo() {
 }
 
 function verComprobante(url) {
-  document.getElementById('comp-img').src = url;
   document.getElementById('comp-modal').classList.remove('hidden');
+  document.getElementById('comp-img').src = '';
+  _signedComprobante(url).then(function(signedUrl) {
+    if (signedUrl) {
+      document.getElementById('comp-img').src = signedUrl;
+    } else {
+      document.getElementById('comp-modal').classList.add('hidden');
+      alert('No se pudo abrir el comprobante.');
+    }
+  });
 }
 
 function closeCompModal() {
