@@ -76,6 +76,7 @@ tr.selected td{background:var(--naranja-light);}
 
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
 .badge-activa{background:var(--verde-light);color:var(--verde);}
+.badge-sinplan{background:#F3F4F6;color:#6B7280;}
 .badge-pend{background:var(--amarillo-light);color:var(--warning);}
 .badge-venc{background:var(--danger-light);color:var(--danger);}
 .badge-kyc-ok{background:var(--verde-light);color:var(--verde);}
@@ -206,6 +207,7 @@ tr.selected td{background:var(--naranja-light);}
       </div>
       <div class="filter-btns">
         <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('sin_plan',this)">Sin plan</button>
         <button class="filter-btn" onclick="setFilter('activa',this)">Activos</button>
         <button class="filter-btn" onclick="setFilter('pendiente',this)">Pendientes</button>
         <button class="filter-btn" onclick="setFilter('vencida',this)">Vencidos</button>
@@ -276,6 +278,14 @@ var _todos = [], _filtro = 'todos', _selIdx = null;
 
 function esc(s) {
   return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function estadoLegible(estado) {
+  if (estado === 'sin_plan') return 'Sin plan';
+  if (estado === 'activa') return 'Activa';
+  if (estado === 'vencida') return 'Vencida';
+  if (estado === 'pendiente') return 'Pendiente';
+  return estado || '-';
 }
 
 async function _signedComprobante(storedUrl) {
@@ -374,7 +384,9 @@ function renderTable() {
     var cls;
     if (sEstado === 'activa') cls = 'badge-activa';
     else if (sEstado === 'vencida') cls = 'badge-venc';
+    else if (sEstado === 'sin_plan') cls = 'badge-sinplan';
     else cls = 'badge-pend';
+    var sEstadoLbl = estadoLegible(sEstado);
     var kycCls;
     if (sKyc === 'verificado') kycCls = 'badge-kyc-ok';
     else if (sKyc === 'rechazado') kycCls = 'badge-kyc-err';
@@ -389,8 +401,8 @@ function renderTable() {
     html += '<td style="font-weight:600">' + esc(s.nombre || '-') + '</td>';
     html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.cedula || '-') + '</td>';
     html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.email || '-') + '</td>';
-    html += '<td style="color:var(--ink-60)">' + (s.telefono || '-') + '</td>';
-    html += '<td><span class="badge ' + cls + '">' + (sEstado || '-') + '</span></td>';
+    html += '<td style="color:var(--ink-60)">' + esc(s.telefono || '-') + '</td>';
+    html += '<td><span class="badge ' + cls + '">' + sEstadoLbl + '</span></td>';
     html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span></td>';
     html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
     html += '<td><button class="btn-ver" onclick="openPanel(' + oidx + ')">Ver detalles</button></td>';
@@ -439,6 +451,7 @@ async function openPanel(idx) {
   var cls2;
   if (sEstado2 === 'activa') cls2 = 'badge-activa';
   else if (sEstado2 === 'vencida') cls2 = 'badge-venc';
+  else if (sEstado2 === 'sin_plan') cls2 = 'badge-sinplan';
   else cls2 = 'badge-pend';
   var susIdSafe = sus ? sus.id : '';
   var datosHtml = '';
@@ -449,7 +462,7 @@ async function openPanel(idx) {
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + esc(s.barrio || '-') + '</span></div>';
   var planLbl2 = (sus && sus.plan === 'ahorro') ? 'Plan Ahorro ($8.99)' : (sus && sus.plan === 'familiar') ? 'Plan Familiar ($12.99)' : 'Sin plan asignado';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Plan</span><span style="font-weight:500">' + planLbl2 + '</span></div>';
-  datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + (sEstado2 || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + estadoLegible(sEstado2) + '</span></div>';
   if (sus && sus.fecha_inicio) {
     datosHtml += '<div class="pfield"><span class="pfield-lbl">Inicio membresia</span><span style="font-weight:500">' + new Date(sus.fecha_inicio).toLocaleDateString('es-EC') + '</span></div>';
   }
