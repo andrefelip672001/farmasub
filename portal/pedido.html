@@ -335,6 +335,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
       Renovar membresia
     </a>
+    <a href="../portal/activar-membresia.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Activar membresia
+    </a>
   </aside>
 
   <!-- MAIN -->
@@ -452,6 +456,7 @@ var PLANS = { ahorro: { nombre: 'Plan Ahorro', limite: 90 }, familiar: { nombre:
 var _cupoMensual = 190;
 var _yaGastado = 0;
 var _planNombre = 'Plan Familiar';
+var _tienePlan = true;
 
 (async function() {
   var sessRes = await _db.auth.getSession();
@@ -472,6 +477,7 @@ var _planNombre = 'Plan Familiar';
     _miembros = mRes.data || [];
 
     var suscRow = (s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
+    _tienePlan = !!(suscRow && suscRow.estado !== 'sin_plan');
     var planKey = (suscRow && suscRow.plan && PLANS[suscRow.plan]) ? suscRow.plan : 'familiar';
     _cupoMensual = PLANS[planKey].limite;
     _planNombre = PLANS[planKey].nombre;
@@ -648,6 +654,11 @@ function renderSummary() {
 
 async function confirmarPedido() {
   if (!_cart.length) return;
+  if (!_tienePlan) {
+    alert('Para confirmar tu pedido primero necesitas activar tu membresia (elegir un plan y completar el pago). Te llevamos a esa pantalla.');
+    window.location.href = '../portal/activar-membresia.html';
+    return;
+  }
   var cartTotal = 0;
   for (var vi = 0; vi < _cart.length; vi++) { cartTotal += _cart[vi].precio_costo * _cart[vi].cantidad; }
   if (cartTotal > (_cupoMensual - _yaGastado)) {
