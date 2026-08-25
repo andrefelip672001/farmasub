@@ -189,6 +189,25 @@ var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_p
 function esc(s) {
   return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
+
+async function _signedComprobante(storedUrl) {
+  if (!storedUrl) return null;
+  var parts = storedUrl.split('/comprobantes/');
+  var path = parts.length > 1 ? parts[1] : storedUrl;
+  var res = await _db.storage.from('comprobantes').createSignedUrl(path, 300);
+  return (res.data && res.data.signedUrl) ? res.data.signedUrl : null;
+}
+
+async function verComprobanteAdmin(event, storedUrl) {
+  event.preventDefault();
+  var signedUrl = await _signedComprobante(storedUrl);
+  if (signedUrl) {
+    window.open(signedUrl, '_blank');
+  } else {
+    alert('No se pudo abrir el comprobante.');
+  }
+}
+
 var _todos = [], _filtro = 'todos';
 var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'];
 var _adminUserId = null;
@@ -343,6 +362,14 @@ async function toggleDetail(rowIdx) {
     }
     if (pedidoData.fecha_entrega_estimada) {
       html += '<div class="detail-extra"><span class="di-extra-lbl">Fecha estimada:</span><span class="di-extra-val">' + new Date(pedidoData.fecha_entrega_estimada).toLocaleDateString('es-EC') + '</span></div>';
+    }
+    if (pedidoData.metodo_pago) {
+      html += '<div class="detail-extra"><span class="di-extra-lbl">Metodo de pago:</span><span class="di-extra-val">' + esc(pedidoData.metodo_pago === 'deuna' ? 'QR De Una' : 'Transferencia bancaria') + '</span></div>';
+    }
+    if (pedidoData.comprobante_url) {
+      html += '<div class="detail-extra"><span class="di-extra-lbl">Comprobante:</span><span class="di-extra-val"><a href="#" onclick="verComprobanteAdmin(event, \'' + pedidoData.comprobante_url.replace(/'/g, '') + '\')" style="color:var(--naranja);font-weight:600">Ver comprobante</a></span></div>';
+    } else {
+      html += '<div class="detail-extra"><span class="di-extra-lbl">Comprobante:</span><span class="di-extra-val" style="color:var(--danger)">No adjunto</span></div>';
     }
   }
   det.innerHTML = html;
