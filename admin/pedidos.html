@@ -81,6 +81,7 @@ tr.clickable:hover td{background:var(--naranja-light);}
 
 .badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
 .badge-pendiente{background:var(--amarillo-light);color:var(--warning);}
+.badge-activa{background:var(--verde-light);color:var(--verde);}
 .badge-en-proceso{background:var(--naranja-light);color:var(--naranja-d);}
 .badge-despachado{background:var(--azul-light);color:var(--azul);}
 .badge-entregado{background:var(--verde-light);color:var(--verde);}
@@ -171,12 +172,13 @@ tr.clickable:hover td{background:var(--naranja-light);}
             <th>Suscriptor</th>
             <th>Fecha</th>
             <th>Total</th>
+            <th>Pago</th>
             <th>Estado</th>
             <th>Cambiar estado</th>
           </tr>
         </thead>
         <tbody id="tbody">
-          <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
+          <tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
         </tbody>
       </table>
     </div>
@@ -184,6 +186,8 @@ tr.clickable:hover td{background:var(--naranja-light);}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
 function esc(s) {
@@ -209,6 +213,7 @@ async function verComprobanteAdmin(event, storedUrl) {
 }
 
 var _todos = [], _filtro = 'todos';
+var _itemsCache = {};
 var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'];
 var _adminUserId = null;
 
@@ -277,7 +282,7 @@ function renderTable() {
   }
   var tbody = document.getElementById('tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';
     return;
   }
   var html = '';
@@ -295,6 +300,9 @@ function renderTable() {
       selHtml += '<option value="' + est + '"' + selAttr + '>' + est + '</option>';
     }
     selHtml += '</select>';
+    var pagoEstado = p.pago_estado || 'pendiente';
+    var pagoCls = pagoEstado === 'aprobado' ? 'badge-activa' : (pagoEstado === 'rechazado' ? 'badge-cancelado' : 'badge-pendiente');
+    var pagoLbl = pagoEstado === 'aprobado' ? 'Pagado' : (pagoEstado === 'rechazado' ? 'Rechazado' : 'Pendiente');
     html += '<tr class="clickable" onclick="toggleDetail(' + j + ')">';
     html += '<td style="width:32px;color:var(--ink-30)">';
     html += '<svg id="chev-' + j + '" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -303,11 +311,12 @@ function renderTable() {
     html += '<td style="font-weight:500">' + suscNombre + '</td>';
     html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
     html += '<td style="font-weight:600">' + total + '</td>';
+    html += '<td><span class="badge ' + pagoCls + '">' + pagoLbl + '</span></td>';
     html += '<td><span class="badge ' + cls + '">' + p.estado + '</span></td>';
     html += '<td onclick="event.stopPropagation()">' + selHtml + '</td>';
     html += '</tr>';
     html += '<tr class="detail-row">';
-    html += '<td colspan="7"><div class="detail-inner" id="detail-' + j + '" data-loaded="0" data-id="' + p.id + '"></div></td>';
+    html += '<td colspan="8"><div class="detail-inner" id="detail-' + j + '" data-loaded="0" data-id="' + p.id + '"></div></td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
@@ -328,6 +337,7 @@ async function toggleDetail(rowIdx) {
   var pedidoId = det.dataset.id;
   var itemsRes = await _db.from('pedido_items').select('cantidad,precio_unitario,productos(nombre),miembros(nombre)').eq('pedido_id', pedidoId);
   var items = itemsRes.data || [];
+  _itemsCache[pedidoId] = items;
   var html = '<p class="detail-label">Productos del pedido</p>';
   html += '<div class="detail-items">';
   if (items.length) {
@@ -371,6 +381,9 @@ async function toggleDetail(rowIdx) {
     } else {
       html += '<div class="detail-extra"><span class="di-extra-lbl">Comprobante:</span><span class="di-extra-val" style="color:var(--danger)">No adjunto</span></div>';
     }
+    html += '<div style="margin-top:14px"><button type="button" onclick="descargarPdfPedido(\'' + pedidoId + '\')" style="background:#fff;border:1.5px solid var(--naranja);color:var(--naranja);border-radius:8px;padding:8px 16px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px">'
+      + '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
+      + 'Descargar PDF</button></div>';
   }
   det.innerHTML = html;
 }
@@ -416,6 +429,84 @@ async function descontarStockPedido(pedidoId) {
 
 function logout() {
   _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
+
+function descargarPdfPedido(pedidoId) {
+  var pedidoData = null;
+  for (var pi = 0; pi < _todos.length; pi++) {
+    if (String(_todos[pi].id) === String(pedidoId)) { pedidoData = _todos[pi]; break; }
+  }
+  if (!pedidoData) { alert('No se encontraron los datos del pedido.'); return; }
+  var items = _itemsCache[pedidoId] || [];
+
+  var jsPDFCtor = window.jspdf ? window.jspdf.jsPDF : null;
+  if (!jsPDFCtor) { alert('No se pudo cargar el generador de PDF. Revisa tu conexion e intenta de nuevo.'); return; }
+  var doc = new jsPDFCtor();
+
+  var pedNum = '#' + String(pedidoData.id).slice(0, 8);
+  var fecha = pedidoData.fecha_pedido ? new Date(pedidoData.fecha_pedido).toLocaleDateString('es-EC', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+  var suscNombre = (pedidoData.usuarios && pedidoData.usuarios.nombre) ? pedidoData.usuarios.nombre : '-';
+  var suscCedula = (pedidoData.usuarios && pedidoData.usuarios.cedula) ? String(pedidoData.usuarios.cedula) : '-';
+  var metodoPagoLbl = pedidoData.metodo_pago === 'deuna' ? 'QR De Una' : (pedidoData.metodo_pago === 'transferencia' ? 'Transferencia bancaria' : '-');
+  var pagoEstadoLbl = pedidoData.pago_estado === 'aprobado' ? 'Pagado' : (pedidoData.pago_estado === 'rechazado' ? 'Rechazado' : 'Pendiente de verificar');
+
+  doc.setFontSize(18);
+  doc.setTextColor(239, 104, 48);
+  doc.text('TuCosto', 14, 18);
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text('ahorro a un clic', 14, 24);
+
+  doc.setFontSize(14);
+  doc.setTextColor(20, 20, 30);
+  doc.text('Comprobante de pedido ' + pedNum, 14, 38);
+
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  var infoLines = [
+    'Fecha del pedido: ' + fecha,
+    'Suscriptor: ' + suscNombre + '  (Cedula: ' + suscCedula + ')',
+    'Direccion de entrega: ' + (pedidoData.direccion_entrega || '-'),
+    'Metodo de pago: ' + metodoPagoLbl,
+    'Estado del pago: ' + pagoEstadoLbl,
+    'Estado del pedido: ' + (pedidoData.estado || '-')
+  ];
+  var y = 46;
+  for (var li = 0; li < infoLines.length; li++) {
+    doc.text(infoLines[li], 14, y);
+    y += 6;
+  }
+
+  var rows = [];
+  var totalCalc = 0;
+  for (var ii = 0; ii < items.length; ii++) {
+    var item = items[ii];
+    var prodNombre = (item.productos && item.productos.nombre) ? item.productos.nombre : 'Producto';
+    var miemNombre = (item.miembros && item.miembros.nombre) ? item.miembros.nombre : 'Titular';
+    var lineTotal = (item.precio_unitario || 0) * item.cantidad;
+    totalCalc += lineTotal;
+    rows.push([prodNombre, miemNombre, String(item.cantidad), '$' + (item.precio_unitario || 0).toFixed(2), '$' + lineTotal.toFixed(2)]);
+  }
+
+  doc.autoTable({
+    startY: y + 4,
+    head: [['Producto', 'Para', 'Cant.', 'Precio unit.', 'Subtotal']],
+    body: rows,
+    theme: 'grid',
+    headStyles: { fillColor: [239, 104, 48] },
+    styles: { fontSize: 9 }
+  });
+
+  var finalY = doc.lastAutoTable.finalY + 8;
+  doc.setFontSize(12);
+  doc.setTextColor(20, 20, 30);
+  doc.text('Total: $' + (pedidoData.total_costo || totalCalc).toFixed(2), 150, finalY);
+
+  doc.setFontSize(8);
+  doc.setTextColor(150, 150, 150);
+  doc.text('Generado desde el panel de TuCosto el ' + new Date().toLocaleDateString('es-EC'), 14, 285);
+
+  doc.save('pedido_' + pedNum.replace('#', '') + '.pdf');
 }
 </script>
 </body>

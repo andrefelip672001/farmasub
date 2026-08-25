@@ -799,6 +799,17 @@ async function confirmarPedido() {
     if (pedRes.error) throw pedRes.error;
     var pedido = pedRes.data;
 
+    var pagoRes = await _db.from('pagos').insert({
+      titular_id: titularId,
+      pedido_id: pedido.id,
+      tipo: 'pedido',
+      monto: total,
+      metodo_pago: _metodo,
+      comprobante_url: comprobanteUrl,
+      estado: 'pendiente'
+    });
+    if (pagoRes.error) console.error('Error registrando pago del pedido:', pagoRes.error);
+
     for (var i = 0; i < _cart.length; i++) {
       var miembroId = null;
       if (_cart[i].miembro && _cart[i].miembro !== 'titular') {

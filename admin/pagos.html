@@ -304,7 +304,7 @@ function renderTable() {
     else lbl = 'Pendiente';
     var fecha = p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC') : '-';
     var u = p.usuarios || {};
-    var tipoLbl = p.tipo === 'renovacion' ? ' (renovacion)' : ' (registro)';
+    var tipoLbl = p.tipo === 'renovacion' ? ' (renovacion)' : (p.tipo === 'pedido' ? ' (pedido #' + String(p.pedido_id || '').slice(0, 8) + ')' : (p.tipo === 'activacion' ? ' (activacion)' : ' (registro)'));
     var compHtml;
     if (p.comprobante_url) {
       var urlSafe = p.comprobante_url.replace(/'/g, '').replace(/"/g, '');
@@ -349,6 +349,11 @@ async function aprobar(pagoId) {
   if (!pago) return;
   var ahora = new Date().toISOString();
   await _db.from('pagos').update({ estado: 'aprobado', fecha_revision: ahora }).eq('id', pagoId);
+  if (pago.tipo === 'pedido' && pago.pedido_id) {
+    await _db.from('pedidos').update({ pago_estado: 'aprobado' }).eq('id', pago.pedido_id);
+    await loadData();
+    return;
+  }
   if (pago.suscripcion_id) {
     var fechaInicio = new Date().toISOString().slice(0, 10);
     var venc = new Date();
@@ -389,7 +394,9 @@ async function confirmarRechazo() {
     motivo_rechazo: motivo,
     fecha_revision: new Date().toISOString()
   }).eq('id', _rechazoId);
-  if (pago && pago.tipo === 'registro' && pago.suscripcion_id) {
+  if (pago && pago.tipo === 'pedido' && pago.pedido_id) {
+    await _db.from('pedidos').update({ pago_estado: 'rechazado' }).eq('id', pago.pedido_id);
+  } else if (pago && pago.tipo === 'registro' && pago.suscripcion_id) {
     await _db.from('suscripciones').update({
       estado: 'rechazada',
       kyc_estado: 'rechazado',
