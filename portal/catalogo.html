@@ -456,7 +456,7 @@ var _galleryFotos = [], _galleryIdx = 0;
     var session = sessRes.data.session;
     if (!session) { window.location.href = '../portal/login.html'; return; }
     document.getElementById('nav-nombre').textContent = session.user.email;
-    _db.from('suscriptores').select('nombre').eq('email', session.user.email).single().then(function(sRes) {
+    _db.from('usuarios').select('nombre').eq('email', session.user.email).single().then(function(sRes) {
       if (sRes.data) {
         document.getElementById('nav-nombre').textContent = sRes.data.nombre;
         document.getElementById('nav-avatar').textContent = sRes.data.nombre.charAt(0).toUpperCase();
@@ -486,7 +486,7 @@ function loadCats() {
 
 function loadProducts() {
   return _db.from('productos')
-    .select('*, categorias(nombre), producto_fotos(url, orden)')
+    .select('id, nombre, principio_activo, laboratorio, categoria_id, precio_farmacia, precio_costo, indicaciones, dosis, contraindicaciones, efectos_secundarios, unidades_caja, categorias(nombre), producto_fotos(url, orden)')
     .eq('activo', true)
     .order('nombre')
     .then(function(prodRes) {

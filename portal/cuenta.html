@@ -466,7 +466,7 @@ var FIELDS = [
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('*, suscripciones(estado, plan, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('id, nombre, cedula, email, telefono, direccion, barrio, suscripciones(estado, plan, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
   var _suscRow = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
@@ -555,7 +555,7 @@ var _miembrosActuales = [];
 
 async function loadMembers() {
   var titularId = (_susc && _susc.id) ? _susc.id : null;
-  var mRes = await _db.from('miembros').select('*').eq('titular_id', titularId);
+  var mRes = await _db.from('miembros').select('id, nombre, relacion, cedula').eq('titular_id', titularId);
   var m = mRes.data || [];
   _miembrosActuales = m;
   var list = document.getElementById('members-list');
@@ -660,7 +660,7 @@ async function submitAddMember() {
 
 async function loadPagos() {
   var list = document.getElementById('pagos-list');
-  var pagosRes = await _db.from('pagos').select('*').eq('titular_id', _susc.id).order('fecha_pago', {ascending: false});
+  var pagosRes = await _db.from('pagos').select('estado, tipo, monto, fecha_pago').eq('titular_id', _susc.id).order('fecha_pago', {ascending: false});
   var pagos = pagosRes.data;
   if (!pagos || !pagos.length) {
     list.innerHTML = '<p class="list-empty">Sin historial de pagos.</p>';
@@ -691,7 +691,7 @@ async function loadPagos() {
 }
 
 async function verSalud(miembroId, nombre) {
-  var sRes = await _db.from('cuestionarios').select('*').eq('miembro_id', miembroId).single();
+  var sRes = await _db.from('cuestionarios').select('condiciones, medicamentos, medico_tratante, tiempo_tratamiento, recetas_vigentes, alergias, observaciones').eq('miembro_id', miembroId).single();
   var s = sRes.data;
   if (!s) { alert('No hay cuestionario de salud registrado para: ' + nombre); return; }
   var conds = Array.isArray(s.condiciones) ? s.condiciones.join(', ') : (s.condiciones || '-');

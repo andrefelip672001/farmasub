@@ -339,7 +339,7 @@ var _user, _susc, _cedula, _metodo = 'transferencia', _archivo = null;
     var session = sessRes.data.session;
     if (!session) { window.location.href = '../portal/login.html'; return; }
     _user = session.user;
-    _db.from('usuarios').select('*, suscripciones(*)').eq('id', _user.id).single().then(function(res) {
+    _db.from('usuarios').select('nombre, cedula, suscripciones(id, estado, plan, fecha_vencimiento)').eq('id', _user.id).single().then(function(res) {
       var s = res.data;
       var nombre = (s && s.nombre) ? s.nombre : _user.email;
       document.getElementById('nav-avatar').textContent = nombre.charAt(0).toUpperCase() || '?';

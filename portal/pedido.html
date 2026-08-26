@@ -558,7 +558,7 @@ var _tienePlan = true;
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('*, suscripciones(plan, estado)').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('id, nombre, cedula, direccion, barrio, suscripciones(plan, estado)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
 
@@ -567,7 +567,7 @@ var _tienePlan = true;
 
   if (s) {
     document.getElementById('addr-input').value = (s.direccion || '') + (s.barrio ? ', ' + s.barrio : '');
-    var mRes = await _db.from('miembros').select('*').eq('titular_id', s.id);
+    var mRes = await _db.from('miembros').select('id, nombre, cedula').eq('titular_id', s.id);
     _miembros = mRes.data || [];
 
     var suscRow = (s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;

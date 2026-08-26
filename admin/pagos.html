@@ -258,7 +258,7 @@ var PLANS = { ahorro: { nombre: 'Plan Ahorro', precio: 8.99 }, familiar: { nombr
 })();
 
 async function loadData() {
-  var res = await _db.from('pagos').select('*, usuarios(nombre,cedula,email)').order('fecha_pago', {ascending: false});
+  var res = await _db.from('pagos').select('id, tipo, estado, monto, fecha_pago, comprobante_url, motivo_rechazo, pedido_id, suscripcion_id, usuarios(nombre,cedula,email)').order('fecha_pago', {ascending: false});
   _todos = res.data || [];
   var pendientes = 0;
   for (var i = 0; i < _todos.length; i++) {

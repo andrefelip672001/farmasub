@@ -238,9 +238,9 @@ async function cargarMes(mesStr) {
   var r = rangoDelMes(mesStr);
 
   var results = await Promise.all([
-    _db.from('pagos').select('*, usuarios(nombre)').eq('estado', 'aprobado').gte('fecha_pago', r.inicio).lt('fecha_pago', r.fin).order('fecha_pago', {ascending: false}),
+    _db.from('pagos').select('tipo, plan, monto, fecha_pago, usuarios(nombre)').eq('estado', 'aprobado').gte('fecha_pago', r.inicio).lt('fecha_pago', r.fin).order('fecha_pago', {ascending: false}),
     _db.from('pedidos').select('total_costo').neq('estado', 'cancelado').gte('fecha_pedido', r.inicio).lt('fecha_pedido', r.fin),
-    _db.from('movimientos_inventario').select('*, productos(nombre)').eq('tipo', 'entrada').gte('created_at', r.inicio).lt('created_at', r.fin).order('created_at', {ascending: false}),
+    _db.from('movimientos_inventario').select('cantidad, costo_unitario, created_at, productos(nombre)').eq('tipo', 'entrada').gte('created_at', r.inicio).lt('created_at', r.fin).order('created_at', {ascending: false}),
     _db.from('productos').select('stock_actual, precio_costo').eq('activo', true)
   ]);
 

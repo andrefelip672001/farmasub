@@ -499,7 +499,7 @@ async function init() {
 }
 
 async function loadCategorias() {
-  var res = await sb.from('categorias').select('*').order('nombre');
+  var res = await sb.from('categorias').select('id, nombre').order('nombre');
   if (res.error) { console.error('Error categorias:', res.error); return; }
   _categorias = res.data || [];
   var sel = document.getElementById('f-categoria');
@@ -515,7 +515,7 @@ async function loadCategorias() {
 async function loadProductos() {
   var tbody = document.getElementById('tbody');
   tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:2rem;color:#9CA3AF">Cargando...</td></tr>';
-  var res = await sb.from('productos').select('*, categorias(nombre), producto_fotos(id,url,orden)').order('nombre');
+  var res = await sb.from('productos').select('id, nombre, principio_activo, laboratorio, categoria_id, unidades_caja, fecha_caducidad, precio_farmacia, precio_costo, indicaciones, dosis, contraindicaciones, efectos_secundarios, activo, stock_actual, categorias(nombre), producto_fotos(id,url,orden)').order('nombre');
   if (res.error) {
     tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:red">Error: ' + res.error.message + '</td></tr>';
     return;
@@ -729,7 +729,7 @@ async function editProducto(id) {
   document.getElementById('f-contraindicaciones').value = p.contraindicaciones || '';
   document.getElementById('f-efectos').value = p.efectos_secundarios || '';
   document.getElementById('modal-error').style.display = 'none';
-  var fotosRes = await sb.from('producto_fotos').select('*').eq('producto_id', id).order('orden');
+  var fotosRes = await sb.from('producto_fotos').select('id, url, orden').eq('producto_id', id).order('orden');
   if (!fotosRes.error && fotosRes.data) {
     for (var j = 0; j < fotosRes.data.length; j++) {
       _fotoItems.push({ existing: true, id: fotosRes.data[j].id, url: fotosRes.data[j].url, orden: fotosRes.data[j].orden });

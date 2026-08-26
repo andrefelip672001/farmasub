@@ -434,7 +434,7 @@ var _user, _susc;
 
 async function loadDashboard() {
   var res = await _db.from('usuarios')
-    .select('*, suscripciones(estado, kyc_estado, fecha_inicio, fecha_vencimiento)')
+    .select('id, nombre, cedula, suscripciones(estado, kyc_estado, fecha_inicio, fecha_vencimiento)')
     .eq('id', _user.id)
     .single();
   var s = res.data;

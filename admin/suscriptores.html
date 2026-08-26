@@ -332,7 +332,7 @@ async function verComprobanteAdmin(event, storedUrl) {
 async function loadSuscriptores() {
   var res = await _db
     .from('usuarios')
-    .select('*, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
+    .select('id, nombre, cedula, email, telefono, direccion, barrio, created_at, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
     .eq('rol', 'suscriptor')
     .order('created_at', {ascending: false});
   if (res.error) {
@@ -437,9 +437,9 @@ async function openPanel(idx) {
   document.getElementById('tab-kyc').innerHTML = '';
 
   var panelResults = await Promise.all([
-    _db.from('miembros').select('*').eq('titular_id', s.id),
+    _db.from('miembros').select('nombre, cedula, relacion').eq('titular_id', s.id),
     _db.from('pedidos').select('id,fecha_pedido,estado,total_costo').eq('titular_id', s.id).order('fecha_pedido', {ascending: false}).limit(5),
-    _db.from('pagos').select('*').eq('titular_id', s.id).order('fecha_pago', {ascending: false}).limit(10)
+    _db.from('pagos').select('tipo, estado, monto, fecha_pago, comprobante_url, motivo_rechazo').eq('titular_id', s.id).order('fecha_pago', {ascending: false}).limit(10)
   ]);
   var miembros = panelResults[0].data || [];
   var pedidos = panelResults[1].data || [];

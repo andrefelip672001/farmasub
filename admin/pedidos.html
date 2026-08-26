@@ -242,7 +242,7 @@ var _adminUserId = null;
 })();
 
 async function loadData() {
-  var res = await _db.from('pedidos').select('*,usuarios(nombre,cedula)').order('fecha_pedido', {ascending: false});
+  var res = await _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,pago_estado,direccion_entrega,fecha_entrega_estimada,metodo_pago,comprobante_url,usuarios(nombre,cedula)').order('fecha_pedido', {ascending: false});
   _todos = res.data || [];
   document.getElementById('total-badge').textContent = _todos.length;
   renderTable();

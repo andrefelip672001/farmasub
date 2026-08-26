@@ -465,7 +465,7 @@ var _user, _susc, _metodo = 'transferencia', _archivo = null, _healthBuilt = fal
     var session = sessRes.data.session;
     if (!session) { window.location.href = '../portal/login.html'; return; }
     _user = session.user;
-    _db.from('usuarios').select('*, suscripciones(*)').eq('id', _user.id).single().then(function(res) {
+    _db.from('usuarios').select('nombre, cedula, fecha_nacimiento, suscripciones(id, estado)').eq('id', _user.id).single().then(function(res) {
       var s = res.data;
       var nombre = (s && s.nombre) ? s.nombre : _user.email;
       document.getElementById('nav-avatar').textContent = nombre.charAt(0).toUpperCase() || '?';
