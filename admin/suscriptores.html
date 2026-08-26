@@ -218,11 +218,11 @@ tr.selected td{background:var(--naranja-light);}
         <thead>
           <tr>
             <th>Nombre</th><th>C&eacute;dula</th><th>Email</th><th>Tel&eacute;fono</th>
-            <th>Estado</th><th>KYC</th><th>Registro</th><th></th>
+            <th>Plan</th><th>Estado</th><th>KYC</th><th>Registro</th><th></th>
           </tr>
         </thead>
         <tbody id="tbody">
-          <tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
+          <tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
         </tbody>
       </table>
     </div>
@@ -371,7 +371,7 @@ function renderTable() {
   }
   var tbody = document.getElementById('tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';
     return;
   }
   var html = '';
@@ -395,6 +395,8 @@ function renderTable() {
     if (sKyc === 'verificado') kycLbl = 'Verificado';
     else if (sKyc === 'rechazado') kycLbl = 'Rechazado';
     else kycLbl = 'Pendiente';
+    var sPlan = sus0 ? sus0.plan : null;
+    var sPlanLbl = sPlan === 'ahorro' ? 'Ahorro' : (sPlan === 'familiar' ? 'Familiar' : '&#8212;');
     var fecha = s.created_at ? new Date(s.created_at).toLocaleDateString('es-EC') : '-';
     var selClass = (_selIdx === oidx) ? ' selected' : '';
     html += '<tr class="clickable' + selClass + '">';
@@ -402,6 +404,7 @@ function renderTable() {
     html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.cedula || '-') + '</td>';
     html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.email || '-') + '</td>';
     html += '<td style="color:var(--ink-60)">' + esc(s.telefono || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.85rem">' + sPlanLbl + '</td>';
     html += '<td><span class="badge ' + cls + '">' + sEstadoLbl + '</span></td>';
     html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span></td>';
     html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
