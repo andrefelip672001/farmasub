@@ -16,6 +16,7 @@
   --white:#FFFFFF;--bg:#F9FAFB;
   --danger:#EF4444;--danger-light:#FEF2F2;
   --warning:#D97706;--warning-light:#FFFBEB;
+  --morado:#7C3AED;--morado-light:#F5F3FF;
   --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -98,6 +99,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .m-verde .metric-val{color:var(--verde);}
 .m-danger .metric-icon{background:var(--danger-light);color:var(--danger);}
 .m-danger .metric-val{color:var(--danger);}
+.m-morado .metric-icon{background:var(--morado-light);color:var(--morado);}
+.m-morado .metric-val{color:var(--morado);}
 
 /* TABLES */
 .table-block{
@@ -240,6 +243,17 @@ tr:hover td{background:var(--naranja-light);}
           <p class="metric-sub">membresias vigentes</p>
         </div>
       </div>
+
+      <a href="../admin/suscriptores.html" class="metric-card m-morado" style="text-decoration:none;display:flex">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Registrados sin plan</p>
+          <p class="metric-val" id="m-sinplan">&#8212;</p>
+          <p class="metric-sub" id="m-sinplan-sub">registro gratuito</p>
+        </div>
+      </a>
 
       <div class="metric-card m-warn">
         <div class="metric-icon">
@@ -389,12 +403,16 @@ async function loadMetrics() {
   var results = await Promise.all([
     _db.from('suscripciones').select('plan', {count: 'exact'}).eq('estado', 'activa'),
     _db.from('pagos').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
-    _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha_pedido', firstOfMonth)
+    _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha_pedido', firstOfMonth),
+    _db.from('suscripciones').select('*', {count: 'exact', head: true}).eq('estado', 'sin_plan'),
+    _db.from('usuarios').select('id, suscripciones(estado)').eq('rol', 'suscriptor').gte('created_at', firstOfMonth)
   ]);
   var activasRows = results[0].data || [];
   var activos = results[0].count || 0;
   var pendientes = results[1].count || 0;
   var pedidosMes = results[2].count || 0;
+  var sinPlan = results[3].count || 0;
+  var registradosMes = results[4].data || [];
   var ingresos = 0;
   for (var i = 0; i < activasRows.length; i++) {
     var planKey = (activasRows[i].plan && PLANS[activasRows[i].plan]) ? activasRows[i].plan : 'familiar';
@@ -405,6 +423,20 @@ async function loadMetrics() {
   document.getElementById('m-pedidos').textContent = pedidosMes;
   document.getElementById('m-ingresos').textContent = '$' + ingresos.toFixed(2);
   document.getElementById('m-utilidad').textContent = 'Utilidad: $' + ingresos.toFixed(2) + ' (100% membresia, medicamentos al costo)';
+  document.getElementById('m-sinplan').textContent = sinPlan;
+
+  var totalMes = registradosMes.length;
+  if (totalMes > 0) {
+    var convertidosMes = 0;
+    for (var j = 0; j < registradosMes.length; j++) {
+      var u = registradosMes[j];
+      if (u.suscripciones && u.suscripciones[0] && u.suscripciones[0].estado === 'activa') { convertidosMes++; }
+    }
+    var pct = Math.round((convertidosMes / totalMes) * 100);
+    document.getElementById('m-sinplan-sub').textContent = pct + '% activo este mes (' + convertidosMes + ' de ' + totalMes + ' registrados)';
+  } else {
+    document.getElementById('m-sinplan-sub').textContent = 'registro gratuito';
+  }
 }
 
 async function loadCaducidad() {
