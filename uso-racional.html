@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Uso racional de medicamentos — TuCosto Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'] },
+      colors: {
+        naranja: '#EF6830',
+        'naranja-d': '#C95220',
+        'naranja-light': '#FFF2EC',
+      }
+    }
+  }
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height:1.6;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+.nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.content-col{max-width:800px;}
+.oms-quote{background:linear-gradient(135deg,#C95220 0%,#EF6830 100%);border-radius:16px;padding:32px 36px;margin-bottom:40px;position:relative;overflow:hidden;}
+.oms-quote::before{content:'"';position:absolute;top:-10px;left:20px;font-size:120px;color:rgba(255,255,255,.1);font-family:Georgia,serif;line-height:1;}
+.oms-quote p{color:#fff;font-size:1.05rem;font-style:italic;line-height:1.7;position:relative;z-index:1;}
+.oms-quote cite{display:block;margin-top:12px;color:rgba(255,255,255,.75);font-size:.8rem;font-style:normal;position:relative;z-index:1;}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:36px;}
+.info-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.info-card h3{font-size:.95rem;font-weight:700;color:#EF6830;margin-bottom:12px;}
+.info-card p,.info-card ul{font-size:.85rem;color:#6B7280;line-height:1.7;}
+.info-card ul{padding-left:18px;}
+.info-card ul li{margin-bottom:6px;}
+.dose-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:.84rem;}
+.dose-table th{text-align:left;padding:10px 14px;background:#EF6830;color:#fff;font-weight:600;font-size:.8rem;}
+.dose-table th:first-child{border-radius:8px 0 0 0;}
+.dose-table th:last-child{border-radius:0 8px 0 0;}
+.dose-table td{padding:11px 14px;border-bottom:1px solid #FFF2EC;color:#6B7280;}
+.dose-table tr:last-child td{border-bottom:none;}
+.dose-table tr:nth-child(even) td{background:#F9FAFB;}
+.warn-list{background:#fff;border-radius:16px;padding:28px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:24px;}
+.warn-list h3{font-size:.95rem;font-weight:700;color:#EF6830;margin-bottom:14px;}
+.warn-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #F3F4F6;font-size:.85rem;color:#6B7280;line-height:1.5;}
+.warn-item:last-child{border-bottom:none;}
+.warn-emoji{font-size:1.1rem;flex-shrink:0;margin-top:2px;}
+.storage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:36px;}
+.stor-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.06);text-align:center;}
+.stor-emoji{font-size:1.7rem;margin-bottom:8px;}
+.stor-title{font-size:.82rem;font-weight:700;color:#1A1A2E;margin-bottom:5px;}
+.stor-desc{font-size:.78rem;color:#6B7280;line-height:1.5;}
+.qf-card{background:linear-gradient(135deg,#C95220 0%,#EF6830 50%,#F07040 100%);border-radius:18px;padding:36px;text-align:center;margin-bottom:16px;}
+.qf-card h3{color:#fff;font-size:1.1rem;font-weight:700;margin-bottom:10px;}
+.qf-card p{color:rgba(255,255,255,.82);font-size:.88rem;line-height:1.7;margin-bottom:20px;}
+.qf-btn{display:inline-block;background:#fff;color:#EF6830;font-weight:700;font-size:.88rem;padding:12px 28px;border-radius:10px;text-decoration:none;}
+.section-title{font-size:1.1rem;font-weight:700;color:#1A1A2E;margin-bottom:20px;}
+@media(max-width:768px){
+  .nav-links{display:none !important;}
+  .footer-grid{grid-template-columns:1fr 1fr !important;}
+  .content-grid{grid-template-columns:1fr !important;}
+  .storage-grid{grid-template-columns:1fr 1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;height:64px">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
+      <li><a href="index.html#membresia" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Membresía</a></li>
+      <li><a href="quienes-somos.html" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Quiénes somos</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="portal/login.html" style="color:#EF6830;border:1.5px solid #EF6830;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#EF6830;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+    </div>
+  </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,#C95220 0%,#EF6830 50%,#F07040 100%);padding:64px 0 56px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-40%;right:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);pointer-events:none"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;margin-bottom:18px">
+      <span style="font-size:.75rem;color:rgba(255,255,255,.9);font-weight:500">Regulatorio</span>
+    </div>
+    <h1 style="color:#fff;font-size:clamp(1.9rem,3.5vw,2.7rem);font-weight:700;line-height:1.15;margin-bottom:14px">Uso racional de medicamentos</h1>
+    <p style="color:rgba(255,255,255,.78);font-size:.97rem;max-width:560px;line-height:1.7">En TuCosto promovemos el uso correcto, seguro y eficiente de los medicamentos, conforme a las directrices de la OMS y la normativa ARCSA del Ecuador.</p>
+  </div>
+</div>
+
+<section style="padding:64px 0;background:#F9FAFB">
+  <div class="container">
+    <div class="content-col">
+
+      <div class="oms-quote">
+        <p>El uso racional de medicamentos requiere que los pacientes reciban los medicamentos apropiados a sus necesidades clínicas, en las dosis que satisfagan sus requerimientos individuales, durante el período de tiempo adecuado, y al menor coste posible para ellos y para la comunidad.</p>
+        <cite>— Organización Mundial de la Salud (OMS)</cite>
+      </div>
+
+      <div class="content-grid">
+        <div class="info-card">
+          <h3>¿Por qué es importante?</h3>
+          <p>El uso inadecuado de medicamentos puede generar resistencias bacterianas, efectos secundarios evitables, interacciones medicamentosas peligrosas y un gasto innecesario para las familias. En el Ecuador, la ARCSA regula que todo medicamento de venta bajo prescripción médica debe ser dispensado únicamente con receta.</p>
+        </div>
+        <div class="info-card">
+          <h3>Nuestro compromiso</h3>
+          <p>TuCosto opera bajo la supervisión de un <strong>Químico Farmacéutico Responsable Técnico</strong> registrado en la ARCSA. Todos los medicamentos de venta bajo prescripción son dispensados únicamente con presentación de receta médica válida, verificada por el QF. Nunca sugerimos tratamientos ni sustituimos la consulta médica.</p>
+        </div>
+        <div class="info-card">
+          <h3>Los cinco derechos de la administración</h3>
+          <ul>
+            <li>Medicamento <strong>correcto</strong></li>
+            <li>Dosis <strong>correcta</strong></li>
+            <li>Paciente <strong>correcto</strong></li>
+            <li>Vía de administración <strong>correcta</strong></li>
+            <li>Momento <strong>correcto</strong></li>
+          </ul>
+        </div>
+        <div class="info-card">
+          <h3>Automedicación responsable</h3>
+          <p>Los medicamentos de venta libre (OTC) pueden adquirirse sin receta, pero eso no los hace inocuos. Lea siempre el prospecto, respete las dosis indicadas por el fabricante y consulte con nuestro QF si tiene dudas antes de tomar cualquier medicamento.</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">Control de dosis: referencia general</h2>
+      <p style="font-size:.85rem;color:#6B7280;margin-bottom:14px">La siguiente tabla es únicamente orientativa. La dosis exacta debe ser indicada por su médico tratante o nuestro Químico Farmacéutico Responsable.</p>
+      <div style="overflow-x:auto">
+        <table class="dose-table">
+          <thead><tr><th>Principio activo (adulto)</th><th>Dosis habitual</th><th>Dosis máxima diaria</th><th>Intervalo</th></tr></thead>
+          <tbody>
+            <tr><td>Paracetamol 500 mg</td><td>500–1000 mg</td><td>4000 mg</td><td>Cada 4–6 h</td></tr>
+            <tr><td>Ibuprofeno 400 mg</td><td>200–400 mg</td><td>1200 mg (OTC) / 2400 mg (Rx)</td><td>Cada 4–6 h</td></tr>
+            <tr><td>Amoxicilina 500 mg</td><td>500 mg</td><td>3000 mg (solo bajo Rx)</td><td>Cada 8 h</td></tr>
+            <tr><td>Loratadina 10 mg</td><td>10 mg</td><td>10 mg</td><td>Cada 24 h</td></tr>
+            <tr><td>Metformina 500 mg</td><td>500–850 mg</td><td>2550 mg (solo bajo Rx)</td><td>Con las comidas</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="warn-list">
+        <h3>Señales de alerta — consulte a su médico o QF</h3>
+        <div class="warn-item"><span class="warn-emoji">&#9888;&#65039;</span><span><strong>Falta de mejoría:</strong> si sus síntomas no mejoran en 48–72 horas con el tratamiento iniciado, no aumente la dosis por su cuenta.</span></div>
+        <div class="warn-item"><span class="warn-emoji">&#128721;</span><span><strong>Antibióticos sin receta:</strong> nunca compre antibióticos sin prescripción médica. La resistencia bacteriana es un problema de salud pública grave.</span></div>
+        <div class="warn-item"><span class="warn-emoji">&#128148;</span><span><strong>Medicamentos en embarazo y lactancia:</strong> muchos fármacos de uso común están contraindicados. Consulte siempre con su médico antes de tomar cualquier medicamento.</span></div>
+        <div class="warn-item"><span class="warn-emoji">&#128116;</span><span><strong>Niños:</strong> nunca ajuste por su cuenta la dosis de un adulto para dársela a un niño. Las dosis pediátricas se calculan por peso y edad.</span></div>
+        <div class="warn-item"><span class="warn-emoji">&#128197;</span><span><strong>Medicamentos vencidos:</strong> nunca consuma medicamentos cuya fecha de vencimiento haya pasado, aunque el aspecto del producto parezca normal.</span></div>
+        <div class="warn-item"><span class="warn-emoji">&#128139;</span><span><strong>Interacciones:</strong> informe a su médico y QF de todos los medicamentos, suplementos y plantas medicinales que consume para evitar interacciones peligrosas.</span></div>
+      </div>
+
+      <h2 class="section-title">Almacenamiento correcto de medicamentos</h2>
+      <div class="storage-grid">
+        <div class="stor-card"><div class="stor-emoji">&#127777;&#65039;</div><div class="stor-title">Temperatura</div><div class="stor-desc">Guarde en lugar fresco, entre 15°C y 25°C, alejado de fuentes de calor.</div></div>
+        <div class="stor-card"><div class="stor-emoji">&#9728;&#65039;</div><div class="stor-title">Luz</div><div class="stor-desc">Evite la exposición directa a la luz solar. Use el envase original.</div></div>
+        <div class="stor-card"><div class="stor-emoji">&#128167;</div><div class="stor-title">Humedad</div><div class="stor-desc">No guarde en el baño ni en la cocina. La humedad deteriora los medicamentos.</div></div>
+        <div class="stor-card"><div class="stor-emoji">&#10052;&#65039;</div><div class="stor-title">Refrigeración</div><div class="stor-desc">Insulina, jarabes y ciertos antibióticos requieren cadena de frío (2°C–8°C).</div></div>
+        <div class="stor-card"><div class="stor-emoji">&#128274;</div><div class="stor-title">Seguridad</div><div class="stor-desc">Mantenga los medicamentos fuera del alcance de niños y mascotas.</div></div>
+        <div class="stor-card"><div class="stor-emoji">&#9851;&#65039;</div><div class="stor-title">Desecho seguro</div><div class="stor-desc">No tire medicamentos al inodoro ni a la basura. Devuélvalos en puntos autorizados.</div></div>
+      </div>
+
+      <div class="qf-card">
+        <h3>&#127748; ¿Tiene dudas sobre su medicación?</h3>
+        <p>Nuestro Químico Farmacéutico Responsable Técnico está disponible para orientarle sobre el uso correcto de sus medicamentos, posibles interacciones y almacenamiento adecuado. Este servicio es exclusivo para socios TuCosto y no reemplaza la consulta médica.</p>
+        <a href="reclamos.html" class="qf-btn">Contactar al QF Responsable</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer style="background:#1A1A2E;padding:48px 0 28px">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">TuCosto</div>
+        <p style="font-size:.85rem;color:#6B7280;margin-top:12px;max-width:240px;line-height:1.6">La membresía de salud para familias ecuatorianas. Ahorro a un clic.</p>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Producto</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="index.html#productos" style="font-size:.83rem;color:#6B7280;text-decoration:none">Productos</a></li>
+          <li><a href="index.html#calculadora" style="font-size:.83rem;color:#6B7280;text-decoration:none">Calculadora de ahorro</a></li>
+          <li><a href="index.html#membresia" style="font-size:.83rem;color:#6B7280;text-decoration:none">Planes y precios</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Empresa</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="quienes-somos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Quiénes Somos</a></li>
+          <li><a href="terminos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Devolución</a></li>
+          <li><a href="faq.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Regulatorio</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="uso-racional.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-size:.78rem;color:#6B7280">&#169; 2025 TuCosto Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p style="font-size:.78rem;color:#6B7280">Santo Domingo de los Ts&#225;chilas &#183; Ecuador</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

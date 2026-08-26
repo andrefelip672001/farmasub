@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Suscriptores &mdash; TuCosto Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .nav-tag{display:none;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+}
+
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-head{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.page-title{font-size:1.4rem;font-weight:700;color:var(--ink);}
+.total-badge{background:var(--naranja);color:white;border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;}
+
+.toolbar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-30);}
+.search-input{width:100%;padding:9px 12px 9px 38px;background:var(--white);border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);outline:none;transition:border .2s;}
+.search-input:focus{border-color:var(--naranja);}
+.search-input::placeholder{color:var(--ink-30);}
+.filter-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-btn{padding:8px 14px;background:var(--white);border:1.5px solid var(--ink-30);border-radius:20px;font-size:.78rem;font-weight:500;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.filter-btn:hover{border-color:var(--naranja);color:var(--naranja);}
+.filter-btn.active{background:var(--naranja);border-color:var(--naranja);color:white;}
+
+.table-wrap{background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;overflow:hidden;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid #F3F4F6;background:var(--bg);}
+td{padding:11px 16px;font-size:.82rem;border-bottom:1px solid #F3F4F6;vertical-align:middle;color:var(--ink);}
+tr:last-child td{border-bottom:none;}
+tr.clickable:hover td{background:var(--naranja-light);}
+tr.selected td{background:var(--naranja-light);}
+
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+.badge-activa{background:var(--verde-light);color:var(--verde);}
+.badge-sinplan{background:#F3F4F6;color:#6B7280;}
+.badge-pend{background:var(--amarillo-light);color:var(--warning);}
+.badge-venc{background:var(--danger-light);color:var(--danger);}
+.badge-kyc-ok{background:var(--verde-light);color:var(--verde);}
+.badge-kyc-pend{background:var(--amarillo-light);color:var(--warning);}
+.badge-kyc-err{background:var(--danger-light);color:var(--danger);}
+
+.btn-ver{padding:5px 12px;background:var(--naranja-light);border:1px solid var(--naranja);border-radius:8px;font-size:.75rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap;}
+.btn-ver:hover{background:var(--naranja);color:white;}
+
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:30;opacity:0;pointer-events:none;transition:opacity .3s;}
+.panel-overlay.show{opacity:1;pointer-events:all;}
+
+.side-panel{position:fixed;top:0;right:0;bottom:0;width:460px;background:var(--white);transform:translateX(100%);transition:transform .3s;z-index:40;box-shadow:-6px 0 24px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+.side-panel.open{transform:translateX(0);}
+
+.panel-header{padding:16px 22px;display:flex;align-items:center;justify-content:space-between;background:var(--naranja);flex-shrink:0;}
+.panel-title{font-size:1rem;font-weight:700;color:white;}
+.btn-close-panel{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:white;width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.btn-close-panel:hover{background:rgba(255,255,255,.35);}
+
+.panel-tabs{display:flex;border-bottom:2px solid #F3F4F6;background:var(--white);flex-shrink:0;}
+.panel-tab{flex:1;padding:11px 4px;background:none;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:500;color:var(--ink-60);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+.panel-tab:hover{color:var(--naranja);}
+.panel-tab.active{color:var(--naranja);border-bottom-color:var(--naranja);font-weight:600;}
+
+.panel-body{flex:1;padding:20px 24px;overflow-y:auto;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+.pfield{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:.82rem;border-bottom:1px solid #F9FAFB;}
+.pfield:last-of-type{border-bottom:none;}
+.pfield-lbl{color:var(--ink-60);}
+
+.member-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--naranja-light);border-radius:10px;margin-bottom:6px;}
+.m-av{width:32px;height:32px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:white;flex-shrink:0;}
+
+.panel-actions{display:flex;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid #F3F4F6;}
+.btn-activar{flex:1;padding:10px;background:var(--verde);border:none;border-radius:10px;font-size:.82rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-activar:hover{background:#047857;}
+.btn-suspender{flex:1;padding:10px;background:none;border:1.5px solid var(--danger);border-radius:10px;font-size:.82rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-suspender:hover{background:var(--danger-light);}
+.btn-comprobante{display:block;width:100%;margin-top:8px;padding:10px;background:var(--bg);border:1.5px solid var(--ink-30);border-radius:10px;font-size:.82rem;font-weight:600;color:var(--ink);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;text-decoration:none;text-align:center;}
+.btn-comprobante:hover{background:var(--naranja-light);border-color:var(--naranja);color:var(--naranja);}
+
+.kmo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;}
+.kmo.hidden{display:none;}
+.km{background:var(--white);border-radius:var(--r);width:540px;max-width:94vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;}
+.km-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:var(--naranja);flex-shrink:0;}
+.km-hd h3{font-size:1rem;font-weight:700;color:white;}
+.btn-close-km{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:white;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;transition:background .2s;}
+.btn-close-km:hover{background:rgba(255,255,255,.35);}
+.km-body{padding:22px;}
+.km-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.km-info-item{background:var(--bg);border-radius:8px;padding:10px 12px;}
+.km-info-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);margin-bottom:2px;}
+.km-info-val{font-size:.875rem;font-weight:600;color:var(--ink);}
+.km-docs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+.km-doc{border:1px solid #F3F4F6;border-radius:10px;overflow:hidden;}
+.km-doc-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);padding:8px 12px;background:var(--bg);border-bottom:1px solid #F3F4F6;}
+.km-doc img{width:100%;height:150px;object-fit:cover;display:block;}
+.km-doc-placeholder{height:150px;display:flex;align-items:center;justify-content:center;font-size:2rem;background:var(--bg);}
+.km-motivo{display:none;margin-bottom:16px;}
+.km-motivo label{font-size:.82rem;font-weight:500;color:var(--ink);display:block;margin-bottom:6px;}
+.km-motivo textarea{width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);resize:vertical;min-height:80px;outline:none;}
+.km-motivo textarea:focus{border-color:var(--naranja);}
+.km-actions{display:flex;gap:10px;padding-top:4px;}
+.km-btn-ok{flex:1;padding:11px;background:var(--verde);border:none;border-radius:10px;font-size:.875rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.km-btn-ok:hover{background:#047857;}
+.km-btn-no{flex:1;padding:11px;background:none;border:1.5px solid var(--danger);border-radius:10px;font-size:.875rem;font-weight:600;color:var(--danger);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.km-btn-no:hover{background:var(--danger-light);}
+.km-btn-confirm-no{width:100%;margin-top:8px;padding:10px;background:var(--danger);border:none;border-radius:10px;font-size:.875rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.km-btn-confirm-no:hover{background:#dc2626;}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="../admin/dashboard.html" class="nav-logo">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <span class="nav-tag">PANEL ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesi&oacute;n</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="../admin/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos
+    </a>
+    <a href="../admin/productos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Cat&aacute;logo
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
+    </a>
+
+    <a href="../admin/finanzas.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finanzas
+    </a>
+    <a href="../admin/seguridad.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Seguridad
+    </a>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="page-head">
+      <h1 class="page-title">Suscriptores</h1>
+      <span class="total-badge" id="total-badge">0</span>
+    </div>
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" placeholder="Buscar nombre, c&eacute;dula o email..." oninput="renderTable()" id="search"/>
+      </div>
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="setFilter('todos',this)">Todos</button>
+        <button class="filter-btn" onclick="setFilter('sin_plan',this)">Sin plan</button>
+        <button class="filter-btn" onclick="setFilter('activa',this)">Activos</button>
+        <button class="filter-btn" onclick="setFilter('pendiente',this)">Pendientes</button>
+        <button class="filter-btn" onclick="setFilter('vencida',this)">Vencidos</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th><th>C&eacute;dula</th><th>Email</th><th>Tel&eacute;fono</th>
+            <th>Plan</th><th>Estado</th><th>KYC</th><th>Registro</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- PANEL OVERLAY -->
+<div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
+
+<!-- SIDE PANEL -->
+<div class="side-panel" id="side-panel">
+  <div class="panel-header">
+    <span class="panel-title" id="panel-nombre">Suscriptor</span>
+    <button class="btn-close-panel" onclick="closePanel()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="panel-tabs">
+    <button class="panel-tab active" data-tab="datos" onclick="switchTab('datos',this)">Datos</button>
+    <button class="panel-tab" data-tab="miembros" onclick="switchTab('miembros',this)">Miembros</button>
+    <button class="panel-tab" data-tab="pedidos" onclick="switchTab('pedidos',this)">Pedidos</button>
+    <button class="panel-tab" data-tab="pagos" onclick="switchTab('pagos',this)">Pagos</button>
+    <button class="panel-tab" data-tab="kyc" onclick="switchTab('kyc',this)">KYC</button>
+  </div>
+  <div class="panel-body">
+    <div class="tab-content active" id="tab-datos"><p style="color:var(--ink-60);font-size:.875rem">Selecciona un suscriptor.</p></div>
+    <div class="tab-content" id="tab-miembros"></div>
+    <div class="tab-content" id="tab-pedidos"></div>
+    <div class="tab-content" id="tab-pagos"></div>
+    <div class="tab-content" id="tab-kyc"></div>
+  </div>
+</div>
+
+<!-- KYC MODAL -->
+<div class="kmo hidden" id="kyc-modal" onclick="closeKycModalClick(event)">
+  <div class="km">
+    <div class="km-hd">
+      <h3>Documentos KYC &mdash; <span id="km-nombre"></span></h3>
+      <button class="btn-close-km" onclick="closeKycModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="km-body" id="kyc-modal-body">
+      <p style="color:var(--ink-60);font-size:.875rem">Cargando documentos...</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var _todos = [], _filtro = 'todos', _selIdx = null;
+
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function estadoLegible(estado) {
+  if (estado === 'sin_plan') return 'Sin plan';
+  if (estado === 'activa') return 'Activa';
+  if (estado === 'vencida') return 'Vencida';
+  if (estado === 'pendiente') return 'Pendiente';
+  return estado || '-';
+}
+
+async function _signedComprobante(storedUrl) {
+  if (!storedUrl) return null;
+  var parts = storedUrl.split('/comprobantes/');
+  var path = parts.length > 1 ? parts[1] : storedUrl;
+  var res = await _db.storage.from('comprobantes').createSignedUrl(path, 300);
+  return (res.data && res.data.signedUrl) ? res.data.signedUrl : null;
+}
+
+async function verComprobanteAdmin(event, storedUrl) {
+  event.preventDefault();
+  var signedUrl = await _signedComprobante(storedUrl);
+  if (signedUrl) {
+    window.open(signedUrl, '_blank');
+  } else {
+    alert('No se pudo abrir el comprobante.');
+  }
+}
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = null;
+  if (user.user_metadata && user.user_metadata.rol) {
+    rol = user.user_metadata.rol;
+  } else if (user.app_metadata && user.app_metadata.rol) {
+    rol = user.app_metadata.rol;
+  }
+  if (!rol) {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  var aalRes = await _db.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalRes.data && aalRes.data.nextLevel === 'aal2' && aalRes.data.currentLevel !== aalRes.data.nextLevel) { window.location.href = '../portal/login.html?mfa=1'; return; }
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email[0].toUpperCase();
+  await loadSuscriptores();
+})();
+
+async function loadSuscriptores() {
+  var res = await _db
+    .from('usuarios')
+    .select('id, nombre, cedula, email, telefono, direccion, barrio, created_at, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
+    .eq('rol', 'suscriptor')
+    .order('created_at', {ascending: false});
+  if (res.error) {
+    console.error('Error cargando suscriptores:', res.error);
+    return;
+  }
+  _todos = res.data || [];
+  document.getElementById('total-badge').textContent = _todos.length;
+  renderTable();
+}
+
+function setFilter(f, btn) {
+  _filtro = f;
+  var btns = document.querySelectorAll('.filter-btn');
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderTable() {
+  var q = document.getElementById('search').value.toLowerCase();
+  var rows = [];
+  var origIdxs = [];
+  for (var i = 0; i < _todos.length; i++) {
+    var s = _todos[i];
+    var sSus0 = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+    if (_filtro !== 'todos' && (sSus0 ? sSus0.estado : 'pendiente') !== _filtro) continue;
+    if (q) {
+      var nombre = s.nombre ? s.nombre.toLowerCase() : '';
+      var cedula = s.cedula ? s.cedula : '';
+      var email2 = s.email ? s.email.toLowerCase() : '';
+      if (!nombre.includes(q) && !cedula.includes(q) && !email2.includes(q)) continue;
+    }
+    rows.push(s);
+    origIdxs.push(i);
+  }
+  var tbody = document.getElementById('tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:28px;color:var(--ink-60)">Sin resultados</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var j = 0; j < rows.length; j++) {
+    var s = rows[j];
+    var oidx = origIdxs[j];
+    var sus0 = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+    var sEstado = sus0 ? sus0.estado : 'pendiente';
+    var sKyc = sus0 ? sus0.kyc_estado : 'pendiente';
+    var cls;
+    if (sEstado === 'activa') cls = 'badge-activa';
+    else if (sEstado === 'vencida') cls = 'badge-venc';
+    else if (sEstado === 'sin_plan') cls = 'badge-sinplan';
+    else cls = 'badge-pend';
+    var sEstadoLbl = estadoLegible(sEstado);
+    var kycCls;
+    if (sKyc === 'verificado') kycCls = 'badge-kyc-ok';
+    else if (sKyc === 'rechazado') kycCls = 'badge-kyc-err';
+    else kycCls = 'badge-kyc-pend';
+    var kycLbl;
+    if (sKyc === 'verificado') kycLbl = 'Verificado';
+    else if (sKyc === 'rechazado') kycLbl = 'Rechazado';
+    else kycLbl = 'Pendiente';
+    var sPlan = sus0 ? sus0.plan : null;
+    var sPlanLbl = sPlan === 'ahorro' ? 'Ahorro' : (sPlan === 'familiar' ? 'Familiar' : '&#8212;');
+    var fecha = s.created_at ? new Date(s.created_at).toLocaleDateString('es-EC') : '-';
+    var selClass = (_selIdx === oidx) ? ' selected' : '';
+    html += '<tr class="clickable' + selClass + '">';
+    html += '<td style="font-weight:600">' + esc(s.nombre || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.cedula || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.78rem">' + esc(s.email || '-') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + esc(s.telefono || '-') + '</td>';
+    html += '<td style="color:var(--ink-60);font-size:.85rem">' + sPlanLbl + '</td>';
+    html += '<td><span class="badge ' + cls + '">' + sEstadoLbl + '</span></td>';
+    html += '<td><span class="badge ' + kycCls + '">' + kycLbl + '</span></td>';
+    html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
+    html += '<td><button class="btn-ver" onclick="openPanel(' + oidx + ')">Ver detalles</button></td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+function switchTab(name, btn) {
+  var tabs = document.querySelectorAll('.tab-content');
+  for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); }
+  var tabBtns = document.querySelectorAll('.panel-tab');
+  for (var j = 0; j < tabBtns.length; j++) { tabBtns[j].classList.remove('active'); }
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+async function openPanel(idx) {
+  _selIdx = idx;
+  renderTable();
+  var s = _todos[idx];
+  var panelName = s.nombre ? s.nombre : (s.email ? s.email : '');
+  document.getElementById('panel-nombre').textContent = panelName;
+  document.getElementById('side-panel').classList.add('open');
+  document.getElementById('panel-overlay').classList.add('show');
+
+  switchTab('datos', document.querySelector('.panel-tab[data-tab="datos"]'));
+  document.getElementById('tab-datos').innerHTML = '<p style="color:var(--ink-60);font-size:.875rem">Cargando...</p>';
+  document.getElementById('tab-miembros').innerHTML = '';
+  document.getElementById('tab-pedidos').innerHTML = '';
+  document.getElementById('tab-pagos').innerHTML = '';
+  document.getElementById('tab-kyc').innerHTML = '';
+
+  var panelResults = await Promise.all([
+    _db.from('miembros').select('nombre, cedula, relacion').eq('titular_id', s.id),
+    _db.from('pedidos').select('id,fecha_pedido,estado,total_costo').eq('titular_id', s.id).order('fecha_pedido', {ascending: false}).limit(5),
+    _db.from('pagos').select('tipo, estado, monto, fecha_pago, comprobante_url, motivo_rechazo').eq('titular_id', s.id).order('fecha_pago', {ascending: false}).limit(10)
+  ]);
+  var miembros = panelResults[0].data || [];
+  var pedidos = panelResults[1].data || [];
+  var pagos = panelResults[2].data || [];
+
+  // TAB DATOS
+  var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+  var sEstado2 = sus ? sus.estado : 'pendiente';
+  var cls2;
+  if (sEstado2 === 'activa') cls2 = 'badge-activa';
+  else if (sEstado2 === 'vencida') cls2 = 'badge-venc';
+  else if (sEstado2 === 'sin_plan') cls2 = 'badge-sinplan';
+  else cls2 = 'badge-pend';
+  var susIdSafe = sus ? sus.id : '';
+  var datosHtml = '';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Cedula</span><span style="font-weight:500">' + esc(s.cedula || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Email</span><span style="font-weight:500">' + esc(s.email || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Telefono</span><span style="font-weight:500">' + esc(s.telefono || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Direccion</span><span style="font-weight:500">' + esc(s.direccion || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + esc(s.barrio || '-') + '</span></div>';
+  var planLbl2 = (sus && sus.plan === 'ahorro') ? 'Plan Ahorro ($8.99)' : (sus && sus.plan === 'familiar') ? 'Plan Familiar ($12.99)' : 'Sin plan asignado';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Plan</span><span style="font-weight:500">' + planLbl2 + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + estadoLegible(sEstado2) + '</span></div>';
+  if (sus && sus.fecha_inicio) {
+    datosHtml += '<div class="pfield"><span class="pfield-lbl">Inicio membresia</span><span style="font-weight:500">' + new Date(sus.fecha_inicio).toLocaleDateString('es-EC') + '</span></div>';
+  }
+  if (sus && sus.fecha_vencimiento) {
+    var venceDate = new Date(sus.fecha_vencimiento);
+    var venceVencida = venceDate < new Date();
+    datosHtml += '<div class="pfield"><span class="pfield-lbl">Vence</span><span style="font-weight:500' + (venceVencida ? ';color:var(--danger)' : '') + '">' + venceDate.toLocaleDateString('es-EC') + (venceVencida ? ' (vencida)' : '') + '</span></div>';
+  }
+  datosHtml += '<div class="panel-actions">';
+  datosHtml += '<button class="btn-activar" onclick="cambiarEstado(\'' + susIdSafe + '\',\'activa\')">Activar membresia</button>';
+  datosHtml += '<button class="btn-suspender" onclick="cambiarEstado(\'' + susIdSafe + '\',\'vencida\')">Suspender</button>';
+  datosHtml += '</div>';
+  if (sus && sus.comprobante_url) {
+    var compSignedUrl0 = await _signedComprobante(sus.comprobante_url);
+    if (compSignedUrl0) {
+      datosHtml += '<a href="' + compSignedUrl0 + '" target="_blank" class="btn-comprobante">Ver comprobante de pago</a>';
+    }
+  }
+  document.getElementById('tab-datos').innerHTML = datosHtml;
+
+  // TAB MIEMBROS
+  var membHtml = '';
+  if (miembros.length) {
+    for (var mi = 0; mi < miembros.length; mi++) {
+      var m = miembros[mi];
+      var mNombre = m.nombre ? m.nombre : '?';
+      var mIni = esc(mNombre.charAt(0).toUpperCase());
+      var mRel = m.relacion ? m.relacion : 'Familiar';
+      var mCed = m.cedula ? m.cedula : '';
+      membHtml += '<div class="member-row">';
+      membHtml += '<div class="m-av">' + mIni + '</div>';
+      membHtml += '<div><p style="font-weight:600;font-size:.875rem">' + esc(mNombre) + '</p>';
+      membHtml += '<p style="color:var(--ink-60);font-size:.78rem">' + esc(mRel) + ' &middot; ' + esc(mCed) + '</p></div>';
+      membHtml += '</div>';
+    }
+  } else {
+    membHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin miembros adicionales.</p>';
+  }
+  document.getElementById('tab-miembros').innerHTML = membHtml;
+
+  // TAB PEDIDOS
+  var pedHtml = '';
+  if (pedidos.length) {
+    for (var pi = 0; pi < pedidos.length; pi++) {
+      var ped = pedidos[pi];
+      var pc;
+      if (ped.estado === 'entregado') pc = 'badge-activa';
+      else if (ped.estado === 'cancelado') pc = 'badge-venc';
+      else pc = 'badge-pend';
+      var pedNum = '#' + String(ped.id).slice(0, 8);
+      pedHtml += '<div class="pfield">';
+      pedHtml += '<span style="font-size:.82rem;font-weight:500">' + pedNum + '</span>';
+      pedHtml += '<span class="badge ' + pc + '">' + ped.estado + '</span>';
+      pedHtml += '</div>';
+    }
+  } else {
+    pedHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin pedidos aun.</p>';
+  }
+  document.getElementById('tab-pedidos').innerHTML = pedHtml;
+
+  // TAB PAGOS (historial real de la tabla pagos)
+  var pagHtml = '';
+  if (pagos.length) {
+    for (var pgi = 0; pgi < pagos.length; pgi++) {
+      var pg = pagos[pgi];
+      var pgCls;
+      if (pg.estado === 'aprobado') pgCls = 'badge-activa';
+      else if (pg.estado === 'rechazado') pgCls = 'badge-venc';
+      else pgCls = 'badge-pend';
+      var pgTipo = pg.tipo === 'renovacion' ? 'Renovacion' : 'Registro';
+      var pgFecha = pg.fecha_pago ? new Date(pg.fecha_pago).toLocaleDateString('es-EC') : '-';
+      pagHtml += '<div class="pfield" style="flex-direction:column;align-items:flex-start;gap:4px;padding-bottom:12px;margin-bottom:8px;border-bottom:1px solid #F3F4F6">';
+      pagHtml += '<div style="display:flex;justify-content:space-between;width:100%"><span style="font-weight:600;font-size:.85rem">' + pgTipo + ' &middot; $' + (pg.monto || 0).toFixed(2) + '</span><span class="badge ' + pgCls + '">' + pg.estado + '</span></div>';
+      pagHtml += '<span style="color:var(--ink-60);font-size:.78rem">' + pgFecha + '</span>';
+      if (pg.comprobante_url) {
+        pagHtml += '<a href="#" onclick="verComprobanteAdmin(event, \'' + pg.comprobante_url.replace(/'/g, '') + '\')" style="color:var(--naranja);font-size:.78rem">Ver comprobante</a>';
+      }
+      if (pg.estado === 'rechazado' && pg.motivo_rechazo) {
+        pagHtml += '<span style="color:var(--danger);font-size:.75rem">' + esc(pg.motivo_rechazo) + '</span>';
+      }
+      pagHtml += '</div>';
+    }
+  } else {
+    pagHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin pagos registrados.</p>';
+  }
+  document.getElementById('tab-pagos').innerHTML = pagHtml;
+
+  // TAB KYC
+  var kycEstado = sus ? sus.kyc_estado : 'pendiente';
+  var kycCls2;
+  if (kycEstado === 'verificado') kycCls2 = 'badge-kyc-ok';
+  else if (kycEstado === 'rechazado') kycCls2 = 'badge-kyc-err';
+  else kycCls2 = 'badge-kyc-pend';
+  var kycLbl2;
+  if (kycEstado === 'verificado') kycLbl2 = 'Verificado';
+  else if (kycEstado === 'rechazado') kycLbl2 = 'Rechazado';
+  else kycLbl2 = 'Pendiente';
+  var kycHtml = '';
+  kycHtml += '<div class="pfield"><span class="pfield-lbl">Estado KYC</span><span class="badge ' + kycCls2 + '">' + kycLbl2 + '</span></div>';
+  if (kycEstado === 'rechazado' && sus && sus.kyc_motivo_rechazo) {
+    kycHtml += '<div class="pfield"><span class="pfield-lbl">Motivo</span><span style="font-size:.78rem;color:var(--danger)">' + esc(sus.kyc_motivo_rechazo) + '</span></div>';
+  }
+  if (sus && sus.kyc_fecha) {
+    kycHtml += '<div class="pfield"><span class="pfield-lbl">Fecha revision</span><span>' + new Date(sus.kyc_fecha).toLocaleDateString('es-EC') + '</span></div>';
+  }
+  if (sus && (sus.cedula_frontal_url || sus.cedula_posterior_url)) {
+    kycHtml += '<button class="btn-comprobante" onclick="abrirModalKYC()" style="margin-top:10px">Ver documentos KYC</button>';
+  } else {
+    kycHtml += '<p style="font-size:.82rem;color:var(--ink-60);margin-top:6px">No hay documentos cargados.</p>';
+  }
+  document.getElementById('tab-kyc').innerHTML = kycHtml;
+}
+
+function closePanel() {
+  document.getElementById('side-panel').classList.remove('open');
+  document.getElementById('panel-overlay').classList.remove('show');
+  _selIdx = null;
+  renderTable();
+}
+
+async function cambiarEstado(susId, estado) {
+  if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
+  await _db.from('suscripciones').update({estado: estado}).eq('id', susId);
+  await loadSuscriptores();
+  closePanel();
+}
+
+async function abrirModalKYC() {
+  var s = _todos[_selIdx];
+  var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
+  var kmNombre = s.nombre ? s.nombre : (s.email ? s.email : '');
+  document.getElementById('km-nombre').textContent = kmNombre;
+  document.getElementById('kyc-modal').classList.remove('hidden');
+  var body = document.getElementById('kyc-modal-body');
+  body.innerHTML = '<p style="color:var(--ink-60);font-size:.875rem">Cargando documentos...</p>';
+
+  var frontalUrl = null, posteriorUrl = null, compUrl3 = null;
+  if (sus && sus.cedula_frontal_url) {
+    var fRes = await _db.storage.from('kyc-documentos').createSignedUrl(sus.cedula_frontal_url, 3600);
+    frontalUrl = (fRes.data && fRes.data.signedUrl) ? fRes.data.signedUrl : null;
+  }
+  if (sus && sus.cedula_posterior_url) {
+    var bRes = await _db.storage.from('kyc-documentos').createSignedUrl(sus.cedula_posterior_url, 3600);
+    posteriorUrl = (bRes.data && bRes.data.signedUrl) ? bRes.data.signedUrl : null;
+  }
+  if (sus && sus.comprobante_url) {
+    compUrl3 = await _signedComprobante(sus.comprobante_url);
+  }
+
+  var kycEstado = (sus && sus.kyc_estado) ? sus.kyc_estado : 'pendiente';
+  var kycCls3;
+  if (kycEstado === 'verificado') kycCls3 = 'badge-kyc-ok';
+  else if (kycEstado === 'rechazado') kycCls3 = 'badge-kyc-err';
+  else kycCls3 = 'badge-kyc-pend';
+  var kycLbl3;
+  if (kycEstado === 'verificado') kycLbl3 = 'Verificado';
+  else if (kycEstado === 'rechazado') kycLbl3 = 'Rechazado';
+  else kycLbl3 = 'Pendiente';
+
+  var html = '';
+  html += '<div class="km-info">';
+  html += '<div class="km-info-item"><div class="km-info-lbl">Estado KYC</div><div class="km-info-val"><span class="badge ' + kycCls3 + '">' + kycLbl3 + '</span></div></div>';
+  html += '</div>';
+  html += '<div class="km-docs">';
+  html += '<div class="km-doc"><div class="km-doc-lbl">Frontal</div>';
+  if (frontalUrl) {
+    html += '<img src="' + frontalUrl + '" alt="Cedula frontal"/>';
+  } else {
+    html += '<div class="km-doc-placeholder">&#128196;</div>';
+  }
+  html += '</div>';
+  html += '<div class="km-doc"><div class="km-doc-lbl">Posterior</div>';
+  if (posteriorUrl) {
+    html += '<img src="' + posteriorUrl + '" alt="Cedula posterior"/>';
+  } else {
+    html += '<div class="km-doc-placeholder">&#128196;</div>';
+  }
+  html += '</div>';
+  if (sus && sus.comprobante_url) {
+    html += '<div class="km-doc"><div class="km-doc-lbl">Comprobante</div>';
+    if (compUrl3) {
+      html += '<img src="' + compUrl3 + '" alt="Comprobante"/>';
+    } else {
+      html += '<div class="km-doc-placeholder">&#128196;</div>';
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<div class="km-motivo" id="km-motivo">';
+  html += '<label>Motivo del rechazo</label>';
+  html += '<textarea id="km-motivo-text" placeholder="Indique por que se rechaza la verificacion..."></textarea>';
+  html += '<button class="km-btn-confirm-no" onclick="rechazarKYC()">Confirmar rechazo</button>';
+  html += '</div>';
+  html += '<div class="km-actions">';
+  html += '<button class="km-btn-ok" onclick="aprobarKYC()">Aprobar KYC</button>';
+  html += '<button class="km-btn-no" onclick="toggleRechazarModal()">Rechazar KYC</button>';
+  html += '</div>';
+  body.innerHTML = html;
+}
+
+function closeKycModal() { document.getElementById('kyc-modal').classList.add('hidden'); }
+function closeKycModalClick(e) { if (e.target === document.getElementById('kyc-modal')) closeKycModal(); }
+
+function toggleRechazarModal() {
+  var el = document.getElementById('km-motivo');
+  if (el) el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+}
+
+async function aprobarKYC() {
+  var s = _todos[_selIdx];
+  var susId = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0].id : null;
+  if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
+  await _db.from('suscripciones').update({
+    kyc_estado: 'verificado',
+    kyc_fecha: new Date().toISOString(),
+    estado: 'activa'
+  }).eq('id', susId);
+  await loadSuscriptores();
+  closeKycModal();
+  openPanel(_selIdx);
+}
+
+async function rechazarKYC() {
+  var s = _todos[_selIdx];
+  var susId = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0].id : null;
+  if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
+  var motivo = document.getElementById('km-motivo-text').value.trim();
+  if (!motivo) { document.getElementById('km-motivo-text').focus(); return; }
+  await _db.from('suscripciones').update({
+    kyc_estado: 'rechazado',
+    kyc_fecha: new Date().toISOString(),
+    kyc_motivo_rechazo: motivo
+  }).eq('id', susId);
+  await loadSuscriptores();
+  closeKycModal();
+  openPanel(_selIdx);
+}
+
+function logout() {
+  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
+</script>
+</body>
+</html>

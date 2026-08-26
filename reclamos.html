@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reclamos y sugerencias — TuCosto Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'] },
+      colors: {
+        naranja: '#EF6830',
+        'naranja-d': '#C95220',
+        'naranja-light': '#FFF2EC',
+      }
+    }
+  }
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height:1.6;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+.nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.two-col{display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start;}
+.form-card{background:#fff;border-radius:18px;padding:36px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.form-card h2{font-size:1.1rem;font-weight:700;color:#1A1A2E;margin-bottom:6px;}
+.form-card .sub{font-size:.82rem;color:#9CA3AF;margin-bottom:24px;}
+.field-group{margin-bottom:18px;}
+.field-group label{display:block;font-size:.8rem;font-weight:600;color:#374151;margin-bottom:6px;}
+.field-group input,
+.field-group select,
+.field-group textarea{
+  width:100%;
+  border:1.5px solid #E5E7EB;
+  border-radius:10px;
+  padding:11px 14px;
+  font-size:.85rem;
+  font-family:'Inter',sans-serif;
+  color:#1A1A2E;
+  background:#fff;
+  outline:none;
+  transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus{border-color:#EF6830;box-shadow:0 0 0 3px rgba(232,82,26,.1);}
+.field-group textarea{resize:vertical;min-height:110px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn-submit{width:100%;background:#EF6830;color:#fff;font-weight:700;font-size:.88rem;padding:14px;border:none;border-radius:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.btn-submit:hover{background:#C95220;}
+.success-card{display:none;text-align:center;padding:40px 20px;}
+.success-icon{font-size:3rem;margin-bottom:14px;}
+.success-title{font-size:1.1rem;font-weight:700;color:#1A1A2E;margin-bottom:8px;}
+.success-desc{font-size:.85rem;color:#6B7280;line-height:1.65;}
+.sidebar-card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:18px;}
+.sidebar-card h3{font-size:.88rem;font-weight:700;color:#EF6830;margin-bottom:12px;}
+.sidebar-card p{font-size:.8rem;color:#6B7280;line-height:1.65;}
+.sidebar-card a{color:#EF6830;font-weight:500;text-decoration:none;}
+.contact-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #F3F4F6;font-size:.8rem;color:#6B7280;}
+.contact-item:last-child{border-bottom:none;}
+.contact-icon{width:28px;height:28px;background:#FFF2EC;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.8rem;}
+.tipo-badge{display:inline-block;background:#FFF2EC;color:#EF6830;font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:20px;margin-bottom:6px;}
+.plazo-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #F3F4F6;font-size:.78rem;}
+.plazo-item:last-child{border-bottom:none;}
+.plazo-label{color:#6B7280;}
+.plazo-val{color:#EF6830;font-weight:600;}
+@media(max-width:768px){
+  .nav-links{display:none !important;}
+  .footer-grid{grid-template-columns:1fr 1fr !important;}
+  .two-col{grid-template-columns:1fr !important;}
+  .field-row{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;height:64px">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
+      <li><a href="index.html#membresia" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Membresía</a></li>
+      <li><a href="quienes-somos.html" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Quiénes somos</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="portal/login.html" style="color:#EF6830;border:1.5px solid #EF6830;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#EF6830;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+    </div>
+  </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,#C95220 0%,#EF6830 50%,#F07040 100%);padding:64px 0 56px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-40%;right:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);pointer-events:none"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;margin-bottom:18px">
+      <span style="font-size:.75rem;color:rgba(255,255,255,.9);font-weight:500">Atención al socio</span>
+    </div>
+    <h1 style="color:#fff;font-size:clamp(1.9rem,3.5vw,2.7rem);font-weight:700;line-height:1.15;margin-bottom:14px">Reclamos y sugerencias</h1>
+    <p style="color:rgba(255,255,255,.78);font-size:.97rem;max-width:540px;line-height:1.7">Tu opinión es fundamental para mejorar el servicio. Registra tu reclamo o sugerencia y nuestro equipo te responderá en el plazo indicado.</p>
+  </div>
+</div>
+
+<section style="padding:64px 0;background:#F9FAFB">
+  <div class="container">
+    <div class="two-col">
+
+      <div class="form-card">
+        <h2>Enviar reclamo o sugerencia</h2>
+        <p class="sub">Todos los campos marcados con * son obligatorios.</p>
+
+        <form id="reclamos-form" onsubmit="handleSubmit(event)">
+          <div class="field-row">
+            <div class="field-group">
+              <label for="nombre">Nombre completo *</label>
+              <input type="text" id="nombre" name="nombre" required placeholder="Juan Pérez"/>
+            </div>
+            <div class="field-group">
+              <label for="cedula">Cédula de identidad *</label>
+              <input type="text" id="cedula" name="cedula" required placeholder="1700000000" maxlength="10"/>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-group">
+              <label for="email">Correo electrónico *</label>
+              <input type="email" id="email" name="email" required placeholder="ejemplo@correo.com"/>
+            </div>
+            <div class="field-group">
+              <label for="telefono">Teléfono *</label>
+              <input type="tel" id="telefono" name="telefono" required placeholder="0999000000"/>
+            </div>
+          </div>
+          <div class="field-group">
+            <label for="tipo">Tipo de solicitud *</label>
+            <select id="tipo" name="tipo" required>
+              <option value="">Seleccionar...</option>
+              <option value="reclamo_pedido">Reclamo — Pedido incorrecto o dañado</option>
+              <option value="reclamo_membresia">Reclamo — Membresía o cobro</option>
+              <option value="reclamo_atencion">Reclamo — Atención al cliente</option>
+              <option value="reclamo_desabastecimiento">Reclamo — Desabastecimiento</option>
+              <option value="sugerencia">Sugerencia de mejora</option>
+              <option value="consulta_qf">Consulta al QF Responsable</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label for="pedido">Número de pedido (opcional)</label>
+            <input type="text" id="pedido" name="pedido" placeholder="Ej: PED-2025-00123"/>
+          </div>
+          <div class="field-group">
+            <label for="descripcion">Descripción del reclamo o sugerencia *</label>
+            <textarea id="descripcion" name="descripcion" required placeholder="Describe con detalle tu reclamo o sugerencia. Entre más información proporciones, más rápido podremos ayudarte."></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Enviar solicitud</button>
+        </form>
+
+        <div id="success-msg" class="success-card">
+          <div class="success-icon">&#9989;</div>
+          <div class="success-title">Solicitud recibida correctamente</div>
+          <div class="success-desc">Hemos registrado tu reclamo o sugerencia. Recibirás una respuesta en el correo electrónico proporcionado dentro del plazo indicado.<br><br>Gracias por ayudarnos a mejorar TuCosto.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="sidebar-card">
+          <h3>&#128337; Plazos de respuesta</h3>
+          <div class="plazo-item"><span class="plazo-label">Reclamo de pedido</span><span class="plazo-val">24 h hábiles</span></div>
+          <div class="plazo-item"><span class="plazo-label">Reclamo de cobro</span><span class="plazo-val">48 h hábiles</span></div>
+          <div class="plazo-item"><span class="plazo-label">Consulta al QF</span><span class="plazo-val">4 h hábiles</span></div>
+          <div class="plazo-item"><span class="plazo-label">Sugerencia</span><span class="plazo-val">5 días hábiles</span></div>
+          <div class="plazo-item"><span class="plazo-label">Otro</span><span class="plazo-val">72 h hábiles</span></div>
+        </div>
+
+        <div class="sidebar-card">
+          <h3>&#128222; Canales de contacto</h3>
+          <div class="contact-item"><div class="contact-icon">&#128242;</div><div>WhatsApp disponible en nuestra página principal — horario de atención: lun–vie 08h00–17h00</div></div>
+          <div class="contact-item"><div class="contact-icon">&#128140;</div><div>Correo: <a href="mailto:soporte@farmasub.ec">soporte@farmasub.ec</a></div></div>
+          <div class="contact-item"><div class="contact-icon">&#128205;</div><div>Santo Domingo de los Ts&#225;chilas, Ecuador</div></div>
+        </div>
+
+        <div class="sidebar-card">
+          <h3>&#128203; Tipos de solicitud</h3>
+          <div style="margin-bottom:8px"><span class="tipo-badge">Reclamo</span><p style="font-size:.78rem;color:#6B7280">Inconformidad con un pedido, cobro, atención o disponibilidad de medicamentos.</p></div>
+          <div style="margin-bottom:8px"><span class="tipo-badge">Sugerencia</span><p style="font-size:.78rem;color:#6B7280">Ideas para mejorar el servicio, el catálogo o la plataforma.</p></div>
+          <div><span class="tipo-badge">Consulta QF</span><p style="font-size:.78rem;color:#6B7280">Preguntas sobre uso, dosis, interacciones o almacenamiento de medicamentos.</p></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer style="background:#1A1A2E;padding:48px 0 28px">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">TuCosto</div>
+        <p style="font-size:.85rem;color:#6B7280;margin-top:12px;max-width:240px;line-height:1.6">La membresía de salud para familias ecuatorianas. Ahorro a un clic.</p>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Producto</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="index.html#productos" style="font-size:.83rem;color:#6B7280;text-decoration:none">Productos</a></li>
+          <li><a href="index.html#calculadora" style="font-size:.83rem;color:#6B7280;text-decoration:none">Calculadora de ahorro</a></li>
+          <li><a href="index.html#membresia" style="font-size:.83rem;color:#6B7280;text-decoration:none">Planes y precios</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Empresa</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="quienes-somos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Quiénes Somos</a></li>
+          <li><a href="terminos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Devolución</a></li>
+          <li><a href="faq.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Regulatorio</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="uso-racional.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-size:.78rem;color:#6B7280">&#169; 2025 TuCosto Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p style="font-size:.78rem;color:#6B7280">Santo Domingo de los Ts&#225;chilas &#183; Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient(
+  'https://cjimcldhoglgqachcimm.supabase.co',
+  'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC'
+);
+
+function handleSubmit(e) {
+  e.preventDefault();
+  var form = document.getElementById('reclamos-form');
+  var required = form.querySelectorAll('[required]');
+  var valid = true;
+  for (var i = 0; i < required.length; i++) {
+    var field = required[i];
+    if (!field.value.trim()) {
+      field.style.borderColor = '#EF4444';
+      valid = false;
+    } else {
+      field.style.borderColor = '';
+    }
+  }
+  if (!valid) return;
+  form.style.display = 'none';
+  document.getElementById('success-msg').style.display = 'block';
+  var nombre = document.getElementById('nombre').value.trim();
+  var cedula = document.getElementById('cedula').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var telefono = document.getElementById('telefono').value.trim();
+  var tipo = document.getElementById('tipo').value;
+  var descripcion = document.getElementById('descripcion').value.trim();
+  var pedidoVal = document.getElementById('pedido').value.trim();
+  var numeroPedido = pedidoVal ? pedidoVal : null;
+  _db.from('reclamos').insert({
+    nombre: nombre,
+    cedula: cedula,
+    email: email,
+    telefono: telefono,
+    tipo: tipo,
+    descripcion: descripcion,
+    numero_pedido: numeroPedido,
+    estado: 'pendiente'
+  }).then(function(res) {
+    if (res.error) {
+      console.error('[TuCosto] Error al enviar reclamo:', res.error);
+    }
+  });
+}
+</script>
+</body>
+</html>

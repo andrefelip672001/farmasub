@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Registrarse — TuCosto Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --danger:#EF4444;--danger-light:#FEE2E2;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --r:12px;--r-lg:16px;
+  --shadow:0 2px 16px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh;}
+p{color:var(--ink-60);}
+
+/* NAV */
+.reg-nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1080px;margin:0 auto;padding:0 24px;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-back{font-size:.88rem;color:var(--ink-60);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .2s;}
+.nav-back:hover{color:var(--naranja);}
+
+/* HERO PEQUENO */
+.reg-hero{background:linear-gradient(135deg,#C95220 0%,#EF6830 40%,#F07040 70%,#F5A070 100%);padding:32px 24px;text-align:center;}
+.reg-hero h1{color:#fff;font-size:clamp(1.4rem,3vw,1.8rem);font-weight:700;line-height:1.2;margin-bottom:6px;}
+.reg-hero p{color:rgba(255,255,255,.82);font-size:.95rem;}
+
+/* PROGRESS BAR */
+.wizard-bar{background:var(--white);border-bottom:1px solid #F3F4F6;padding:20px 0 16px;}
+.progress-track{display:flex;align-items:flex-start;max-width:560px;margin:0 auto;padding:0 24px;position:relative;}
+.progress-track::before{content:'';position:absolute;top:17px;left:calc(24px + 18px);right:calc(24px + 18px);height:2px;background:var(--ink-30);}
+.fill-line{position:absolute;top:17px;left:calc(24px + 18px);height:2px;background:var(--naranja);transition:width .4s ease;z-index:1;width:0;}
+.ps{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2;}
+.ps-circle{width:36px;height:36px;border-radius:50%;border:2px solid var(--ink-30);background:var(--white);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:var(--ink-30);transition:all .3s;}
+.ps.ps-active .ps-circle{border-color:var(--naranja);background:var(--naranja);color:#fff;}
+.ps.ps-done .ps-circle{border-color:var(--naranja);background:var(--naranja);color:#fff;}
+.ps-label{font-size:.68rem;color:var(--ink-30);margin-top:7px;text-align:center;font-weight:500;white-space:nowrap;}
+.ps.ps-active .ps-label,.ps.ps-done .ps-label{color:var(--naranja);}
+
+/* WIZARD MAIN */
+.wizard-main{padding:40px 24px 120px;min-height:60vh;}
+.wizard-container{max-width:680px;margin:0 auto;}
+.step-panel{display:none;}
+.step-panel.active{display:block;}
+.step-head{margin-bottom:32px;}
+.step-head h1{font-size:clamp(1.4rem,3vw,1.8rem);font-weight:700;color:var(--ink);margin-bottom:6px;}
+.step-head p{font-size:.95rem;}
+
+/* FORMS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1 / -1;}
+label{font-size:.85rem;font-weight:500;color:var(--ink);}
+label .req{color:var(--danger);margin-left:2px;}
+input[type=text],input[type=email],input[type=tel],input[type=date],select,textarea{
+  width:100%;padding:10px 14px;border:1.5px solid var(--ink-30);border-radius:var(--r);
+  font-size:.9rem;font-family:'Inter',sans-serif;color:var(--ink);background:var(--white);
+  transition:border-color .2s;appearance:none;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--naranja);box-shadow:0 0 0 3px rgba(232,82,26,.08);}
+input.invalid,select.invalid,textarea.invalid{border-color:var(--danger)!important;}
+input::placeholder,textarea::placeholder{color:var(--ink-30);}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+.field-error{font-size:.78rem;color:var(--danger);min-height:16px;display:block;margin-top:2px;}
+.field-note{font-size:.75rem;color:var(--ink-30);margin-top:3px;}
+input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba(5,150,105,.08)!important;}
+
+/* MEMBER CARDS */
+.member-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.member-card{background:var(--white);border:1.5px solid #F3F4F6;border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);}
+.mc-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;flex-shrink:0;color:#fff;}
+.mc-avatar.gold{background:var(--amarillo);}
+.mc-avatar.green{background:var(--naranja);}
+.mc-info{flex:1;}
+.mc-name{font-size:.92rem;font-weight:600;color:var(--ink);}
+.mc-detail{font-size:.78rem;color:var(--ink-60);margin-top:1px;}
+.badge-titular{background:var(--amarillo-light);color:var(--amarillo);font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px;}
+.mc-del{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--ink-30);background:transparent;color:var(--ink-60);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .15s;flex-shrink:0;}
+.mc-del:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-light);}
+.btn-add-member{display:flex;align-items:center;gap:8px;background:transparent;border:1.5px dashed var(--naranja);color:var(--naranja);padding:11px 20px;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;width:100%;justify-content:center;transition:all .2s;}
+.btn-add-member:hover{background:var(--naranja-light);}
+.add-member-form{background:var(--bg);border:1.5px solid #F3F4F6;border-radius:var(--r-lg);padding:24px;margin-top:12px;display:none;}
+.amf-title{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:16px;}
+.amf-actions{display:flex;gap:10px;margin-top:16px;}
+.btn-amf-save{background:var(--naranja);color:#fff;border:none;padding:10px 20px;border-radius:var(--r);font-size:.88rem;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-amf-save:hover{background:var(--naranja-d);}
+.btn-amf-cancel{background:transparent;color:var(--ink-60);border:1.5px solid var(--ink-30);padding:10px 20px;border-radius:var(--r);font-size:.88rem;cursor:pointer;transition:all .2s;}
+.btn-amf-cancel:hover{border-color:var(--ink-60);}
+.members-limit{font-size:.8rem;color:var(--ink-60);text-align:center;padding:10px;display:none;background:var(--naranja-light);border-radius:var(--r);}
+.step2-note{background:var(--naranja-light);border-left:3px solid var(--naranja);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;font-size:.83rem;color:var(--ink-60);margin-bottom:20px;}
+.step2-note strong{color:var(--naranja);}
+
+/* PAYMENT */
+.payment-summary{background:var(--naranja-light);border:1.5px solid #FDCDB9;border-radius:var(--r-lg);padding:24px;margin-bottom:24px;}
+.ps-title{font-size:.75rem;font-weight:600;color:var(--naranja);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;}
+.ps-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(232,82,26,.1);}
+.ps-row:last-child{border-bottom:none;}
+.ps-key{font-size:.88rem;color:var(--ink-60);}
+.ps-val{font-size:.9rem;font-weight:600;color:var(--ink);}
+.ps-val.green{color:var(--verde);}
+.bank-box{background:var(--white);border:1.5px solid #F3F4F6;border-radius:var(--r-lg);padding:20px 24px;margin-bottom:24px;box-shadow:var(--shadow);}
+.bank-box h3{font-size:.85rem;font-weight:600;color:var(--ink);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.bank-icon{width:28px;height:28px;background:var(--naranja-light);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.bank-icon svg{width:14px;height:14px;}
+.bank-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg);font-size:.88rem;}
+.bank-row:last-child{border-bottom:none;}
+.bank-key{color:var(--ink-60);}
+.bank-val{font-weight:600;color:var(--ink);}
+.bank-concept{background:var(--amarillo-light);border:1px solid #FFE0A0;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:.83rem;color:var(--ink-60);}
+.bank-concept strong{color:var(--amarillo);}
+.upload-zone{border:2px dashed var(--naranja);border-radius:var(--r-lg);padding:36px 24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:8px;background:var(--naranja-light);}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--naranja-d);background:#FDE8DF;}
+.upload-icon{font-size:2rem;margin-bottom:10px;}
+.upload-text{font-size:.9rem;font-weight:600;color:var(--naranja);margin-bottom:4px;}
+.upload-hint{font-size:.78rem;color:var(--ink-60);}
+.upload-preview{display:none;align-items:center;gap:10px;background:var(--naranja-light);border:1.5px solid #FDCDB9;border-radius:var(--r);padding:10px 14px;margin-bottom:8px;}
+.upload-filename{font-size:.85rem;color:var(--naranja);font-weight:500;flex:1;}
+.btn-clear-file{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1.1rem;padding:0 4px;}
+.confirm-check{display:flex;align-items:flex-start;gap:10px;margin-top:16px;}
+.confirm-check input{width:18px;height:18px;accent-color:var(--naranja);flex-shrink:0;margin-top:2px;}
+.confirm-check label{font-size:.88rem;color:var(--ink-60);cursor:pointer;}
+.payment-note{font-size:.78rem;color:var(--ink-30);margin-top:14px;}
+
+/* HEALTH STEP */
+.health-person{background:var(--white);border:1.5px solid #F3F4F6;border-radius:var(--r-lg);margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow);}
+.hp-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #F3F4F6;}
+.hp-person{display:flex;align-items:center;gap:12px;}
+.hp-avatar{width:40px;height:40px;border-radius:50%;background:var(--naranja);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1rem;flex-shrink:0;}
+.hp-avatar.gold{background:var(--amarillo);}
+.hp-name{font-size:.95rem;font-weight:600;color:var(--ink);}
+.hp-role{font-size:.75rem;color:var(--ink-60);margin-top:1px;}
+.hp-body{padding:20px;}
+.hs-sec{margin-bottom:24px;}
+.hs-sec:last-child{margin-bottom:0;}
+.hs-sec-label{font-size:.78rem;font-weight:600;color:var(--naranja);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;display:block;}
+.cond-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.cond-item{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg);border-radius:8px;cursor:pointer;border:1.5px solid transparent;transition:all .15s;user-select:none;}
+.cond-item:has(input:checked){border-color:var(--naranja);background:var(--naranja-light);}
+.cond-item input{width:16px;height:16px;accent-color:var(--naranja);flex-shrink:0;}
+.cond-item span{font-size:.83rem;color:var(--ink-60);}
+.no-meds-label{display:flex;align-items:center;gap:8px;margin-bottom:12px;cursor:pointer;}
+.no-meds-label input{width:16px;height:16px;accent-color:var(--naranja);}
+.no-meds-label span{font-size:.85rem;color:var(--ink-60);}
+.med-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;}
+.med-row{display:grid;grid-template-columns:1fr .6fr .8fr auto;gap:8px;align-items:center;}
+.med-row input,.med-row select{padding:8px 10px;font-size:.82rem;}
+.med-del{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--ink-30);background:transparent;color:var(--ink-30);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;transition:all .15s;}
+.med-del:hover{border-color:var(--danger);color:var(--danger);}
+.btn-add-med{background:transparent;border:1.5px dashed var(--ink-30);color:var(--ink-60);padding:8px 16px;border-radius:var(--r);font-size:.82rem;cursor:pointer;transition:all .2s;}
+.btn-add-med:hover{border-color:var(--naranja);color:var(--naranja);}
+.hs-q-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bg);}
+.hs-q-row:last-of-type{border-bottom:none;}
+.hs-q{font-size:.88rem;color:var(--ink-60);}
+.tbg{display:inline-flex;border:1.5px solid var(--ink-30);border-radius:var(--r);overflow:hidden;flex-shrink:0;}
+.tbg-btn{padding:7px 18px;border:none;background:var(--white);font-size:.85rem;font-weight:500;color:var(--ink-60);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+.tbg-btn:not(:first-child){border-left:1px solid var(--ink-30);}
+.tbg-btn.active{background:var(--naranja);color:#fff;}
+.hs-q-row input[type=text],.hs-q-row select{padding:8px 10px;font-size:.85rem;border:1.5px solid var(--ink-30);border-radius:var(--r);font-family:'Inter',sans-serif;color:var(--ink);background:var(--white);max-width:240px;width:100%;}
+.hs-q-row select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;appearance:none;}
+.toggle-wrap{display:flex;align-items:center;gap:10px;}
+.toggle-lbl{font-size:.82rem;color:var(--ink-60);}
+.toggle{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-sl{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--ink-30);border-radius:24px;transition:.3s;}
+.toggle-sl::before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-sl{background:var(--naranja);}
+.toggle input:checked+.toggle-sl::before{transform:translateX(20px);}
+.health-note{background:var(--amarillo-light);border-left:3px solid var(--amarillo);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:var(--ink-60);}
+
+/* KYC */
+.kyc-divider{height:1px;background:#F3F4F6;margin:28px 0;}
+.kyc-head{margin-bottom:18px;}
+.kyc-head h2{font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.kyc-head p{font-size:.83rem;color:var(--ink-60);}
+.kyc-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.kyc-zone-wrap{display:flex;flex-direction:column;gap:4px;}
+.kyc-zone-label{font-size:.85rem;font-weight:500;color:var(--ink);}
+.kyc-zone-sub{font-size:.75rem;color:var(--ink-60);margin-bottom:6px;}
+.kyc-preview{display:none;border:1.5px solid #FDCDB9;border-radius:var(--r);overflow:hidden;}
+.kyc-preview-img{width:100%;max-height:130px;object-fit:cover;display:block;}
+.kyc-preview-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--naranja-light);}
+.kyc-preview-name{font-size:.75rem;color:var(--naranja);font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.kyc-btn-change{background:none;border:none;font-size:.75rem;color:var(--ink-60);cursor:pointer;padding:0 4px;font-family:'Inter',sans-serif;}
+.kyc-btn-change:hover{color:var(--naranja);}
+.kyc-pdf-block{display:flex;align-items:center;justify-content:center;height:80px;font-size:2rem;background:var(--bg);}
+.kyc-legal{display:flex;gap:8px;align-items:flex-start;background:var(--bg);border-radius:var(--r);padding:12px 14px;font-size:.75rem;color:var(--ink-60);line-height:1.55;}
+
+/* CONFIRMATION */
+.confirm-hero{text-align:center;padding:40px 0 32px;}
+.check-anim{width:80px;height:80px;margin:0 auto 20px;}
+.check-anim circle{stroke:var(--verde);stroke-width:3;fill:none;stroke-dasharray:220;stroke-dashoffset:220;animation:draw-circle .6s ease forwards;}
+.check-anim path{stroke:var(--verde);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:80;stroke-dashoffset:80;animation:draw-check .4s ease .5s forwards;}
+@keyframes draw-circle{to{stroke-dashoffset:0;}}
+@keyframes draw-check{to{stroke-dashoffset:0;}}
+.conf-title{font-size:1.8rem;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.conf-sub{font-size:.95rem;color:var(--ink-60);}
+.conf-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+.conf-card{background:var(--naranja-light);border:1.5px solid #FDCDB9;border-radius:var(--r-lg);padding:20px;}
+.cc-label{font-size:.72rem;font-weight:600;color:var(--naranja);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+.cc-val{font-size:.88rem;color:var(--ink);line-height:1.6;}
+.cc-val ul{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.cc-val li{display:flex;align-items:center;gap:6px;}
+.cc-badge{font-size:.65rem;font-weight:600;padding:1px 6px;border-radius:8px;}
+.cc-badge.gold{background:var(--amarillo-light);color:var(--amarillo);}
+.cc-badge.green{background:var(--naranja-light);color:var(--naranja);}
+.status-card{background:var(--bg);border:1.5px solid #F3F4F6;border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:10px;}
+.status-dot-anim{width:10px;height:10px;background:var(--amarillo);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.status-text{font-size:.85rem;color:var(--ink-60);}
+.status-text strong{color:var(--ink);}
+.whatsapp-banner{background:var(--verde-light);border-left:4px solid var(--verde);border-radius:0 var(--r-lg) var(--r-lg) 0;padding:16px 20px;margin:20px 0;}
+.wb-text{font-size:.9rem;color:var(--verde);font-weight:600;}
+.wb-sub{font-size:.82rem;color:var(--ink-60);margin-top:2px;}
+.btn-home{display:inline-block;background:var(--naranja);color:#fff;padding:13px 32px;border-radius:var(--r);font-size:.95rem;font-weight:600;text-decoration:none;transition:all .2s;margin-top:8px;}
+.btn-home:hover{background:var(--naranja-d);transform:translateY(-1px);}
+.btn-home.btn-outline{background:#fff;color:var(--naranja);border:1.5px solid var(--naranja);}
+.spinner{width:44px;height:44px;border:4px solid #F3F4F6;border-top-color:var(--naranja);border-radius:50%;margin:0 auto;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* WIZARD BOTTOM NAV */
+.wizard-nav-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-top:1px solid #F3F4F6;padding:14px 24px;z-index:50;}
+.wizard-nav-inner{max-width:680px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;}
+.btn-prev{background:transparent;color:var(--naranja);border:1.5px solid var(--naranja);padding:11px 24px;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-prev:hover{background:var(--naranja-light);}
+.btn-next{background:var(--naranja);color:#fff;border:none;padding:11px 28px;border-radius:var(--r);font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;margin-left:auto;}
+.btn-next:hover{background:var(--naranja-d);}
+.step-counter{font-size:.78rem;color:var(--ink-30);}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .form-grid{grid-template-columns:1fr;}
+  .form-group.full{grid-column:1;}
+  .cond-grid{grid-template-columns:1fr;}
+  .med-row{grid-template-columns:1fr auto;}
+  .med-row .med-dose,.med-row .med-freq{grid-column:1;}
+  .conf-cards{grid-template-columns:1fr;}
+  .progress-track::before,.fill-line{display:none;}
+  .ps-label{display:none;}
+  .wizard-main{padding:28px 16px 110px;}
+  .kyc-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr!important;}
+}
+</style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="reg-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div>
+        <div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div>
+        <div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div>
+      </div>
+    </a>
+    <a href="index.html" class="nav-back">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Volver al inicio
+    </a>
+  </div>
+</nav>
+
+<!-- HERO PEQUENO -->
+<div class="reg-hero">
+  <h1>Crea tu cuenta</h1>
+  <p>Unete a TuCosto y empieza a ahorrar en medicamentos</p>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="wizard-bar">
+  <div class="progress-track" id="progress-track">
+    <div class="fill-line" id="fill-line"></div>
+    <div class="ps ps-active" id="ps-1"><div class="ps-circle" id="pc-1">1</div><div class="ps-label">Tus datos</div></div>
+    <div class="ps" id="ps-2"><div class="ps-circle" id="pc-2">2</div><div class="ps-label">Listo</div></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="wizard-main">
+  <div class="wizard-container">
+
+    <!-- PASO 1 — TITULAR -->
+    <div class="step-panel active" id="panel-1">
+      <div class="step-head">
+        <h1>Cuentanos sobre ti</h1>
+        <p>El titular es el responsable de la membresia familiar</p>
+      </div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="s1-nombre">Nombre completo<span class="req">*</span></label>
+          <input type="text" id="s1-nombre" placeholder="Ej: Maria Garcia Lopez" autocomplete="name"/>
+          <span class="field-error" id="err-s1-nombre"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-cedula">Numero de cedula<span class="req">*</span></label>
+          <input type="text" id="s1-cedula" placeholder="0000000000" maxlength="10" inputmode="numeric"/>
+          <span class="field-error" id="err-s1-cedula"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-fechaNac">Fecha de nacimiento<span class="req">*</span></label>
+          <input type="date" id="s1-fechaNac"/>
+          <span class="field-error" id="err-s1-fechaNac"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-telefono">Telefono celular<span class="req">*</span></label>
+          <input type="tel" id="s1-telefono" placeholder="09XXXXXXXX" maxlength="10" inputmode="numeric"/>
+          <span class="field-error" id="err-s1-telefono"></span>
+          <span class="field-note">Formato ecuatoriano: 09XXXXXXXX</span>
+        </div>
+        <div class="form-group">
+          <label for="s1-email">Correo electronico<span class="req">*</span></label>
+          <input type="email" id="s1-email" placeholder="ejemplo@correo.com" autocomplete="email"/>
+          <span class="field-error" id="err-s1-email"></span>
+        </div>
+        <div class="form-group full">
+          <label for="s1-direccion">Direccion completa de entrega en Santo Domingo<span class="req">*</span></label>
+          <input type="text" id="s1-direccion" placeholder="Calle, numero, interseccion, referencia..." autocomplete="street-address"/>
+          <span class="field-error" id="err-s1-direccion"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-barrio">Barrio o sector<span class="req">*</span></label>
+          <input type="text" id="s1-barrio" placeholder="Ej: Ciudadela Ibarra"/>
+          <span class="field-error" id="err-s1-barrio"></span>
+        </div>
+      </div>
+
+      <div class="kyc-divider"></div>
+      <div class="kyc-head">
+        <h2>Verificacion de identidad</h2>
+        <p>Sube una foto clara de tu cedula para verificar tu identidad</p>
+      </div>
+      <div class="kyc-grid">
+        <div class="kyc-zone-wrap">
+          <label class="kyc-zone-label">Parte frontal <span class="req">*</span></label>
+          <p class="kyc-zone-sub">Debe verse claramente tu foto, nombre y numero de cedula</p>
+          <div class="upload-zone" id="kyc-front-zone" onclick="document.getElementById('kyc-front-input').click()" ondragover="kycDragOver(event,'kyc-front-zone')" ondragleave="kycDragLeave(event,'kyc-front-zone')" ondrop="kycDrop(event,'front')">
+            <input type="file" id="kyc-front-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'front')"/>
+            <div class="upload-icon">&#128219;</div>
+            <div class="upload-text">Cedula — Parte frontal</div>
+            <div class="upload-hint">JPG, PNG o PDF &middot; Max. 5 MB</div>
+          </div>
+          <div class="kyc-preview" id="kyc-front-preview">
+            <img class="kyc-preview-img" id="kyc-front-img" src="" alt="Frontal" style="display:none"/>
+            <div class="kyc-pdf-block" id="kyc-front-pdf" style="display:none">&#128196;</div>
+            <div class="kyc-preview-bar">
+              <span class="kyc-preview-name" id="kyc-front-name"></span>
+              <button class="kyc-btn-change" onclick="clearKycFile(event,'front')" type="button">Cambiar</button>
+            </div>
+          </div>
+          <span class="field-error" id="err-kyc-front"></span>
+        </div>
+        <div class="kyc-zone-wrap">
+          <label class="kyc-zone-label">Parte posterior <span class="req">*</span></label>
+          <p class="kyc-zone-sub">Debe verse claramente la informacion adicional</p>
+          <div class="upload-zone" id="kyc-back-zone" onclick="document.getElementById('kyc-back-input').click()" ondragover="kycDragOver(event,'kyc-back-zone')" ondragleave="kycDragLeave(event,'kyc-back-zone')" ondrop="kycDrop(event,'back')">
+            <input type="file" id="kyc-back-input" accept=".jpg,.jpeg,.png,.pdf" style="display:none" onchange="handleKycFile(this,'back')"/>
+            <div class="upload-icon">&#128219;</div>
+            <div class="upload-text">Cedula — Parte posterior</div>
+            <div class="upload-hint">JPG, PNG o PDF &middot; Max. 5 MB</div>
+          </div>
+          <div class="kyc-preview" id="kyc-back-preview">
+            <img class="kyc-preview-img" id="kyc-back-img" src="" alt="Posterior" style="display:none"/>
+            <div class="kyc-pdf-block" id="kyc-back-pdf" style="display:none">&#128196;</div>
+            <div class="kyc-preview-bar">
+              <span class="kyc-preview-name" id="kyc-back-name"></span>
+              <button class="kyc-btn-change" onclick="clearKycFile(event,'back')" type="button">Cambiar</button>
+            </div>
+          </div>
+          <span class="field-error" id="err-kyc-back"></span>
+        </div>
+      </div>
+      <div class="kyc-legal">
+        <span style="flex-shrink:0;font-size:1rem;margin-top:1px">&#128274;</span>
+        <span>Tu informacion es confidencial y esta protegida bajo la Ley Organica de Proteccion de Datos Personales (LOPDP). Solo sera usada para verificar tu identidad.</span>
+      </div>
+      <div style="display:flex;justify-content:center;margin-top:24px">
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEWKakLBmN11CvI1" data-callback="onTurnstileOk" data-expired-callback="onTurnstileExpired"></div>
+      </div>
+      <p id="err-turnstile" style="display:none;color:#EF4444;font-size:.82rem;text-align:center;margin-top:8px">Completa la verificacion para continuar</p>
+    </div>
+
+    <!-- PASO 2 — CONFIRMACION -->
+    <div class="step-panel" id="panel-2">
+      <div id="conf-loading" style="text-align:center;padding:60px 0">
+        <div class="spinner"></div>
+        <p style="margin-top:18px;color:var(--ink-60);font-weight:600">Procesando tu registro...</p>
+        <p style="margin-top:4px;color:var(--ink-60);font-size:.85rem">No cierres esta pagina</p>
+      </div>
+
+      <div id="conf-success-block" style="display:none">
+      <div class="confirm-hero">
+        <svg class="check-anim" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="35"/>
+          <path d="M24 40l11 11 21-22" class="check-anim path"/>
+        </svg>
+        <div class="conf-title" id="conf-title">Bienvenido a TuCosto!</div>
+        <p class="conf-sub">Tu cuenta esta creada. Estamos verificando tu documento de identidad.</p>
+      </div>
+      <div class="status-card" style="margin-bottom:16px">
+        <div class="status-dot-anim"></div>
+        <div class="status-text"><strong>Estado:</strong> Verificando tu identidad — maximo 24 horas habiles</div>
+      </div>
+      <div class="whatsapp-banner">
+        <div class="wb-text">Te avisaremos por WhatsApp al numero <span id="conf-telefono">registrado</span></div>
+        <div class="wb-sub">apenas tu identidad quede verificada</div>
+      </div>
+      <div style="background:#FFF2EC;border:1.5px solid #FDCDB9;border-radius:12px;padding:16px 20px;margin:16px 0;text-align:center">
+        <div style="font-size:.85rem;font-weight:700;color:#EF6830;margin-bottom:4px">&#128273; Tu contrasena temporal</div>
+        <div style="font-size:.9rem;color:#1A1A2E">Tu contrasena es tu <strong>numero de cedula</strong>. Cambiala despues de tu primer ingreso al portal.</div>
+      </div>
+      <div id="submit-error" style="display:none;background:#FFFBEB;border:1.5px solid #F5A623;border-radius:12px;padding:14px 18px;margin:12px 0;font-size:.85rem;color:#92400E"></div>
+      <div style="background:#ECFDF5;border:1.5px solid #A7F3D0;border-radius:12px;padding:20px;margin:16px 0;text-align:center">
+        <div style="font-size:.95rem;font-weight:700;color:#065F46;margin-bottom:6px">Ya puedes explorar TuCosto</div>
+        <p style="font-size:.85rem;color:#065F46;margin-bottom:14px">Mira el catalogo y descubre cuanto vas a ahorrar. Cuando quieras comprar, activas tu membresia con el plan que prefieras.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <a href="index.html" class="btn-home">Ver catalogo y mi ahorro</a>
+          <a href="portal/login.html" class="btn-home btn-outline">Iniciar sesion en mi portal</a>
+        </div>
+      </div>
+      <p style="margin-top:16px;font-size:.8rem;text-align:center">Tienes dudas? <a href="https://wa.me/593XXXXXXXXX" style="color:#EF6830;font-weight:500">Escribenos por WhatsApp</a></p>
+      </div>
+
+      <div id="conf-error-block" style="display:none;text-align:center;padding:20px 0">
+        <svg viewBox="0 0 80 80" style="width:64px;height:64px;margin:0 auto 16px">
+          <circle cx="40" cy="40" r="35" stroke="#EF4444" stroke-width="3" fill="none"/>
+          <path d="M28 28l24 24M52 28l-24 24" stroke="#EF4444" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div style="font-size:1.15rem;font-weight:700;color:#1A1A2E;margin-bottom:8px">No pudimos completar tu registro</div>
+        <p id="conf-error-msg" style="color:var(--ink-60);font-size:.88rem;max-width:440px;margin:0 auto 24px;line-height:1.5"></p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button type="button" class="btn-home" onclick="retryRegistro()">Reintentar</button>
+          <a href="index.html" class="btn-home btn-outline">Volver al inicio</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- NAV BAR INFERIOR -->
+<div class="wizard-nav-bar" id="wizard-nav-bar">
+  <div class="wizard-nav-inner">
+    <button class="btn-prev" id="btn-prev" onclick="navigate(-1)" style="display:none">&#8592; Anterior</button>
+    <span class="step-counter" id="step-counter">Paso 1 de 2</span>
+    <button class="btn-next" id="btn-next" onclick="navigate(1)">Siguiente &#8594;</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="background:#1A1A2E;padding:48px 0 28px">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div class="footer-grid" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:40px">
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">TuCosto</div>
+        <p style="font-size:.85rem;color:#6B7280;margin-top:12px;max-width:240px;line-height:1.6">La membresia de salud para familias ecuatorianas. Ahorro a un clic.</p>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Empresa</h4>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
+          <li><a href="quienes-somos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Quienes Somos</a></li>
+          <li><a href="terminos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Terminos y Condiciones</a></li>
+          <li><a href="privacidad.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Politica de Privacidad</a></li>
+          <li><a href="devoluciones.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Politica de Devolucion</a></li>
+          <li><a href="faq.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Preguntas Frecuentes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Regulatorio</h4>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
+          <li><a href="uso-racional.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-size:.78rem;color:#6B7280">&#169; 2025 TuCosto Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p style="font-size:.78rem;color:#6B7280">Santo Domingo de los Tsachilas &#183; Ecuador</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+// SUPABASE CLIENT
+const _db = supabase.createClient(
+  'https://cjimcldhoglgqachcimm.supabase.co',
+  'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC'
+);
+
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+var _turnstileToken = null;
+function onTurnstileOk(token) {
+  _turnstileToken = token;
+  var err = document.getElementById('err-turnstile');
+  if (err) err.style.display = 'none';
+}
+function onTurnstileExpired() {
+  _turnstileToken = null;
+}
+
+// ESTADO GLOBAL
+const S = {
+  step: 1,
+  titular: { nombre:'', cedula:'', fechaNac:'', telefono:'', email:'', direccion:'', barrio:'' },
+  payment: { cedula_frontal: null, cedula_posterior: null }
+};
+
+const CHECK_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" fill="none"><path d="M1 6l5 5L15 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+// INICIALIZACION
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('s1-cedula').addEventListener('blur', () => validateCedulaBlur('s1-cedula', 'err-s1-cedula'));
+});
+
+// NAVEGACION
+function navigate(dir) {
+  if (dir === 1) {
+    if (!validateStep(S.step)) return;
+    if (S.step === 1) saveTitular();
+  }
+  if (dir === -1 && S.step === 1) return;
+
+  S.step += dir;
+  if (S.step < 1) S.step = 1;
+  if (S.step > 2) return;
+
+  if (S.step === 2) { submitRegistro(); }
+
+  renderUI();
+}
+
+function renderUI() {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + S.step).classList.add('active');
+
+  const pct = ((S.step - 1) / 1) * 100;
+  document.getElementById('fill-line').style.width = pct + '%';
+  for (let i = 1; i <= 2; i++) {
+    const ps = document.getElementById('ps-' + i);
+    const pc = document.getElementById('pc-' + i);
+    ps.classList.toggle('ps-active', i === S.step);
+    ps.classList.toggle('ps-done', i < S.step);
+    pc.innerHTML = i < S.step ? CHECK_SVG : i;
+  }
+
+  document.getElementById('btn-prev').style.display = S.step === 1 || S.step === 2 ? 'none' : '';
+  document.getElementById('step-counter').textContent = S.step < 2 ? `Paso ${S.step} de 2` : '';
+  const btnNext = document.getElementById('btn-next');
+  if (S.step === 2) {
+    document.getElementById('wizard-nav-bar').style.display = 'none';
+  } else {
+    document.getElementById('wizard-nav-bar').style.display = '';
+    btnNext.textContent = 'Finalizar >';
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// KYC - CEDULA ECUATORIANA
+function validarCedulaEcuador(cedula) {
+  if (!cedula || !/^\d{10}$/.test(cedula)) return false;
+  const prov = parseInt(cedula.substring(0, 2), 10);
+  if ((prov < 1 || prov > 24) && prov !== 30) return false;
+  const coef = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+  let suma = 0;
+  for (let i = 0; i < 9; i++) {
+    let val = parseInt(cedula[i], 10) * coef[i];
+    if (val >= 10) val -= 9;
+    suma += val;
+  }
+  const digitoVerificador = suma % 10 === 0 ? 0 : 10 - (suma % 10);
+  return digitoVerificador === parseInt(cedula[9], 10);
+}
+
+function validateCedulaBlur(inputId, errId) {
+  const input = document.getElementById(inputId);
+  const errEl = document.getElementById(errId);
+  const val = input.value.trim();
+  if (!val) return;
+  if (validarCedulaEcuador(val)) {
+    input.classList.remove('invalid');
+    input.classList.add('cedula-valid');
+    if (errEl) errEl.textContent = '';
+  } else {
+    input.classList.remove('cedula-valid');
+    input.classList.add('invalid');
+    if (errEl) errEl.textContent = 'La cedula ecuatoriana no es valida';
+  }
+}
+
+function handleKycFile(input, side) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    const errId = side === 'front' ? 'err-kyc-front' : 'err-kyc-back';
+    showErr(errId, 'El archivo no puede superar 5 MB');
+    input.value = '';
+    return;
+  }
+  const zoneId   = side === 'front' ? 'kyc-front-zone'    : 'kyc-back-zone';
+  const prevId   = side === 'front' ? 'kyc-front-preview'  : 'kyc-back-preview';
+  const imgId    = side === 'front' ? 'kyc-front-img'      : 'kyc-back-img';
+  const pdfId    = side === 'front' ? 'kyc-front-pdf'      : 'kyc-back-pdf';
+  const nameId   = side === 'front' ? 'kyc-front-name'     : 'kyc-back-name';
+  const errId    = side === 'front' ? 'err-kyc-front'      : 'err-kyc-back';
+
+  if (side === 'front') S.payment.cedula_frontal = file;
+  else                  S.payment.cedula_posterior = file;
+
+  document.getElementById(errId).textContent = '';
+  document.getElementById(zoneId).style.display = 'none';
+  document.getElementById(prevId).style.display = 'block';
+  document.getElementById(nameId).textContent = file.name;
+
+  const imgEl = document.getElementById(imgId);
+  const pdfEl = document.getElementById(pdfId);
+  if (file.type === 'application/pdf') {
+    imgEl.style.display = 'none';
+    pdfEl.style.display = 'flex';
+  } else {
+    pdfEl.style.display = 'none';
+    imgEl.style.display = 'block';
+    const reader = new FileReader();
+    reader.onload = e => { imgEl.src = e.target.result; };
+    reader.readAsDataURL(file);
+  }
+}
+
+function clearKycFile(event, side) {
+  event.stopPropagation();
+  const zoneId = side === 'front' ? 'kyc-front-zone'   : 'kyc-back-zone';
+  const prevId = side === 'front' ? 'kyc-front-preview' : 'kyc-back-preview';
+  const inpId  = side === 'front' ? 'kyc-front-input'   : 'kyc-back-input';
+  const imgId  = side === 'front' ? 'kyc-front-img'     : 'kyc-back-img';
+  const pdfId  = side === 'front' ? 'kyc-front-pdf'     : 'kyc-back-pdf';
+
+  if (side === 'front') S.payment.cedula_frontal = null;
+  else                  S.payment.cedula_posterior = null;
+
+  document.getElementById(inpId).value = '';
+  document.getElementById(imgId).src = '';
+  document.getElementById(imgId).style.display = 'none';
+  document.getElementById(pdfId).style.display = 'none';
+  document.getElementById(prevId).style.display = 'none';
+  document.getElementById(zoneId).style.display = '';
+}
+
+function kycDragOver(event, zoneId) {
+  event.preventDefault();
+  document.getElementById(zoneId).classList.add('drag-over');
+}
+
+function kycDragLeave(event, zoneId) {
+  document.getElementById(zoneId).classList.remove('drag-over');
+}
+
+function kycDrop(event, side) {
+  event.preventDefault();
+  const zoneId = side === 'front' ? 'kyc-front-zone' : 'kyc-back-zone';
+  document.getElementById(zoneId).classList.remove('drag-over');
+  const file = event.dataTransfer.files[0];
+  if (!file) return;
+  const inputId = side === 'front' ? 'kyc-front-input' : 'kyc-back-input';
+  const dt = new DataTransfer();
+  dt.items.add(file);
+  document.getElementById(inputId).files = dt.files;
+  handleKycFile(document.getElementById(inputId), side);
+}
+
+// VALIDACION
+function validateStep(step) {
+  clearErrors();
+  if (step === 1) return validateStep1();
+  return true;
+}
+
+function validateStep1() {
+  let ok = true;
+  const required = [
+    ['s1-nombre', 'Ingrese su nombre completo'],
+    ['s1-cedula', 'Ingrese su numero de cedula'],
+    ['s1-fechaNac', 'Ingrese su fecha de nacimiento'],
+    ['s1-telefono', 'Ingrese su telefono celular'],
+    ['s1-email', 'Ingrese su correo electronico'],
+    ['s1-direccion', 'Ingrese su direccion de entrega'],
+    ['s1-barrio', 'Ingrese su barrio o sector']
+  ];
+  required.forEach(([id, msg]) => {
+    if (!document.getElementById(id).value.trim()) { showErr(id, msg); ok = false; }
+  });
+  const cedula = document.getElementById('s1-cedula').value.trim();
+  if (cedula && !validarCedulaEcuador(cedula)) { showErr('s1-cedula', 'La cedula ecuatoriana no es valida'); ok = false; }
+  const tel = document.getElementById('s1-telefono').value.trim();
+  if (tel && !/^09\d{8}$/.test(tel)) { showErr('s1-telefono', 'El telefono debe empezar con 09 y tener 10 digitos'); ok = false; }
+  const email = document.getElementById('s1-email').value.trim();
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr('s1-email', 'Ingrese un correo electronico valido'); ok = false; }
+  if (!S.payment.cedula_frontal) { showErr('err-kyc-front', 'Debe subir la parte frontal de su cedula'); ok = false; }
+  if (!S.payment.cedula_posterior) { showErr('err-kyc-back', 'Debe subir la parte posterior de su cedula'); ok = false; }
+  if (!_turnstileToken) {
+    const errT = document.getElementById('err-turnstile');
+    if (errT) { errT.style.display = 'block'; errT.scrollIntoView({ behavior: 'smooth' }); }
+    ok = false;
+  }
+  return ok;
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id) || document.getElementById('err-' + id);
+  if (!el) return;
+  if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+    el.classList.add('invalid');
+    const errEl = document.getElementById('err-' + id);
+    if (errEl) errEl.textContent = msg;
+  } else {
+    el.textContent = msg;
+  }
+}
+
+function clearErrors() {
+  document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+  document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+}
+
+// PASO 1 - GUARDAR TITULAR
+function saveTitular() {
+  S.titular = {
+    nombre: document.getElementById('s1-nombre').value.trim(),
+    cedula: document.getElementById('s1-cedula').value.trim(),
+    fechaNac: document.getElementById('s1-fechaNac').value,
+    telefono: document.getElementById('s1-telefono').value.trim(),
+    email: document.getElementById('s1-email').value.trim(),
+    direccion: document.getElementById('s1-direccion').value.trim(),
+    barrio: document.getElementById('s1-barrio').value.trim()
+  };
+}
+
+// PASO 2 - CONFIRMACION Y SUPABASE
+function _showSubmitError(msg) {
+  const el = document.getElementById('submit-error');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function _showFatalError(msg) {
+  document.getElementById('conf-loading').style.display = 'none';
+  document.getElementById('conf-success-block').style.display = 'none';
+  document.getElementById('conf-error-block').style.display = '';
+  document.getElementById('conf-error-msg').textContent = msg;
+}
+
+function retryRegistro() {
+  _turnstileToken = null;
+  if (window.turnstile) { try { window.turnstile.reset(); } catch (e) {} }
+  document.getElementById('conf-error-block').style.display = 'none';
+  document.getElementById('conf-loading').style.display = 'none';
+  S.step = 1;
+  renderUI();
+}
+
+async function submitRegistro() {
+  document.getElementById('conf-loading').style.display = '';
+  document.getElementById('conf-success-block').style.display = 'none';
+  document.getElementById('conf-error-block').style.display = 'none';
+  let _userCreatedOk = false;
+  try {
+    const authRes = await _db.auth.signUp({
+      email: S.titular.email,
+      password: S.titular.cedula,
+      options: { data: { rol: 'suscriptor' }, captchaToken: _turnstileToken }
+    });
+    if (authRes.error) {
+      _showFatalError('No se pudo crear tu cuenta: ' + authRes.error.message + '. Por favor intenta de nuevo.');
+      return;
+    }
+    const userId = authRes.data.user.id;
+    _userCreatedOk = true;
+
+    let kycFrontalPath = null;
+    let kycPosteriorPath = null;
+    if (S.payment.cedula_frontal) {
+      const ext = S.payment.cedula_frontal.name.split('.').pop();
+      const path = `${S.titular.cedula}/cedula_frontal.${ext}`;
+      const { error: kycFErr } = await _db.storage.from('kyc-documentos').upload(path, S.payment.cedula_frontal, { upsert: true });
+      if (!kycFErr) kycFrontalPath = path;
+    }
+    if (S.payment.cedula_posterior) {
+      const ext = S.payment.cedula_posterior.name.split('.').pop();
+      const path = `${S.titular.cedula}/cedula_posterior.${ext}`;
+      const { error: kycBErr } = await _db.storage.from('kyc-documentos').upload(path, S.payment.cedula_posterior, { upsert: true });
+      if (!kycBErr) kycPosteriorPath = path;
+    }
+
+    var { error: userErr } = await _db.from('usuarios').upsert({
+      id: userId,
+      nombre: S.titular.nombre,
+      cedula: S.titular.cedula,
+      telefono: S.titular.telefono,
+      email: S.titular.email,
+      direccion: S.titular.direccion,
+      barrio: S.titular.barrio,
+      fecha_nacimiento: S.titular.fechaNac,
+      rol: 'suscriptor'
+    });
+    if (userErr) {
+      _showFatalError('No se pudo guardar tu perfil: ' + userErr.message + '. Intenta de nuevo; si el problema persiste, contactanos por WhatsApp.');
+      return;
+    }
+
+    const { error: suscErr } = await _db.from('suscripciones').insert({
+      titular_id: userId,
+      estado: 'sin_plan',
+      plan: null,
+      metodo_pago: null,
+      comprobante_url: null,
+      kyc_estado: 'pendiente',
+      cedula_frontal_url: kycFrontalPath,
+      cedula_posterior_url: kycPosteriorPath
+    });
+    if (suscErr) {
+      _showFatalError('No se pudo guardar tu cuenta: ' + suscErr.message + '. Intenta de nuevo; si el problema persiste, contactanos por WhatsApp.');
+      return;
+    }
+
+    buildConfirmation();
+    document.getElementById('conf-loading').style.display = 'none';
+    document.getElementById('conf-success-block').style.display = '';
+  } catch (err) {
+    console.error('[TuCosto] submitRegistro error:', err);
+    if (_userCreatedOk) {
+      buildConfirmation();
+      document.getElementById('conf-loading').style.display = 'none';
+      document.getElementById('conf-success-block').style.display = '';
+      _showSubmitError('Tu cuenta se creo, pero hubo un problema con un paso adicional (' + (err.message || 'error desconocido') + '). Contactanos por WhatsApp para confirmar que todo quedo bien.');
+    } else {
+      _showFatalError('Ocurrio un error inesperado: ' + (err.message || 'intenta de nuevo') + '.');
+    }
+  }
+}
+
+function buildConfirmation() {
+  const nombre = S.titular.nombre || '\u2014';
+  document.getElementById('conf-title').textContent = `Bienvenido/a a TuCosto, ${nombre.split(' ')[0]}!`;
+  document.getElementById('conf-telefono').textContent = S.titular.telefono || 'registrado';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quiénes somos — TuCosto Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'] },
+      colors: {
+        naranja: '#EF6830',
+        'naranja-d': '#C95220',
+        'naranja-light': '#FFF2EC',
+        amarillo: '#F5A623',
+        'amarillo-light': '#FFF8ED',
+      }
+    }
+  }
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height:1.6;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+.nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
+.section-label{font-size:.75rem;font-weight:600;color:#EF6830;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:10px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+@media(max-width:768px){
+  .nav-links{display:none !important;}
+  .footer-grid{grid-template-columns:1fr 1fr !important;}
+  .section{padding:52px 0 !important;}
+  .mission-grid,.problem-grid,.steps-grid,.values-grid{grid-template-columns:1fr !important;}
+  .reg-inner{flex-direction:column !important;}
+}
+</style>
+</head>
+<body>
+
+<nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;height:64px">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
+      <li><a href="index.html#membresia" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Membresía</a></li>
+      <li><a href="faq.html" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Preguntas frecuentes</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="portal/login.html" style="color:#EF6830;border:1.5px solid #EF6830;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#EF6830;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+    </div>
+  </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,#C95220 0%,#EF6830 50%,#F07040 100%);padding:64px 0 56px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-40%;right:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);pointer-events:none"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;margin-bottom:18px">
+      <span style="font-size:.75rem;color:rgba(255,255,255,.9);font-weight:500">Santo Domingo de los Tsáchilas · Ecuador</span>
+    </div>
+    <h1 style="color:#fff;font-size:clamp(1.9rem,3.5vw,2.7rem);font-weight:700;line-height:1.15;margin-bottom:14px">Quiénes somos</h1>
+    <p style="color:rgba(255,255,255,.78);font-size:.97rem;max-width:540px;line-height:1.7">TuCosto nació de una pregunta simple: ¿por qué las familias ecuatorianas pagan hasta un 40% de más en los medicamentos que necesitan cada mes?</p>
+  </div>
+</div>
+
+<section class="section" style="padding:72px 0;background:#fff">
+  <div class="container">
+    <div class="mission-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div style="background:#EF6830;border-radius:20px;padding:36px">
+        <div style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6);margin-bottom:12px">Misión</div>
+        <div style="font-size:1.3rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:14px">Eliminar el margen en los medicamentos</div>
+        <p style="font-size:.9rem;color:rgba(255,255,255,.8);line-height:1.7">Hacer accesibles los medicamentos para familias ecuatorianas eliminando el margen de intermediación de las farmacias tradicionales. Cada familia paga lo justo: el costo real del medicamento más una suscripción transparente.</p>
+      </div>
+      <div style="background:#FFF2EC;border-radius:20px;padding:36px;border:1.5px solid #FFD5C4">
+        <div style="font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:12px">Visión</div>
+        <div style="font-size:1.3rem;font-weight:700;color:#1A1A2E;line-height:1.3;margin-bottom:14px">La farmacia de confianza de cada familia en Ecuador</div>
+        <p style="font-size:.9rem;color:#6B7280;line-height:1.7">Ser la referencia en acceso equitativo a medicamentos en Ecuador, expandiendo el modelo a nivel nacional bajo los más altos estándares de ética, transparencia y cumplimiento regulatorio.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding:72px 0;background:#F9FAFB">
+  <div class="container">
+    <div class="problem-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center">
+      <div>
+        <span class="section-label">El problema que resolvemos</span>
+        <h2 style="font-size:clamp(1.4rem,2.5vw,1.9rem);font-weight:700;color:#1A1A2E;line-height:1.25;margin-bottom:18px">El margen que nadie debería pagar</h2>
+        <p style="font-size:.93rem;color:#6B7280;line-height:1.75;margin-bottom:14px">Las farmacias tradicionales aplican márgenes de entre el <strong style="color:#1A1A2E">30% y el 40%</strong> sobre el precio de costo del medicamento. Para una familia que gasta $80 en medicamentos al mes, eso significa entre $24 y $32 que no van al medicamento sino a la cadena de intermediación.</p>
+        <p style="font-size:.93rem;color:#6B7280;line-height:1.75;margin-bottom:14px">TuCosto funciona al revés: la única ganancia es la suscripción mensual de tu plan (desde $8.99). Los medicamentos siempre al costo exacto del distribuidor, verificable con documentación.</p>
+        <p style="font-size:.93rem;color:#6B7280;line-height:1.75">No es un descuento. No es una promoción. Es el precio real.</p>
+      </div>
+      <div style="background:#fff;border-radius:20px;padding:32px;box-shadow:0 4px 24px rgba(0,0,0,.08)">
+        <div style="display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #FFF2EC">
+          <div style="width:44px;height:44px;background:#FFF2EC;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div><div style="font-size:1.7rem;font-weight:700;color:#EF6830;line-height:1">30–40%</div><div style="font-size:.8rem;color:#6B7280;margin-top:3px">Margen promedio en farmacias tradicionales</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid #FFF2EC">
+          <div style="width:44px;height:44px;background:#FFF2EC;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div><div style="font-size:1.7rem;font-weight:700;color:#EF6830;line-height:1">4</div><div style="font-size:.8rem;color:#6B7280;margin-top:3px">Personas cubiertas en el Plan Familiar</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px;padding:16px 0">
+          <div style="width:44px;height:44px;background:#FFF2EC;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><path d="M12 2L3 6v8l7 4 7-4V6L10 2z"/><path d="M7 10h6M10 7v6"/></svg>
+          </div>
+          <div><div style="font-size:1.7rem;font-weight:700;color:#EF6830;line-height:1">400+</div><div style="font-size:.8rem;color:#6B7280;margin-top:3px">Medicamentos disponibles en el catálogo</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding:72px 0;background:#fff">
+  <div class="container">
+    <span class="section-label">Nuestro modelo</span>
+    <h2 style="font-size:clamp(1.4rem,2.5vw,1.9rem);font-weight:700;color:#1A1A2E;line-height:1.25;margin-bottom:32px">Cómo funciona la suscripción + costo</h2>
+    <div class="steps-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+      <div style="background:#F9FAFB;border-radius:16px;padding:28px;border-top:3px solid #EF6830">
+        <div style="width:40px;height:40px;background:#EF6830;color:#fff;border-radius:12px;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:16px">1</div>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Suscripción mensual fija</div>
+        <p style="font-size:.87rem;color:#6B7280;line-height:1.65">Desde $8.99 al mes segun el plan (Ahorro hasta 2 personas, Familiar hasta 4). Este es el único ingreso de TuCosto. No hay margen sobre los medicamentos.</p>
+      </div>
+      <div style="background:#F9FAFB;border-radius:16px;padding:28px;border-top:3px solid #EF6830">
+        <div style="width:40px;height:40px;background:#EF6830;color:#fff;border-radius:12px;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:16px">2</div>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Medicamentos al precio de compra</div>
+        <p style="font-size:.87rem;color:#6B7280;line-height:1.65">Compramos medicamentos a distribuidores autorizados y los trasladamos al suscriptor al mismo precio, sin añadir ni un centavo.</p>
+      </div>
+      <div style="background:#F9FAFB;border-radius:16px;padding:28px;border-top:3px solid #EF6830">
+        <div style="width:40px;height:40px;background:#EF6830;color:#fff;border-radius:12px;font-size:1.1rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:16px">3</div>
+        <div style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:8px">Transparencia total</div>
+        <p style="font-size:.87rem;color:#6B7280;line-height:1.65">El precio que usted paga corresponde exactamente al costo de compra al distribuidor, sin ningún margen adicional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding:72px 0;background:#F9FAFB">
+  <div class="container">
+    <span class="section-label">Regulación y responsabilidad</span>
+    <div class="reg-inner" style="background:#fff;border-radius:20px;padding:36px;box-shadow:0 2px 12px rgba(0,0,0,.07);display:flex;gap:28px;align-items:flex-start">
+      <div style="width:56px;height:56px;background:#FFF2EC;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div>
+        <h3 style="font-size:1.15rem;font-weight:700;color:#1A1A2E;margin-bottom:12px">Operamos bajo normativa ARCSA con Químico Farmacéutico responsable</h3>
+        <p style="font-size:.9rem;color:#6B7280;line-height:1.7;margin-bottom:10px">TuCosto no es una plataforma de reventa informal. Operamos bajo la normativa de la <strong style="color:#1A1A2E">Agencia Nacional de Regulación, Control y Vigilancia Sanitaria (ARCSA)</strong> del Ecuador y el <strong style="color:#1A1A2E">Código Orgánico de la Salud</strong>.</p>
+        <p style="font-size:.9rem;color:#6B7280;line-height:1.7;margin-bottom:10px">Contamos con un <strong style="color:#1A1A2E">Químico Farmacéutico (QF) Responsable Técnico</strong>, quien supervisa la validación de recetas médicas, la revisión de cada pedido y la trazabilidad de todos los medicamentos dispensados. Su presencia es un requisito legal para la operación y una garantía de seguridad para nuestros suscriptores.</p>
+        <p style="font-size:.9rem;color:#6B7280;line-height:1.7">Los medicamentos que comercializamos provienen de distribuidores autorizados por ARCSA. Nunca fuera de la cadena oficial.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="padding:72px 0;background:#fff">
+  <div class="container">
+    <span class="section-label">Lo que nos define</span>
+    <h2 style="font-size:clamp(1.4rem,2.5vw,1.9rem);font-weight:700;color:#1A1A2E;line-height:1.25;margin-bottom:32px">Nuestros valores</h2>
+    <div class="values-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div style="background:#F9FAFB;border-radius:16px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:44px;height:44px;background:#FFF2EC;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div><h4 style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:6px">Transparencia</h4><p style="font-size:.87rem;color:#6B7280;line-height:1.6">Precios verificables, documentación accesible, sin márgenes ocultos. Lo que ves es exactamente lo que pagas y lo que pagamos nosotros.</p></div>
+      </div>
+      <div style="background:#F9FAFB;border-radius:16px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:44px;height:44px;background:#FFF2EC;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <div><h4 style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:6px">Accesibilidad</h4><p style="font-size:.87rem;color:#6B7280;line-height:1.6">El cuidado de la salud no debería depender del bolsillo. Trabajamos para que cada familia ecuatoriana tenga acceso a los medicamentos que necesita.</p></div>
+      </div>
+      <div style="background:#F9FAFB;border-radius:16px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:44px;height:44px;background:#FFF2EC;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div><h4 style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:6px">Responsabilidad</h4><p style="font-size:.87rem;color:#6B7280;line-height:1.6">Operamos bajo la ley ecuatoriana, con normativa ARCSA y QF responsable. Cada decisión que tomamos considera el bienestar y seguridad de nuestros suscriptores.</p></div>
+      </div>
+      <div style="background:#F9FAFB;border-radius:16px;padding:24px;display:flex;gap:16px;align-items:flex-start">
+        <div style="width:44px;height:44px;background:#FFF2EC;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div><h4 style="font-size:1rem;font-weight:600;color:#1A1A2E;margin-bottom:6px">Confianza</h4><p style="font-size:.87rem;color:#6B7280;line-height:1.6">Construimos relaciones a largo plazo con nuestras familias suscriptoras. La confianza se gana con hechos, no con promesas vacías.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div style="background:linear-gradient(135deg,#C95220 0%,#EF6830 60%);padding:64px 0;text-align:center">
+  <div class="container">
+    <h2 style="color:#fff;font-size:clamp(1.4rem,2.5vw,1.8rem);font-weight:700;margin-bottom:12px">Operamos en Santo Domingo de los Tsáchilas</h2>
+    <p style="color:rgba(255,255,255,.75);font-size:.95rem;margin-bottom:28px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.65">Estamos aquí, en tu ciudad. Conocemos las necesidades de las familias santodomingueñas y trabajamos cada día para servirlas mejor.</p>
+    <a href="index.html#membresia" style="display:inline-block;background:#fff;color:#EF6830;font-weight:600;font-size:.9rem;padding:12px 28px;border-radius:12px;text-decoration:none">Comenzar desde $8.99 al mes</a>
+  </div>
+</div>
+
+<footer style="background:#1A1A2E;padding:48px 0 28px">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">TuCosto</div>
+        <p style="font-size:.85rem;color:#6B7280;margin-top:12px;max-width:240px;line-height:1.6">La membresía de salud para familias ecuatorianas. Ahorro a un clic.</p>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Producto</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="index.html#productos" style="font-size:.83rem;color:#6B7280;text-decoration:none">Productos</a></li>
+          <li><a href="index.html#calculadora" style="font-size:.83rem;color:#6B7280;text-decoration:none">Calculadora de ahorro</a></li>
+          <li><a href="index.html#membresia" style="font-size:.83rem;color:#6B7280;text-decoration:none">Planes y precios</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Empresa</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="quienes-somos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Quiénes Somos</a></li>
+          <li><a href="terminos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Devolución</a></li>
+          <li><a href="faq.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Regulatorio</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="uso-racional.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-size:.78rem;color:#6B7280">&#169; 2025 TuCosto Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p style="font-size:.78rem;color:#6B7280">Santo Domingo de los Ts&#225;chilas &#183; Ecuador</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

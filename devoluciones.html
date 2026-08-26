@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Política de devolución — TuCosto Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter','sans-serif'] },
+      colors: {
+        naranja: '#EF6830',
+        'naranja-d': '#C95220',
+        'naranja-light': '#FFF2EC',
+      }
+    }
+  }
+}
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height:1.6;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+.nav-links{display:flex;gap:26px;list-style:none;margin:0;padding:0;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.content-col{max-width:800px;}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:48px;}
+.summary-card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 1px 4px rgba(0,0,0,.06);border-top:3px solid #EF6830;}
+.summary-card.green{border-top-color:#22C55E;}
+.summary-card.gold{border-top-color:#F5A623;}
+.summary-icon{font-size:2rem;margin-bottom:10px;}
+.summary-title{font-size:.9rem;font-weight:700;color:#1A1A2E;margin-bottom:8px;}
+.summary-list{font-size:.82rem;color:#6B7280;padding-left:16px;}
+.summary-list li{margin-bottom:5px;}
+.pol-block{background:#fff;border-radius:16px;padding:32px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:20px;}
+.pol-header{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
+.pol-icon{width:42px;height:42px;background:#FFF2EC;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.pol-title{font-size:1rem;font-weight:700;color:#EF6830;}
+.pol-body{font-size:.88rem;color:#6B7280;line-height:1.75;}
+.pol-body p{margin-bottom:10px;}
+.pol-body p:last-child{margin-bottom:0;}
+.pol-body ul{padding-left:20px;margin:8px 0;}
+.pol-body ul li{margin-bottom:7px;}
+.pol-body strong{color:#1A1A2E;}
+.alert-box{border-radius:12px;padding:16px 20px;font-size:.85rem;line-height:1.6;margin-top:14px;}
+.alert-red{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;}
+.alert-green{background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;}
+.alert-gold{background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;}
+.timeline{margin:18px 0 0;display:flex;flex-direction:column;gap:0;}
+.tl-step{display:flex;gap:14px;align-items:flex-start;padding-bottom:20px;position:relative;}
+.tl-step:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;width:2px;background:#FFF2EC;bottom:0;}
+.tl-dot{width:32px;height:32px;background:#EF6830;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#fff;font-size:.75rem;font-weight:700;}
+.tl-content{padding-top:4px;}
+.tl-label{font-size:.87rem;font-weight:600;color:#1A1A2E;margin-bottom:3px;}
+.tl-desc{font-size:.82rem;color:#6B7280;}
+@media(max-width:768px){
+  .nav-links{display:none !important;}
+  .footer-grid{grid-template-columns:1fr 1fr !important;}
+  .summary-grid{grid-template-columns:1fr !important;}
+}
+</style>
+</head>
+<body>
+
+<nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;height:64px">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#productos" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Productos</a></li>
+      <li><a href="index.html#membresia" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Membresía</a></li>
+      <li><a href="quienes-somos.html" style="color:#6B7280;font-size:.88rem;font-weight:500;text-decoration:none">Quiénes somos</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="portal/login.html" style="color:#EF6830;border:1.5px solid #EF6830;font-weight:600;font-size:.82rem;padding:8px 16px;border-radius:10px;text-decoration:none">Iniciar sesión</a>
+      <a href="registro.html" style="background:#EF6830;color:#fff;font-weight:600;font-size:.82rem;padding:9px 18px;border-radius:10px;text-decoration:none">Registrarse</a>
+    </div>
+  </div>
+</nav>
+
+<div style="background:linear-gradient(135deg,#C95220 0%,#EF6830 50%,#F07040 100%);padding:64px 0 56px;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-40%;right:-8%;width:520px;height:520px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);pointer-events:none"></div>
+  <div class="container" style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;margin-bottom:18px">
+      <span style="font-size:.75rem;color:rgba(255,255,255,.9);font-weight:500">Legal</span>
+    </div>
+    <h1 style="color:#fff;font-size:clamp(1.9rem,3.5vw,2.7rem);font-weight:700;line-height:1.15;margin-bottom:14px">Política de devolución</h1>
+    <p style="color:rgba(255,255,255,.78);font-size:.97rem;max-width:560px;line-height:1.7">Conoce las condiciones bajo las cuales TuCosto acepta devoluciones o emite reembolsos, en el marco de la normativa ARCSA sobre medicamentos.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+      <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.75rem;font-weight:500;padding:4px 12px;border-radius:20px">Normativa ARCSA</span>
+      <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.9);font-size:.75rem;font-weight:500;padding:4px 12px;border-radius:20px">Vigencia: julio 2025</span>
+    </div>
+  </div>
+</div>
+
+<section style="padding:64px 0;background:#F9FAFB">
+  <div class="container">
+    <div class="content-col">
+
+      <h2 style="font-size:1.15rem;font-weight:700;color:#1A1A2E;margin-bottom:24px">Resumen de la política</h2>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-icon">&#128683;</div>
+          <div class="summary-title">No se devuelven</div>
+          <ul class="summary-list">
+            <li>Medicamentos de control especial</li>
+            <li>Productos con cadena de frío</li>
+            <li>Empaques abiertos o con sello roto</li>
+            <li>Devoluciones pasadas 48 h</li>
+          </ul>
+        </div>
+        <div class="summary-card green">
+          <div class="summary-icon">&#9989;</div>
+          <div class="summary-title">Reembolsable</div>
+          <ul class="summary-list">
+            <li>Error en el producto despachado</li>
+            <li>Medicamento vencido al recibirlo</li>
+            <li>Medicamento en desabastecimiento</li>
+            <li>Pedido cancelado antes del despacho</li>
+          </ul>
+        </div>
+        <div class="summary-card gold">
+          <div class="summary-icon">&#9888;&#65039;</div>
+          <div class="summary-title">Evaluación por caso</div>
+          <ul class="summary-list">
+            <li>Producto en mal estado al recibir</li>
+            <li>Cambio en prescripción médica</li>
+            <li>Daño durante el transporte</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pol-block">
+        <div class="pol-header">
+          <div class="pol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <div class="pol-title">1. Restricciones regulatorias</div>
+        </div>
+        <div class="pol-body">
+          <p>La legislación ecuatoriana y las normativas de ARCSA <strong>prohíben la devolución</strong> de medicamentos a la cadena de dispensación una vez entregados al paciente, salvo en circunstancias específicas establecidas por el ente regulador.</p>
+          <div class="alert-box alert-red"><strong>Importante:</strong> Los medicamentos psicotrópicos, estupefacientes (lista 1 y 2) y aquellos que requieren refrigeración o cadena de frío <strong>no pueden ser devueltos bajo ninguna circunstancia</strong>, por razones de seguridad y normativa regulatoria.</div>
+          <p style="margin-top:14px">Toda solicitud de devolución o reclamo debe realizarse dentro de las <strong>48 horas</strong> siguientes a la recepción del pedido y acompañarse de fotografías o evidencia que acredite la causa.</p>
+        </div>
+      </div>
+
+      <div class="pol-block">
+        <div class="pol-header">
+          <div class="pol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="pol-title">2. Causas que dan derecho a reembolso</div>
+        </div>
+        <div class="pol-body">
+          <p>TuCosto emitirá un reembolso íntegro al saldo de membresía en los siguientes casos:</p>
+          <ul>
+            <li><strong>Error en el despacho:</strong> el producto entregado no corresponde al medicamento, presentación o dosis indicados en el pedido.</li>
+            <li><strong>Medicamento vencido:</strong> si la fecha de vencimiento del producto era anterior a la fecha de entrega.</li>
+            <li><strong>Desabastecimiento:</strong> si el medicamento no puede ser provisto por causas de desabastecimiento del mercado y el pedido ya fue cancelado.</li>
+            <li><strong>Cancelación antes del despacho:</strong> si el socio cancela el pedido antes de que TuCosto lo procese para envío.</li>
+          </ul>
+          <div class="alert-box alert-green"><strong>Garantía TuCosto:</strong> En los casos anteriores, el reembolso se aplica al saldo de su cuenta dentro de las <strong>72 horas hábiles</strong> siguientes a la verificación del caso.</div>
+        </div>
+      </div>
+
+      <div class="pol-block">
+        <div class="pol-header">
+          <div class="pol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+          <div class="pol-title">3. Proceso de reclamo por producto defectuoso</div>
+        </div>
+        <div class="pol-body">
+          <p>Si recibe un producto en mal estado o diferente al solicitado, siga estos pasos:</p>
+          <div class="timeline">
+            <div class="tl-step">
+              <div class="tl-dot">1</div>
+              <div class="tl-content"><div class="tl-label">Documentar el problema</div><div class="tl-desc">Tome fotografías del producto, etiqueta, empaque y del comprobante de entrega. Hágalo dentro de las 48 horas de recibido el pedido.</div></div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-dot">2</div>
+              <div class="tl-content"><div class="tl-label">Comunicarse con TuCosto</div><div class="tl-desc">Envíe las fotografías y su número de pedido a través de WhatsApp o el formulario de reclamos de nuestra página web.</div></div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-dot">3</div>
+              <div class="tl-content"><div class="tl-label">Evaluación por el QF Responsable</div><div class="tl-desc">Nuestro Químico Farmacéutico revisa el caso en un plazo máximo de 24 horas hábiles y determina si procede el reembolso o el reenvío del producto.</div></div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-dot">4</div>
+              <div class="tl-content"><div class="tl-label">Resolución</div><div class="tl-desc">Se le notifica la resolución y, en caso de proceder el reembolso, el crédito se aplica al saldo de su cuenta dentro de 72 horas hábiles.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pol-block">
+        <div class="pol-header">
+          <div class="pol-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+          <div class="pol-title">4. Política de reembolso de membresía</div>
+        </div>
+        <div class="pol-body">
+          <p>Las cuotas de membresía <strong>no son reembolsables bajo ninguna circunstancia</strong> una vez realizado el pago, salvo la siguiente excepción:</p>
+          <ul>
+            <li><strong>Error de cobro:</strong> si se realizó un cobro duplicado o por un monto incorrecto, se reembolsa el excedente en su totalidad.</li>
+          </ul>
+          <div class="alert-box alert-gold"><strong>Nota sobre membresías:</strong> El socio puede cancelar su membresía en cualquier momento para detener la renovación futura, pero esto no genera el reembolso de la cuota ya pagada del período vigente.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer style="background:#1A1A2E;padding:48px 0 28px">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div style="font-weight:700;font-size:1.1rem;color:#fff">TuCosto</div>
+        <p style="font-size:.85rem;color:#6B7280;margin-top:12px;max-width:240px;line-height:1.6">La membresía de salud para familias ecuatorianas. Ahorro a un clic.</p>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Producto</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="index.html#productos" style="font-size:.83rem;color:#6B7280;text-decoration:none">Productos</a></li>
+          <li><a href="index.html#calculadora" style="font-size:.83rem;color:#6B7280;text-decoration:none">Calculadora de ahorro</a></li>
+          <li><a href="index.html#membresia" style="font-size:.83rem;color:#6B7280;text-decoration:none">Planes y precios</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Empresa</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="quienes-somos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Quiénes Somos</a></li>
+          <li><a href="terminos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Términos y Condiciones</a></li>
+          <li><a href="privacidad.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Privacidad</a></li>
+          <li><a href="devoluciones.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Política de Devolución</a></li>
+          <li><a href="faq.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Preguntas Frecuentes</a></li>
+          <li><a href="reclamos.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Reclamos y Sugerencias</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:.85rem;font-weight:600;color:#fff;margin-bottom:14px">Regulatorio</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li><a href="uso-racional.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Uso Racional de Medicamentos</a></li>
+          <li><a href="desabastecimiento.html" style="font-size:.83rem;color:#6B7280;text-decoration:none">Cartas de Desabastecimiento</a></li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <p style="font-size:.78rem;color:#6B7280">&#169; 2025 TuCosto Ecuador. Operamos bajo normativa ARCSA.</p>
+      <p style="font-size:.78rem;color:#6B7280">Santo Domingo de los Ts&#225;chilas &#183; Ecuador</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

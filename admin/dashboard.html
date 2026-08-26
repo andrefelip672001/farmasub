@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard Admin — TuCosto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --morado:#7C3AED;--morado-light:#F5F3FF;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+/* NAV */
+.top-nav{
+  height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;flex-shrink:0;
+  box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;
+}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{
+  font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;
+}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{
+  width:34px;height:34px;background:var(--naranja);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-weight:700;font-size:.85rem;flex-shrink:0;
+}
+.btn-logout{
+  background:transparent;border:1.5px solid var(--naranja);border-radius:8px;
+  padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-logout:hover{background:var(--naranja-light);}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;background:var(--white);border-right:1px solid #F3F4F6;
+  flex-shrink:0;overflow-y:auto;padding:20px 12px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;
+  color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;
+}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-title{font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.page-sub{font-size:.875rem;color:var(--ink-60);margin-bottom:24px;}
+
+/* METRIC CARDS */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.metric-card{
+  background:var(--white);border:1px solid #F3F4F6;border-radius:16px;
+  padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;
+}
+.metric-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.metric-icon svg{width:22px;height:22px;stroke-width:1.6;}
+.metric-lbl{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);margin-bottom:2px;}
+.metric-val{font-size:2.2rem;font-weight:700;line-height:1;}
+.metric-sub{font-size:.75rem;color:var(--ink-60);}
+
+.m-naranja .metric-icon{background:var(--naranja-light);color:var(--naranja);}
+.m-naranja .metric-val{color:var(--naranja);}
+.m-warn .metric-icon{background:var(--warning-light);color:var(--warning);}
+.m-warn .metric-val{color:var(--warning);}
+.m-blue .metric-icon{background:var(--azul-light);color:var(--azul);}
+.m-blue .metric-val{color:var(--azul);}
+.m-verde .metric-icon{background:var(--verde-light);color:var(--verde);}
+.m-verde .metric-val{color:var(--verde);}
+.m-danger .metric-icon{background:var(--danger-light);color:var(--danger);}
+.m-danger .metric-val{color:var(--danger);}
+.m-morado .metric-icon{background:var(--morado-light);color:var(--morado);}
+.m-morado .metric-val{color:var(--morado);}
+
+/* TABLES */
+.table-block{
+  background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;
+  overflow:hidden;margin-bottom:20px;box-shadow:var(--shadow);
+}
+.table-header{
+  padding:16px 20px;border-bottom:1px solid #F3F4F6;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.table-title{font-weight:700;font-size:.95rem;color:var(--ink);}
+.table-link{font-size:.78rem;color:var(--naranja);text-decoration:none;font-weight:600;}
+.table-link:hover{text-decoration:underline;}
+table{width:100%;border-collapse:collapse;}
+th{
+  padding:10px 20px;text-align:left;font-size:.7rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);
+  border-bottom:1px solid #F3F4F6;background:var(--bg);
+}
+td{
+  padding:12px 20px;font-size:.82rem;border-bottom:1px solid #FAFAFA;
+  vertical-align:middle;color:var(--ink);
+}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:var(--naranja-light);}
+.td-num{font-weight:600;color:var(--naranja);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:600;}
+.badge-pendiente{background:var(--warning-light);color:var(--warning);}
+.badge-entregado{background:var(--verde-light);color:var(--verde);}
+.badge-proceso{background:var(--azul-light);color:var(--azul);}
+.badge-cancelado{background:var(--danger-light);color:var(--danger);}
+
+/* ACTION BUTTONS */
+.btn-aprobar{
+  padding:6px 12px;background:var(--verde);border:none;border-radius:8px;
+  font-size:.75rem;font-weight:600;color:white;cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .2s;margin-right:6px;
+}
+.btn-aprobar:hover{background:#047857;}
+.btn-aprobar:disabled{opacity:.6;cursor:not-allowed;}
+.btn-rechazar{
+  padding:6px 12px;background:none;border:1.5px solid var(--danger);border-radius:8px;
+  font-size:.75rem;font-weight:600;color:var(--danger);cursor:pointer;
+  font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-rechazar:hover{background:var(--danger-light);}
+.btn-rechazar:disabled{opacity:.6;cursor:not-allowed;}
+
+.empty-row td{
+  text-align:center;padding:28px;
+  background:var(--naranja-light);color:var(--naranja);font-weight:600;
+}
+
+@media(max-width:1100px){.metrics-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:700px){.sidebar{display:none;}.main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .nav-tag{display:none;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="../admin/dashboard.html" class="nav-logo">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+      <div>
+        <div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div>
+        <div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div>
+      </div>
+    </a>
+    <span class="nav-tag">PANEL ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">A</div>
+      <span id="nav-nombre">Admin</span>
+    </div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesion</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR — Inicio activo -->
+  <aside class="sidebar">
+    <a href="../admin/dashboard.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Pedidos
+    </a>
+    <a href="../admin/productos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      Catalogo
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Pagos
+    </a>
+
+    <a href="../admin/finanzas.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Finanzas
+    </a>
+    <a href="../admin/seguridad.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Seguridad
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <h1 class="page-title">Panel de control</h1>
+    <p class="page-sub" id="page-date">Cargando...</p>
+
+    <!-- METRICS -->
+    <div class="metrics-grid">
+
+      <div class="metric-card m-naranja">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Suscriptores activos</p>
+          <p class="metric-val" id="m-activos">&#8212;</p>
+          <p class="metric-sub">membresias vigentes</p>
+        </div>
+      </div>
+
+      <a href="../admin/suscriptores.html" class="metric-card m-morado" style="text-decoration:none;display:flex">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Registrados sin plan</p>
+          <p class="metric-val" id="m-sinplan">&#8212;</p>
+          <p class="metric-sub" id="m-sinplan-sub">registro gratuito</p>
+        </div>
+      </a>
+
+      <div class="metric-card m-warn">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Pendientes verificacion</p>
+          <p class="metric-val" id="m-pendientes">&#8212;</p>
+          <p class="metric-sub">esperando confirmacion</p>
+        </div>
+      </div>
+
+      <div class="metric-card m-blue">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Pedidos del mes</p>
+          <p class="metric-val" id="m-pedidos">&#8212;</p>
+          <p class="metric-sub" id="m-pedidos-sub">este mes</p>
+        </div>
+      </div>
+
+      <div class="metric-card m-verde">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Ingresos del mes</p>
+          <p class="metric-val" id="m-ingresos">&#8212;</p>
+          <p class="metric-sub" id="m-utilidad"></p>
+        </div>
+      </div>
+
+      <a href="../admin/productos.html" class="metric-card m-danger" style="text-decoration:none;display:flex">
+        <div class="metric-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <p class="metric-lbl">Por caducar (6 meses)</p>
+          <p class="metric-val" id="m-caducar">&#8212;</p>
+          <p class="metric-sub" id="m-caducar-sub">revisar catalogo</p>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- PAGOS PENDIENTES -->
+    <div class="table-block">
+      <div class="table-header">
+        <span class="table-title">Pagos pendientes de verificar</span>
+        <a href="../admin/pagos.html" class="table-link">Ver todos &#8594;</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Suscriptor</th><th>Cedula</th><th>Monto</th><th>Fecha</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="pagos-tbody">
+          <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ULTIMOS PEDIDOS -->
+    <div class="table-block">
+      <div class="table-header">
+        <span class="table-title">Ultimos pedidos</span>
+        <a href="../admin/pedidos.html" class="table-link">Ver todos &#8594;</a>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Numero</th><th>Suscriptor</th><th>Fecha</th><th>Total</th><th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="pedidos-tbody">
+          <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+async function _signedComprobante(storedUrl) {
+  if (!storedUrl) return null;
+  var parts = storedUrl.split('/comprobantes/');
+  var path = parts.length > 1 ? parts[1] : storedUrl;
+  var res = await _db.storage.from('comprobantes').createSignedUrl(path, 300);
+  return (res.data && res.data.signedUrl) ? res.data.signedUrl : null;
+}
+
+async function verComprobanteAdmin(event, storedUrl) {
+  event.preventDefault();
+  var signedUrl = await _signedComprobante(storedUrl);
+  if (signedUrl) {
+    window.open(signedUrl, '_blank');
+  } else {
+    alert('No se pudo abrir el comprobante.');
+  }
+}
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+
+  var rol = null;
+  if (user.user_metadata && user.user_metadata.rol) rol = user.user_metadata.rol;
+  else if (user.app_metadata && user.app_metadata.rol) rol = user.app_metadata.rol;
+  if (!rol) {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  var aalRes = await _db.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalRes.data && aalRes.data.nextLevel === 'aal2' && aalRes.data.currentLevel !== aalRes.data.nextLevel) { window.location.href = '../portal/login.html?mfa=1'; return; }
+
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+
+  var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var now = new Date();
+  document.getElementById('page-date').textContent = months[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+
+  await loadMetrics();
+  await loadPagosPendientes();
+  await loadUltimosPedidos();
+  await loadCaducidad();
+})();
+
+var PLANS = { ahorro: { precio: 8.99 }, familiar: { precio: 12.99 } };
+
+async function loadMetrics() {
+  var firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+  var results = await Promise.all([
+    _db.from('suscripciones').select('plan', {count: 'exact'}).eq('estado', 'activa'),
+    _db.from('pagos').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
+    _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha_pedido', firstOfMonth),
+    _db.from('suscripciones').select('*', {count: 'exact', head: true}).eq('estado', 'sin_plan'),
+    _db.from('usuarios').select('id, suscripciones(estado)').eq('rol', 'suscriptor').gte('created_at', firstOfMonth)
+  ]);
+  var activasRows = results[0].data || [];
+  var activos = results[0].count || 0;
+  var pendientes = results[1].count || 0;
+  var pedidosMes = results[2].count || 0;
+  var sinPlan = results[3].count || 0;
+  var registradosMes = results[4].data || [];
+  var ingresos = 0;
+  for (var i = 0; i < activasRows.length; i++) {
+    var planKey = (activasRows[i].plan && PLANS[activasRows[i].plan]) ? activasRows[i].plan : 'familiar';
+    ingresos += PLANS[planKey].precio;
+  }
+  document.getElementById('m-activos').textContent = activos;
+  document.getElementById('m-pendientes').textContent = pendientes;
+  document.getElementById('m-pedidos').textContent = pedidosMes;
+  document.getElementById('m-ingresos').textContent = '$' + ingresos.toFixed(2);
+  document.getElementById('m-utilidad').textContent = 'Utilidad: $' + ingresos.toFixed(2) + ' (100% membresia, medicamentos al costo)';
+  document.getElementById('m-sinplan').textContent = sinPlan;
+
+  var totalMes = registradosMes.length;
+  if (totalMes > 0) {
+    var convertidosMes = 0;
+    for (var j = 0; j < registradosMes.length; j++) {
+      var u = registradosMes[j];
+      if (u.suscripciones && u.suscripciones[0] && u.suscripciones[0].estado === 'activa') { convertidosMes++; }
+    }
+    var pct = Math.round((convertidosMes / totalMes) * 100);
+    document.getElementById('m-sinplan-sub').textContent = pct + '% activo este mes (' + convertidosMes + ' de ' + totalMes + ' registrados)';
+  } else {
+    document.getElementById('m-sinplan-sub').textContent = 'registro gratuito';
+  }
+}
+
+async function loadCaducidad() {
+  var seisMeses = new Date();
+  seisMeses.setMonth(seisMeses.getMonth() + 6);
+  var res = await _db.from('productos').select('id', {count: 'exact', head: true}).eq('activo', true).not('fecha_caducidad', 'is', null).lte('fecha_caducidad', seisMeses.toISOString().slice(0,10));
+  var count = res.count || 0;
+  document.getElementById('m-caducar').textContent = count;
+  document.getElementById('m-caducar-sub').textContent = count === 1 ? '1 producto necesita revision' : count + ' productos necesitan revision';
+}
+
+async function loadPagosPendientes() {
+  var res = await _db.from('pagos').select('id,suscripcion_id,tipo,monto,comprobante_url,fecha_pago,usuarios(nombre,cedula)').eq('estado', 'pendiente').order('fecha_pago', {ascending: false}).limit(5);
+  var data = res.data;
+  var tbody = document.getElementById('pagos-tbody');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin pagos pendientes</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var p = data[i];
+    var sNom = (p.usuarios && p.usuarios.nombre) ? esc(p.usuarios.nombre) : '-';
+    var sCed = (p.usuarios && p.usuarios.cedula) ? esc(String(p.usuarios.cedula)) : '';
+    var tipoTxt = p.tipo === 'renovacion' ? ' (renovacion)' : ' (registro)';
+    var comprobanteLink = p.comprobante_url ? '<a href="#" onclick="verComprobanteAdmin(event, \'' + p.comprobante_url.replace(/'/g, '') + '\')" style="color:var(--naranja);font-size:.78rem;display:block;margin-top:2px">Ver comprobante</a>' : '';
+    html += '<tr>'
+      + '<td style="font-weight:500">' + sNom + tipoTxt + comprobanteLink + '</td>'
+      + '<td style="color:var(--ink-60)">' + (sCed || '-') + '</td>'
+      + '<td style="font-weight:600">$' + (p.monto || 0).toFixed(2) + '</td>'
+      + '<td style="color:var(--ink-60)">' + new Date(p.fecha_pago).toLocaleDateString('es-EC') + '</td>'
+      + '<td>'
+      + '<button class="btn-aprobar" onclick="aprobarPago(\'' + p.id + '\',\'' + (p.suscripcion_id || '') + '\',this)">Aprobar</button>'
+      + '<button class="btn-rechazar" onclick="rechazarPago(\'' + p.id + '\',this)">Rechazar</button>'
+      + '</td>'
+      + '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+async function loadUltimosPedidos() {
+  var res = await _db.from('pedidos').select('id,fecha_pedido,total_costo,estado,usuarios(nombre)').order('fecha_pedido', {ascending: false}).limit(5);
+  var data = res.data;
+  var tbody = document.getElementById('pedidos-tbody');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--ink-60)">Sin pedidos aun</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < data.length; i++) {
+    var p = data[i];
+    var cls;
+    if (p.estado === 'pendiente') cls = 'badge-pendiente';
+    else if (p.estado === 'entregado') cls = 'badge-entregado';
+    else if (p.estado === 'despachado' || p.estado === 'en-proceso') cls = 'badge-proceso';
+    else if (p.estado === 'cancelado') cls = 'badge-cancelado';
+    else cls = 'badge-pendiente';
+    var sNom = (p.usuarios && p.usuarios.nombre) ? esc(p.usuarios.nombre) : '-';
+    html += '<tr>'
+      + '<td class="td-num">#' + String(p.id).slice(0,8) + '</td>'
+      + '<td>' + sNom + '</td>'
+      + '<td style="color:var(--ink-60)">' + new Date(p.fecha_pedido).toLocaleDateString('es-EC') + '</td>'
+      + '<td style="font-weight:600">$' + (p.total_costo || 0).toFixed(2) + '</td>'
+      + '<td><span class="badge ' + cls + '">' + (p.estado || '') + '</span></td>'
+      + '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+async function aprobarPago(pagoId, suscripcionId, btn) {
+  btn.disabled = true;
+  btn.textContent = '...';
+  var ahora = new Date().toISOString();
+  await _db.from('pagos').update({estado: 'aprobado', fecha_revision: ahora}).eq('id', pagoId);
+  if (suscripcionId) {
+    var fechaInicio = new Date().toISOString().slice(0,10);
+    var venc = new Date();
+    venc.setMonth(venc.getMonth() + 1);
+    await _db.from('suscripciones').update({estado: 'activa', kyc_estado: 'verificado', kyc_fecha: ahora, fecha_inicio: fechaInicio, fecha_vencimiento: venc.toISOString().slice(0,10)}).eq('id', suscripcionId);
+  }
+  btn.closest('tr').remove();
+  var m = parseInt(document.getElementById('m-pendientes').textContent) - 1;
+  document.getElementById('m-pendientes').textContent = Math.max(0, m);
+  loadMetrics();
+}
+
+async function rechazarPago(pagoId, btn) {
+  if (!confirm('Rechazar este pago?')) return;
+  btn.disabled = true;
+  await _db.from('pagos').update({estado: 'rechazado', fecha_revision: new Date().toISOString()}).eq('id', pagoId);
+  btn.closest('tr').remove();
+  var m = parseInt(document.getElementById('m-pendientes').textContent) - 1;
+  document.getElementById('m-pendientes').textContent = Math.max(0, m);
+}
+
+function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
+</script>
+</body>
+</html>

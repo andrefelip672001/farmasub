@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mi cuenta — TuCosto Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+/* NAV */
+.top-nav{
+  height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;flex-shrink:0;
+  box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{
+  width:34px;height:34px;background:var(--naranja);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0;
+}
+.btn-logout{
+  background:transparent;border:1.5px solid var(--naranja);border-radius:8px;
+  padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-logout:hover{background:var(--naranja-light);}
+
+/* LAYOUT */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;background:var(--white);border-right:1px solid #F3F4F6;
+  flex-shrink:0;overflow-y:auto;padding:20px 12px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.sb-link{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;
+  color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;
+}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-badge{
+  margin-left:auto;background:var(--naranja);color:white;
+  font-size:.68rem;font-weight:700;border-radius:99px;
+  min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 5px;
+}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+
+/* PROFILE HERO */
+.profile-hero{
+  display:flex;align-items:center;gap:22px;
+  background:var(--white);border-radius:var(--r);
+  padding:24px 28px;margin-bottom:20px;
+  box-shadow:var(--shadow);border:1px solid #F3F4F6;
+}
+.hero-avatar{
+  width:72px;height:72px;background:var(--naranja);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:white;font-size:1.9rem;font-weight:700;flex-shrink:0;
+  box-shadow:0 4px 16px rgba(232,82,26,.25);
+}
+.hero-info{flex:1;min-width:0;}
+.hero-name{font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.hero-email{font-size:.875rem;color:var(--ink-60);margin-bottom:8px;}
+.badge-estado{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:600;
+}
+.badge-estado::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;}
+.badge-activa{background:var(--verde-light);color:var(--verde);}
+.badge-pend{background:var(--warning-light);color:var(--warning);}
+.badge-venc{background:var(--danger-light);color:var(--danger);}
+
+/* SECTION CARD */
+.section-block{
+  background:var(--white);border-radius:var(--r);padding:24px;
+  box-shadow:var(--shadow);border:1px solid #F3F4F6;margin-bottom:20px;
+}
+.section-header{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;
+}
+.section-title{font-size:1rem;font-weight:700;color:var(--naranja);}
+.section-actions{display:flex;gap:8px;align-items:center;}
+
+/* BUTTONS */
+.btn-edit{
+  background:none;border:1.5px solid var(--naranja);border-radius:8px;
+  padding:6px 14px;font-size:.8rem;font-weight:600;color:var(--naranja);
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-edit:hover{background:var(--naranja-light);}
+.btn-save{
+  background:var(--naranja);border:none;border-radius:8px;
+  padding:6px 14px;font-size:.8rem;font-weight:600;color:white;
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-save:hover{background:var(--naranja-d);}
+.btn-cancel{
+  background:none;border:1.5px solid var(--ink-30);border-radius:8px;
+  padding:6px 14px;font-size:.8rem;font-weight:600;color:var(--ink-60);
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-cancel:hover{background:var(--bg);}
+
+/* FIELDS GRID */
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.field-group{display:flex;flex-direction:column;gap:5px;}
+.field-label{font-size:.72rem;font-weight:700;color:var(--ink-60);text-transform:uppercase;letter-spacing:.06em;}
+.field-value{font-size:.9rem;color:var(--ink);padding:9px 12px;background:var(--bg);border-radius:8px;min-height:38px;display:flex;align-items:center;}
+.field-input{
+  font-size:.9rem;color:var(--ink);padding:9px 12px;
+  background:var(--white);border:1.5px solid var(--ink-30);
+  border-radius:8px;font-family:'Inter',sans-serif;
+  outline:none;transition:border .2s;display:none;width:100%;
+}
+.field-input:focus{border-color:var(--naranja);}
+
+/* MEMBERS */
+.member-card{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:13px 16px;background:var(--bg);border-radius:10px;
+  margin-bottom:8px;border:1.5px solid transparent;transition:border-color .15s;
+}
+.member-card:last-child{margin-bottom:0;}
+.member-card:hover{border-color:rgba(232,82,26,.12);}
+.member-info{display:flex;align-items:center;gap:12px;}
+.member-avatar{
+  width:38px;height:38px;background:var(--naranja-light);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--naranja);font-weight:700;font-size:.875rem;flex-shrink:0;
+}
+.member-nombre{font-weight:600;font-size:.875rem;color:var(--ink);}
+.member-rel{font-size:.8rem;color:var(--ink-60);margin-top:2px;}
+.btn-salud{
+  padding:6px 12px;background:none;border:1.5px solid var(--naranja);
+  border-radius:8px;font-size:.75rem;font-weight:600;color:var(--naranja);
+  cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap;
+}
+.btn-salud:hover{background:var(--naranja-light);}
+
+/* PAYMENTS */
+.pay-header{
+  display:grid;grid-template-columns:1fr auto auto auto;
+  gap:16px;padding:8px 0;
+  font-size:.7rem;font-weight:700;color:var(--ink-60);
+  text-transform:uppercase;letter-spacing:.06em;
+  border-bottom:2px solid #F3F4F6;margin-bottom:4px;
+}
+.pay-row{
+  display:grid;grid-template-columns:1fr auto auto auto;
+  gap:16px;padding:11px 0;
+  border-bottom:1px solid #F9FAFB;align-items:center;
+}
+.pay-row:last-child{border:none;padding-bottom:0;}
+.pay-mes{font-size:.875rem;font-weight:500;color:var(--ink);}
+.pay-monto{font-size:.875rem;font-weight:600;color:var(--ink);min-width:60px;text-align:right;}
+.pay-fecha{font-size:.8rem;color:var(--ink-60);min-width:90px;text-align:right;}
+.badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:600;}
+.badge-pagado{background:var(--verde-light);color:var(--verde);}
+.badge-pendiente{background:var(--warning-light);color:var(--warning);}
+.badge-vencido{background:var(--danger-light);color:var(--danger);}
+
+/* SECURITY */
+.btn-pass-toggle{
+  padding:10px 20px;background:none;border:1.5px solid var(--naranja);
+  border-radius:8px;font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;
+  color:var(--naranja);cursor:pointer;transition:all .2s;
+}
+.btn-pass-toggle:hover{background:var(--naranja-light);}
+.pass-form{
+  margin-top:18px;display:flex;flex-direction:column;gap:14px;max-width:380px;
+}
+.pass-field{display:flex;flex-direction:column;gap:5px;}
+.pass-label{font-size:.8rem;font-weight:600;color:var(--ink-60);}
+.pass-input{
+  padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:8px;
+  font-family:'Inter',sans-serif;font-size:.875rem;color:var(--ink);
+  outline:none;transition:border .2s;
+}
+.pass-input:focus{border-color:var(--naranja);}
+.btn-cambiar{
+  padding:10px 20px;background:var(--naranja);border:none;border-radius:8px;
+  font-family:'Inter',sans-serif;font-size:.875rem;font-weight:600;
+  color:white;cursor:pointer;transition:all .2s;align-self:flex-start;
+}
+.btn-cambiar:hover{background:var(--naranja-d);}
+.pass-msg{font-size:.82rem;padding:8px 12px;border-radius:8px;display:none;}
+.pass-ok{background:var(--verde-light);color:var(--verde);}
+.pass-err{background:var(--danger-light);color:var(--danger);}
+
+/* EMPTY / LOADING */
+.list-empty{color:var(--ink-60);font-size:.875rem;padding:8px 0;}
+
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  .fields-grid{grid-template-columns:1fr;}
+  .profile-hero{flex-direction:column;text-align:center;}
+  .pay-header,.pay-row{grid-template-columns:1fr auto auto;}
+  .pay-fecha{display:none;}
+  #nav-nombre{max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+}
+/* MOBILE BOTTOM NAV */
+.mobile-nav{display:none;}
+@media(max-width:700px){
+  .mobile-nav{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:100;
+    background:var(--white);border-top:1px solid #F3F4F6;
+    box-shadow:0 -2px 12px rgba(0,0,0,.06);height:60px;
+  }
+  .mn-link{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;text-decoration:none;color:var(--ink-60);font-size:.62rem;font-weight:600;
+    position:relative;
+  }
+  .mn-link.active{color:var(--naranja);}
+  .mn-link svg{width:20px;height:20px;stroke-width:1.8;}
+  .mn-badge{
+    position:absolute;top:2px;right:24%;background:var(--naranja);color:#fff;
+    font-size:.6rem;font-weight:700;border-radius:99px;min-width:16px;height:16px;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;
+  }
+  .main{padding-bottom:82px!important;}
+}
+</style>
+
+</head>
+<body>
+<div class="app">
+
+<!-- NAV -->
+<nav class="top-nav">
+  <a href="../portal/dashboard.html" class="nav-logo">
+    <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+    <div>
+      <div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div>
+      <div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div>
+    </div>
+  </a>
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span id="nav-nombre">Cargando...</span>
+    </div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesion</button>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR — Mi cuenta activo -->
+  <aside class="sidebar">
+    <a href="../portal/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>
+      Inicio
+    </a>
+    <a href="../portal/catalogo.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      Catalogo
+    </a>
+    <a href="../portal/pedido.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Mi pedido
+      <span class="sb-badge" id="cart-badge" style="display:none">0</span>
+    </a>
+    <a href="../portal/mis-pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Mis pedidos
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../portal/cuenta.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Mi cuenta
+    </a>
+    <a href="../portal/renovar.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Renovar membresia
+    </a>
+    <a href="../portal/activar-membresia.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Activar membresia
+    </a>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PROFILE HERO -->
+    <div class="profile-hero">
+      <div class="hero-avatar" id="hero-avatar">?</div>
+      <div class="hero-info">
+        <h2 class="hero-name" id="hero-name">Cargando...</h2>
+        <p class="hero-email" id="hero-email"></p>
+        <span class="badge-estado badge-pend" id="badge-estado">Pendiente</span>
+      </div>
+    </div>
+
+    <!-- DATOS PERSONALES -->
+    <div class="section-block">
+      <div class="section-header">
+        <h2 class="section-title">Datos personales</h2>
+        <div class="section-actions" id="section-actions-edit">
+          <button class="btn-edit" onclick="startEdit()">Editar</button>
+        </div>
+        <div class="section-actions" id="section-actions-save" style="display:none">
+          <button class="btn-save" onclick="saveProfile()">Guardar cambios</button>
+          <button class="btn-cancel" onclick="cancelEdit()">Cancelar</button>
+        </div>
+      </div>
+      <div class="fields-grid" id="fields-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--ink-60)">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- GRUPO FAMILIAR -->
+    <div class="section-block">
+      <div class="section-header">
+        <h2 class="section-title">Grupo familiar</h2>
+        <button class="btn-edit" id="btn-add-member" onclick="openAddMemberModal()">+ Agregar miembro</button>
+      </div>
+      <div id="members-list"><p class="list-empty">Cargando...</p></div>
+    </div>
+
+    <!-- MODAL AGREGAR MIEMBRO -->
+    <div class="modal-overlay" id="add-member-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px" onclick="closeAddMemberOnBg(event)">
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto">
+        <h3 style="font-size:1.1rem;font-weight:700;margin-bottom:4px">Agregar miembro</h3>
+        <p id="add-member-cupo-txt" style="font-size:.82rem;color:var(--ink-60);margin-bottom:18px">Cargando cupo...</p>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Nombre completo</label>
+            <input type="text" id="am-nombre" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem"/>
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Cedula</label>
+            <input type="text" id="am-cedula" maxlength="10" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem"/>
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Fecha de nacimiento</label>
+            <input type="date" id="am-fecha" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem"/>
+          </div>
+          <div>
+            <label style="font-size:.78rem;font-weight:600;color:var(--ink-60);display:block;margin-bottom:4px">Relacion</label>
+            <select id="am-relacion" style="width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.9rem">
+              <option value="Conyuge">Conyuge</option>
+              <option value="Hijo/a">Hijo/a</option>
+              <option value="Padre/Madre">Padre/Madre</option>
+              <option value="Hermano/a">Hermano/a</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+        </div>
+        <p id="am-error" style="color:var(--danger);font-size:.82rem;margin-top:10px;display:none"></p>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button onclick="closeAddMemberModal()" style="flex:1;padding:11px;border-radius:10px;border:1.5px solid var(--ink-30);background:#fff;color:var(--ink-60);font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit">Cancelar</button>
+          <button onclick="submitAddMember()" id="am-submit-btn" style="flex:1;padding:11px;border-radius:10px;border:none;background:var(--naranja);color:#fff;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORIAL DE PAGOS -->
+    <div class="section-block">
+      <div class="section-header">
+        <h2 class="section-title">Historial de pagos</h2>
+      </div>
+      <div id="pagos-list"><p class="list-empty">Cargando...</p></div>
+    </div>
+
+    <!-- SEGURIDAD -->
+    <div class="section-block">
+      <div class="section-header">
+        <h2 class="section-title">Seguridad</h2>
+      </div>
+      <button class="btn-pass-toggle" id="btn-pass-toggle" onclick="togglePassForm()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Cambiar contrasena
+      </button>
+      <div class="pass-form" id="pass-form" style="display:none">
+        <div class="pass-field">
+          <label class="pass-label" for="new-pass">Nueva contrasena</label>
+          <input class="pass-input" type="password" id="new-pass" placeholder="Minimo 6 caracteres"/>
+        </div>
+        <div class="pass-field">
+          <label class="pass-label" for="confirm-pass">Confirmar contrasena</label>
+          <input class="pass-input" type="password" id="confirm-pass" placeholder="Repite la contrasena"/>
+        </div>
+        <p class="pass-msg" id="pass-msg"></p>
+        <button class="btn-cambiar" onclick="changePass()">Actualizar contrasena</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+<nav class="mobile-nav">
+  <a href="../portal/dashboard.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h5v-5h4v5h5V10"/></svg>
+    <span>Inicio</span>
+  </a>
+  <a href="../portal/catalogo.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+    <span>Catalogo</span>
+  </a>
+  <a href="../portal/pedido.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    <span>Pedido</span><span class="mn-badge" id="cart-badge-mobile" style="display:none">0</span>
+  </a>
+  <a href="../portal/mis-pedidos.html" class="mn-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span>Historial</span>
+  </a>
+  <a href="../portal/cuenta.html" class="mn-link active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Cuenta</span>
+  </a>
+</nav>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+var _user, _susc, _editMode = false;
+var PLANS = { ahorro: { nombre: 'Plan Ahorro', cupo: 2 }, familiar: { nombre: 'Plan Familiar', cupo: 4 } };
+var _planKey = 'familiar';
+
+var FIELDS = [
+  {k: 'nombre',    l: 'Nombre completo'},
+  {k: 'cedula',    l: 'Cedula'},
+  {k: 'email',     l: 'Correo electronico'},
+  {k: 'telefono',  l: 'Telefono'},
+  {k: 'direccion', l: 'Direccion'},
+  {k: 'barrio',    l: 'Barrio/Sector'}
+];
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  _user = session.user;
+
+  var sRes = await _db.from('usuarios').select('id, nombre, cedula, email, telefono, direccion, barrio, suscripciones(estado, plan, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
+  var s = sRes.data;
+  _susc = s;
+  var _suscRow = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
+  _planKey = (_suscRow && _suscRow.plan && PLANS[_suscRow.plan]) ? _suscRow.plan : 'familiar';
+
+  var nombre = (s && s.nombre) ? s.nombre : _user.email;
+  var initial = nombre.charAt(0).toUpperCase();
+
+  document.getElementById('nav-nombre').textContent = nombre;
+  document.getElementById('nav-avatar').textContent = initial;
+  document.getElementById('hero-avatar').textContent = initial;
+  document.getElementById('hero-name').textContent = nombre;
+  document.getElementById('hero-email').textContent = _user.email;
+
+  var estadoBadge = document.getElementById('badge-estado');
+  var estado = (_suscRow && _suscRow.estado) ? _suscRow.estado : 'pendiente';
+  var estadoCls = {activa: 'badge-activa', pendiente: 'badge-pend', vencida: 'badge-venc'};
+  var estadoLbl = {activa: 'Activa', pendiente: 'Pendiente', vencida: 'Vencida'};
+  estadoBadge.className = 'badge-estado ' + (estadoCls[estado] || 'badge-pend');
+  estadoBadge.textContent = estadoLbl[estado] || 'Pendiente';
+
+  renderFields();
+  await loadMembers();
+  await loadPagos();
+  updateCartBadge();
+})();
+
+function renderFields() {
+  var html = '';
+  for (var fi = 0; fi < FIELDS.length; fi++) {
+    var f = FIELDS[fi];
+    var val = (_susc && _susc[f.k]) ? String(_susc[f.k]) : '';
+    html += '<div class="field-group">'
+      + '<span class="field-label">' + f.l + '</span>'
+      + '<div class="field-value" id="fv-' + f.k + '">' + (val ? esc(val) : '&#8212;') + '</div>'
+      + '<input class="field-input" id="fi-' + f.k + '" type="text" value="' + val.replace(/"/g, '&quot;') + '"/>'
+      + '</div>';
+  }
+  document.getElementById('fields-grid').innerHTML = html;
+}
+
+function startEdit() {
+  _editMode = true;
+  for (var fi = 0; fi < FIELDS.length; fi++) {
+    var f = FIELDS[fi];
+    document.getElementById('fv-' + f.k).style.display = 'none';
+    document.getElementById('fi-' + f.k).style.display = 'block';
+  }
+  document.getElementById('section-actions-edit').style.display = 'none';
+  document.getElementById('section-actions-save').style.display = 'flex';
+}
+
+function cancelEdit() {
+  _editMode = false;
+  for (var fi = 0; fi < FIELDS.length; fi++) {
+    var f = FIELDS[fi];
+    var val = (_susc && _susc[f.k]) ? String(_susc[f.k]) : '';
+    document.getElementById('fv-' + f.k).style.display = '';
+    document.getElementById('fi-' + f.k).style.display = 'none';
+    document.getElementById('fi-' + f.k).value = val;
+  }
+  document.getElementById('section-actions-edit').style.display = 'flex';
+  document.getElementById('section-actions-save').style.display = 'none';
+}
+
+async function saveProfile() {
+  var updates = {};
+  for (var fi = 0; fi < FIELDS.length; fi++) {
+    var f = FIELDS[fi];
+    updates[f.k] = document.getElementById('fi-' + f.k).value.trim();
+  }
+  var saveRes = await _db.from('usuarios').update(updates).eq('id', _susc.id);
+  if (!saveRes.error) {
+    for (var k in updates) {
+      if (Object.prototype.hasOwnProperty.call(updates, k)) { _susc[k] = updates[k]; }
+    }
+    renderFields();
+    cancelEdit();
+    document.getElementById('hero-name').textContent = (_susc && _susc.nombre) ? _susc.nombre : _user.email;
+  } else {
+    alert('Error al guardar. Intenta nuevamente.');
+  }
+}
+
+var _miembrosActuales = [];
+
+async function loadMembers() {
+  var titularId = (_susc && _susc.id) ? _susc.id : null;
+  var mRes = await _db.from('miembros').select('id, nombre, relacion, cedula').eq('titular_id', titularId);
+  var m = mRes.data || [];
+  _miembrosActuales = m;
+  var list = document.getElementById('members-list');
+  if (!m || !m.length) {
+    list.innerHTML = '<p class="list-empty">No tienes miembros adicionales registrados.</p>';
+    return;
+  }
+  var html = '';
+  for (var mi = 0; mi < m.length; mi++) {
+    var mb = m[mi];
+    var ini = mb.nombre ? mb.nombre.charAt(0).toUpperCase() : '?';
+    var cedSafe = String(mb.cedula || '').replace(/'/g, '').replace(/"/g, '');
+    var nomSafe = String(mb.nombre || '').replace(/'/g, '').replace(/"/g, '');
+    html += '<div class="member-card">'
+      + '<div class="member-info">'
+      + '<div class="member-avatar">' + esc(ini) + '</div>'
+      + '<div>'
+      + '<p class="member-nombre">' + esc(mb.nombre || '') + '</p>'
+      + '<p class="member-rel">' + esc(mb.relacion || 'Familiar') + ' - C.I. ' + esc(mb.cedula || '') + '</p>'
+      + '</div>'
+      + '</div>'
+      + '<button class="btn-salud" onclick="verSalud(\'' + mb.id + '\',\'' + nomSafe + '\')">Ver cuestionario de salud</button>'
+      + '</div>';
+  }
+  list.innerHTML = html;
+}
+
+function openAddMemberModal() {
+  var maxExtra = PLANS[_planKey].cupo - 1;
+  var cupoTxt = document.getElementById('add-member-cupo-txt');
+  if (_miembrosActuales.length >= maxExtra) {
+    cupoTxt.innerHTML = '<span style="color:var(--danger)">Ya alcanzaste el maximo de ' + PLANS[_planKey].cupo + ' personas de tu ' + PLANS[_planKey].nombre + '.</span>';
+    document.getElementById('am-submit-btn').disabled = true;
+  } else {
+    var restantes = maxExtra - _miembrosActuales.length;
+    cupoTxt.textContent = 'Puedes agregar ' + restantes + ' persona' + (restantes === 1 ? '' : 's') + ' mas en tu ' + PLANS[_planKey].nombre + '.';
+    document.getElementById('am-submit-btn').disabled = false;
+  }
+  document.getElementById('am-nombre').value = '';
+  document.getElementById('am-cedula').value = '';
+  document.getElementById('am-fecha').value = '';
+  document.getElementById('am-relacion').value = 'Conyuge';
+  document.getElementById('am-error').style.display = 'none';
+  document.getElementById('add-member-overlay').style.display = 'flex';
+}
+
+function closeAddMemberModal() {
+  document.getElementById('add-member-overlay').style.display = 'none';
+}
+
+function closeAddMemberOnBg(e) {
+  if (e.target === document.getElementById('add-member-overlay')) closeAddMemberModal();
+}
+
+async function submitAddMember() {
+  var errEl = document.getElementById('am-error');
+  errEl.style.display = 'none';
+
+  var maxExtra = PLANS[_planKey].cupo - 1;
+  if (_miembrosActuales.length >= maxExtra) {
+    errEl.textContent = 'Ya alcanzaste el cupo de personas de tu plan.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var nombre = document.getElementById('am-nombre').value.trim();
+  var cedula = document.getElementById('am-cedula').value.trim();
+  var fecha = document.getElementById('am-fecha').value;
+  var relacion = document.getElementById('am-relacion').value;
+
+  if (!nombre) { errEl.textContent = 'Ingresa el nombre completo.'; errEl.style.display = 'block'; return; }
+  if (!cedula || cedula.length !== 10 || !/^[0-9]+$/.test(cedula)) { errEl.textContent = 'Ingresa una cedula valida de 10 digitos.'; errEl.style.display = 'block'; return; }
+  if (cedula === (_susc && _susc.cedula ? _susc.cedula : '')) { errEl.textContent = 'Esa cedula ya es la del titular.'; errEl.style.display = 'block'; return; }
+  for (var ci = 0; ci < _miembrosActuales.length; ci++) {
+    if (_miembrosActuales[ci].cedula === cedula) { errEl.textContent = 'Ese miembro ya esta registrado.'; errEl.style.display = 'block'; return; }
+  }
+
+  var btn = document.getElementById('am-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  var insRes = await _db.from('miembros').insert({
+    titular_id: _susc.id,
+    nombre: nombre,
+    cedula: cedula,
+    fecha_nacimiento: fecha || null,
+    relacion: relacion
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Guardar';
+
+  if (insRes.error) {
+    errEl.textContent = 'Error al guardar: ' + insRes.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  closeAddMemberModal();
+  await loadMembers();
+}
+
+async function loadPagos() {
+  var list = document.getElementById('pagos-list');
+  var pagosRes = await _db.from('pagos').select('estado, tipo, monto, fecha_pago').eq('titular_id', _susc.id).order('fecha_pago', {ascending: false});
+  var pagos = pagosRes.data;
+  if (!pagos || !pagos.length) {
+    list.innerHTML = '<p class="list-empty">Sin historial de pagos.</p>';
+    return;
+  }
+  var html = '<div class="pay-header"><span>Mes</span><span>Monto</span><span>Estado</span><span class="pay-fecha">Fecha</span></div>';
+  for (var pi = 0; pi < pagos.length; pi++) {
+    var p = pagos[pi];
+    var cls;
+    if (p.estado === 'aprobado') cls = 'badge-pagado';
+    else if (p.estado === 'rechazado') cls = 'badge-vencido';
+    else cls = 'badge-pendiente';
+    var lbl;
+    if (p.estado === 'aprobado') lbl = 'Aprobado';
+    else if (p.estado === 'rechazado') lbl = 'Rechazado';
+    else lbl = 'En revision';
+    var tipoTxt = p.tipo === 'renovacion' ? 'Renovacion' : 'Registro';
+    var mesTxt = tipoTxt + ' - ' + (p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC', {month: 'long', year: 'numeric'}) : '');
+    var fechaTxt = p.fecha_pago ? new Date(p.fecha_pago).toLocaleDateString('es-EC') : '-';
+    html += '<div class="pay-row">'
+      + '<span class="pay-mes">' + mesTxt + '</span>'
+      + '<span class="pay-monto">$' + (p.monto || 0).toFixed(2) + '</span>'
+      + '<span class="badge ' + cls + '">' + lbl + '</span>'
+      + '<span class="pay-fecha">' + fechaTxt + '</span>'
+      + '</div>';
+  }
+  list.innerHTML = html;
+}
+
+async function verSalud(miembroId, nombre) {
+  var sRes = await _db.from('cuestionarios').select('condiciones, medicamentos, medico_tratante, tiempo_tratamiento, recetas_vigentes, alergias, observaciones').eq('miembro_id', miembroId).single();
+  var s = sRes.data;
+  if (!s) { alert('No hay cuestionario de salud registrado para: ' + nombre); return; }
+  var conds = Array.isArray(s.condiciones) ? s.condiciones.join(', ') : (s.condiciones || '-');
+  var medsTxt = '-';
+  if (s.medicamentos) {
+    medsTxt = (typeof s.medicamentos === 'string') ? s.medicamentos : JSON.stringify(s.medicamentos);
+  }
+  alert('Cuestionario de salud - ' + nombre
+    + '\n\nCondiciones: ' + conds
+    + '\nMedicamentos: ' + medsTxt
+    + '\nMedico tratante: ' + (s.medico_tratante || '-')
+    + '\nTiempo de tratamiento: ' + (s.tiempo_tratamiento || '-')
+    + '\nRecetas vigentes: ' + (s.recetas_vigentes ? 'Si' : 'No')
+    + '\nAlergias: ' + (s.alergias || 'No reporta')
+    + '\nObservaciones: ' + (s.observaciones || '-'));
+}
+
+function togglePassForm() {
+  var form = document.getElementById('pass-form');
+  var btn = document.getElementById('btn-pass-toggle');
+  var isOpen = form.style.display !== 'none';
+  form.style.display = isOpen ? 'none' : 'flex';
+  btn.innerHTML = isOpen
+    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:6px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Cambiar contrasena'
+    : 'Cancelar';
+}
+
+async function changePass() {
+  var np = document.getElementById('new-pass').value;
+  var cp = document.getElementById('confirm-pass').value;
+  var msg = document.getElementById('pass-msg');
+  msg.style.display = 'block';
+  msg.className = 'pass-msg';
+  if (np.length < 6) {
+    msg.classList.add('pass-err');
+    msg.textContent = 'La contrasena debe tener al menos 6 caracteres.';
+    return;
+  }
+  if (np !== cp) {
+    msg.classList.add('pass-err');
+    msg.textContent = 'Las contrasenas no coinciden.';
+    return;
+  }
+  var passRes = await _db.auth.updateUser({password: np});
+  if (passRes.error) {
+    msg.classList.add('pass-err');
+    msg.textContent = 'Error al cambiar la contrasena. Intenta nuevamente.';
+  } else {
+    msg.classList.add('pass-ok');
+    msg.textContent = 'Contrasena actualizada correctamente.';
+    document.getElementById('new-pass').value = '';
+    document.getElementById('confirm-pass').value = '';
+  }
+}
+
+function updateCartBadge() {
+  var c = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var b = document.getElementById('cart-badge');
+  if (b) { if (c.length) { b.style.display = 'flex'; b.textContent = c.length; } else { b.style.display = 'none'; } }
+  var mb = document.getElementById('cart-badge-mobile');
+  if (mb) { if (c.length) { mb.style.display = 'flex'; mb.textContent = c.length; } else { mb.style.display = 'none'; } }
+}
+
+function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
+</script>
+</body>
+</html>
