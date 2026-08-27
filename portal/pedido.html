@@ -794,7 +794,8 @@ async function confirmarPedido() {
       fecha_pedido: new Date().toISOString(),
       titular_id: titularId,
       comprobante_url: comprobanteUrl,
-      metodo_pago: _metodo
+      metodo_pago: _metodo,
+      codigo_entrega: String(Math.floor(1000 + Math.random() * 9000))
     }).select().single();
     if (pedRes.error) throw pedRes.error;
     var pedido = pedRes.data;

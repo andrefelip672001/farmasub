@@ -242,7 +242,7 @@ var _adminUserId = null;
 })();
 
 async function loadData() {
-  var res = await _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,pago_estado,direccion_entrega,fecha_entrega_estimada,metodo_pago,comprobante_url,usuarios(nombre,cedula)').order('fecha_pedido', {ascending: false});
+  var res = await _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,pago_estado,direccion_entrega,fecha_entrega_estimada,metodo_pago,comprobante_url,codigo_entrega,usuarios(nombre,cedula)').order('fecha_pedido', {ascending: false});
   _todos = res.data || [];
   document.getElementById('total-badge').textContent = _todos.length;
   renderTable();
@@ -389,6 +389,22 @@ async function toggleDetail(rowIdx) {
 }
 
 async function cambiarEstado(id, estado) {
+  if (estado === 'entregado') {
+    var pedidoData = null;
+    for (var pi = 0; pi < _todos.length; pi++) {
+      if (String(_todos[pi].id) === String(id)) { pedidoData = _todos[pi]; break; }
+    }
+    var codigoReal = pedidoData ? pedidoData.codigo_entrega : null;
+    if (codigoReal) {
+      var codigoIngresado = prompt('Pidele el codigo de entrega a la persona y escribelo aqui para confirmar:');
+      if (codigoIngresado === null) { await loadData(); return; }
+      if (codigoIngresado.trim() !== String(codigoReal).trim()) {
+        alert('El codigo no coincide. No se marco el pedido como entregado.');
+        await loadData();
+        return;
+      }
+    }
+  }
   var res = await _db.from('pedidos').update({estado: estado}).eq('id', id).select();
   if (res.error) {
     alert('No se pudo actualizar el estado: ' + res.error.message);

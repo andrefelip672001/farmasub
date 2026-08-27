@@ -183,7 +183,7 @@ var _titularId;
 })();
 
 function loadPedidos(){
-  return _db.from('pedidos').select('id,estado,fecha_pedido,total_costo').eq('titular_id',_titularId).order('fecha_pedido',{ascending:false}).then(function(pedRes){
+  return _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,codigo_entrega').eq('titular_id',_titularId).order('fecha_pedido',{ascending:false}).then(function(pedRes){
     var pedidos=pedRes.data;
     var list=document.getElementById('pedidos-list');
     if(!pedidos||!pedidos.length){
@@ -195,6 +195,14 @@ function loadPedidos(){
       var p=pedidos[i];
       var cls=badgeCls(p.estado);
       var fecha=new Date(p.fecha_pedido).toLocaleDateString('es-EC',{day:'numeric',month:'long',year:'numeric'});
+      var codigoHtml='';
+      if(p.estado==='despachado'&&p.codigo_entrega){
+        codigoHtml='<div style="background:#FFF2EC;border:1.5px solid #FDCDB9;border-radius:10px;padding:10px 14px;margin-top:10px;text-align:center">'
+          +'<span style="font-size:.75rem;color:#EF6830;font-weight:700;display:block;margin-bottom:2px">CODIGO DE ENTREGA</span>'
+          +'<span style="font-size:1.4rem;font-weight:700;color:#1A1A2E;letter-spacing:.1em">'+esc(p.codigo_entrega)+'</span>'
+          +'<div style="font-size:.75rem;color:#6B7280;margin-top:4px">Dile este numero al repartidor cuando te entregue tu pedido</div>'
+          +'</div>';
+      }
       html+='<div class="pedido-card">'
         +'<div class="pedido-header" onclick="togglePedido('+i+',\''+p.id+'\')">'
         +'<div class="ped-info">'
@@ -205,6 +213,7 @@ function loadPedidos(){
         +'<span class="ped-total">$'+(p.total_costo||0).toFixed(2)+'</span>'
         +'<svg class="ped-chevron" id="chev-'+i+'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
         +'</div>'
+        +codigoHtml
         +'<div class="pedido-detail" id="detail-'+i+'">'
         +'<p class="detail-title">Cargando productos...</p>'
         +'</div>'
