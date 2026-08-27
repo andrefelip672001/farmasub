@@ -250,6 +250,7 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
 }
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAme0Mg5cZyTp2giqmEzFl2gLERayYDYn4&callback=initMap" async defer></script>
 </head>
 <body>
 
@@ -332,7 +333,23 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
           <input type="text" id="s1-barrio" placeholder="Ej: Ciudadela Ibarra"/>
           <span class="field-error" id="err-s1-barrio"></span>
         </div>
+        <div class="form-group full">
+          <label for="s1-what3words">Ubicacion what3words (opcional)</label>
+          <input type="text" id="s1-what3words" placeholder="ej: zapato.melon.rueda"/>
+          <span class="field-note">Si tienes tus 3 palabras de what3words, ayudan al domiciliario a llegar exacto si la direccion es dificil de encontrar</span>
+        </div>
       </div>
+
+      <div class="kyc-divider"></div>
+      <div class="kyc-head">
+        <h2>Confirma tu ubicacion</h2>
+        <p>Ayuda a nuestro domiciliario a encontrar tu casa. Busca tu direccion o ajusta el pin en el mapa.</p>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button type="button" onclick="buscarDireccionMapa()" style="background:var(--naranja);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-size:.88rem;font-weight:600;cursor:pointer;font-family:inherit">Buscar mi direccion en el mapa</button>
+      </div>
+      <div id="map-container" style="width:100%;height:280px;border-radius:14px;background:#F3F4F6;margin-bottom:10px"></div>
+      <p id="map-status" style="font-size:.85rem;color:#6B7280;margin-bottom:8px">Busca tu direccion arriba, o arrastra el pin en el mapa hasta tu ubicacion exacta.</p>
 
       <div class="kyc-divider"></div>
       <div class="kyc-head">
@@ -501,6 +518,132 @@ function esc(s) {
   return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+// UBICACION Y SECTORES
+var GMAPS_KEY = 'AIzaSyAme0Mg5cZyTp2giqmEzFl2gLERayYDYn4';
+var _map = null, _marker = null, _mapLat = null, _mapLng = null;
+var _sectoresCache = [];
+var _sectorEncontradoId = null;
+var _sectorEncontradoNombre = null;
+
+function initMap() {
+  var centroSantoDomingo = { lat: -0.2532, lng: -79.1750 };
+  _map = new google.maps.Map(document.getElementById('map-container'), {
+    center: centroSantoDomingo,
+    zoom: 13,
+    streetViewControl: false,
+    mapTypeControl: false
+  });
+  _marker = new google.maps.Marker({
+    position: centroSantoDomingo,
+    map: _map,
+    draggable: true
+  });
+  _marker.addListener('dragend', function() {
+    var pos = _marker.getPosition();
+    handleMapPosition(pos.lat(), pos.lng());
+  });
+  _map.addListener('click', function(e) {
+    _marker.setPosition(e.latLng);
+    handleMapPosition(e.latLng.lat(), e.latLng.lng());
+  });
+  loadSectores();
+}
+
+async function loadSectores() {
+  var res = await _db.from('sectores').select('id, nombre, geojson').eq('activo', true);
+  _sectoresCache = res.data || [];
+}
+
+function pointInPolygon(lat, lng, ring) {
+  var inside = false;
+  for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    var xi = ring[i][0], yi = ring[i][1];
+    var xj = ring[j][0], yj = ring[j][1];
+    var intersect = ((yi > lat) !== (yj > lat)) && (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+    if (intersect) { inside = !inside; }
+  }
+  return inside;
+}
+
+function extraerAnillos(geo) {
+  var geometry = geo;
+  if (geo && geo.type === 'Feature') { geometry = geo.geometry; }
+  if (!geometry) { return []; }
+  if (geometry.type === 'Polygon') { return [geometry.coordinates[0]]; }
+  if (geometry.type === 'MultiPolygon') {
+    var rings = [];
+    for (var i = 0; i < geometry.coordinates.length; i++) { rings.push(geometry.coordinates[i][0]); }
+    return rings;
+  }
+  return [];
+}
+
+function encontrarSector(lat, lng) {
+  for (var s = 0; s < _sectoresCache.length; s++) {
+    var anillos = extraerAnillos(_sectoresCache[s].geojson);
+    for (var a = 0; a < anillos.length; a++) {
+      if (pointInPolygon(lat, lng, anillos[a])) { return _sectoresCache[s]; }
+    }
+  }
+  return null;
+}
+
+function handleMapPosition(lat, lng) {
+  _mapLat = lat;
+  _mapLng = lng;
+  var statusEl = document.getElementById('map-status');
+  if (_sectoresCache.length === 0) {
+    statusEl.textContent = 'Ubicacion confirmada.';
+    statusEl.style.color = '#059669';
+    _sectorEncontradoId = null;
+    _sectorEncontradoNombre = null;
+    return;
+  }
+  var sector = encontrarSector(lat, lng);
+  if (sector) {
+    statusEl.textContent = 'Zona de entrega: ' + sector.nombre;
+    statusEl.style.color = '#059669';
+    _sectorEncontradoId = sector.id;
+    _sectorEncontradoNombre = sector.nombre;
+  } else {
+    statusEl.textContent = 'Esta ubicacion parece estar fuera de nuestra zona de cobertura actual. Puedes continuar y te contactamos para confirmar.';
+    statusEl.style.color = '#D97706';
+    _sectorEncontradoId = null;
+    _sectorEncontradoNombre = null;
+  }
+}
+
+async function buscarDireccionMapa() {
+  var addr = document.getElementById('s1-direccion').value.trim();
+  var statusEl = document.getElementById('map-status');
+  if (!addr) {
+    statusEl.textContent = 'Escribe tu direccion arriba antes de buscarla en el mapa.';
+    statusEl.style.color = '#D97706';
+    return;
+  }
+  statusEl.textContent = 'Buscando...';
+  statusEl.style.color = '#6B7280';
+  try {
+    var query = encodeURIComponent(addr + ', Santo Domingo, Ecuador');
+    var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + query + '&key=' + GMAPS_KEY;
+    var res = await fetch(url);
+    var data = await res.json();
+    if (data.status === 'OK' && data.results && data.results.length > 0) {
+      var loc = data.results[0].geometry.location;
+      _map.setCenter(loc);
+      _map.setZoom(17);
+      _marker.setPosition(loc);
+      handleMapPosition(loc.lat, loc.lng);
+    } else {
+      statusEl.textContent = 'No se encontro esa direccion. Ajusta el pin manualmente en el mapa.';
+      statusEl.style.color = '#D97706';
+    }
+  } catch (e) {
+    statusEl.textContent = 'No se pudo buscar la direccion. Ajusta el pin manualmente en el mapa.';
+    statusEl.style.color = '#D97706';
+  }
+}
+
 var _turnstileToken = null;
 function onTurnstileOk(token) {
   _turnstileToken = token;
@@ -514,7 +657,7 @@ function onTurnstileExpired() {
 // ESTADO GLOBAL
 const S = {
   step: 1,
-  titular: { nombre:'', cedula:'', fechaNac:'', telefono:'', email:'', direccion:'', barrio:'' },
+  titular: { nombre:'', cedula:'', fechaNac:'', telefono:'', email:'', direccion:'', barrio:'', what3words:'' },
   payment: { cedula_frontal: null, cedula_posterior: null }
 };
 
@@ -743,7 +886,8 @@ function saveTitular() {
     telefono: document.getElementById('s1-telefono').value.trim(),
     email: document.getElementById('s1-email').value.trim(),
     direccion: document.getElementById('s1-direccion').value.trim(),
-    barrio: document.getElementById('s1-barrio').value.trim()
+    barrio: document.getElementById('s1-barrio').value.trim(),
+    what3words: document.getElementById('s1-what3words').value.trim()
   };
 }
 
@@ -814,6 +958,8 @@ async function submitRegistro() {
       direccion: S.titular.direccion,
       barrio: S.titular.barrio,
       fecha_nacimiento: S.titular.fechaNac,
+      what3words: S.titular.what3words || null,
+      sector_id: _sectorEncontradoId,
       rol: 'suscriptor'
     });
     if (userErr) {
