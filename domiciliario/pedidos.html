@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Mis entregas &mdash; TuCosto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --r:14px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:10;box-shadow:0 1px 8px rgba(0,0,0,.05);}
+.nav-left{display:flex;align-items:center;gap:10px;}
+.nav-tag{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:4px 10px;}
+.nav-user{font-size:.82rem;font-weight:500;color:var(--ink);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 12px;font-size:.78rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;}
+
+.main{max-width:640px;margin:0 auto;padding:20px 16px 60px;}
+.page-title{font-size:1.3rem;font-weight:700;margin-bottom:2px;}
+.page-sub{font-size:.85rem;color:var(--ink-60);margin-bottom:18px;}
+
+.tabs{display:flex;gap:6px;margin-bottom:16px;}
+.tab-btn{flex:1;padding:9px;background:var(--white);border:1.5px solid var(--ink-30);border-radius:10px;font-size:.82rem;font-weight:600;color:var(--ink-60);cursor:pointer;font-family:inherit;}
+.tab-btn.active{background:var(--naranja);border-color:var(--naranja);color:white;}
+
+.entrega-card{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;}
+.entrega-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.entrega-num{font-size:.78rem;font-weight:700;color:var(--naranja);}
+.entrega-total{font-size:1rem;font-weight:700;}
+.entrega-nombre{font-size:1.05rem;font-weight:700;margin-bottom:2px;}
+.entrega-dir{font-size:.88rem;color:var(--ink-60);margin-bottom:10px;line-height:1.4;}
+.entrega-links{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.link-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg);border:1.5px solid var(--ink-30);border-radius:10px;font-size:.8rem;font-weight:600;color:var(--ink);text-decoration:none;}
+.link-btn:hover{border-color:var(--naranja);color:var(--naranja);}
+.link-btn.tel{background:var(--verde-light);border-color:var(--verde);color:var(--verde);}
+.btn-entregado{width:100%;padding:12px;background:var(--naranja);color:white;border:none;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;}
+.btn-entregado:hover{background:var(--naranja-d);}
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;background:var(--verde-light);color:var(--verde);}
+.empty-state{text-align:center;padding:50px 20px;color:var(--ink-60);}
+.empty-state svg{width:48px;height:48px;margin-bottom:12px;color:var(--ink-30);}
+
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mo.hidden{display:none;}
+.mc{background:white;border-radius:var(--r);width:360px;max-width:100%;padding:22px;}
+.mc h3{font-size:1rem;margin-bottom:6px;}
+.mc p{font-size:.85rem;color:var(--ink-60);margin-bottom:14px;}
+.mc input{width:100%;padding:12px;border:1.5px solid var(--ink-30);border-radius:10px;font-size:1.2rem;text-align:center;letter-spacing:.2em;font-family:inherit;margin-bottom:14px;}
+.mc-actions{display:flex;gap:8px;}
+.mc-actions button{flex:1;padding:11px;border-radius:10px;font-size:.85rem;font-weight:600;font-family:inherit;cursor:pointer;}
+.btn-mc-cancel{background:none;border:1.5px solid var(--ink-30);color:var(--ink-60);}
+.btn-mc-ok{background:var(--naranja);border:none;color:white;}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <span class="nav-tag">Domiciliario</span>
+    <span class="nav-user" id="nav-nombre">Cargando...</span>
+  </div>
+  <button class="btn-logout" onclick="logout()">Salir</button>
+</nav>
+
+<main class="main">
+  <h1 class="page-title">Mis entregas</h1>
+  <p class="page-sub">Pedidos asignados a ti</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-pendientes" onclick="switchTab('pendientes')">Por entregar</button>
+    <button class="tab-btn" id="tab-entregados" onclick="switchTab('entregados')">Entregados hoy</button>
+  </div>
+
+  <div id="lista-pendientes"></div>
+  <div id="lista-entregados" style="display:none"></div>
+</main>
+
+<div class="mo hidden" id="codigo-modal">
+  <div class="mc">
+    <h3>Confirmar entrega</h3>
+    <p>Pidele el codigo de 4 digitos a la persona y escribelo aqui:</p>
+    <input type="text" id="codigo-input" maxlength="4" inputmode="numeric" placeholder="0000"/>
+    <p id="codigo-error" style="display:none;color:var(--danger);margin-top:-8px;margin-bottom:12px"></p>
+    <div class="mc-actions">
+      <button class="btn-mc-cancel" onclick="cerrarModalCodigo()">Cancelar</button>
+      <button class="btn-mc-ok" onclick="confirmarEntrega()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+var _domiciliarioId = null;
+var _pendientes = [], _entregados = [];
+var _pedidoEnConfirmacion = null;
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+
+  var uRes = await _db.from('usuarios').select('id, nombre, rol, activo').eq('id', user.id).single();
+  var u = uRes.data;
+
+  if (!u || u.rol !== 'domiciliario') { window.location.href = '../portal/login.html'; return; }
+  if (u.activo === false) {
+    await _db.auth.signOut();
+    alert('Tu cuenta de domiciliario esta desactivada. Contacta al administrador.');
+    window.location.href = '../portal/login.html';
+    return;
+  }
+
+  _domiciliarioId = u.id;
+  document.getElementById('nav-nombre').textContent = u.nombre || user.email;
+
+  await loadEntregas();
+})();
+
+async function loadEntregas() {
+  var hoyInicio = new Date();
+  hoyInicio.setHours(0, 0, 0, 0);
+
+  var pendRes = await _db.from('pedidos')
+    .select('id, total_costo, direccion_entrega, codigo_entrega, usuarios!titular_id(nombre, telefono, what3words)')
+    .eq('domiciliario_id', _domiciliarioId)
+    .eq('estado', 'despachado')
+    .order('fecha_pedido', {ascending: true});
+  _pendientes = pendRes.data || [];
+
+  var entRes = await _db.from('pedidos')
+    .select('id, total_costo, direccion_entrega, usuarios!titular_id(nombre)')
+    .eq('domiciliario_id', _domiciliarioId)
+    .eq('estado', 'entregado')
+    .gte('fecha_pedido', hoyInicio.toISOString())
+    .order('fecha_pedido', {ascending: false});
+  _entregados = entRes.data || [];
+
+  renderPendientes();
+  renderEntregados();
+}
+
+function renderPendientes() {
+  var el = document.getElementById('lista-pendientes');
+  if (!_pendientes.length) {
+    el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No tienes entregas pendientes por ahora.</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _pendientes.length; i++) {
+    var p = _pendientes[i];
+    var u = p.usuarios || {};
+    var nombre = u.nombre || 'Suscriptor';
+    var telefono = u.telefono || '';
+    var direccion = p.direccion_entrega || 'Sin direccion registrada';
+    var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(direccion + ', Santo Domingo, Ecuador');
+    var w3wHtml = '';
+    if (u.what3words) {
+      w3wHtml = '<a href="https://w3w.co/' + encodeURIComponent(u.what3words.trim()) + '" target="_blank" class="link-btn">///' + esc(u.what3words) + '</a>';
+    }
+    var telHtml = telefono ? '<a href="tel:' + esc(telefono) + '" class="link-btn tel"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Llamar</a>' : '';
+
+    html += '<div class="entrega-card">'
+      + '<div class="entrega-top"><span class="entrega-num">#' + p.id.slice(0, 8) + '</span><span class="entrega-total">$' + (p.total_costo || 0).toFixed(2) + '</span></div>'
+      + '<div class="entrega-nombre">' + esc(nombre) + '</div>'
+      + '<div class="entrega-dir">' + esc(direccion) + '</div>'
+      + '<div class="entrega-links">'
+      + '<a href="' + mapsUrl + '" target="_blank" class="link-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Ver en Maps</a>'
+      + telHtml
+      + w3wHtml
+      + '</div>'
+      + '<button class="btn-entregado" onclick="abrirModalCodigo(\'' + p.id + '\')">Marcar como entregado</button>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function renderEntregados() {
+  var el = document.getElementById('lista-entregados');
+  if (!_entregados.length) {
+    el.innerHTML = '<div class="empty-state"><p>Todavia no has entregado ningun pedido hoy.</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _entregados.length; i++) {
+    var p = _entregados[i];
+    var u = p.usuarios || {};
+    html += '<div class="entrega-card">'
+      + '<div class="entrega-top"><span class="entrega-num">#' + p.id.slice(0, 8) + '</span><span class="badge">Entregado</span></div>'
+      + '<div class="entrega-nombre">' + esc(u.nombre || 'Suscriptor') + '</div>'
+      + '<div class="entrega-dir">' + esc(p.direccion_entrega || '') + '</div>'
+      + '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-pendientes').classList.toggle('active', tab === 'pendientes');
+  document.getElementById('tab-entregados').classList.toggle('active', tab === 'entregados');
+  document.getElementById('lista-pendientes').style.display = tab === 'pendientes' ? '' : 'none';
+  document.getElementById('lista-entregados').style.display = tab === 'entregados' ? '' : 'none';
+}
+
+function abrirModalCodigo(pedidoId) {
+  _pedidoEnConfirmacion = pedidoId;
+  document.getElementById('codigo-input').value = '';
+  document.getElementById('codigo-error').style.display = 'none';
+  document.getElementById('codigo-modal').classList.remove('hidden');
+  document.getElementById('codigo-input').focus();
+}
+
+function cerrarModalCodigo() {
+  document.getElementById('codigo-modal').classList.add('hidden');
+  _pedidoEnConfirmacion = null;
+}
+
+async function confirmarEntrega() {
+  var codigoIngresado = document.getElementById('codigo-input').value.trim();
+  var errEl = document.getElementById('codigo-error');
+  errEl.style.display = 'none';
+
+  var pedido = null;
+  for (var i = 0; i < _pendientes.length; i++) {
+    if (String(_pendientes[i].id) === String(_pedidoEnConfirmacion)) { pedido = _pendientes[i]; break; }
+  }
+  if (!pedido) { cerrarModalCodigo(); return; }
+
+  if (!codigoIngresado) {
+    errEl.textContent = 'Ingresa el codigo.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (pedido.codigo_entrega && codigoIngresado !== String(pedido.codigo_entrega).trim()) {
+    errEl.textContent = 'El codigo no coincide. Verificalo con la persona.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var res = await _db.from('pedidos').update({ estado: 'entregado' }).eq('id', _pedidoEnConfirmacion);
+  if (res.error) {
+    errEl.textContent = 'No se pudo actualizar: ' + res.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  cerrarModalCodigo();
+  await loadEntregas();
+}
+
+function logout() {
+  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
+</script>
+</body>
+</html>

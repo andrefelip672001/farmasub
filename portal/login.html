@@ -394,6 +394,8 @@ async function redirectByRole(user) {
 
   if (rol === 'admin') {
     window.location.href = '../admin/dashboard.html';
+  } else if (rol === 'domiciliario') {
+    window.location.href = '../domiciliario/pedidos.html';
   } else {
     window.location.href = '../portal/dashboard.html';
   }

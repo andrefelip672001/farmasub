@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Domiciliarios &mdash; TuCosto Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .nav-tag{display:none;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+}
+
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;}
+.page-title-wrap{display:flex;align-items:center;gap:12px;}
+.page-title{font-size:1.4rem;font-weight:700;color:var(--ink);}
+.total-badge{background:var(--naranja);color:white;border-radius:20px;padding:3px 12px;font-size:.78rem;font-weight:700;}
+.btn-nuevo{background:var(--naranja);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;transition:background .2s;}
+.btn-nuevo:hover{background:var(--naranja-d);}
+
+.table-wrap{background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;overflow:hidden;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid #F3F4F6;background:var(--bg);}
+td{padding:11px 16px;font-size:.82rem;border-bottom:1px solid #F3F4F6;vertical-align:middle;color:var(--ink);}
+tr:last-child td{border-bottom:none;}
+
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;}
+.badge-activa{background:var(--verde-light);color:var(--verde);}
+.badge-inactiva{background:var(--danger-light);color:var(--danger);}
+
+.btn-toggle{padding:5px 12px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;white-space:nowrap;border:1px solid;}
+.btn-toggle.desactivar{background:var(--danger-light);border-color:var(--danger);color:var(--danger);}
+.btn-toggle.activar{background:var(--verde-light);border-color:var(--verde);color:var(--verde);}
+
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mo.hidden{display:none;}
+.mc{background:var(--white);border-radius:var(--r);width:460px;max-width:94vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;}
+.mc-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:var(--naranja);flex-shrink:0;}
+.mc-hd h3{font-size:1rem;font-weight:700;color:white;}
+.btn-close-mc{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:white;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.btn-close-mc:hover{background:rgba(255,255,255,.35);}
+.mc-body{padding:22px;}
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:.8rem;font-weight:600;color:var(--ink);margin-bottom:5px;}
+.form-group input{width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.85rem;color:var(--ink);outline:none;}
+.form-group input:focus{border-color:var(--naranja);}
+.field-hint{font-size:.72rem;color:var(--ink-60);margin-top:4px;}
+.pw-row{display:flex;gap:8px;}
+.pw-row input{flex:1;}
+.btn-gen{background:var(--bg);border:1.5px solid var(--ink-30);border-radius:8px;padding:0 12px;font-size:.75rem;font-weight:600;color:var(--ink-60);cursor:pointer;white-space:nowrap;}
+.btn-gen:hover{border-color:var(--naranja);color:var(--naranja);}
+.modal-error{display:none;background:var(--danger-light);color:var(--danger);border-radius:8px;padding:10px 12px;font-size:.8rem;margin-bottom:12px;}
+.mc-actions{display:flex;gap:10px;margin-top:8px;}
+.btn-cancel{flex:1;padding:11px;background:none;border:1.5px solid var(--ink-30);border-radius:10px;font-size:.85rem;font-weight:600;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-guardar{flex:1;padding:11px;background:var(--naranja);border:none;border-radius:10px;font-size:.85rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.btn-guardar:hover{background:var(--naranja-d);}
+.btn-guardar:disabled{opacity:.6;cursor:not-allowed;}
+
+.credenciales-box{background:var(--verde-light);border:1.5px solid var(--verde);border-radius:10px;padding:16px;margin-bottom:16px;}
+.credenciales-box p{font-size:.8rem;color:var(--ink);margin-bottom:6px;}
+.credenciales-box strong{color:var(--verde);}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <a href="../admin/dashboard.html" class="nav-logo">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <span class="nav-tag">PANEL ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesi&oacute;n</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <a href="../admin/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos
+    </a>
+    <a href="../admin/productos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Cat&aacute;logo
+    </a>
+    <a href="../admin/domiciliarios.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 0 1 1 1v5h-6l3-6z"/><path d="M9 17.5H5.5l-2-6h5.5"/><path d="M9 6h6l3 6h-9"/></svg>Domiciliarios
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
+    </a>
+    <a href="../admin/finanzas.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finanzas
+    </a>
+    <a href="../admin/seguridad.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Seguridad
+    </a>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="page-head">
+      <div class="page-title-wrap">
+        <h1 class="page-title">Domiciliarios</h1>
+        <span class="total-badge" id="total-badge">0</span>
+      </div>
+      <button class="btn-nuevo" onclick="openAddModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Agregar domiciliario
+      </button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th><th>C&eacute;dula</th><th>Tel&eacute;fono</th><th>Email</th>
+            <th>Estado</th><th>Creado</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL AGREGAR -->
+<div class="mo hidden" id="add-modal" onclick="closeAddModalClick(event)">
+  <div class="mc">
+    <div class="mc-hd">
+      <h3>Agregar domiciliario</h3>
+      <button class="btn-close-mc" onclick="closeAddModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mc-body">
+      <div class="modal-error" id="modal-error"></div>
+      <div class="form-group">
+        <label for="f-nombre">Nombre completo</label>
+        <input type="text" id="f-nombre" placeholder="Ej: Juan Perez"/>
+      </div>
+      <div class="form-group">
+        <label for="f-cedula">C&eacute;dula</label>
+        <input type="text" id="f-cedula" placeholder="0000000000" maxlength="10" inputmode="numeric"/>
+      </div>
+      <div class="form-group">
+        <label for="f-telefono">Tel&eacute;fono</label>
+        <input type="text" id="f-telefono" placeholder="09XXXXXXXX"/>
+      </div>
+      <div class="form-group">
+        <label for="f-email">Correo electr&oacute;nico</label>
+        <input type="email" id="f-email" placeholder="repartidor@correo.com"/>
+        <p class="field-hint">Con este correo va a iniciar sesion en su pantalla de entregas.</p>
+      </div>
+      <div class="form-group">
+        <label for="f-password">Contrase&ntilde;a temporal</label>
+        <div class="pw-row">
+          <input type="text" id="f-password" placeholder="Minimo 6 caracteres"/>
+          <button type="button" class="btn-gen" onclick="generarPassword()">Generar</button>
+        </div>
+        <p class="field-hint">Comp&aacute;rtela con el domiciliario. La puede cambiar despu&eacute;s.</p>
+      </div>
+      <div class="mc-actions">
+        <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar" onclick="crearDomiciliario()">Crear cuenta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EXITO -->
+<div class="mo hidden" id="exito-modal">
+  <div class="mc">
+    <div class="mc-hd">
+      <h3>Cuenta creada</h3>
+      <button class="btn-close-mc" onclick="closeExitoModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mc-body">
+      <div class="credenciales-box">
+        <p><strong>Correo:</strong> <span id="exito-email"></span></p>
+        <p><strong>Contrase&ntilde;a:</strong> <span id="exito-pass"></span></p>
+      </div>
+      <p style="font-size:.85rem;color:var(--ink-60);margin-bottom:16px">Comparte estos datos con el domiciliario por un medio seguro (WhatsApp, en persona). El inicia sesion en el mismo login del portal.</p>
+      <button class="btn-guardar" onclick="closeExitoModal()">Listo</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var SUPA_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
+var SUPA_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
+var _db = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+var _todos = [];
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = (user.user_metadata && user.user_metadata.rol) ? user.user_metadata.rol : null;
+  if (rol !== 'admin') {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : null;
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  var aalRes = await _db.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalRes.data && aalRes.data.nextLevel === 'aal2' && aalRes.data.currentLevel !== aalRes.data.nextLevel) { window.location.href = '../portal/login.html?mfa=1'; return; }
+
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+  await loadData();
+})();
+
+async function loadData() {
+  var res = await _db.from('usuarios').select('id, nombre, cedula, telefono, email, activo, created_at').eq('rol', 'domiciliario').order('created_at', {ascending: false});
+  _todos = res.data || [];
+  document.getElementById('total-badge').textContent = _todos.length;
+  renderTable();
+}
+
+function renderTable() {
+  var tbody = document.getElementById('tbody');
+  if (!_todos.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--ink-60)">Todavia no has agregado ningun domiciliario</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _todos.length; i++) {
+    var d = _todos[i];
+    var activo = d.activo !== false;
+    var badgeCls = activo ? 'badge-activa' : 'badge-inactiva';
+    var badgeLbl = activo ? 'Activo' : 'Inactivo';
+    var fecha = d.created_at ? new Date(d.created_at).toLocaleDateString('es-EC') : '-';
+    var toggleCls = activo ? 'desactivar' : 'activar';
+    var toggleLbl = activo ? 'Desactivar' : 'Activar';
+    html += '<tr>';
+    html += '<td style="font-weight:600">' + esc(d.nombre || '-') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + esc(d.cedula || '-') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + esc(d.telefono || '-') + '</td>';
+    html += '<td style="color:var(--ink-60)">' + esc(d.email || '-') + '</td>';
+    html += '<td><span class="badge ' + badgeCls + '">' + badgeLbl + '</span></td>';
+    html += '<td style="color:var(--ink-60)">' + fecha + '</td>';
+    html += '<td><button class="btn-toggle ' + toggleCls + '" onclick="toggleActivo(\'' + d.id + '\',' + activo + ')">' + toggleLbl + '</button></td>';
+    html += '</tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+async function toggleActivo(id, estabaActivo) {
+  var res = await _db.from('usuarios').update({ activo: !estabaActivo }).eq('id', id);
+  if (res.error) {
+    alert('No se pudo actualizar: ' + res.error.message);
+    return;
+  }
+  await loadData();
+}
+
+function openAddModal() {
+  document.getElementById('f-nombre').value = '';
+  document.getElementById('f-cedula').value = '';
+  document.getElementById('f-telefono').value = '';
+  document.getElementById('f-email').value = '';
+  document.getElementById('f-password').value = '';
+  document.getElementById('modal-error').style.display = 'none';
+  document.getElementById('add-modal').classList.remove('hidden');
+}
+
+function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
+function closeAddModalClick(e) { if (e.target.id === 'add-modal') closeAddModal(); }
+function closeExitoModal() { document.getElementById('exito-modal').classList.add('hidden'); loadData(); }
+
+function generarPassword() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  var pw = '';
+  for (var i = 0; i < 8; i++) { pw += chars.charAt(Math.floor(Math.random() * chars.length)); }
+  document.getElementById('f-password').value = pw;
+}
+
+function showModalError(msg) {
+  var el = document.getElementById('modal-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function crearDomiciliario() {
+  var nombre = document.getElementById('f-nombre').value.trim();
+  var cedula = document.getElementById('f-cedula').value.trim();
+  var telefono = document.getElementById('f-telefono').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var password = document.getElementById('f-password').value;
+
+  document.getElementById('modal-error').style.display = 'none';
+
+  if (!nombre || !cedula || !telefono || !email || !password) {
+    showModalError('Completa todos los campos.');
+    return;
+  }
+  if (password.length < 6) {
+    showModalError('La contrasena debe tener al menos 6 caracteres.');
+    return;
+  }
+
+  var btn = document.getElementById('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = 'Creando...';
+
+  try {
+    var tempClient = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
+
+    var authRes = await tempClient.auth.signUp({
+      email: email,
+      password: password,
+      options: { data: { rol: 'domiciliario', nombre: nombre } }
+    });
+
+    if (authRes.error) {
+      showModalError('No se pudo crear la cuenta: ' + authRes.error.message);
+      btn.disabled = false;
+      btn.textContent = 'Crear cuenta';
+      return;
+    }
+
+    var newUserId = authRes.data.user.id;
+
+    var upRes = await _db.from('usuarios').upsert({
+      id: newUserId,
+      nombre: nombre,
+      cedula: cedula,
+      telefono: telefono,
+      email: email,
+      rol: 'domiciliario',
+      activo: true
+    });
+
+    if (upRes.error) {
+      showModalError('La cuenta se creo pero hubo un error guardando los datos: ' + upRes.error.message);
+      btn.disabled = false;
+      btn.textContent = 'Crear cuenta';
+      return;
+    }
+
+    closeAddModal();
+    document.getElementById('exito-email').textContent = email;
+    document.getElementById('exito-pass').textContent = password;
+    document.getElementById('exito-modal').classList.remove('hidden');
+  } catch (e) {
+    showModalError('Error inesperado: ' + (e.message || 'intenta de nuevo'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Crear cuenta';
+  }
+}
+
+function logout() {
+  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
+</script>
+</body>
+</html>

@@ -131,6 +131,9 @@ tr.clickable:hover td{background:var(--naranja-light);}
     <a href="../admin/productos.html" class="sb-link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Cat&aacute;logo
     </a>
+    <a href="../admin/domiciliarios.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 0 1 1 1v5h-6l3-6z"/><path d="M9 17.5H5.5l-2-6h5.5"/><path d="M9 6h6l3 6h-9"/></svg>Domiciliarios
+    </a>
     <hr class="sb-divider"/>
     <a href="../admin/pagos.html" class="sb-link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
@@ -212,7 +215,7 @@ async function verComprobanteAdmin(event, storedUrl) {
   }
 }
 
-var _todos = [], _filtro = 'todos';
+var _todos = [], _filtro = 'todos', _domiciliarios = [];
 var _itemsCache = {};
 var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'];
 var _adminUserId = null;
@@ -242,9 +245,13 @@ var _adminUserId = null;
 })();
 
 async function loadData() {
-  var res = await _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,pago_estado,direccion_entrega,fecha_entrega_estimada,metodo_pago,comprobante_url,codigo_entrega,usuarios(nombre,cedula)').order('fecha_pedido', {ascending: false});
+  var res = await _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,pago_estado,direccion_entrega,fecha_entrega_estimada,metodo_pago,comprobante_url,codigo_entrega,domiciliario_id,usuarios!titular_id(nombre,cedula),domiciliario:usuarios!domiciliario_id(nombre)').order('fecha_pedido', {ascending: false});
   _todos = res.data || [];
   document.getElementById('total-badge').textContent = _todos.length;
+  if (!_domiciliarios.length) {
+    var domRes = await _db.from('usuarios').select('id, nombre').eq('rol', 'domiciliario').eq('activo', true).order('nombre');
+    _domiciliarios = domRes.data || [];
+  }
   renderTable();
 }
 
@@ -376,6 +383,14 @@ async function toggleDetail(rowIdx) {
     if (pedidoData.metodo_pago) {
       html += '<div class="detail-extra"><span class="di-extra-lbl">Metodo de pago:</span><span class="di-extra-val">' + esc(pedidoData.metodo_pago === 'deuna' ? 'QR De Una' : 'Transferencia bancaria') + '</span></div>';
     }
+    var domSelect = '<select onchange="asignarDomiciliario(\'' + pedidoId + '\', this.value)" style="padding:6px 10px;border:1.5px solid var(--ink-30);border-radius:8px;font-size:.8rem;font-family:inherit;color:var(--ink)">';
+    domSelect += '<option value="">Sin asignar</option>';
+    for (var di = 0; di < _domiciliarios.length; di++) {
+      var domSel = String(pedidoData.domiciliario_id) === String(_domiciliarios[di].id) ? ' selected' : '';
+      domSelect += '<option value="' + _domiciliarios[di].id + '"' + domSel + '>' + esc(_domiciliarios[di].nombre) + '</option>';
+    }
+    domSelect += '</select>';
+    html += '<div class="detail-extra"><span class="di-extra-lbl">Domiciliario asignado:</span><span class="di-extra-val">' + domSelect + '</span></div>';
     if (pedidoData.comprobante_url) {
       html += '<div class="detail-extra"><span class="di-extra-lbl">Comprobante:</span><span class="di-extra-val"><a href="#" onclick="verComprobanteAdmin(event, \'' + pedidoData.comprobante_url.replace(/'/g, '') + '\')" style="color:var(--naranja);font-weight:600">Ver comprobante</a></span></div>';
     } else {
@@ -386,6 +401,15 @@ async function toggleDetail(rowIdx) {
       + 'Descargar PDF</button></div>';
   }
   det.innerHTML = html;
+}
+
+async function asignarDomiciliario(pedidoId, domiciliarioId) {
+  var res = await _db.from('pedidos').update({ domiciliario_id: domiciliarioId || null }).eq('id', pedidoId);
+  if (res.error) {
+    alert('No se pudo asignar el domiciliario: ' + res.error.message);
+    return;
+  }
+  await loadData();
 }
 
 async function cambiarEstado(id, estado) {
