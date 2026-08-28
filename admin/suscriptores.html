@@ -335,7 +335,7 @@ async function verComprobanteAdmin(event, storedUrl) {
 async function loadSuscriptores() {
   var res = await _db
     .from('usuarios')
-    .select('id, nombre, cedula, email, telefono, direccion, barrio, created_at, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
+    .select('id, nombre, cedula, email, telefono, direccion, barrio, what3words, created_at, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
     .eq('rol', 'suscriptor')
     .order('created_at', {ascending: false});
   if (res.error) {
@@ -466,6 +466,11 @@ async function openPanel(idx) {
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Telefono</span><span style="font-weight:500">' + esc(s.telefono || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Direccion</span><span style="font-weight:500">' + esc(s.direccion || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + esc(s.barrio || '-') + '</span></div>';
+  datosHtml += '<div class="pfield" style="grid-column:1/-1"><span class="pfield-lbl">What3words (privado, solo admin/domiciliario)</span>'
+    + '<div style="display:flex;gap:8px;margin-top:4px">'
+    + '<input type="text" id="km-w3w-' + s.id + '" value="' + esc(s.what3words || '') + '" placeholder="ej: zapato.melon.rueda" style="flex:1;padding:8px 10px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:inherit;font-size:.85rem"/>'
+    + '<button type="button" onclick="guardarWhat3words(\'' + s.id + '\')" style="background:var(--naranja);color:#fff;border:none;border-radius:8px;padding:0 16px;font-size:.82rem;font-weight:600;cursor:pointer">Guardar</button>'
+    + '</div></div>';
   var planLbl2 = (sus && sus.plan === 'ahorro') ? 'Plan Ahorro ($8.99)' : (sus && sus.plan === 'familiar') ? 'Plan Familiar ($12.99)' : 'Sin plan asignado';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Plan</span><span style="font-weight:500">' + planLbl2 + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Estado</span><span class="badge ' + cls2 + '">' + estadoLegible(sEstado2) + '</span></div>';
@@ -587,6 +592,17 @@ function closePanel() {
   document.getElementById('panel-overlay').classList.remove('show');
   _selIdx = null;
   renderTable();
+}
+
+async function guardarWhat3words(susId) {
+  var input = document.getElementById('km-w3w-' + susId);
+  var valor = input.value.trim();
+  var res = await _db.from('usuarios').update({ what3words: valor || null }).eq('id', susId);
+  if (res.error) {
+    alert('No se pudo guardar: ' + res.error.message);
+    return;
+  }
+  alert('Ubicacion what3words guardada.');
 }
 
 async function cambiarEstado(susId, estado) {

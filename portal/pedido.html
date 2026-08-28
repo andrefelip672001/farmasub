@@ -412,6 +412,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
           </div>
 
           <div class="addr-field">
+            <label class="addr-label">Confirma tu ubicacion</label>
+            <div style="display:flex;gap:8px;margin-bottom:10px">
+              <button type="button" onclick="buscarDireccionMapa()" style="background:var(--naranja);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit">Buscar mi direccion en el mapa</button>
+            </div>
+            <div id="map-container" style="width:100%;height:220px;border-radius:14px;background:#F3F4F6;margin-bottom:8px"></div>
+            <p id="map-status" style="font-size:.82rem;color:#6B7280">Busca tu direccion arriba, o arrastra el pin hasta tu ubicacion exacta.</p>
+          </div>
+
+          <div class="addr-field">
             <label class="addr-label">Metodo de pago</label>
             <div class="pm-toggle">
               <button type="button" class="pm-btn active" id="pm-btn-transfer" onclick="setPaymentMethod('transferencia')">Transferencia</button>
@@ -496,8 +505,132 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAme0Mg5cZyTp2giqmEzFl2gLERayYDYn4&callback=initMap" async defer></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+
+// UBICACION Y SECTORES
+var GMAPS_KEY = 'AIzaSyAme0Mg5cZyTp2giqmEzFl2gLERayYDYn4';
+var _map = null, _marker = null, _mapLat = null, _mapLng = null;
+var _sectoresCache = [];
+var _sectorEncontradoId = null;
+
+function initMap() {
+  var centroSantoDomingo = { lat: -0.2532, lng: -79.1750 };
+  _map = new google.maps.Map(document.getElementById('map-container'), {
+    center: centroSantoDomingo,
+    zoom: 13,
+    streetViewControl: false,
+    mapTypeControl: false
+  });
+  _marker = new google.maps.Marker({
+    position: centroSantoDomingo,
+    map: _map,
+    draggable: true
+  });
+  _marker.addListener('dragend', function() {
+    var pos = _marker.getPosition();
+    handleMapPosition(pos.lat(), pos.lng());
+  });
+  _map.addListener('click', function(e) {
+    _marker.setPosition(e.latLng);
+    handleMapPosition(e.latLng.lat(), e.latLng.lng());
+  });
+  loadSectoresMapa();
+}
+
+async function loadSectoresMapa() {
+  var res = await _db.from('sectores').select('id, nombre, geojson').eq('activo', true);
+  _sectoresCache = res.data || [];
+}
+
+function pointInPolygon(lat, lng, ring) {
+  var inside = false;
+  for (var i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    var xi = ring[i][0], yi = ring[i][1];
+    var xj = ring[j][0], yj = ring[j][1];
+    var intersect = ((yi > lat) !== (yj > lat)) && (lng < (xj - xi) * (lat - yi) / (yj - yi) + xi);
+    if (intersect) { inside = !inside; }
+  }
+  return inside;
+}
+
+function extraerAnillos(geo) {
+  var geometry = geo;
+  if (geo && geo.type === 'Feature') { geometry = geo.geometry; }
+  if (!geometry) { return []; }
+  if (geometry.type === 'Polygon') { return [geometry.coordinates[0]]; }
+  if (geometry.type === 'MultiPolygon') {
+    var rings = [];
+    for (var i = 0; i < geometry.coordinates.length; i++) { rings.push(geometry.coordinates[i][0]); }
+    return rings;
+  }
+  return [];
+}
+
+function encontrarSector(lat, lng) {
+  for (var s = 0; s < _sectoresCache.length; s++) {
+    var anillos = extraerAnillos(_sectoresCache[s].geojson);
+    for (var a = 0; a < anillos.length; a++) {
+      if (pointInPolygon(lat, lng, anillos[a])) { return _sectoresCache[s]; }
+    }
+  }
+  return null;
+}
+
+function handleMapPosition(lat, lng) {
+  _mapLat = lat;
+  _mapLng = lng;
+  var statusEl = document.getElementById('map-status');
+  if (_sectoresCache.length === 0) {
+    statusEl.textContent = 'Ubicacion confirmada.';
+    statusEl.style.color = '#059669';
+    _sectorEncontradoId = null;
+    return;
+  }
+  var sector = encontrarSector(lat, lng);
+  if (sector) {
+    statusEl.textContent = 'Zona de entrega: ' + sector.nombre;
+    statusEl.style.color = '#059669';
+    _sectorEncontradoId = sector.id;
+  } else {
+    statusEl.textContent = 'Esta ubicacion parece estar fuera de nuestra zona de cobertura actual. Puedes continuar y te contactamos para confirmar.';
+    statusEl.style.color = '#D97706';
+    _sectorEncontradoId = null;
+  }
+}
+
+async function buscarDireccionMapa() {
+  var addr = document.getElementById('addr-input').value.trim();
+  var statusEl = document.getElementById('map-status');
+  if (!addr) {
+    statusEl.textContent = 'Escribe tu direccion arriba antes de buscarla en el mapa.';
+    statusEl.style.color = '#D97706';
+    return;
+  }
+  statusEl.textContent = 'Buscando...';
+  statusEl.style.color = '#6B7280';
+  try {
+    var query = encodeURIComponent(addr + ', Santo Domingo, Ecuador');
+    var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + query + '&key=' + GMAPS_KEY;
+    var res = await fetch(url);
+    var data = await res.json();
+    if (data.status === 'OK' && data.results && data.results.length > 0) {
+      var loc = data.results[0].geometry.location;
+      _map.setCenter(loc);
+      _map.setZoom(17);
+      _marker.setPosition(loc);
+      handleMapPosition(loc.lat, loc.lng);
+    } else {
+      statusEl.textContent = 'No se encontro esa direccion. Ajusta el pin manualmente en el mapa.';
+      statusEl.style.color = '#D97706';
+    }
+  } catch (e) {
+    statusEl.textContent = 'No se pudo buscar la direccion. Ajusta el pin manualmente en el mapa.';
+    statusEl.style.color = '#D97706';
+  }
+}
+
 function esc(s) {
   return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
@@ -795,10 +928,15 @@ async function confirmarPedido() {
       titular_id: titularId,
       comprobante_url: comprobanteUrl,
       metodo_pago: _metodo,
-      codigo_entrega: String(Math.floor(1000 + Math.random() * 9000))
+      codigo_entrega: String(Math.floor(1000 + Math.random() * 9000)),
+      sector_id: _sectorEncontradoId
     }).select().single();
     if (pedRes.error) throw pedRes.error;
     var pedido = pedRes.data;
+
+    if (_sectorEncontradoId && titularId) {
+      await _db.from('usuarios').update({ sector_id: _sectorEncontradoId }).eq('id', titularId);
+    }
 
     var pagoRes = await _db.from('pagos').insert({
       titular_id: titularId,

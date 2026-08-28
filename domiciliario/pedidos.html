@@ -97,6 +97,33 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
   </div>
 </div>
 
+<div class="mo hidden" id="ubicacion-modal">
+  <div class="mc">
+    <h3>&#191;La ubicacion es correcta?</h3>
+    <p>Nos ayuda para la proxima entrega en esta misma direccion.</p>
+    <div class="mc-actions">
+      <button class="btn-mc-cancel" onclick="ubicacionCorrecta(true)">Si, esta bien</button>
+      <button class="btn-mc-ok" onclick="mostrarCorreccionUbicacion()">No, corregir</button>
+    </div>
+  </div>
+</div>
+
+<div class="mo hidden" id="correccion-modal">
+  <div class="mc">
+    <h3>Corregir ubicacion</h3>
+    <p>Actualiza la direccion y/o agrega las 3 palabras de what3words para la ubicacion exacta.</p>
+    <label style="display:block;font-size:.78rem;font-weight:600;color:var(--ink-60);margin-bottom:4px;text-align:left">Direccion</label>
+    <input type="text" id="correccion-direccion" placeholder="Direccion corregida" style="text-align:left;letter-spacing:normal;font-size:.9rem"/>
+    <label style="display:block;font-size:.78rem;font-weight:600;color:var(--ink-60);margin-bottom:4px;text-align:left">What3words (opcional)</label>
+    <input type="text" id="correccion-what3words" placeholder="ej: zapato.melon.rueda" style="text-align:left;letter-spacing:normal;font-size:.9rem"/>
+    <p id="correccion-error" style="display:none;color:var(--danger);margin-top:-8px;margin-bottom:12px"></p>
+    <div class="mc-actions">
+      <button class="btn-mc-cancel" onclick="cerrarModalCorreccion()">Cancelar</button>
+      <button class="btn-mc-ok" onclick="guardarCorreccionUbicacion()">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
@@ -108,6 +135,7 @@ function esc(s) {
 var _domiciliarioId = null;
 var _pendientes = [], _entregados = [];
 var _pedidoEnConfirmacion = null;
+var _pedidoUbicacionActual = null;
 
 (async function() {
   var sessRes = await _db.auth.getSession();
@@ -137,7 +165,7 @@ async function loadEntregas() {
   hoyInicio.setHours(0, 0, 0, 0);
 
   var pendRes = await _db.from('pedidos')
-    .select('id, total_costo, direccion_entrega, codigo_entrega, usuarios!titular_id(nombre, telefono, what3words)')
+    .select('id, total_costo, direccion_entrega, codigo_entrega, titular_id, usuarios!titular_id(nombre, telefono, what3words)')
     .eq('domiciliario_id', _domiciliarioId)
     .eq('estado', 'despachado')
     .order('fecha_pedido', {ascending: true});
@@ -258,7 +286,63 @@ async function confirmarEntrega() {
     return;
   }
 
-  cerrarModalCodigo();
+  _pedidoUbicacionActual = pedido;
+  document.getElementById('codigo-modal').classList.add('hidden');
+  document.getElementById('ubicacion-modal').classList.remove('hidden');
+}
+
+function ubicacionCorrecta(esCorrecta) {
+  document.getElementById('ubicacion-modal').classList.add('hidden');
+  _pedidoEnConfirmacion = null;
+  _pedidoUbicacionActual = null;
+  loadEntregas();
+}
+
+function mostrarCorreccionUbicacion() {
+  document.getElementById('ubicacion-modal').classList.add('hidden');
+  var pedido = _pedidoUbicacionActual;
+  var u = (pedido && pedido.usuarios) ? pedido.usuarios : {};
+  document.getElementById('correccion-direccion').value = (pedido && pedido.direccion_entrega) ? pedido.direccion_entrega : '';
+  document.getElementById('correccion-what3words').value = u.what3words || '';
+  document.getElementById('correccion-error').style.display = 'none';
+  document.getElementById('correccion-modal').classList.remove('hidden');
+}
+
+function cerrarModalCorreccion() {
+  document.getElementById('correccion-modal').classList.add('hidden');
+  _pedidoEnConfirmacion = null;
+  _pedidoUbicacionActual = null;
+  loadEntregas();
+}
+
+async function guardarCorreccionUbicacion() {
+  var errEl = document.getElementById('correccion-error');
+  errEl.style.display = 'none';
+  var pedido = _pedidoUbicacionActual;
+  if (!pedido || !pedido.titular_id) { cerrarModalCorreccion(); return; }
+
+  var nuevaDireccion = document.getElementById('correccion-direccion').value.trim();
+  var nuevoW3w = document.getElementById('correccion-what3words').value.trim();
+
+  if (!nuevaDireccion) {
+    errEl.textContent = 'La direccion no puede quedar vacia.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var updates = { direccion: nuevaDireccion };
+  if (nuevoW3w) { updates.what3words = nuevoW3w; }
+
+  var res = await _db.from('usuarios').update(updates).eq('id', pedido.titular_id);
+  if (res.error) {
+    errEl.textContent = 'No se pudo guardar: ' + res.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('correccion-modal').classList.add('hidden');
+  _pedidoEnConfirmacion = null;
+  _pedidoUbicacionActual = null;
   await loadEntregas();
 }
 
