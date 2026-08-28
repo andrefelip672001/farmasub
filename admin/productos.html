@@ -949,7 +949,7 @@ async function guardarProducto() {
       var upFoto = await sb.storage.from('producto-fotos').upload(fpath, item.file, { upsert: true });
       if (upFoto.error) { console.error('Error foto:', upFoto.error); continue; }
       var pub = sb.storage.from('producto-fotos').getPublicUrl(fpath);
-      fotoUrl = pub.data.publicUrl;
+      fotoUrl = pub.data.publicUrl + '?v=' + Date.now();
     }
     if (fotoUrl) {
       await sb.from('producto_fotos').insert({ producto_id: productoId, url: fotoUrl, orden: i + 1 });
