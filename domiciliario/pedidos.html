@@ -80,6 +80,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);min-he
     <button class="tab-btn" id="tab-entregados" onclick="switchTab('entregados')">Entregados hoy</button>
   </div>
 
+  <div id="ruta-completa-wrap" style="display:none;margin-bottom:14px">
+    <a id="ruta-completa-link" href="#" target="_blank" class="link-btn" style="width:100%;justify-content:center;padding:12px;background:var(--naranja-light);border-color:var(--naranja);color:var(--naranja);font-size:.88rem">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Ver toda mi ruta en Google Maps
+    </a>
+  </div>
+
   <div id="lista-pendientes"></div>
   <div id="lista-entregados" style="display:none"></div>
 </main>
@@ -185,6 +192,7 @@ async function loadEntregas() {
 
 function renderPendientes() {
   var el = document.getElementById('lista-pendientes');
+  actualizarLinkRutaCompleta();
   if (!_pendientes.length) {
     el.innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No tienes entregas pendientes por ahora.</p></div>';
     return;
@@ -235,6 +243,28 @@ function renderEntregados() {
       + '</div>';
   }
   el.innerHTML = html;
+}
+
+function actualizarLinkRutaCompleta() {
+  var wrap = document.getElementById('ruta-completa-wrap');
+  if (_pendientes.length < 2) {
+    wrap.style.display = 'none';
+    return;
+  }
+  var direcciones = [];
+  for (var i = 0; i < _pendientes.length; i++) {
+    var dir = (_pendientes[i].direccion_entrega || '').trim();
+    if (dir) { direcciones.push(dir + ', Santo Domingo, Ecuador'); }
+  }
+  if (direcciones.length < 2) {
+    wrap.style.display = 'none';
+    return;
+  }
+  var destino = direcciones[direcciones.length - 1];
+  var waypoints = direcciones.slice(0, -1);
+  var url = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(destino) + '&waypoints=' + waypoints.map(encodeURIComponent).join('|') + '&travelmode=driving';
+  document.getElementById('ruta-completa-link').href = url;
+  wrap.style.display = 'block';
 }
 
 function switchTab(tab) {

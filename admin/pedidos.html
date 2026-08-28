@@ -153,6 +153,18 @@ tr.clickable:hover td{background:var(--naranja-light);}
       <h1 class="page-title">Gesti&oacute;n de pedidos</h1>
       <span class="total-badge" id="total-badge">0</span>
     </div>
+
+    <div class="table-wrap" style="margin-bottom:20px;padding:18px 20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:.95rem;font-weight:700">Rutas del d&iacute;a</div>
+          <div style="font-size:.8rem;color:var(--ink-60)" id="rutas-sub">Agrupa pedidos pagados y listos por sector, y asigna cada ruta completa a un domiciliario.</div>
+        </div>
+        <button type="button" onclick="generarRutas()" style="background:var(--naranja);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:inherit">Generar rutas del d&iacute;a</button>
+      </div>
+      <div id="rutas-list" style="margin-top:14px"></div>
+    </div>
+
     <div class="toolbar">
       <div class="search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -215,7 +227,7 @@ async function verComprobanteAdmin(event, storedUrl) {
   }
 }
 
-var _todos = [], _filtro = 'todos', _domiciliarios = [];
+var _todos = [], _filtro = 'todos', _domiciliarios = [], _rutasHoy = [];
 var _itemsCache = {};
 var ESTADOS = ['pendiente', 'en-proceso', 'despachado', 'entregado', 'cancelado'];
 var _adminUserId = null;
@@ -245,14 +257,106 @@ var _adminUserId = null;
 })();
 
 async function loadData() {
-  var res = await _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,pago_estado,direccion_entrega,fecha_entrega_estimada,metodo_pago,comprobante_url,codigo_entrega,domiciliario_id,usuarios!titular_id(nombre,cedula),domiciliario:usuarios!domiciliario_id(nombre)').order('fecha_pedido', {ascending: false});
+  var res = await _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,pago_estado,direccion_entrega,fecha_entrega_estimada,metodo_pago,comprobante_url,codigo_entrega,domiciliario_id,ruta_id,usuarios!titular_id(nombre,cedula),domiciliario:usuarios!domiciliario_id(nombre)').order('fecha_pedido', {ascending: false});
   _todos = res.data || [];
   document.getElementById('total-badge').textContent = _todos.length;
   if (!_domiciliarios.length) {
     var domRes = await _db.from('usuarios').select('id, nombre').eq('rol', 'domiciliario').eq('activo', true).order('nombre');
     _domiciliarios = domRes.data || [];
   }
+  await loadRutasHoy();
   renderTable();
+}
+
+async function loadRutasHoy() {
+  var hoy = new Date().toISOString().slice(0, 10);
+  var res = await _db.from('rutas').select('id, fecha, estado, domiciliario_id, sectores(nombre), domiciliario:usuarios!domiciliario_id(nombre)').eq('fecha', hoy).order('created_at', {ascending: true});
+  _rutasHoy = res.data || [];
+  renderRutas();
+}
+
+function renderRutas() {
+  var el = document.getElementById('rutas-list');
+  if (!_rutasHoy.length) {
+    el.innerHTML = '<p style="font-size:.82rem;color:var(--ink-60)">Todavia no se han generado rutas hoy.</p>';
+    return;
+  }
+  var html = '<table style="width:100%;border-collapse:collapse;margin-top:6px">';
+  html += '<thead><tr><th style="text-align:left;padding:6px 10px;font-size:.72rem;color:var(--ink-60);text-transform:uppercase">Sector</th><th style="text-align:left;padding:6px 10px;font-size:.72rem;color:var(--ink-60);text-transform:uppercase">Pedidos</th><th style="text-align:left;padding:6px 10px;font-size:.72rem;color:var(--ink-60);text-transform:uppercase">Estado</th><th style="text-align:left;padding:6px 10px;font-size:.72rem;color:var(--ink-60);text-transform:uppercase">Domiciliario asignado</th></tr></thead><tbody>';
+  for (var i = 0; i < _rutasHoy.length; i++) {
+    var r = _rutasHoy[i];
+    var sectorNom = (r.sectores && r.sectores.nombre) ? r.sectores.nombre : 'Sin sector';
+    var count = 0;
+    for (var j = 0; j < _todos.length; j++) { if (String(_todos[j].ruta_id) === String(r.id)) { count++; } }
+    var domSelect = '<select onchange="asignarRuta(\'' + r.id + '\', this.value)" style="padding:6px 10px;border:1.5px solid var(--ink-30);border-radius:8px;font-size:.8rem;font-family:inherit;color:var(--ink)">';
+    domSelect += '<option value="">Sin asignar</option>';
+    for (var d = 0; d < _domiciliarios.length; d++) {
+      var sel = String(r.domiciliario_id) === String(_domiciliarios[d].id) ? ' selected' : '';
+      domSelect += '<option value="' + _domiciliarios[d].id + '"' + sel + '>' + esc(_domiciliarios[d].nombre) + '</option>';
+    }
+    domSelect += '</select>';
+    var estadoLbl = r.estado === 'asignada' ? 'Asignada' : (r.estado === 'en_curso' ? 'En curso' : (r.estado === 'completada' ? 'Completada' : 'Generada'));
+    html += '<tr>';
+    html += '<td style="padding:8px 10px;font-weight:600;font-size:.85rem">' + esc(sectorNom) + '</td>';
+    html += '<td style="padding:8px 10px;font-size:.85rem">' + count + '</td>';
+    html += '<td style="padding:8px 10px;font-size:.82rem;color:var(--ink-60)">' + estadoLbl + '</td>';
+    html += '<td style="padding:8px 10px">' + domSelect + '</td>';
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+async function generarRutas() {
+  var pendRes = await _db.from('pedidos').select('id, sector_id').is('ruta_id', null).eq('estado', 'pendiente').eq('pago_estado', 'aprobado');
+  var pedidosListos = pendRes.data || [];
+
+  var sinSector = pedidosListos.filter(function(p) { return !p.sector_id; }).length;
+  var conSector = pedidosListos.filter(function(p) { return p.sector_id; });
+
+  if (conSector.length === 0) {
+    alert('No hay pedidos pagados y listos con sector asignado para agrupar en rutas.' + (sinSector > 0 ? ' Hay ' + sinSector + ' pedido(s) sin sector detectado, esos hay que asignarlos manualmente.' : ''));
+    return;
+  }
+
+  var porSector = {};
+  for (var i = 0; i < conSector.length; i++) {
+    var sid = conSector[i].sector_id;
+    if (!porSector[sid]) { porSector[sid] = []; }
+    porSector[sid].push(conSector[i].id);
+  }
+
+  var hoy = new Date().toISOString().slice(0, 10);
+  var sectorIds = Object.keys(porSector);
+  var rutasCreadas = 0;
+
+  for (var s = 0; s < sectorIds.length; s++) {
+    var sectorId = sectorIds[s];
+    var pedidoIds = porSector[sectorId];
+
+    var rutaRes = await _db.from('rutas').insert({ fecha: hoy, sector_id: sectorId, estado: 'generada' }).select().single();
+    if (rutaRes.error) { continue; }
+
+    await _db.from('pedidos').update({ ruta_id: rutaRes.data.id, estado: 'despachado' }).in('id', pedidoIds);
+    rutasCreadas++;
+  }
+
+  alert(rutasCreadas + ' ruta(s) generada(s).' + (sinSector > 0 ? ' ' + sinSector + ' pedido(s) sin sector detectado quedaron sin agrupar, asignalos manualmente.' : ''));
+  await loadData();
+}
+
+async function asignarRuta(rutaId, domiciliarioId) {
+  var updates = { domiciliario_id: domiciliarioId || null, estado: domiciliarioId ? 'asignada' : 'generada' };
+  var res = await _db.from('rutas').update(updates).eq('id', rutaId);
+  if (res.error) {
+    alert('No se pudo asignar: ' + res.error.message);
+    return;
+  }
+  var pedRes = await _db.from('pedidos').update({ domiciliario_id: domiciliarioId || null }).eq('ruta_id', rutaId);
+  if (pedRes.error) {
+    alert('La ruta se asigno pero hubo un error actualizando los pedidos: ' + pedRes.error.message);
+  }
+  await loadData();
 }
 
 function setFilter(f, btn) {
