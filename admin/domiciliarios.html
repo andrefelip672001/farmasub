@@ -371,6 +371,13 @@ async function crearDomiciliario() {
     return;
   }
 
+  var checkRes = await _db.from('usuarios').select('id, nombre, rol').or('cedula.eq.' + cedula + ',email.eq.' + email);
+  if (checkRes.data && checkRes.data.length > 0) {
+    var existente = checkRes.data[0];
+    showModalError('Ya existe una cuenta con esa cedula o correo (' + existente.nombre + ', rol: ' + existente.rol + '). Usa datos distintos.');
+    return;
+  }
+
   var btn = document.getElementById('btn-guardar');
   btn.disabled = true;
   btn.textContent = 'Creando...';
