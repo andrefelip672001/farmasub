@@ -353,7 +353,7 @@ async function aprobar(pagoId) {
   var ahora = new Date().toISOString();
   await _db.from('pagos').update({ estado: 'aprobado', fecha_revision: ahora }).eq('id', pagoId);
   if (pago.tipo === 'pedido' && pago.pedido_id) {
-    await _db.from('pedidos').update({ pago_estado: 'aprobado' }).eq('id', pago.pedido_id);
+    await _db.from('pedidos').update({ pago_estado: 'aprobado', estado: 'en-proceso' }).eq('id', pago.pedido_id).eq('estado', 'pendiente');
     await loadData();
     return;
   }

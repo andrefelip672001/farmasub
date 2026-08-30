@@ -308,7 +308,7 @@ function renderRutas() {
 }
 
 async function generarRutas() {
-  var pendRes = await _db.from('pedidos').select('id, sector_id').is('ruta_id', null).eq('estado', 'pendiente').eq('pago_estado', 'aprobado');
+  var pendRes = await _db.from('pedidos').select('id, sector_id').is('ruta_id', null).eq('estado', 'en-proceso').eq('pago_estado', 'aprobado');
   var pedidosListos = pendRes.data || [];
 
   var sinSector = pedidosListos.filter(function(p) { return !p.sector_id; }).length;
