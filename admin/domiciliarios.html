@@ -210,6 +210,9 @@ tr:last-child td{border-bottom:none;}
         </div>
         <p class="field-hint">Comp&aacute;rtela con el domiciliario. La puede cambiar despu&eacute;s.</p>
       </div>
+      <div class="form-group">
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAAEWKakLBmN11CvI1" data-callback="onTurnstileOkDom" data-expired-callback="onTurnstileExpiredDom"></div>
+      </div>
       <div class="mc-actions">
         <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
         <button class="btn-guardar" id="btn-guardar" onclick="crearDomiciliario()">Crear cuenta</button>
@@ -239,6 +242,7 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 var SUPA_URL = 'https://cjimcldhoglgqachcimm.supabase.co';
 var SUPA_KEY = 'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC';
@@ -249,6 +253,9 @@ function esc(s) {
 }
 
 var _todos = [];
+var _domTurnstileToken = null;
+function onTurnstileOkDom(token) { _domTurnstileToken = token; }
+function onTurnstileExpiredDom() { _domTurnstileToken = null; }
 
 (async function() {
   var sessRes = await _db.auth.getSession();
@@ -320,7 +327,9 @@ function openAddModal() {
   document.getElementById('f-email').value = '';
   document.getElementById('f-password').value = '';
   document.getElementById('modal-error').style.display = 'none';
+  _domTurnstileToken = null;
   document.getElementById('add-modal').classList.remove('hidden');
+  if (window.turnstile) { try { window.turnstile.reset(); } catch (e) {} }
 }
 
 function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
@@ -357,6 +366,10 @@ async function crearDomiciliario() {
     showModalError('La contrasena debe tener al menos 6 caracteres.');
     return;
   }
+  if (!_domTurnstileToken) {
+    showModalError('Verifica que no eres un robot (marca la casilla de abajo).');
+    return;
+  }
 
   var btn = document.getElementById('btn-guardar');
   btn.disabled = true;
@@ -370,13 +383,15 @@ async function crearDomiciliario() {
     var authRes = await tempClient.auth.signUp({
       email: email,
       password: password,
-      options: { data: { rol: 'domiciliario', nombre: nombre } }
+      options: { data: { rol: 'domiciliario', nombre: nombre }, captchaToken: _domTurnstileToken }
     });
 
     if (authRes.error) {
       showModalError('No se pudo crear la cuenta: ' + authRes.error.message);
       btn.disabled = false;
       btn.textContent = 'Crear cuenta';
+      if (window.turnstile) { try { window.turnstile.reset(); } catch (e) {} }
+      _domTurnstileToken = null;
       return;
     }
 
