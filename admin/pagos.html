@@ -353,7 +353,12 @@ async function aprobar(pagoId) {
   var ahora = new Date().toISOString();
   await _db.from('pagos').update({ estado: 'aprobado', fecha_revision: ahora }).eq('id', pagoId);
   if (pago.tipo === 'pedido' && pago.pedido_id) {
-    await _db.from('pedidos').update({ pago_estado: 'aprobado', estado: 'en-proceso' }).eq('id', pago.pedido_id).eq('estado', 'pendiente');
+    var updRes = await _db.from('pedidos').update({ pago_estado: 'aprobado', estado: 'en-proceso' }).eq('id', pago.pedido_id).select();
+    if (updRes.error) {
+      alert('El pago se aprobo, pero hubo un error actualizando el pedido: ' + updRes.error.message);
+    } else if (!updRes.data || !updRes.data.length) {
+      alert('El pago se aprobo, pero no se pudo actualizar el estado del pedido (0 filas afectadas). Puede ser un tema de permisos (RLS) en la tabla pedidos.');
+    }
     await loadData();
     return;
   }
