@@ -182,8 +182,8 @@ async function loadEntregas() {
     .select('id, total_costo, direccion_entrega, usuarios!titular_id(nombre)')
     .eq('domiciliario_id', _domiciliarioId)
     .eq('estado', 'entregado')
-    .gte('fecha_pedido', hoyInicio.toISOString())
-    .order('fecha_pedido', {ascending: false});
+    .gte('fecha_entrega', hoyInicio.toISOString())
+    .order('fecha_entrega', {ascending: false});
   _entregados = entRes.data || [];
 
   renderPendientes();
@@ -309,7 +309,7 @@ async function confirmarEntrega() {
     return;
   }
 
-  var res = await _db.from('pedidos').update({ estado: 'entregado' }).eq('id', _pedidoEnConfirmacion);
+  var res = await _db.from('pedidos').update({ estado: 'entregado', fecha_entrega: new Date().toISOString() }).eq('id', _pedidoEnConfirmacion);
   if (res.error) {
     errEl.textContent = 'No se pudo actualizar: ' + res.error.message;
     errEl.style.display = 'block';
