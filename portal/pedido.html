@@ -925,6 +925,7 @@ async function confirmarPedido() {
       total_costo: total,
       direccion_entrega: addr,
       fecha_pedido: new Date().toISOString(),
+      fecha_entrega_estimada: proximaFechaEntregaDate().toISOString().slice(0, 10),
       titular_id: titularId,
       comprobante_url: comprobanteUrl,
       metodo_pago: _metodo,
@@ -978,10 +979,23 @@ async function confirmarPedido() {
   }
 }
 
+function proximaFechaEntregaDate() {
+  var hoy = new Date();
+  var dia = hoy.getDate();
+  var year = hoy.getFullYear();
+  var mes = hoy.getMonth();
+  var d;
+  if (dia <= 15) {
+    d = new Date(year, mes, 17);
+  } else {
+    d = new Date(year, mes + 1, 3);
+  }
+  while (d.getDay() === 0 || d.getDay() === 6) { d.setDate(d.getDate() + 1); }
+  return d;
+}
+
 function primerDiaHabilSiguienteMes() {
-  var now3 = new Date();
-  var d = new Date(now3.getFullYear(), now3.getMonth() + 1, 1);
-  while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1);
+  var d = proximaFechaEntregaDate();
   return d.toLocaleDateString('es-EC', {weekday: 'long', day: 'numeric', month: 'long'});
 }
 
