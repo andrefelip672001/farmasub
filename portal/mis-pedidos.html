@@ -183,7 +183,7 @@ var _titularId;
 })();
 
 function loadPedidos(){
-  return _db.from('pedidos').select('id,estado,fecha_pedido,total_costo,codigo_entrega').eq('titular_id',_titularId).order('fecha_pedido',{ascending:false}).then(function(pedRes){
+  return _db.from('pedidos').select('id,estado,fecha_pedido,fecha_entrega_estimada,total_costo,codigo_entrega').eq('titular_id',_titularId).order('fecha_pedido',{ascending:false}).then(function(pedRes){
     var pedidos=pedRes.data;
     var list=document.getElementById('pedidos-list');
     if(!pedidos||!pedidos.length){
@@ -195,6 +195,11 @@ function loadPedidos(){
       var p=pedidos[i];
       var cls=badgeCls(p.estado);
       var fecha=new Date(p.fecha_pedido).toLocaleDateString('es-EC',{day:'numeric',month:'long',year:'numeric'});
+      var entregaHtml='';
+      if(p.fecha_entrega_estimada && p.estado!=='entregado' && p.estado!=='cancelado'){
+        var fechaEntrega=new Date(p.fecha_entrega_estimada+'T00:00:00').toLocaleDateString('es-EC',{day:'numeric',month:'long'});
+        entregaHtml='<span class="ped-entrega-est" style="font-size:.75rem;color:#6B7280">Entrega estimada: '+fechaEntrega+'</span>';
+      }
       var codigoHtml='';
       if(p.estado==='despachado'&&p.codigo_entrega){
         codigoHtml='<div style="background:#FFF2EC;border:1.5px solid #FDCDB9;border-radius:10px;padding:10px 14px;margin-top:10px;text-align:center">'
@@ -209,6 +214,7 @@ function loadPedidos(){
         +'<span class="ped-num">#'+p.id.slice(0,8)+'</span>'
         +'<span class="ped-fecha">'+fecha+'</span>'
         +'<span class="badge '+cls+'">'+p.estado+'</span>'
+        +entregaHtml
         +'</div>'
         +'<span class="ped-total">$'+(p.total_costo||0).toFixed(2)+'</span>'
         +'<svg class="ped-chevron" id="chev-'+i+'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>'
