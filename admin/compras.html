@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Compras &mdash; TuCosto Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+.hamburger-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-right:8px;flex-shrink:0;}
+.hamburger-btn svg{width:24px;height:24px;color:var(--ink);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;}
+.sidebar-backdrop.open{display:block;}
+
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;}
+.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;}
+.page-title{font-size:1.4rem;font-weight:700;color:var(--ink);}
+.page-sub{font-size:.85rem;color:var(--ink-60);margin-top:2px;}
+
+.card{background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;box-shadow:var(--shadow);padding:22px;margin-bottom:22px;}
+.card h2{font-size:1rem;font-weight:700;margin-bottom:16px;}
+
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--ink);margin-bottom:5px;}
+.form-group input{width:100%;padding:9px 11px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.85rem;color:var(--ink);outline:none;}
+.form-group input:focus{border-color:var(--naranja);}
+.modal-error{display:none;background:var(--danger-light);color:var(--danger);border-radius:8px;padding:10px 12px;font-size:.8rem;margin-bottom:12px;}
+
+.buscador-wrap{position:relative;margin-bottom:16px;}
+.buscador-wrap input{width:100%;padding:11px 14px 11px 38px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:'Inter',sans-serif;font-size:.9rem;color:var(--ink);outline:none;}
+.buscador-wrap input:focus{border-color:var(--naranja);}
+.buscador-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--ink-30);}
+.buscador-resultados{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--ink-30);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);max-height:280px;overflow-y:auto;z-index:20;display:none;}
+.buscador-resultados.open{display:block;}
+.buscador-item{padding:10px 14px;cursor:pointer;font-size:.85rem;border-bottom:1px solid #F3F4F6;display:flex;justify-content:space-between;gap:10px;}
+.buscador-item:last-child{border-bottom:none;}
+.buscador-item:hover{background:var(--naranja-light);}
+.buscador-item .bi-costo{color:var(--ink-60);font-size:.78rem;white-space:nowrap;}
+.buscador-vacio{padding:14px;text-align:center;color:var(--ink-60);font-size:.82rem;}
+
+.linea-factura{background:var(--bg);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.linea-top{display:flex;align-items:center;gap:10px;}
+.linea-nombre{flex:1;font-size:.88rem;font-weight:600;}
+.linea-campos{display:grid;grid-template-columns:100px 130px auto;gap:8px;align-items:center;margin-top:8px;}
+.linea-campos input{padding:7px 9px;border:1.5px solid var(--ink-30);border-radius:7px;font-family:'Inter',sans-serif;font-size:.82rem;}
+.linea-del{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1.2rem;width:26px;height:26px;flex-shrink:0;}
+.linea-del:hover{color:var(--danger);}
+.linea-alerta{font-size:.75rem;padding:5px 9px;border-radius:6px;margin-top:8px;}
+.linea-alerta.sube{background:var(--danger-light);color:var(--danger);}
+.linea-alerta.baja{background:var(--verde-light);color:var(--verde);}
+.linea-alerta label{display:flex;align-items:center;gap:5px;margin-top:5px;cursor:pointer;font-weight:500;}
+.lineas-vacio{text-align:center;color:var(--ink-60);font-size:.85rem;padding:20px;}
+
+.total-row{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin:16px 0;font-size:1rem;font-weight:700;}
+.btn-guardar{background:var(--naranja);border:none;border-radius:10px;padding:12px 24px;font-size:.9rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;width:100%;}
+.btn-guardar:hover{background:var(--naranja-d);}
+.btn-guardar:disabled{opacity:.6;cursor:not-allowed;}
+
+.table-wrap{background:var(--white);border-radius:var(--r);border:1px solid #F3F4F6;overflow:hidden;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 16px;text-align:left;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-60);border-bottom:1px solid #F3F4F6;background:var(--bg);}
+td{padding:11px 16px;font-size:.82rem;border-bottom:1px solid #F3F4F6;vertical-align:middle;color:var(--ink);}
+tr:last-child td{border-bottom:none;}
+.clickable{cursor:pointer;}
+.clickable:hover{background:var(--bg);}
+
+@media(max-width:700px){
+  .hamburger-btn{display:flex;align-items:center;justify-content:center;}
+  .sidebar{position:fixed;top:64px;left:0;bottom:0;width:240px;transform:translateX(-100%);transition:transform .25s ease;z-index:100;box-shadow:2px 0 12px rgba(0,0,0,.1);}
+  .sidebar.open{transform:translateX(0);}
+  .table-wrap{overflow-x:auto;}
+  .page-head{flex-direction:column;align-items:flex-start;gap:10px;}
+  .main{padding:20px;}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .nav-tag{display:none;}
+  .btn-logout{padding:6px 10px;font-size:.75rem;}
+  .linea-campos{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<nav class="top-nav">
+  <div class="nav-left">
+    <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <a href="../admin/dashboard.html" class="nav-logo">
+      <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div><div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div></div>
+    </a>
+    <span class="nav-tag">PANEL ADMIN</span>
+  </div>
+  <div class="nav-right">
+    <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+    <button onclick="logout()" class="btn-logout">Cerrar sesi&oacute;n</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <a href="../admin/dashboard.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>Inicio
+    </a>
+    <a href="../admin/suscriptores.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Suscriptores
+    </a>
+    <a href="../admin/pedidos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Pedidos
+    </a>
+    <a href="../admin/productos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Cat&aacute;logo
+    </a>
+    <a href="../admin/compras.html" class="sb-link active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M9 11a3 3 0 0 0 6 0"/></svg>Compras
+    </a>
+    <a href="../admin/domiciliarios.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 0 1 1 1v5h-6l3-6z"/><path d="M9 17.5H5.5l-2-6h5.5"/><path d="M9 6h6l3 6h-9"/></svg>Domiciliarios
+    </a>
+    <hr class="sb-divider"/>
+    <a href="../admin/pagos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
+    </a>
+    <a href="../admin/finanzas.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finanzas
+    </a>
+    <a href="../admin/seguridad.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Seguridad
+    </a>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title">Compras a proveedores</h1>
+        <p class="page-sub">Registra facturas de compra, actualiza stock, y controla cambios de precio.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Registrar factura nueva</h2>
+      <div class="modal-error" id="factura-modal-error"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px">
+        <div class="form-group" style="margin-bottom:0">
+          <label for="f-proveedor">Proveedor</label>
+          <input type="text" id="f-proveedor" placeholder="Ej: Acromax"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label for="f-numero">N&deg; de factura (opcional)</label>
+          <input type="text" id="f-numero" placeholder="001-001-123456"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label for="f-fecha">Fecha</label>
+          <input type="date" id="f-fecha"/>
+        </div>
+      </div>
+
+      <label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:6px">Buscar y agregar producto</label>
+      <div class="buscador-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="buscador-input" placeholder="Escribe el nombre del producto..." oninput="filtrarProductos()" onfocus="filtrarProductos()"/>
+        <div class="buscador-resultados" id="buscador-resultados"></div>
+      </div>
+
+      <div id="factura-lineas">
+        <p class="lineas-vacio">Todavia no has agregado ningun producto.</p>
+      </div>
+
+      <div class="total-row">Total: <span id="factura-total">$0.00</span></div>
+      <button class="btn-guardar" id="btn-guardar-factura" onclick="guardarFactura()">Guardar factura</button>
+    </div>
+
+    <h2 class="page-title" style="font-size:1.1rem;margin-bottom:14px">Facturas registradas</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:24px"></th><th>Proveedor</th><th>N&deg; factura</th><th>Fecha</th><th>Total</th></tr></thead>
+        <tbody id="facturas-tbody"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--ink-60)">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+
+function esc(s) {
+  return String(s === null || s === undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+var _productosCache = [];
+var _lineas = [];
+var _lineaCounter = 0;
+var _facturas = [];
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = null;
+  if (user.user_metadata && user.user_metadata.rol) rol = user.user_metadata.rol;
+  else if (user.app_metadata && user.app_metadata.rol) rol = user.app_metadata.rol;
+  if (!rol) {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  var aalRes = await _db.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aalRes.data && aalRes.data.nextLevel === 'aal2' && aalRes.data.currentLevel !== aalRes.data.nextLevel) { window.location.href = '../portal/login.html?mfa=1'; return; }
+  document.getElementById('nav-nombre').textContent = user.email;
+  document.getElementById('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+
+  document.getElementById('f-fecha').value = new Date().toISOString().slice(0, 10);
+
+  await cargarProductosCache();
+  await cargarFacturas();
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.buscador-wrap')) {
+      document.getElementById('buscador-resultados').classList.remove('open');
+    }
+  });
+})();
+
+async function cargarProductosCache() {
+  var res = await _db.from('productos').select('id, nombre, precio_costo').eq('activo', true).order('nombre');
+  _productosCache = res.data || [];
+}
+
+function filtrarProductos() {
+  var q = document.getElementById('buscador-input').value.trim().toLowerCase();
+  var resDiv = document.getElementById('buscador-resultados');
+  if (!q) { resDiv.classList.remove('open'); resDiv.innerHTML = ''; return; }
+
+  var matches = _productosCache.filter(function(p) {
+    return p.nombre.toLowerCase().indexOf(q) !== -1;
+  }).slice(0, 30);
+
+  if (!matches.length) {
+    resDiv.innerHTML = '<div class="buscador-vacio">Sin resultados para "' + esc(q) + '"</div>';
+  } else {
+    var html = '';
+    for (var i = 0; i < matches.length; i++) {
+      var p = matches[i];
+      html += '<div class="buscador-item" onclick="seleccionarProducto(\'' + p.id + '\')"><span>' + esc(p.nombre) + '</span><span class="bi-costo">$' + (p.precio_costo || 0).toFixed(2) + '</span></div>';
+    }
+    resDiv.innerHTML = html;
+  }
+  resDiv.classList.add('open');
+}
+
+function seleccionarProducto(prodId) {
+  var prod = null;
+  for (var i = 0; i < _productosCache.length; i++) { if (_productosCache[i].id === prodId) { prod = _productosCache[i]; break; } }
+  if (!prod) return;
+
+  var yaExiste = _lineas.some(function(l) { return l.producto_id === prodId; });
+  if (yaExiste) {
+    document.getElementById('buscador-input').value = '';
+    document.getElementById('buscador-resultados').classList.remove('open');
+    return;
+  }
+
+  _lineaCounter++;
+  _lineas.push({
+    lineaId: _lineaCounter,
+    producto_id: prod.id,
+    nombre: prod.nombre,
+    costo_actual: prod.precio_costo || 0,
+    cantidad: 1,
+    costo_nuevo: prod.precio_costo || 0
+  });
+
+  document.getElementById('buscador-input').value = '';
+  document.getElementById('buscador-resultados').classList.remove('open');
+  renderLineas();
+}
+
+function renderLineas() {
+  var wrap = document.getElementById('factura-lineas');
+  if (!_lineas.length) {
+    wrap.innerHTML = '<p class="lineas-vacio">Todavia no has agregado ningun producto.</p>';
+    recalcTotalFactura();
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _lineas.length; i++) {
+    var l = _lineas[i];
+    var alertaHtml = '';
+    if (l.costo_nuevo > 0 && Math.abs(l.costo_nuevo - l.costo_actual) > 0.001) {
+      var subio = l.costo_nuevo > l.costo_actual;
+      var cls = subio ? 'sube' : 'baja';
+      var flecha = subio ? '&#9650;' : '&#9660;';
+      alertaHtml = '<div class="linea-alerta ' + cls + '">' + flecha + ' El costo ' + (subio ? 'subio' : 'bajo') + ' de $' + l.costo_actual.toFixed(2) + ' a $' + l.costo_nuevo.toFixed(2) +
+        '<label><input type="checkbox" onchange="marcarActualizarPrecio(' + l.lineaId + ', this.checked)" ' + (l.actualizar_precio ? 'checked' : '') + '/> Actualizar el precio de costo de este producto</label></div>';
+    }
+    html += '<div class="linea-factura">' +
+      '<div class="linea-top"><span class="linea-nombre">' + esc(l.nombre) + '</span><button type="button" class="linea-del" onclick="quitarLinea(' + l.lineaId + ')">&times;</button></div>' +
+      '<div class="linea-campos">' +
+      '<input type="number" min="1" value="' + l.cantidad + '" placeholder="Cantidad" onchange="actualizarLinea(' + l.lineaId + ', \'cantidad\', this.value)"/>' +
+      '<input type="number" min="0" step="0.01" value="' + l.costo_nuevo.toFixed(2) + '" placeholder="Costo unitario" onchange="actualizarLinea(' + l.lineaId + ', \'costo_nuevo\', this.value)"/>' +
+      '<span style="font-size:.82rem;color:var(--ink-60)">Costo actual: $' + l.costo_actual.toFixed(2) + '</span>' +
+      '</div>' + alertaHtml +
+      '</div>';
+  }
+  wrap.innerHTML = html;
+  recalcTotalFactura();
+}
+
+function actualizarLinea(lineaId, campo, valor) {
+  var l = _lineas.find(function(x) { return x.lineaId === lineaId; });
+  if (!l) return;
+  l[campo] = parseFloat(valor) || 0;
+  renderLineas();
+}
+
+function marcarActualizarPrecio(lineaId, checked) {
+  var l = _lineas.find(function(x) { return x.lineaId === lineaId; });
+  if (l) { l.actualizar_precio = checked; }
+}
+
+function quitarLinea(lineaId) {
+  _lineas = _lineas.filter(function(x) { return x.lineaId !== lineaId; });
+  renderLineas();
+}
+
+function recalcTotalFactura() {
+  var total = 0;
+  for (var i = 0; i < _lineas.length; i++) { total += _lineas[i].cantidad * _lineas[i].costo_nuevo; }
+  document.getElementById('factura-total').textContent = '$' + total.toFixed(2);
+}
+
+async function guardarFactura() {
+  var errEl = document.getElementById('factura-modal-error');
+  errEl.style.display = 'none';
+
+  var proveedor = document.getElementById('f-proveedor').value.trim();
+  var numero = document.getElementById('f-numero').value.trim();
+  var fecha = document.getElementById('f-fecha').value;
+
+  if (!proveedor) { errEl.textContent = 'Ingresa el nombre del proveedor.'; errEl.style.display = 'block'; return; }
+  if (!fecha) { errEl.textContent = 'Selecciona la fecha de la factura.'; errEl.style.display = 'block'; return; }
+  var lineasValidas = _lineas.filter(function(l) { return l.cantidad > 0 && l.costo_nuevo > 0; });
+  if (!lineasValidas.length) { errEl.textContent = 'Agrega al menos un producto con cantidad y costo validos.'; errEl.style.display = 'block'; return; }
+
+  var montoTotal = 0;
+  for (var j = 0; j < lineasValidas.length; j++) { montoTotal += lineasValidas[j].cantidad * lineasValidas[j].costo_nuevo; }
+
+  var btn = document.getElementById('btn-guardar-factura');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  try {
+    var sessRes = await _db.auth.getSession();
+    var userId = sessRes.data.session.user.id;
+
+    var facRes = await _db.from('facturas_compra').insert({
+      proveedor: proveedor,
+      numero_factura: numero || null,
+      fecha_factura: fecha,
+      monto_total: montoTotal,
+      usuario_id: userId
+    }).select().single();
+    if (facRes.error) throw facRes.error;
+    var facturaId = facRes.data.id;
+
+    for (var k = 0; k < lineasValidas.length; k++) {
+      var l = lineasValidas[k];
+      var movRes = await _db.from('movimientos_inventario').insert({
+        producto_id: l.producto_id,
+        tipo: 'entrada',
+        cantidad: l.cantidad,
+        costo_unitario: l.costo_nuevo,
+        motivo: 'Factura de compra: ' + proveedor,
+        usuario_id: userId,
+        factura_compra_id: facturaId
+      });
+      if (movRes.error) console.error('Error registrando movimiento:', movRes.error);
+
+      if (l.actualizar_precio) {
+        var updRes = await _db.from('productos').update({ precio_costo: l.costo_nuevo }).eq('id', l.producto_id);
+        if (updRes.error) console.error('Error actualizando precio:', updRes.error);
+      }
+    }
+
+    _lineas = [];
+    document.getElementById('f-proveedor').value = '';
+    document.getElementById('f-numero').value = '';
+    document.getElementById('f-fecha').value = new Date().toISOString().slice(0, 10);
+    renderLineas();
+    await cargarProductosCache();
+    await cargarFacturas();
+    alert('Factura guardada. El stock se actualizo automaticamente.');
+  } catch (e) {
+    errEl.textContent = 'Error al guardar: ' + (e.message || 'intenta de nuevo');
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar factura';
+  }
+}
+
+async function cargarFacturas() {
+  var res = await _db.from('facturas_compra').select('id, proveedor, numero_factura, fecha_factura, monto_total').order('fecha_factura', { ascending: false }).limit(100);
+  _facturas = res.data || [];
+  renderFacturasTabla();
+}
+
+function renderFacturasTabla() {
+  var tbody = document.getElementById('facturas-tbody');
+  if (!_facturas.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--ink-60)">Sin facturas registradas todavia</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _facturas.length; i++) {
+    var f = _facturas[i];
+    var fecha = new Date(f.fecha_factura + 'T00:00:00').toLocaleDateString('es-EC');
+    html += '<tr class="clickable" onclick="toggleFacturaDetalle(' + i + ')">';
+    html += '<td><svg id="fchev-' + i + '" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></td>';
+    html += '<td style="font-weight:600">' + esc(f.proveedor) + '</td>';
+    html += '<td>' + esc(f.numero_factura || '-') + '</td>';
+    html += '<td>' + fecha + '</td>';
+    html += '<td style="font-weight:600">$' + (f.monto_total || 0).toFixed(2) + '</td>';
+    html += '</tr>';
+    html += '<tr id="fdet-' + i + '" style="display:none"><td colspan="5" style="background:var(--bg);padding:0"><div id="fdet-inner-' + i + '" style="padding:12px 16px;font-size:.82rem;color:var(--ink-60)">Cargando...</div></td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+async function toggleFacturaDetalle(idx) {
+  var row = document.getElementById('fdet-' + idx);
+  var chev = document.getElementById('fchev-' + idx);
+  var isOpen = row.style.display !== 'none';
+  if (isOpen) { row.style.display = 'none'; chev.style.transform = ''; return; }
+  row.style.display = '';
+  chev.style.transform = 'rotate(180deg)';
+  var inner = document.getElementById('fdet-inner-' + idx);
+  if (inner.getAttribute('data-loaded') === '1') return;
+
+  var facturaId = _facturas[idx].id;
+  var res = await _db.from('movimientos_inventario').select('cantidad, costo_unitario, productos(nombre)').eq('factura_compra_id', facturaId);
+  var items = res.data || [];
+  if (!items.length) {
+    inner.innerHTML = 'Sin lineas de productos.';
+  } else {
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      var nom = (it.productos && it.productos.nombre) ? it.productos.nombre : 'Producto';
+      html += '<div style="padding:4px 0">' + esc(nom) + ' &mdash; ' + it.cantidad + ' x $' + (it.costo_unitario || 0).toFixed(2) + ' = $' + (it.cantidad * (it.costo_unitario || 0)).toFixed(2) + '</div>';
+    }
+    inner.innerHTML = html;
+  }
+  inner.setAttribute('data-loaded', '1');
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-backdrop').classList.toggle('open');
+}
+
+function logout() {
+  _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; });
+}
+</script>
+</body>
+</html>
