@@ -59,6 +59,34 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .fin-val.ink{color:var(--ink);}
 
 .section-title{font-size:1.05rem;font-weight:700;margin-bottom:14px;}
+
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mo.hidden{display:none;}
+.mc{background:var(--white);border-radius:var(--r);max-width:94vw;max-height:88vh;box-shadow:0 20px 60px rgba(0,0,0,.15);display:flex;flex-direction:column;}
+.mc-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;background:var(--naranja);flex-shrink:0;border-radius:var(--r) var(--r) 0 0;}
+.mc-hd h3{font-size:1rem;font-weight:700;color:white;}
+.btn-close-mc{background:rgba(255,255,255,.2);border:none;cursor:pointer;color:white;width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+.btn-close-mc:hover{background:rgba(255,255,255,.35);}
+.mc-body{padding:22px;}
+.form-group{margin-bottom:0;}
+.form-group label{display:block;font-size:.78rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.form-group input{width:100%;padding:9px 11px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.85rem;color:var(--ink);outline:none;}
+.form-group input:focus{border-color:var(--naranja);}
+.modal-error{display:none;background:var(--danger-light);color:var(--danger);border-radius:8px;padding:10px 12px;font-size:.8rem;margin-bottom:12px;}
+.mc-actions{display:flex;gap:10px;margin-top:8px;}
+.btn-cancel{flex:1;padding:11px;background:none;border:1.5px solid var(--ink-30);border-radius:10px;font-size:.85rem;font-weight:600;color:var(--ink-60);cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-guardar{flex:1;padding:11px;background:var(--naranja);border:none;border-radius:10px;font-size:.85rem;font-weight:600;color:white;cursor:pointer;font-family:'Inter',sans-serif;transition:background .2s;}
+.btn-guardar:hover{background:var(--naranja-d);}
+.btn-guardar:disabled{opacity:.6;cursor:not-allowed;}
+
+.linea-factura{display:grid;grid-template-columns:2fr 90px 110px 26px;gap:8px;align-items:start;margin-bottom:8px;}
+.linea-factura select,.linea-factura input{padding:8px 9px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:'Inter',sans-serif;font-size:.8rem;color:var(--ink);}
+.linea-del{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1.1rem;width:26px;height:36px;}
+.linea-del:hover{color:var(--danger);}
+.linea-alerta{grid-column:1/-1;font-size:.75rem;padding:4px 8px;border-radius:6px;margin-top:-4px;margin-bottom:2px;}
+.linea-alerta.sube{background:var(--danger-light);color:var(--danger);}
+.linea-alerta.baja{background:var(--verde-light);color:var(--verde);}
+.linea-alerta label{display:flex;align-items:center;gap:5px;margin-top:3px;cursor:pointer;font-weight:500;}
 .table-wrap{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;margin-bottom:28px;}
 table{width:100%;border-collapse:collapse;}
 th{text-align:left;font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-60);padding:12px 16px;border-bottom:1px solid #F3F4F6;background:#FAFAFB;}
@@ -142,6 +170,7 @@ tr:last-child td{border-bottom:none;}
     <div class="mes-selector">
       <select id="mes-select" onchange="cambiarMes()"></select>
       <button class="btn-export" onclick="exportarCSV()">Descargar reporte del mes (CSV)</button>
+      <button class="btn-export" style="background:var(--naranja);color:#fff;border-color:var(--naranja)" onclick="abrirFacturaModal()">+ Registrar factura de compra</button>
     </div>
 
     <div class="fin-grid">
@@ -175,6 +204,14 @@ tr:last-child td{border-bottom:none;}
       </table>
     </div>
 
+    <h2 class="section-title">Facturas de compra registradas</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th style="width:24px"></th><th>Proveedor</th><th>N&deg; factura</th><th>Fecha</th><th>Total</th></tr></thead>
+        <tbody id="facturas-tbody"><tr class="empty-row"><td colspan="5">Cargando...</td></tr></tbody>
+      </table>
+    </div>
+
     <h2 class="section-title">Compras a distribuidor del mes</h2>
     <div class="table-wrap">
       <table>
@@ -185,6 +222,46 @@ tr:last-child td{border-bottom:none;}
 
   </main>
 </div>
+
+<div class="mo hidden" id="factura-modal">
+  <div class="mc" style="width:640px">
+    <div class="mc-hd">
+      <h3>Registrar factura de compra</h3>
+      <button class="btn-close-mc" onclick="closeFacturaModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="mc-body" style="max-height:70vh;overflow-y:auto">
+      <div class="modal-error" id="factura-modal-error"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px">
+        <div class="form-group">
+          <label for="f-proveedor">Proveedor</label>
+          <input type="text" id="f-proveedor" placeholder="Ej: Acromax"/>
+        </div>
+        <div class="form-group">
+          <label for="f-numero">N&deg; de factura (opcional)</label>
+          <input type="text" id="f-numero" placeholder="001-001-123456"/>
+        </div>
+        <div class="form-group">
+          <label for="f-fecha">Fecha</label>
+          <input type="date" id="f-fecha"/>
+        </div>
+      </div>
+
+      <div style="font-size:.85rem;font-weight:600;margin-bottom:8px">Productos de la factura</div>
+      <div id="factura-lineas"></div>
+      <button type="button" onclick="agregarLineaFactura()" style="background:none;border:1.5px dashed var(--ink-30);color:var(--ink-60);border-radius:8px;padding:8px 16px;font-size:.82rem;cursor:pointer;margin-top:6px">+ Agregar producto</button>
+
+      <div style="text-align:right;margin-top:16px;font-size:.95rem;font-weight:700">Total: <span id="factura-total">$0.00</span></div>
+
+      <div class="mc-actions" style="margin-top:16px">
+        <button class="btn-cancel" onclick="closeFacturaModal()">Cancelar</button>
+        <button class="btn-guardar" id="btn-guardar-factura" onclick="guardarFactura()">Guardar factura</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
@@ -290,6 +367,7 @@ async function cargarMes(mesStr) {
 
   renderPagosTabla();
   renderComprasTabla();
+  await loadFacturasMes(mesStr);
 }
 
 function renderPagosTabla() {
@@ -361,6 +439,255 @@ function exportarCSV() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+var _productosCache = [];
+var _facturasMes = [];
+var _lineaCounter = 0;
+
+async function cargarProductosCache() {
+  if (_productosCache.length) return;
+  var res = await _db.from('productos').select('id, nombre, precio_costo').eq('activo', true).order('nombre');
+  _productosCache = res.data || [];
+}
+
+function abrirFacturaModal() {
+  document.getElementById('f-proveedor').value = '';
+  document.getElementById('f-numero').value = '';
+  document.getElementById('f-fecha').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('factura-lineas').innerHTML = '';
+  document.getElementById('factura-modal-error').style.display = 'none';
+  _lineaCounter = 0;
+  cargarProductosCache().then(function() {
+    agregarLineaFactura();
+    document.getElementById('factura-modal').classList.remove('hidden');
+  });
+}
+
+function closeFacturaModal() {
+  document.getElementById('factura-modal').classList.add('hidden');
+}
+
+function opcionesProductos(selectedId) {
+  var html = '<option value="">Selecciona un producto</option>';
+  for (var i = 0; i < _productosCache.length; i++) {
+    var p = _productosCache[i];
+    var sel = p.id === selectedId ? ' selected' : '';
+    html += '<option value="' + p.id + '" data-costo="' + (p.precio_costo || 0) + '"' + sel + '>' + esc(p.nombre) + '</option>';
+  }
+  return html;
+}
+
+function agregarLineaFactura() {
+  _lineaCounter++;
+  var id = _lineaCounter;
+  var wrap = document.getElementById('factura-lineas');
+  var div = document.createElement('div');
+  div.id = 'linea-' + id;
+  div.innerHTML =
+    '<div class="linea-factura">' +
+    '<select id="linea-prod-' + id + '" onchange="onProductoLineaChange(' + id + ')">' + opcionesProductos(null) + '</select>' +
+    '<input type="number" id="linea-cant-' + id + '" placeholder="Cant." min="1" oninput="recalcTotalFactura()"/>' +
+    '<input type="number" id="linea-costo-' + id + '" placeholder="Costo unit." step="0.01" min="0" oninput="onCostoLineaChange(' + id + ')"/>' +
+    '<button type="button" class="linea-del" onclick="quitarLineaFactura(' + id + ')">&times;</button>' +
+    '<div id="linea-alerta-' + id + '"></div>' +
+    '</div>';
+  wrap.appendChild(div);
+}
+
+function quitarLineaFactura(id) {
+  var el = document.getElementById('linea-' + id);
+  if (el) el.remove();
+  recalcTotalFactura();
+}
+
+function onProductoLineaChange(id) {
+  var sel = document.getElementById('linea-prod-' + id);
+  var opt = sel.options[sel.selectedIndex];
+  var costoActual = opt ? parseFloat(opt.getAttribute('data-costo')) || 0 : 0;
+  document.getElementById('linea-costo-' + id).value = costoActual.toFixed(2);
+  onCostoLineaChange(id);
+}
+
+function onCostoLineaChange(id) {
+  var sel = document.getElementById('linea-prod-' + id);
+  var opt = sel.options[sel.selectedIndex];
+  var costoActual = opt ? parseFloat(opt.getAttribute('data-costo')) || 0 : 0;
+  var costoNuevo = parseFloat(document.getElementById('linea-costo-' + id).value) || 0;
+  var alertaEl = document.getElementById('linea-alerta-' + id);
+
+  if (opt && opt.value && costoNuevo > 0 && Math.abs(costoNuevo - costoActual) > 0.001) {
+    var subio = costoNuevo > costoActual;
+    var cls = subio ? 'sube' : 'baja';
+    var flecha = subio ? '&#9650;' : '&#9660;';
+    alertaEl.innerHTML = '<div class="linea-alerta ' + cls + '">' + flecha + ' El costo ' + (subio ? 'subio' : 'bajo') + ' de $' + costoActual.toFixed(2) + ' a $' + costoNuevo.toFixed(2) +
+      '<label><input type="checkbox" id="linea-actualizar-' + id + '"/> Actualizar el precio de costo de este producto</label></div>';
+  } else {
+    alertaEl.innerHTML = '';
+  }
+  recalcTotalFactura();
+}
+
+function recalcTotalFactura() {
+  var total = 0;
+  var lineas = document.querySelectorAll('#factura-lineas > div');
+  for (var i = 0; i < lineas.length; i++) {
+    var id = lineas[i].id.replace('linea-', '');
+    var cant = parseFloat(document.getElementById('linea-cant-' + id).value) || 0;
+    var costo = parseFloat(document.getElementById('linea-costo-' + id).value) || 0;
+    total += cant * costo;
+  }
+  document.getElementById('factura-total').textContent = '$' + total.toFixed(2);
+}
+
+async function guardarFactura() {
+  var errEl = document.getElementById('factura-modal-error');
+  errEl.style.display = 'none';
+
+  var proveedor = document.getElementById('f-proveedor').value.trim();
+  var numero = document.getElementById('f-numero').value.trim();
+  var fecha = document.getElementById('f-fecha').value;
+
+  if (!proveedor) {
+    errEl.textContent = 'Ingresa el nombre del proveedor.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!fecha) {
+    errEl.textContent = 'Selecciona la fecha de la factura.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var lineasDiv = document.querySelectorAll('#factura-lineas > div');
+  var lineas = [];
+  for (var i = 0; i < lineasDiv.length; i++) {
+    var id = lineasDiv[i].id.replace('linea-', '');
+    var prodId = document.getElementById('linea-prod-' + id).value;
+    var cantidad = parseFloat(document.getElementById('linea-cant-' + id).value);
+    var costo = parseFloat(document.getElementById('linea-costo-' + id).value);
+    var actualizarChk = document.getElementById('linea-actualizar-' + id);
+    var actualizarPrecio = actualizarChk ? actualizarChk.checked : false;
+    if (!prodId || !cantidad || cantidad <= 0 || !costo || costo <= 0) continue;
+    lineas.push({ producto_id: prodId, cantidad: cantidad, costo_unitario: costo, actualizar_precio: actualizarPrecio });
+  }
+
+  if (!lineas.length) {
+    errEl.textContent = 'Agrega al menos un producto con cantidad y costo validos.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var montoTotal = 0;
+  for (var j = 0; j < lineas.length; j++) { montoTotal += lineas[j].cantidad * lineas[j].costo_unitario; }
+
+  var btn = document.getElementById('btn-guardar-factura');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  try {
+    var sessRes = await _db.auth.getSession();
+    var userId = sessRes.data.session.user.id;
+
+    var facRes = await _db.from('facturas_compra').insert({
+      proveedor: proveedor,
+      numero_factura: numero || null,
+      fecha_factura: fecha,
+      monto_total: montoTotal,
+      usuario_id: userId
+    }).select().single();
+    if (facRes.error) throw facRes.error;
+    var facturaId = facRes.data.id;
+
+    for (var k = 0; k < lineas.length; k++) {
+      var l = lineas[k];
+      var movRes = await _db.from('movimientos_inventario').insert({
+        producto_id: l.producto_id,
+        tipo: 'entrada',
+        cantidad: l.cantidad,
+        costo_unitario: l.costo_unitario,
+        motivo: 'Factura de compra: ' + proveedor,
+        usuario_id: userId,
+        factura_compra_id: facturaId
+      });
+      if (movRes.error) console.error('Error registrando movimiento:', movRes.error);
+
+      if (l.actualizar_precio) {
+        var updRes = await _db.from('productos').update({ precio_costo: l.costo_unitario }).eq('id', l.producto_id);
+        if (updRes.error) console.error('Error actualizando precio:', updRes.error);
+      }
+    }
+
+    closeFacturaModal();
+    _productosCache = [];
+    await cargarMes(_mesActual);
+  } catch (e) {
+    errEl.textContent = 'Error al guardar: ' + (e.message || 'intenta de nuevo');
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar factura';
+  }
+}
+
+async function loadFacturasMes(mesStr) {
+  var r = rangoDelMes(mesStr);
+  var res = await _db.from('facturas_compra').select('id, proveedor, numero_factura, fecha_factura, monto_total').gte('fecha_factura', r.inicio.slice(0, 10)).lt('fecha_factura', r.fin.slice(0, 10)).order('fecha_factura', { ascending: false });
+  _facturasMes = res.data || [];
+  renderFacturasTabla();
+}
+
+function renderFacturasTabla() {
+  var tbody = document.getElementById('facturas-tbody');
+  if (!_facturasMes.length) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="5">Sin facturas registradas este mes</td></tr>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _facturasMes.length; i++) {
+    var f = _facturasMes[i];
+    var fecha = new Date(f.fecha_factura + 'T00:00:00').toLocaleDateString('es-EC');
+    html += '<tr class="clickable" onclick="toggleFacturaDetalle(' + i + ')" style="cursor:pointer">';
+    html += '<td><svg id="fchev-' + i + '" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg></td>';
+    html += '<td style="font-weight:600">' + esc(f.proveedor) + '</td>';
+    html += '<td>' + esc(f.numero_factura || '-') + '</td>';
+    html += '<td>' + fecha + '</td>';
+    html += '<td style="font-weight:600">$' + (f.monto_total || 0).toFixed(2) + '</td>';
+    html += '</tr>';
+    html += '<tr id="fdet-' + i + '" style="display:none"><td colspan="5" style="background:var(--bg,#F9FAFB);padding:0"><div id="fdet-inner-' + i + '" style="padding:12px 16px;font-size:.82rem;color:var(--ink-60)">Cargando...</div></td></tr>';
+  }
+  tbody.innerHTML = html;
+}
+
+async function toggleFacturaDetalle(idx) {
+  var row = document.getElementById('fdet-' + idx);
+  var chev = document.getElementById('fchev-' + idx);
+  var isOpen = row.style.display !== 'none';
+  if (isOpen) {
+    row.style.display = 'none';
+    chev.style.transform = '';
+    return;
+  }
+  row.style.display = '';
+  chev.style.transform = 'rotate(180deg)';
+  var inner = document.getElementById('fdet-inner-' + idx);
+  if (inner.getAttribute('data-loaded') === '1') return;
+
+  var facturaId = _facturasMes[idx].id;
+  var res = await _db.from('movimientos_inventario').select('cantidad, costo_unitario, productos(nombre)').eq('factura_compra_id', facturaId);
+  var items = res.data || [];
+  if (!items.length) {
+    inner.innerHTML = 'Sin lineas de productos.';
+  } else {
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var it = items[i];
+      var nom = (it.productos && it.productos.nombre) ? it.productos.nombre : 'Producto';
+      html += '<div style="padding:4px 0">' + esc(nom) + ' &mdash; ' + it.cantidad + ' x $' + (it.costo_unitario || 0).toFixed(2) + ' = $' + (it.cantidad * (it.costo_unitario || 0)).toFixed(2) + '</div>';
+    }
+    inner.innerHTML = html;
+  }
+  inner.setAttribute('data-loaded', '1');
 }
 
 function toggleSidebar() {
