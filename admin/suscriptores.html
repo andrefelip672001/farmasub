@@ -379,7 +379,9 @@ function renderTable() {
   for (var i = 0; i < _todos.length; i++) {
     var s = _todos[i];
     var sSus0 = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
-    if (_filtro !== 'todos' && (sSus0 ? sSus0.estado : 'pendiente') !== _filtro) continue;
+    var sSusEstado = sSus0 ? sSus0.estado : 'pendiente';
+    if (sSus0 && sSusEstado === 'activa' && sSus0.fecha_vencimiento && new Date(sSus0.fecha_vencimiento) < new Date()) { sSusEstado = 'vencida'; }
+    if (_filtro !== 'todos' && sSusEstado !== _filtro) continue;
     if (q) {
       var nombre = s.nombre ? s.nombre.toLowerCase() : '';
       var cedula = s.cedula ? s.cedula : '';
@@ -400,6 +402,7 @@ function renderTable() {
     var oidx = origIdxs[j];
     var sus0 = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
     var sEstado = sus0 ? sus0.estado : 'pendiente';
+    if (sus0 && sEstado === 'activa' && sus0.fecha_vencimiento && new Date(sus0.fecha_vencimiento) < new Date()) { sEstado = 'vencida'; }
     var sKyc = sus0 ? sus0.kyc_estado : 'pendiente';
     var cls;
     if (sEstado === 'activa') cls = 'badge-activa';
@@ -471,6 +474,7 @@ async function openPanel(idx) {
   // TAB DATOS
   var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
   var sEstado2 = sus ? sus.estado : 'pendiente';
+  if (sus && sEstado2 === 'activa' && sus.fecha_vencimiento && new Date(sus.fecha_vencimiento) < new Date()) { sEstado2 = 'vencida'; }
   var cls2;
   if (sEstado2 === 'activa') cls2 = 'badge-activa';
   else if (sEstado2 === 'vencida') cls2 = 'badge-venc';

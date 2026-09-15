@@ -418,14 +418,16 @@ var PLANS = { ahorro: { precio: 8.99 }, familiar: { precio: 12.99 } };
 async function loadMetrics() {
   var firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
   var results = await Promise.all([
-    _db.from('suscripciones').select('plan', {count: 'exact'}).eq('estado', 'activa'),
+    _db.from('suscripciones').select('plan, fecha_vencimiento', {count: 'exact'}).eq('estado', 'activa'),
     _db.from('pagos').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
     _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha_pedido', firstOfMonth),
     _db.from('suscripciones').select('*', {count: 'exact', head: true}).eq('estado', 'sin_plan'),
     _db.from('usuarios').select('id, suscripciones(estado)').eq('rol', 'suscriptor').gte('created_at', firstOfMonth)
   ]);
-  var activasRows = results[0].data || [];
-  var activos = results[0].count || 0;
+  var activasRowsRaw = results[0].data || [];
+  var hoy = new Date();
+  var activasRows = activasRowsRaw.filter(function(r) { return !(r.fecha_vencimiento && new Date(r.fecha_vencimiento) < hoy); });
+  var activos = activasRows.length;
   var pendientes = results[1].count || 0;
   var pedidosMes = results[2].count || 0;
   var sinPlan = results[3].count || 0;

@@ -685,6 +685,7 @@ var _cupoMensual = 190;
 var _yaGastado = 0;
 var _planNombre = 'Plan Familiar';
 var _tienePlan = true;
+var _vencidaPorFecha = false;
 
 (async function() {
   var sessRes = await _db.auth.getSession();
@@ -692,7 +693,7 @@ var _tienePlan = true;
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('id, nombre, cedula, direccion, barrio, suscripciones(plan, estado)').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('id, nombre, cedula, direccion, barrio, suscripciones(plan, estado, fecha_vencimiento)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
 
@@ -705,7 +706,9 @@ var _tienePlan = true;
     _miembros = mRes.data || [];
 
     var suscRow = (s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
-    _tienePlan = !!(suscRow && suscRow.estado !== 'sin_plan');
+    var vencidaPorFecha = !!(suscRow && suscRow.estado === 'activa' && suscRow.fecha_vencimiento && new Date(suscRow.fecha_vencimiento) < new Date());
+    _vencidaPorFecha = vencidaPorFecha;
+    _tienePlan = !!(suscRow && suscRow.estado !== 'sin_plan' && !vencidaPorFecha);
     var planKey = (suscRow && suscRow.plan && PLANS[suscRow.plan]) ? suscRow.plan : 'familiar';
     _cupoMensual = PLANS[planKey].limite;
     _planNombre = PLANS[planKey].nombre;
@@ -884,8 +887,13 @@ function renderSummary() {
 async function confirmarPedido() {
   if (!_cart.length) return;
   if (!_tienePlan) {
-    alert('Para confirmar tu pedido primero necesitas activar tu membresia (elegir un plan y completar el pago). Te llevamos a esa pantalla.');
-    window.location.href = '../portal/activar-membresia.html';
+    if (_vencidaPorFecha) {
+      alert('Tu membresia ha vencido. Renuevala para poder confirmar tu pedido.');
+      window.location.href = '../portal/renovar.html';
+    } else {
+      alert('Para confirmar tu pedido primero necesitas activar tu membresia (elegir un plan y completar el pago). Te llevamos a esa pantalla.');
+      window.location.href = '../portal/activar-membresia.html';
+    }
     return;
   }
   if (!_archivo) {
