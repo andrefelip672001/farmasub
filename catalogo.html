@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAEiUlEQVR4nO3dT2gUZxzG8Wdmd7OuMdZFEYToRawGBMWiInjwoId6K+3Bk5e24KnQ0lN7UCn10EsuQnLxUtF4EiUgHsTcJBahySltBJGSFlqQiN1k/2bHgzHGuJvMu/u+M7PzPJ/z5PWF33femVU2enBo/sLhwOX6LIqjU56rta0urIFHw2YQVhbS4ONhI4SuFtDgk6GbEDr6QQ0+mToJwTf9AQ0/uTqZjVEAGn7ymc4o1JGhwfemMI+EDU8ADb93hZndugFo+L1voxkavwRKurQNQHd/eqw3y5YBaPjp026mHwSg4adXq9nqHYDcewHo7k+/tTPWCUBuJQDd/TxWz1onADkf0N3P6O3MdQKQUwDkFAA5T89/bjoByCkAcgqAnAIgpwDIKQByCoCcAiCnAMgpAHIKgJwCIKcAyCkAcgqAnAIgl3W5eP+FYeQOnXL5R1izMPod6tMTcW8jcjoByCkAcgqAnAIgpwDIKQByCoCcAiCX2G8GZQb3Y+DHW6Gvb/77HK8ufeZwR+mkE4CcAiDn9N8CesW2kd9DX1sa/hqN2SfO1v//53NYmvvTaP1u6AQgpwDIKQBTQSI/NHVMARhTAJIiCsBUug4ABWAuXQUoAFPNZtw7sEoBGNMJQC3Qx0ByegSQCxSApIgCMKVHgKSJAiCnAEx5of7D9XeyfW72YYkCMOVnjC73ClscbcQOBWDIy5nd0f7W7Y52YocCMNVXMLo8s3u/o43YoQAAoFEPfanfv9Vo6ey+T0x3EykFACCoLIS+1t8xGPpaL5dH7siZTrYUGQUAICiXQl+b2TMU+tr86fPwNvV3sqXIKAAAQWk+9LW5gydDvdhldh9A/tMvu9lWJBQAgKW/n4a/ONuHzV/9Ai/f/mUwu/cwtnwzAi+Xt7A7t/TNIACNv2Zg8uEuu+8IBn64hcr9a2jMTKJZmoff/xEygx8jd+ws+o6eNf8Lo5goAABLz6aNf8bfuQebz192sJto6RGAN4+ApbnZuLcRCwWwrPboTtxbiIUCWFZ7dAfNF/9YX7f64Lr1NW1SAMuCahmLN36yumZtchzl28NW17RNAazSmJlE5e5VK2tVH97E4q8XE/9lUn0KWKNy/xqC6iIKX3wP+Ob3R1BZQHnsCmq/3XOwO/sUQAvViTE0Zp+g8Pm3yA6dCPUzQb2G+uNxlMdHELx64XiH9iT2t4QlRWbXXmQPnkRu6Di84i74A0V4hQEEtTKaL/9Dc24W9T8eoz49gaD0Mu7tGlMA5PQSSE4BkFMA5BQAOQVATgGQUwDkFAA5BUBOAZBTAOQUADkFQE4BkFMA5BQAOb84OtUb32ES64qjU55OAHIKgJwCIOcDb54FcW9EovV25joByK0EoFOAx+pZ6wQg914AOgXSb+2MdQKQ+yAAnQLp1Wq2LU8ARZA+7Wba9hGgCNJjvVnqHYDcugHoFOh9G81wwxNAEfSuMLMzGq5+mURvMLlpjd4BdBokn+mMjF8CFUFydTKbroapR0IydHNTWrmbFUI8bJzGVo9zhRANm49hp89zBWGHy/eu10tvLYRLX0LqAAAAAElFTkSuQmCC"/>
+<title>Catálogo completo — TuCosto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<style>
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body { font-family: 'Inter', sans-serif; overflow-x: hidden; max-width: 100vw; background: #F9FAFB; color: #1A1A2E; margin: 0; }
+
+/* ── CART DRAWER ── */
+.cart-drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 50;
+  width: 380px; max-width: 100vw; background: #fff;
+  box-shadow: -4px 0 40px rgba(0,0,0,.18);
+  transform: translateX(100%);
+  transition: transform .3s cubic-bezier(.4,0,.2,1);
+  display: flex; flex-direction: column;
+}
+.cart-drawer.open { transform: translateX(0); }
+.cart-overlay {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(0,0,0,.4); opacity: 0; pointer-events: none;
+  transition: opacity .3s;
+}
+.cart-overlay.open { opacity: 1; pointer-events: auto; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 60;
+  background: #1A1A2E; color: #fff; border-radius: 12px; padding: 12px 18px;
+  display: flex; align-items: center; gap: 10px;
+  font-size: .88rem; font-weight: 500;
+  transform: translateY(80px); opacity: 0;
+  transition: all .3s cubic-bezier(.4,0,.2,1); pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* ── PRODUCT CARD ── */
+.product-card {
+  background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,.07);
+  transition: box-shadow .22s, transform .22s;
+}
+.product-card:hover {
+  box-shadow: 0 10px 36px rgba(232,82,26,.16);
+  transform: translateY(-4px);
+}
+.add-wrap { opacity: 0; transform: translateY(6px); transition: all .2s; }
+.product-card:hover .add-wrap { opacity: 1; transform: translateY(0); }
+
+/* ── FILTERS & PILLS ── */
+.cat-btn {
+  padding: 7px 16px; border-radius: 20px; font-size: .83rem; font-weight: 500;
+  border: 1.5px solid #E5E7EB; background: #fff; color: #6B7280;
+  cursor: pointer; white-space: nowrap; transition: all .15s;
+}
+.cat-btn:hover { border-color: #EF6830; color: #EF6830; }
+.cat-btn.active { border-color: #EF6830; background: #FFF2EC; color: #EF6830; }
+
+.prod-grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+
+#buscador-catalogo {
+  width: 100%; max-width: 480px; padding: 13px 18px; border-radius: 12px;
+  border: 1.5px solid #E5E7EB; font-size: .92rem; font-family: 'Inter', sans-serif;
+  outline: none; transition: border-color .15s;
+}
+#buscador-catalogo:focus { border-color: #EF6830; }
+
+#btn-cargar-mas {
+  background: #fff; color: #EF6830; border: 1.5px solid #EF6830;
+  font-weight: 600; font-size: .9rem; padding: 12px 28px; border-radius: 12px;
+  cursor: pointer;
+}
+#btn-cargar-mas:hover { background: #FFF2EC; }
+
+@media (max-width: 768px) {
+  .prod-grid-4 { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .cart-drawer { width: 100vw; }
+}
+@media (max-width: 480px) {
+  .prod-grid-4 { grid-template-columns: 1fr !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── CART OVERLAY / DRAWER / TOAST (igual que en la landing) ── -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+
+<div class="cart-drawer" id="cart-drawer">
+  <div style="padding:16px 20px;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#EF6830" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span style="font-weight:600;color:#1A1A2E">Tu pedido</span>
+      <span id="cart-badge-drawer" style="background:#059669;color:#fff;font-size:.7rem;font-weight:700;border-radius:99px;padding:2px 8px;min-width:22px;text-align:center">0</span>
+    </div>
+    <button onclick="toggleCart()" style="background:none;border:none;cursor:pointer;font-size:1.5rem;color:#9CA3AF;line-height:1;padding:0">&times;</button>
+  </div>
+  <div id="cart-items" style="flex:1;overflow-y:auto;padding:16px 20px">
+    <div id="cart-empty-msg" style="text-align:center;padding:48px 0;color:#D1D5DB;font-size:.88rem">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" style="display:block;margin:0 auto 12px;opacity:.35">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M3 6h18" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      Tu pedido está vacío
+    </div>
+  </div>
+  <div id="cart-footer" style="display:none;border-top:1px solid #F3F4F6;padding:16px 20px;flex-shrink:0">
+    <div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:6px">
+      <span style="color:#6B7280">Precio en farmacia</span>
+      <span id="cart-footer-farmacia" style="color:#EF4444;text-decoration:line-through">$0.00</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:.83rem;margin-bottom:12px">
+      <span style="color:#6B7280">Tu ahorro</span>
+      <span id="cart-footer-ahorro" style="color:#059669;font-weight:600">$0.00</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1rem;margin-bottom:14px">
+      <span>Total TuCosto</span>
+      <span id="cart-footer-total" style="color:#EF6830">$0.00</span>
+    </div>
+    <a href="portal/pedido.html" style="display:block;text-align:center;background:#EF6830;color:#fff;font-weight:600;font-size:.95rem;padding:13px;border-radius:12px;text-decoration:none">Finalizar pedido</a>
+    <p style="text-align:center;font-size:.75rem;color:#9CA3AF;margin-top:8px">+ desde $8.99 de membresía mensual</p>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <circle cx="8" cy="8" r="7" fill="#059669"/>
+    <path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Producto agregado al pedido</span>
+</div>
+
+<!-- ── NAV ── -->
+<nav style="position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid #F3F4F6">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px">
+    <a href="index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none">
+      <div style="width:44px;height:44px;background:#EF6830;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:20px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div><div><div style="font-size:22px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div></div>
+    </a>
+    <div style="display:flex;align-items:center;gap:10px">
+      <a href="index.html" style="color:#6B7280;font-size:.85rem;font-weight:500;text-decoration:none">← Volver al inicio</a>
+      <button onclick="toggleCart()" style="position:relative;background:none;border:none;cursor:pointer;padding:8px;border-radius:10px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#EF6830" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span id="cart-badge" style="position:absolute;top:-4px;right:-4px;background:#059669;color:#fff;font-size:.65rem;font-weight:700;border-radius:99px;width:18px;height:18px;display:flex;align-items:center;justify-content:center">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ── CATÁLOGO COMPLETO ── -->
+<section style="padding:48px 0 80px">
+  <div style="max-width:1100px;margin:0 auto;padding:0 24px">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#EF6830;margin-bottom:8px">Catálogo</div>
+      <h1 style="font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#1A1A2E;margin-bottom:16px">Todos nuestros productos</h1>
+      <div style="display:flex;justify-content:center;margin-bottom:20px">
+        <input id="buscador-catalogo" type="text" placeholder="Buscar por nombre o principio activo..." oninput="onBuscarCatalogoInput(this.value)"/>
+      </div>
+    </div>
+
+    <div id="cat-filter-bar" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:36px">
+      <button class="cat-btn active" onclick="filtrarCategoriaCatalogo('todos',this)">Todos</button>
+    </div>
+
+    <div id="cat-grid" class="prod-grid-4">
+      <div style="grid-column:1/-1;text-align:center;padding:40px;color:#9CA3AF;font-size:.9rem">Cargando catálogo...</div>
+    </div>
+    <div id="cat-grid-empty" style="display:none;text-align:center;padding:40px;color:#9CA3AF;font-size:.9rem">
+      No encontramos productos con ese criterio.
+    </div>
+
+    <div style="text-align:center;margin-top:36px">
+      <button id="btn-cargar-mas" style="display:none" onclick="cargarPaginaCatalogo(false)">Cargar más productos</button>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── CART (idéntico a index.html) ──────────────────────────────────
+var cart = [];
+
+function toggleCart() {
+  var drawer  = document.getElementById('cart-drawer');
+  var overlay = document.getElementById('cart-overlay');
+  drawer.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+
+function addToCart(btn) {
+  var card = btn.closest('[data-id]');
+  var id   = card.dataset.id;
+  var nome = card.dataset.nombre;
+  var farm = parseFloat(card.dataset.farmacia);
+  var cost = parseFloat(card.dataset.costo);
+
+  var found = false;
+  for (var i = 0; i < cart.length; i++) {
+    if (cart[i].id === id) {
+      cart[i].qty += 1;
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    cart.push({ id: id, nombre: nome, farmacia: farm, costo: cost, qty: 1 });
+  }
+  updateCartUI();
+  showToast();
+}
+
+function removeFromCart(id) {
+  for (var i = 0; i < cart.length; i++) {
+    if (cart[i].id === id) {
+      cart.splice(i, 1);
+      break;
+    }
+  }
+  updateCartUI();
+}
+
+function updateQty(id, delta) {
+  for (var i = 0; i < cart.length; i++) {
+    if (cart[i].id === id) {
+      cart[i].qty += delta;
+      if (cart[i].qty < 1) {
+        cart.splice(i, 1);
+      }
+      break;
+    }
+  }
+  updateCartUI();
+}
+
+function updateCartUI() {
+  var container  = document.getElementById('cart-items');
+  var emptyMsg   = document.getElementById('cart-empty-msg');
+  var footer     = document.getElementById('cart-footer');
+  var badge      = document.getElementById('cart-badge');
+  var badgeDrawer = document.getElementById('cart-badge-drawer');
+
+  var oldItems = container.querySelectorAll('.c-item');
+  for (var k = 0; k < oldItems.length; k++) { oldItems[k].remove(); }
+
+  var totalF = 0;
+  var totalC = 0;
+  var count  = 0;
+
+  if (cart.length === 0) {
+    emptyMsg.style.display = 'block';
+    footer.style.display   = 'none';
+  } else {
+    emptyMsg.style.display = 'none';
+    footer.style.display   = 'block';
+
+    for (var j = 0; j < cart.length; j++) {
+      var item = cart[j];
+      count  += item.qty;
+      totalF += item.farmacia * item.qty;
+      totalC += item.costo    * item.qty;
+
+      var div = document.createElement('div');
+      div.className = 'c-item';
+      div.style.cssText = 'padding:12px 0;border-bottom:1px solid #F3F4F6;display:flex;gap:10px;align-items:flex-start';
+
+      var html = '<div style="flex:1;min-width:0">';
+      html += '<div style="font-size:.88rem;font-weight:600;color:#1A1A2E;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + item.nombre + '</div>';
+      html += '<div style="display:flex;align-items:center;gap:8px">';
+      html += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + (item.farmacia * item.qty).toFixed(2) + '</span>';
+      html += '<span style="font-size:.88rem;font-weight:600;color:#EF6830">$' + (item.costo * item.qty).toFixed(2) + '</span>';
+      html += '</div></div>';
+      html += '<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">';
+      html += '<button onclick="updateQty(\'' + item.id + '\',-1)" style="width:24px;height:24px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;cursor:pointer">&#8722;</button>';
+      html += '<span style="font-size:.88rem;font-weight:600;min-width:20px;text-align:center">' + item.qty + '</span>';
+      html += '<button onclick="updateQty(\'' + item.id + '\',1)" style="width:24px;height:24px;border-radius:6px;border:1px solid #E5E7EB;background:#fff;cursor:pointer">&#43;</button>';
+      html += '<button onclick="removeFromCart(\'' + item.id + '\')" style="width:24px;height:24px;border-radius:6px;border:none;background:#FEE2E2;color:#EF4444;cursor:pointer">&#215;</button>';
+      html += '</div>';
+
+      div.innerHTML = html;
+      container.appendChild(div);
+    }
+
+    var ahorro = totalF - totalC;
+    document.getElementById('cart-footer-farmacia').textContent = '$' + totalF.toFixed(2);
+    document.getElementById('cart-footer-ahorro').textContent   = '$' + ahorro.toFixed(2);
+    document.getElementById('cart-footer-total').textContent    = '$' + totalC.toFixed(2);
+  }
+
+  badge.textContent       = count;
+  badgeDrawer.textContent = count;
+}
+
+var toastTimer = null;
+function showToast() {
+  var el = document.getElementById('toast');
+  el.classList.add('show');
+  if (toastTimer) { clearTimeout(toastTimer); }
+  toastTimer = setTimeout(function() { el.classList.remove('show'); }, 3000);
+}
+
+// ── CATÁLOGO COMPLETO (búsqueda + filtro + paginación) ────────────
+var _dbPublic = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+
+var PAGE_SIZE = 24;
+var _catCategorias = [];
+var _catCategoriaActiva = 'todos';
+var _catBusqueda = '';
+var _catPagina = 0;
+var _catHayMas = true;
+var _catCargando = false;
+
+function escapeHtmlCat(str) {
+  return String(str == null ? '' : str).replace(/[&<>"']/g, function(c) {
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+  });
+}
+
+function iconoGenericoCat() {
+  return '<svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="10" y="14" width="28" height="20" rx="4" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/><path d="M24 20v8M20 24h8" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"/></svg>';
+}
+
+async function initCatalogoCompleto() {
+  var filterBar = document.getElementById('cat-filter-bar');
+  try {
+    var catRes = await _dbPublic.from('categorias').select('id,nombre').order('nombre');
+    if (catRes.error) throw catRes.error;
+    _catCategorias = catRes.data || [];
+  } catch (e) {
+    console.error('Error cargando categorías:', e);
+    _catCategorias = [];
+  }
+
+  var filterHtml = '<button class="cat-btn active" onclick="filtrarCategoriaCatalogo(\'todos\',this)">Todos</button>';
+  _catCategorias.forEach(function(c) {
+    filterHtml += '<button class="cat-btn" onclick="filtrarCategoriaCatalogo(\'' + c.id + '\',this)">' + escapeHtmlCat(c.nombre) + '</button>';
+  });
+  filterBar.innerHTML = filterHtml;
+
+  cargarPaginaCatalogo(true);
+}
+
+function filtrarCategoriaCatalogo(catId, btn) {
+  var btns = document.querySelectorAll('#cat-filter-bar .cat-btn');
+  for (var i = 0; i < btns.length; i++) { btns[i].classList.remove('active'); }
+  btn.classList.add('active');
+  _catCategoriaActiva = catId;
+  cargarPaginaCatalogo(true);
+}
+
+var _buscarTimeout = null;
+function onBuscarCatalogoInput(val) {
+  clearTimeout(_buscarTimeout);
+  _buscarTimeout = setTimeout(function() {
+    _catBusqueda = val.trim();
+    cargarPaginaCatalogo(true);
+  }, 350);
+}
+
+async function cargarPaginaCatalogo(reset) {
+  if (_catCargando) { return; }
+  _catCargando = true;
+
+  var grid   = document.getElementById('cat-grid');
+  var empty  = document.getElementById('cat-grid-empty');
+  var btnMas = document.getElementById('btn-cargar-mas');
+
+  if (reset) {
+    _catPagina = 0;
+    _catHayMas = true;
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9CA3AF;font-size:.9rem">Buscando...</div>';
+    empty.style.display = 'none';
+    btnMas.style.display = 'none';
+  }
+
+  try {
+    var desde = _catPagina * PAGE_SIZE;
+    var hasta = desde + PAGE_SIZE - 1;
+
+    var q = _dbPublic.from('productos')
+      .select('id,nombre,principio_activo,categoria_id,precio_farmacia,precio_costo,producto_fotos(url,orden)')
+      .eq('activo', true);
+
+    if (_catCategoriaActiva !== 'todos') {
+      q = q.eq('categoria_id', _catCategoriaActiva);
+    }
+    if (_catBusqueda) {
+      var term = _catBusqueda.replace(/[%,]/g, '');
+      q = q.or('nombre.ilike.%' + term + '%,principio_activo.ilike.%' + term + '%');
+    }
+
+    q = q.order('nombre').range(desde, hasta);
+
+    var res = await q;
+    if (res.error) { throw res.error; }
+
+    var items = res.data || [];
+
+    if (reset) { grid.innerHTML = ''; }
+    if (items.length < PAGE_SIZE) { _catHayMas = false; }
+
+    if (_catPagina === 0 && items.length === 0) {
+      empty.style.display = 'block';
+    } else {
+      empty.style.display = 'none';
+      renderCatalogoCompletoItems(items);
+    }
+
+    btnMas.style.display = _catHayMas ? 'inline-block' : 'none';
+    _catPagina++;
+  } catch (e) {
+    console.error('Error cargando catálogo:', e);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#EF4444;font-size:.9rem">No pudimos cargar el catálogo. Intenta de nuevo.</div>';
+    btnMas.style.display = 'none';
+  } finally {
+    _catCargando = false;
+  }
+}
+
+function renderCatalogoCompletoItems(lista) {
+  var grid = document.getElementById('cat-grid');
+  var catMap = {};
+  _catCategorias.forEach(function(c) { catMap[c.id] = c.nombre; });
+
+  var html = '';
+  lista.forEach(function(p) {
+    var fotos = (p.producto_fotos || []).slice().sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
+    var fotoUrl = fotos.length ? fotos[0].url : null;
+    var catNombre = catMap[p.categoria_id] || '';
+    var pf = parseFloat(p.precio_farmacia) || 0;
+    var pc = parseFloat(p.precio_costo) || 0;
+
+    html += '<div class="product-card" data-id="' + p.id + '" data-nombre="' + escapeHtmlCat(p.nombre) + '" data-farmacia="' + pf + '" data-costo="' + pc + '" data-categoria="' + p.categoria_id + '">';
+    html += '<div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">';
+    html += fotoUrl
+      ? '<img src="' + fotoUrl + '" alt="" style="width:64px;height:64px;object-fit:contain">'
+      : iconoGenericoCat();
+    html += '</div>';
+    html += '<div style="padding:14px">';
+    if (catNombre) {
+      html += '<span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">' + escapeHtmlCat(catNombre) + '</span>';
+    }
+    html += '<div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">' + escapeHtmlCat(p.nombre) + '</div>';
+    html += '<div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">' + escapeHtmlCat(p.principio_activo) + '</div>';
+    html += '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">';
+    if (pf > pc) {
+      html += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + pf.toFixed(2) + '</span>';
+    }
+    html += '<span style="font-size:1.3rem;font-weight:700;color:#EF6830">$' + pc.toFixed(2) + '</span>';
+    html += '</div>';
+    html += '<div class="add-wrap"><button onclick="addToCart(this)" style="width:100%;background:#EF6830;color:#fff;border:none;font-weight:600;font-size:.82rem;padding:9px;border-radius:9px;cursor:pointer">Agregar al pedido</button></div>';
+    html += '</div></div>';
+  });
+  grid.insertAdjacentHTML('beforeend', html);
+}
+
+document.addEventListener('DOMContentLoaded', initCatalogoCompleto);
+</script>
+
+</body>
+</html>
