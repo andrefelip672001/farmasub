@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAEiUlEQVR4nO3dT2gUZxzG8Wdmd7OuMdZFEYToRawGBMWiInjwoId6K+3Bk5e24KnQ0lN7UCn10EsuQnLxUtF4EiUgHsTcJBahySltBJGSFlqQiN1k/2bHgzHGuJvMu/u+M7PzPJ/z5PWF33femVU2enBo/sLhwOX6LIqjU56rta0urIFHw2YQVhbS4ONhI4SuFtDgk6GbEDr6QQ0+mToJwTf9AQ0/uTqZjVEAGn7ymc4o1JGhwfemMI+EDU8ADb93hZndugFo+L1voxkavwRKurQNQHd/eqw3y5YBaPjp026mHwSg4adXq9nqHYDcewHo7k+/tTPWCUBuJQDd/TxWz1onADkf0N3P6O3MdQKQUwDkFAA5T89/bjoByCkAcgqAnAIgpwDIKQByCoCcAiCnAMgpAHIKgJwCIKcAyCkAcgqAnAIgl3W5eP+FYeQOnXL5R1izMPod6tMTcW8jcjoByCkAcgqAnAIgpwDIKQByCoCcAiCX2G8GZQb3Y+DHW6Gvb/77HK8ufeZwR+mkE4CcAiDn9N8CesW2kd9DX1sa/hqN2SfO1v//53NYmvvTaP1u6AQgpwDIKQBTQSI/NHVMARhTAJIiCsBUug4ABWAuXQUoAFPNZtw7sEoBGNMJQC3Qx0ByegSQCxSApIgCMKVHgKSJAiCnAEx5of7D9XeyfW72YYkCMOVnjC73ClscbcQOBWDIy5nd0f7W7Y52YocCMNVXMLo8s3u/o43YoQAAoFEPfanfv9Vo6ey+T0x3EykFACCoLIS+1t8xGPpaL5dH7siZTrYUGQUAICiXQl+b2TMU+tr86fPwNvV3sqXIKAAAQWk+9LW5gydDvdhldh9A/tMvu9lWJBQAgKW/n4a/ONuHzV/9Ai/f/mUwu/cwtnwzAi+Xt7A7t/TNIACNv2Zg8uEuu+8IBn64hcr9a2jMTKJZmoff/xEygx8jd+ws+o6eNf8Lo5goAABLz6aNf8bfuQebz192sJto6RGAN4+ApbnZuLcRCwWwrPboTtxbiIUCWFZ7dAfNF/9YX7f64Lr1NW1SAMuCahmLN36yumZtchzl28NW17RNAazSmJlE5e5VK2tVH97E4q8XE/9lUn0KWKNy/xqC6iIKX3wP+Ob3R1BZQHnsCmq/3XOwO/sUQAvViTE0Zp+g8Pm3yA6dCPUzQb2G+uNxlMdHELx64XiH9iT2t4QlRWbXXmQPnkRu6Di84i74A0V4hQEEtTKaL/9Dc24W9T8eoz49gaD0Mu7tGlMA5PQSSE4BkFMA5BQAOQVATgGQUwDkFAA5BUBOAZBTAOQUADkFQE4BkFMA5BQAOb84OtUb32ES64qjU55OAHIKgJwCIOcDb54FcW9EovV25joByK0EoFOAx+pZ6wQg914AOgXSb+2MdQKQ+yAAnQLp1Wq2LU8ARZA+7Wba9hGgCNJjvVnqHYDcugHoFOh9G81wwxNAEfSuMLMzGq5+mURvMLlpjd4BdBokn+mMjF8CFUFydTKbroapR0IydHNTWrmbFUI8bJzGVo9zhRANm49hp89zBWGHy/eu10tvLYRLX0LqAAAAAElFTkSuQmCC"/>
+<title>Recuperar contraseña — TuCosto Ecuador</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --r:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  font-family:'Inter',sans-serif;
+  background:linear-gradient(135deg,#C95220 0%,#EF6830 40%,#F07040 70%,#F5A070 100%);
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:24px;
+  position:relative;overflow:hidden;
+}
+body::before{
+  content:'';position:absolute;top:-20%;right:-10%;
+  width:520px;height:520px;
+  background:radial-gradient(circle,rgba(245,166,35,.28) 0%,transparent 65%);
+  pointer-events:none;
+}
+body::after{
+  content:'';position:absolute;bottom:-15%;left:-8%;
+  width:400px;height:400px;
+  background:radial-gradient(circle,rgba(255,255,255,.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+
+.card{
+  background:var(--white);
+  border-radius:20px;
+  padding:48px 44px 36px;
+  width:100%;max-width:420px;
+  box-shadow:0 24px 64px rgba(0,0,0,.20),0 4px 16px rgba(0,0,0,.10);
+  position:relative;z-index:1;
+}
+.logo{
+  display:flex;align-items:center;justify-content:center;
+  gap:10px;text-decoration:none;margin-bottom:28px;
+}
+.card-title{
+  font-size:1.65rem;font-weight:700;color:var(--ink);
+  text-align:center;margin-bottom:6px;line-height:1.2;
+}
+.card-sub{
+  text-align:center;font-size:.88rem;
+  color:var(--ink-60);margin-bottom:32px;line-height:1.5;
+}
+.error-box{
+  background:var(--danger-light);
+  border:1.5px solid rgba(239,68,68,.25);
+  border-radius:var(--r);
+  padding:12px 14px;margin-bottom:20px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.error-box svg{flex-shrink:0;margin-top:1px;}
+.error-box p{font-size:.85rem;color:var(--danger);font-weight:500;line-height:1.4;}
+
+.success-box{
+  background:var(--verde-light);
+  border:1.5px solid rgba(5,150,105,.25);
+  border-radius:var(--r);
+  padding:14px 16px;margin-bottom:20px;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.success-box svg{flex-shrink:0;margin-top:1px;}
+.success-box p{font-size:.85rem;color:var(--verde);font-weight:500;line-height:1.5;}
+
+.field{margin-bottom:18px;}
+.field label{
+  display:block;font-size:.85rem;font-weight:600;
+  color:var(--ink);margin-bottom:7px;
+}
+.input-wrap{position:relative;}
+.input-icon{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  color:var(--ink-30);pointer-events:none;
+  display:flex;align-items:center;
+}
+.input-wrap input{
+  width:100%;padding:12px 14px 12px 42px;
+  border:1.5px solid var(--ink-30);border-radius:var(--r);
+  font-family:'Inter',sans-serif;font-size:.93rem;
+  color:var(--ink);background:var(--white);
+  transition:border-color .2s,box-shadow .2s;outline:none;
+}
+.input-wrap input:focus{
+  border-color:var(--naranja);
+  box-shadow:0 0 0 3px rgba(232,82,26,.10);
+}
+.input-wrap input::placeholder{color:var(--ink-30);}
+
+.btn-login{
+  width:100%;padding:13px;
+  background:var(--naranja);color:var(--white);
+  border:none;border-radius:var(--r);
+  font-family:'Inter',sans-serif;font-size:.97rem;font-weight:600;
+  cursor:pointer;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-login:hover:not(:disabled){
+  background:var(--naranja-d);
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(232,82,26,.35);
+}
+.btn-login:disabled{opacity:.65;cursor:not-allowed;}
+
+.spinner{
+  width:18px;height:18px;
+  border:2px solid rgba(255,255,255,.35);border-top-color:white;
+  border-radius:50%;animation:spin .7s linear infinite;display:none;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.btn-login.loading .spinner{display:block;}
+.btn-login.loading .btn-label{display:none;}
+
+.back-link{text-align:center;margin-top:20px;}
+.back-link a{font-size:.85rem;color:var(--naranja);text-decoration:none;font-weight:500;}
+.back-link a:hover{text-decoration:underline;}
+
+.login-footer{
+  text-align:center;margin-top:20px;
+  font-size:.76rem;color:rgba(255,255,255,.55);
+  position:relative;z-index:1;
+}
+
+@media(max-width:480px){
+  .card{padding:36px 24px 28px;}
+  .card-title{font-size:1.4rem;}
+}
+</style>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body>
+
+<div class="card">
+
+  <a href="../" class="logo">
+    <div style="width:52px;height:52px;background:#EF6830;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:24px;font-weight:700;color:white;font-family:Inter,sans-serif">Tu</span></div>
+    <div>
+      <div style="font-size:26px;font-weight:700;color:#1A1A2E;font-family:Inter,sans-serif;line-height:1">Costo</div>
+      <div style="font-size:12px;color:#EF6830;font-family:Georgia,serif;font-style:italic;line-height:1;margin-top:1px">ahorro a un Clic.</div>
+    </div>
+  </a>
+
+  <h1 class="card-title">Recuperar contraseña</h1>
+  <p class="card-sub">Escribe tu correo y te enviaremos un enlace para crear una contraseña nueva.</p>
+
+  <div id="error-box" class="error-box" style="display:none">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" stroke="#EF4444" stroke-width="1.5"/>
+      <path d="M8 5v3.5M8 10.5h.01" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <p id="error-msg"></p>
+  </div>
+
+  <div id="success-box" class="success-box" style="display:none">
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" fill="#059669"/>
+      <path d="M5 8l2 2 4-4" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p>Si ese correo tiene una cuenta, te enviamos un enlace para restablecer tu contraseña. Revisa tu bandeja de entrada (y la carpeta de spam).</p>
+  </div>
+
+  <form id="recuperar-form" onsubmit="handleRecuperar(event)" novalidate>
+
+    <div class="field">
+      <label for="email">Correo electrónico</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="16" height="16" viewBox="0 0 20 16" fill="none">
+            <rect x="1" y="1" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M1 4l9 6 9-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <input type="email" id="email" placeholder="tu@correo.com" autocomplete="email" required/>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:center;margin-bottom:14px">
+      <div class="cf-turnstile" data-sitekey="0x4AAAAAAEWKakLBmN11CvI1" data-callback="onTurnstileOkRecuperar" data-expired-callback="onTurnstileExpiredRecuperar"></div>
+    </div>
+
+    <button type="submit" id="btn-submit" class="btn-login">
+      <span class="btn-label">Enviar enlace</span>
+      <span class="spinner"></span>
+    </button>
+
+  </form>
+
+  <div class="back-link">
+    <a href="login.html">← Volver a iniciar sesión</a>
+  </div>
+
+</div>
+
+<p class="login-footer">&#169; 2025 TuCosto Ecuador</p>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient(
+  'https://cjimcldhoglgqachcimm.supabase.co',
+  'sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC'
+);
+
+var _recuperarTurnstileToken = null;
+function onTurnstileOkRecuperar(token) { _recuperarTurnstileToken = token; }
+function onTurnstileExpiredRecuperar() { _recuperarTurnstileToken = null; }
+
+async function handleRecuperar(e) {
+  e.preventDefault();
+  clearError();
+
+  var email = document.getElementById('email').value.trim();
+  if (!email) {
+    showError('Ingresa tu correo electrónico.');
+    return;
+  }
+  if (!_recuperarTurnstileToken) {
+    showError('Confirma que no eres un robot.');
+    return;
+  }
+
+  setLoading(true);
+
+  var redirectTo = window.location.origin + window.location.pathname.replace('recuperar.html', 'restablecer.html');
+
+  var result = await _db.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectTo,
+    captchaToken: _recuperarTurnstileToken
+  });
+
+  setLoading(false);
+
+  if (result.error) {
+    showError(traducirErrorRecuperar(result.error.message));
+    if (window.turnstile) { try { window.turnstile.reset(); } catch (e2) {} }
+    return;
+  }
+
+  document.getElementById('recuperar-form').style.display = 'none';
+  document.getElementById('success-box').style.display = 'flex';
+}
+
+function setLoading(on) {
+  var btn = document.getElementById('btn-submit');
+  if (on) { btn.classList.add('loading'); btn.disabled = true; }
+  else { btn.classList.remove('loading'); btn.disabled = false; }
+}
+
+function showError(msg) {
+  document.getElementById('error-msg').textContent = msg;
+  document.getElementById('error-box').style.display = 'flex';
+}
+
+function clearError() {
+  document.getElementById('error-box').style.display = 'none';
+}
+
+function traducirErrorRecuperar(msg) {
+  if (!msg) { return 'No pudimos enviar el enlace. Intenta de nuevo.'; }
+  if (msg.indexOf('captcha') !== -1) { return 'Verificación de seguridad fallida. Intenta de nuevo.'; }
+  if (msg.indexOf('rate limit') !== -1 || msg.indexOf('Too many') !== -1) { return 'Demasiados intentos. Espera unos minutos e intenta de nuevo.'; }
+  return 'No pudimos enviar el enlace. Intenta de nuevo.';
+}
+</script>
+
+</body>
+</html>
