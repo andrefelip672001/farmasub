@@ -591,7 +591,7 @@ function openModal(id) {
   document.getElementById('m-ahorro').textContent = ahorro > 0 ? 'Ahorras $' + ahorro.toFixed(2) : '';
   if (p.unidades_caja) {
     document.getElementById('m-unidades-wrap').style.display = '';
-    document.getElementById('m-unidades').textContent = 'Caja de ' + p.unidades_caja + ' unidades';
+    document.getElementById('m-unidades').textContent = p.unidades_caja + ' unidades';
   } else {
     document.getElementById('m-unidades-wrap').style.display = 'none';
   }
