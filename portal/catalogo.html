@@ -420,6 +420,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
         <div style="margin-left:auto"><span class="modal-ahorro" id="m-ahorro"></span></div>
       </div>
 
+      <div class="modal-section" id="m-unidades-wrap"><p class="modal-section-title">Contenido de la caja</p><p id="m-unidades"></p></div>
       <div class="modal-section"><p class="modal-section-title">Presentación</p><p id="m-indicaciones"></p></div>
       <div class="modal-section"><p class="modal-section-title">Dosis recomendada</p><p id="m-dosis"></p></div>
       <div class="modal-section"><p class="modal-section-title">Contraindicaciones</p><p id="m-contraindicaciones"></p></div>
@@ -553,6 +554,7 @@ function renderGrid() {
       + '<div class="prod-card-body">'
       + '<p class="prod-nombre">' + esc(p.nombre) + '</p>'
       + '<p class="prod-activo">' + (p.principio_activo || '') + '</p>'
+      + (p.unidades_caja ? '<p class="prod-activo" style="font-size:.74rem;color:#9CA3AF">Caja x' + p.unidades_caja + ' unidades</p>' : '')
       + '<div class="prod-badges">'
       + (catNombre ? '<span class="badge-cat">' + catNombre + '</span>' : '')
       + '</div>'
@@ -587,6 +589,12 @@ function openModal(id) {
   document.getElementById('m-precio-normal').textContent = 'Precio farmacia: $' + (p.precio_farmacia || 0).toFixed(2);
   var ahorro = (p.precio_farmacia || 0) - (p.precio_costo || 0);
   document.getElementById('m-ahorro').textContent = ahorro > 0 ? 'Ahorras $' + ahorro.toFixed(2) : '';
+  if (p.unidades_caja) {
+    document.getElementById('m-unidades-wrap').style.display = '';
+    document.getElementById('m-unidades').textContent = 'Caja de ' + p.unidades_caja + ' unidades';
+  } else {
+    document.getElementById('m-unidades-wrap').style.display = 'none';
+  }
   document.getElementById('m-indicaciones').textContent = p.indicaciones || '-';
   document.getElementById('m-dosis').textContent = p.dosis || '-';
   document.getElementById('m-contraindicaciones').textContent = p.contraindicaciones || '-';

@@ -387,7 +387,7 @@ async function cargarPaginaCatalogo(reset) {
     var hasta = desde + PAGE_SIZE - 1;
 
     var q = _dbPublic.from('productos')
-      .select('id,nombre,principio_activo,categoria_id,precio_farmacia,precio_costo,producto_fotos(url,orden)')
+      .select('id,nombre,principio_activo,categoria_id,precio_farmacia,precio_costo,unidades_caja,producto_fotos(url,orden)')
       .eq('activo', true);
 
     if (_catCategoriaActiva !== 'todos') {
@@ -450,7 +450,10 @@ function renderCatalogoCompletoItems(lista) {
       html += '<span style="background:#ECFDF5;color:#059669;font-size:.68rem;font-weight:700;padding:3px 9px;border-radius:99px">' + escapeHtmlCat(catNombre) + '</span>';
     }
     html += '<div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">' + escapeHtmlCat(p.nombre) + '</div>';
-    html += '<div style="font-size:.75rem;color:#6B7280;margin-bottom:10px">' + escapeHtmlCat(p.principio_activo) + '</div>';
+    html += '<div style="font-size:.75rem;color:#6B7280">' + escapeHtmlCat(p.principio_activo) + '</div>';
+    html += p.unidades_caja
+      ? '<div style="font-size:.7rem;color:#9CA3AF;margin-bottom:10px">Caja x' + p.unidades_caja + ' unidades</div>'
+      : '<div style="margin-bottom:10px"></div>';
     html += '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">';
     if (pf > pc) {
       html += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + pf.toFixed(2) + '</span>';
