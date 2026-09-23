@@ -326,7 +326,7 @@ function escapeHtmlCat(str) {
 }
 
 function iconoGenericoCat() {
-  return '<svg width="40" height="40" viewBox="0 0 48 48" fill="none"><rect x="10" y="14" width="28" height="20" rx="4" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/><path d="M24 20v8M20 24h8" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  return '<svg width="64" height="64" viewBox="0 0 48 48" fill="none"><rect x="10" y="14" width="28" height="20" rx="4" fill="#EF6830" opacity=".18" stroke="#EF6830" stroke-width="1.5"/><path d="M24 20v8M20 24h8" stroke="#EF6830" stroke-width="1.8" stroke-linecap="round"/></svg>';
 }
 
 async function initCatalogoCompleto() {
@@ -440,9 +440,9 @@ function renderCatalogoCompletoItems(lista) {
     var pc = parseFloat(p.precio_costo) || 0;
 
     html += '<div class="product-card" data-id="' + p.id + '" data-nombre="' + escapeHtmlCat(p.nombre) + '" data-farmacia="' + pf + '" data-costo="' + pc + '" data-categoria="' + p.categoria_id + '">';
-    html += '<div style="background:#FFF2EC;padding:20px 0;display:flex;align-items:center;justify-content:center">';
+    html += '<div style="background:#FFF2EC;height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden">';
     html += fotoUrl
-      ? '<img src="' + fotoUrl + '" alt="" style="width:64px;height:64px;object-fit:contain">'
+      ? '<img src="' + fotoUrl + '" alt="" style="width:100%;height:100%;object-fit:contain;padding:12px;box-sizing:border-box">'
       : iconoGenericoCat();
     html += '</div>';
     html += '<div style="padding:14px">';
