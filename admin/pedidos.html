@@ -569,17 +569,23 @@ async function descontarStockPedido(pedidoId) {
   var yaRes = await _db.from('movimientos_inventario').select('id', {count: 'exact', head: true}).eq('referencia_pedido_id', pedidoId);
   if (yaRes.count && yaRes.count > 0) return;
 
-  var itemsRes = await _db.from('pedido_items').select('producto_id, cantidad').eq('pedido_id', pedidoId);
+  var itemsRes = await _db.from('pedido_items').select('producto_id, cantidad, unidades_por_presentacion, tipo_presentacion').eq('pedido_id', pedidoId);
   var items = itemsRes.data || [];
   if (!items.length) return;
 
   var movimientos = [];
   for (var i = 0; i < items.length; i++) {
+    var unidadesPorLinea = items[i].unidades_por_presentacion || 1;
+    var totalUnidades = items[i].cantidad * unidadesPorLinea;
+    var motivo = 'Entrega de pedido';
+    if (items[i].tipo_presentacion && items[i].tipo_presentacion !== 'unidad') {
+      motivo += ' (' + items[i].cantidad + ' x ' + items[i].tipo_presentacion + ' de ' + unidadesPorLinea + ' unidades)';
+    }
     movimientos.push({
       producto_id: items[i].producto_id,
       tipo: 'salida',
-      cantidad: items[i].cantidad,
-      motivo: 'Entrega de pedido',
+      cantidad: totalUnidades,
+      motivo: motivo,
       referencia_pedido_id: pedidoId,
       usuario_id: _adminUserId
     });
