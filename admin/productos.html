@@ -444,6 +444,9 @@ tr:hover td{background:var(--naranja-light);}
         <p style="font-size:.85rem;color:#6B7280;margin-bottom:14px;line-height:1.5">
           Sube un archivo Excel con varios productos a la vez. Los productos se crean <strong>inactivos</strong> (no visibles para los suscriptores) hasta que les agregues al menos una foto y los actives manualmente desde la tabla.
         </p>
+        <p style="font-size:.8rem;color:#6B7280;margin-bottom:14px;line-height:1.5">
+          Las columnas <strong>blister_unidades, blister_precio_farmacia, blister_precio_costo, unidad_precio_farmacia, unidad_precio_costo</strong> son opcionales: llénalas solo si ese producto tambien se vende por blister o por unidad suelta, ademas de por caja. Si las dejas vacias, el producto se crea solo con la forma "Caja".
+        </p>
         <button type="button" onclick="descargarPlantilla()" style="background:none;border:1.5px solid var(--naranja);color:var(--naranja);border-radius:10px;padding:9px 16px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:18px">
           &#8595; Descargar plantilla Excel
         </button>
@@ -469,6 +472,7 @@ tr:hover td{background:var(--naranja-light);}
                 <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Nombre</th>
                 <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Categoria</th>
                 <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Precio costo</th>
+                <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Formas</th>
                 <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #F3F4F6">Estado</th>
               </tr>
             </thead>
@@ -983,8 +987,8 @@ function renderPresentaciones() {
     row.innerHTML =
       '<div class="pres-field"><label>Tipo</label>' + selectHtml + '</div>' +
       '<div class="pres-field"><label>Unidades sueltas</label><input type="number" min="1" step="1" value="' + esc(pres.unidades == null ? '' : pres.unidades) + '" onchange="onPresentacionChange(' + i + ',\'unidades\',this.value)"/></div>' +
-      '<div class="pres-field"><label>Precio venta ($)</label><input type="number" min="0" step="0.01" value="' + esc(pres.precio == null ? '' : pres.precio) + '" onchange="onPresentacionChange(' + i + ',\'precio\',this.value)"/></div>' +
-      '<div class="pres-field"><label>Costo ($)</label><input type="number" min="0" step="0.01" value="' + esc(pres.precio_costo == null ? '' : pres.precio_costo) + '" onchange="onPresentacionChange(' + i + ',\'precio_costo\',this.value)"/></div>' +
+      '<div class="pres-field"><label>Precio farmacia ($)</label><input type="number" min="0" step="0.01" value="' + esc(pres.precio == null ? '' : pres.precio) + '" onchange="onPresentacionChange(' + i + ',\'precio\',this.value)"/></div>' +
+      '<div class="pres-field"><label>Precio costo ($)</label><input type="number" min="0" step="0.01" value="' + esc(pres.precio_costo == null ? '' : pres.precio_costo) + '" onchange="onPresentacionChange(' + i + ',\'precio_costo\',this.value)"/></div>' +
       '<div class="pres-field pres-activo"><label><input type="checkbox" ' + (pres.activo ? 'checked' : '') + ' onchange="onPresentacionChange(' + i + ',\'activo\',this.checked)"/> Activa</label></div>' +
       '<button type="button" class="pres-remove" onclick="quitarPresentacion(' + i + ')" title="Quitar">&#x2715;</button>';
     wrap.appendChild(row);
@@ -1154,7 +1158,7 @@ function showModalError(msg) {
 // ===== CARGA MASIVA =====
 var _bulkValidRows = [];
 
-var BULK_CSV_HEADERS = ['nombre','principio_activo','laboratorio','categoria','unidades_caja','precio_farmacia','precio_costo','presentacion','dosis','contraindicaciones','efectos_secundarios'];
+var BULK_CSV_HEADERS = ['nombre','principio_activo','laboratorio','categoria','unidades_caja','precio_farmacia','precio_costo','presentacion','dosis','contraindicaciones','efectos_secundarios','blister_unidades','blister_precio_farmacia','blister_precio_costo','unidad_precio_farmacia','unidad_precio_costo'];
 
 function openBulkModal() {
   document.getElementById('bulk-file-input').value = '';
@@ -1177,7 +1181,7 @@ function closeBulkModalClick(e) {
 }
 
 function descargarPlantilla() {
-  var exampleRow = ['Ibuprofeno 400mg','Ibuprofeno','Laboratorio Chile','Antiinflamatorios',20,7.50,5.30,'Alivio de dolor e inflamacion','1 tableta cada 8 horas','Ulcera gastrica activa','Molestias gastrointestinales'];
+  var exampleRow = ['Ibuprofeno 400mg','Ibuprofeno','Laboratorio Chile','Antiinflamatorios',20,7.50,5.30,'Alivio de dolor e inflamacion','1 tableta cada 8 horas','Ulcera gastrica activa','Molestias gastrointestinales',10,2.50,1.80,0.30,0.20];
   var data = [BULK_CSV_HEADERS, exampleRow];
   var ws = XLSX.utils.aoa_to_sheet(data);
   ws['!cols'] = BULK_CSV_HEADERS.map(function(h) { return { wch: Math.max(h.length + 2, 16) }; });
@@ -1274,15 +1278,45 @@ function procesarFilasBulk(rows) {
       errorMsg = 'Precio costo invalido (debe ser mayor a 0)';
     }
 
+    // Formas de venta opcionales: blister y unidad
+    var formasExtra = [];
+    var blisterUnidadesRaw = (r.blister_unidades || '').toString().trim();
+    var blisterCostoRaw = (r.blister_precio_costo || '').toString().trim();
+    var unidadCostoRaw = (r.unidad_precio_costo || '').toString().trim();
+
+    if (!errorMsg && (blisterUnidadesRaw || blisterCostoRaw)) {
+      var blisterUnidades = parseInt(blisterUnidadesRaw) || 0;
+      var blisterCosto = parseFloat(blisterCostoRaw);
+      var blisterFarmacia = parseFloat((r.blister_precio_farmacia || '0').toString().trim()) || 0;
+      if (blisterUnidades <= 0) {
+        errorMsg = 'blister_unidades invalido (debe ser mayor a 0)';
+      } else if (isNaN(blisterCosto) || blisterCosto <= 0) {
+        errorMsg = 'blister_precio_costo invalido (debe ser mayor a 0)';
+      } else {
+        formasExtra.push({ tipo: 'blister', unidades: blisterUnidades, precio: blisterFarmacia, precio_costo: blisterCosto });
+      }
+    }
+    if (!errorMsg && unidadCostoRaw) {
+      var unidadCosto = parseFloat(unidadCostoRaw);
+      var unidadFarmacia = parseFloat((r.unidad_precio_farmacia || '0').toString().trim()) || 0;
+      if (isNaN(unidadCosto) || unidadCosto <= 0) {
+        errorMsg = 'unidad_precio_costo invalido (debe ser mayor a 0)';
+      } else {
+        formasExtra.push({ tipo: 'unidad', unidades: 1, precio: unidadFarmacia, precio_costo: unidadCosto });
+      }
+    }
+
     var tr = document.createElement('tr');
     var estadoHtml = errorMsg
       ? '<span style="color:#EF4444;font-weight:600">&#10007; ' + esc(errorMsg) + '</span>'
       : '<span style="color:#059669;font-weight:600">&#10003; Lista para cargar</span>';
+    var formasLabel = 'Caja' + (formasExtra.length ? ', ' + formasExtra.map(function(f) { return f.tipo === 'blister' ? 'Blister' : 'Unidad'; }).join(', ') : '');
 
     tr.innerHTML = '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + (i + 1) + '</td>'
       + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + esc(nombre || '(sin nombre)') + '</td>'
       + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + esc(categoriaNombre || '-') + '</td>'
       + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + (isNaN(precioCosto) ? '-' : '$' + precioCosto.toFixed(2)) + '</td>'
+      + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + esc(formasLabel) + '</td>'
       + '<td style="padding:7px 10px;border-bottom:1px solid #F9FAFB">' + estadoHtml + '</td>';
     tbody.appendChild(tr);
 
@@ -1302,7 +1336,8 @@ function procesarFilasBulk(rows) {
         dosis: (r.dosis || '').trim(),
         contraindicaciones: (r.contraindicaciones || '').trim(),
         efectos_secundarios: (r.efectos_secundarios || '').trim(),
-        activo: false
+        activo: false,
+        _formasExtra: formasExtra
       });
     }
   }
@@ -1325,7 +1360,13 @@ async function confirmarCargaMasiva() {
   btn.disabled = true;
   btn.textContent = 'Cargando...';
 
-  var res = await sb.from('productos').insert(_bulkValidRows).select('id, unidades_caja, precio_farmacia, precio_costo');
+  var rowsParaInsertar = _bulkValidRows.map(function(r) {
+    var copia = {};
+    for (var k in r) { if (k !== '_formasExtra') copia[k] = r[k]; }
+    return copia;
+  });
+
+  var res = await sb.from('productos').insert(rowsParaInsertar).select('id, unidades_caja, precio_farmacia, precio_costo');
 
   btn.disabled = false;
   btn.textContent = 'Confirmar carga';
@@ -1348,6 +1389,18 @@ async function confirmarCargaMasiva() {
       activo: true,
       orden: 1
     });
+    var formasExtra = (_bulkValidRows[bi] && _bulkValidRows[bi]._formasExtra) || [];
+    for (var fi = 0; fi < formasExtra.length; fi++) {
+      bulkPres.push({
+        producto_id: br.id,
+        tipo: formasExtra[fi].tipo,
+        unidades: formasExtra[fi].unidades,
+        precio: formasExtra[fi].precio,
+        precio_costo: formasExtra[fi].precio_costo,
+        activo: true,
+        orden: fi + 2
+      });
+    }
   }
   if (bulkPres.length) {
     var bulkPresRes = await sb.from('producto_presentaciones').insert(bulkPres);
