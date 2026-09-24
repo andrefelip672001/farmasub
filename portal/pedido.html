@@ -751,6 +751,12 @@ async function loadCartPhotos() {
   }
 }
 
+function qtyLabel(tipo) {
+  if (tipo === 'unidad') return 'Unidades';
+  if (tipo === 'blister') return 'Blísteres';
+  return 'Cajas';
+}
+
 function renderCart() {
   if (!_cart.length) {
     document.getElementById('cart-empty').style.display = 'flex';
@@ -793,7 +799,7 @@ function renderCart() {
       + '<select class="ctrl-select" id="miembro-' + i + '" onchange="updateItem(' + i + ')">' + mopts + '</select>'
       + '</div>'
       + '<div class="ctrl-group">'
-      + '<span class="ctrl-label">Cajas</span>'
+      + '<span class="ctrl-label">' + qtyLabel(item.tipo_presentacion) + '</span>'
       + '<div class="qty-ctrl">'
       + '<button class="qty-btn" onclick="changeQty(' + i + ',-1)">&#8722;</button>'
       + '<span class="qty-val" id="qty-display-' + i + '">' + item.cantidad + '</span>'
@@ -971,7 +977,10 @@ async function confirmarPedido() {
         producto_id: _cart[i].id,
         miembro_id: miembroId,
         cantidad: _cart[i].cantidad,
-        precio_unitario: _cart[i].precio_costo
+        precio_unitario: _cart[i].precio_costo,
+        presentacion_id: _cart[i].presentacion_id || null,
+        tipo_presentacion: _cart[i].tipo_presentacion || 'caja',
+        unidades_por_presentacion: _cart[i].unidades_presentacion || _cart[i].unidades_caja || 1
       });
     }
 

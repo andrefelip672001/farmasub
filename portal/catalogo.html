@@ -200,6 +200,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .modal-precio-normal{font-size:.85rem;color:var(--danger);text-decoration:line-through;margin-top:3px;}
 .modal-ahorro{font-size:.82rem;color:var(--verde);font-weight:600;}
 
+/* FORMAS DE COMPRA */
+.modal-formas{margin-bottom:14px;}
+.formas-title{font-size:.7rem;font-weight:700;color:var(--naranja);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.formas-list{display:flex;gap:8px;flex-wrap:wrap;}
+.forma-pill{
+  display:flex;flex-direction:column;align-items:flex-start;gap:1px;
+  padding:8px 14px;border:1.5px solid var(--naranja);border-radius:12px;
+  background:var(--white);cursor:pointer;font-family:'Inter',sans-serif;
+  transition:all .2s;text-align:left;
+}
+.forma-pill:hover{background:var(--naranja-light);}
+.forma-pill.active{background:var(--naranja);border-color:var(--naranja);}
+.forma-pill-tipo{font-size:.78rem;font-weight:700;color:var(--naranja);}
+.forma-pill.active .forma-pill-tipo{color:white;}
+.forma-pill-precio{font-size:.9rem;font-weight:700;color:var(--ink);}
+.forma-pill.active .forma-pill-precio{color:white;}
+.prod-formas-hint{font-size:.72rem;color:var(--ink-60);margin-top:2px;}
+
 /* MODAL SECTIONS */
 .modal-section{margin-bottom:16px;}
 .modal-section-title{
@@ -412,6 +430,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       <p class="modal-activo" id="m-activo"></p>
       <p class="modal-activo" id="m-laboratorio" style="margin-top:-8px;font-size:.78rem"></p>
 
+      <div class="modal-formas" id="modal-formas" style="display:none">
+        <p class="formas-title">Forma de compra</p>
+        <div class="formas-list" id="formas-list"></div>
+      </div>
+
       <div class="modal-precios">
         <div>
           <div class="modal-precio-sub" id="m-precio-sub"></div>
@@ -420,7 +443,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
         <div style="margin-left:auto"><span class="modal-ahorro" id="m-ahorro"></span></div>
       </div>
 
-      <div class="modal-section" id="m-unidades-wrap"><p class="modal-section-title">Contenido de la caja</p><p id="m-unidades"></p></div>
+      <div class="modal-section" id="m-unidades-wrap"><p class="modal-section-title">Contenido</p><p id="m-unidades"></p></div>
       <div class="modal-section"><p class="modal-section-title">Presentación</p><p id="m-indicaciones"></p></div>
       <div class="modal-section"><p class="modal-section-title">Dosis recomendada</p><p id="m-dosis"></p></div>
       <div class="modal-section"><p class="modal-section-title">Contraindicaciones</p><p id="m-contraindicaciones"></p></div>
@@ -453,6 +476,7 @@ function getSortedFotos(p) {
 
 var _productos = [], _filtrados = [], _categorias = [], _catActiva = null, _modalProd = null;
 var _galleryFotos = [], _galleryIdx = 0;
+var _modalPres = [], _modalPresSel = null;
 
 (function() {
   _db.auth.getSession().then(function(sessRes) {
@@ -489,7 +513,7 @@ function loadCats() {
 
 function loadProducts() {
   return _db.from('productos')
-    .select('id, nombre, principio_activo, laboratorio, categoria_id, precio_farmacia, precio_costo, indicaciones, dosis, contraindicaciones, efectos_secundarios, unidades_caja, categorias(nombre), producto_fotos(url, orden)')
+    .select('id, nombre, principio_activo, laboratorio, categoria_id, precio_farmacia, precio_costo, indicaciones, dosis, contraindicaciones, efectos_secundarios, unidades_caja, categorias(nombre), producto_fotos(url, orden), producto_presentaciones(id,tipo,unidades,precio,precio_costo,activo,orden)')
     .eq('activo', true)
     .order('nombre')
     .then(function(prodRes) {
@@ -497,6 +521,27 @@ function loadProducts() {
       _filtrados = _productos.slice();
       renderGrid();
     });
+}
+
+// ===== FORMAS DE COMPRA (unidad / blister / caja) =====
+function getPresActivas(p) {
+  var list = p.producto_presentaciones || [];
+  var out = [];
+  for (var i = 0; i < list.length; i++) { if (list[i].activo) out.push(list[i]); }
+  out.sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
+  if (!out.length) {
+    out.push({ id: null, tipo: 'caja', unidades: p.unidades_caja || 1, precio: p.precio_farmacia || 0, precio_costo: p.precio_costo || 0, activo: true });
+  }
+  return out;
+}
+function presDefault(pres) {
+  for (var i = 0; i < pres.length; i++) { if (pres[i].tipo === 'caja') return pres[i]; }
+  return pres[0];
+}
+function tipoPresLabel(tipo) {
+  if (tipo === 'unidad') return 'Unidad';
+  if (tipo === 'blister') return 'Blister';
+  return 'Caja';
 }
 
 function selectCat(id, btn) {
@@ -549,19 +594,30 @@ function renderGrid() {
     var catNombre = (p.categorias && p.categorias.nombre) ? esc(p.categorias.nombre) : '';
     var addBtnClass = 'btn-add' + (inCart ? ' added' : '');
     var addBtnText = inCart ? 'Agregado' : 'Agregar al pedido';
+    var presActivas = getPresActivas(p);
+    var presPrincipal = presDefault(presActivas);
+    var precioBlock;
+    if (presActivas.length > 1) {
+      precioBlock = '<div class="prod-precios">'
+        + '<p class="precio-sub">Desde $' + presPrincipal.precio_costo.toFixed(2) + '</p>'
+        + '<p class="prod-formas-hint">' + presActivas.length + ' formas de compra -- ver detalle</p>'
+        + '</div>';
+    } else {
+      precioBlock = '<div class="prod-precios">'
+        + '<p class="precio-normal">Farmacia: $' + presPrincipal.precio.toFixed(2) + '</p>'
+        + '<p class="precio-sub">$' + presPrincipal.precio_costo.toFixed(2) + '</p>'
+        + '</div>';
+    }
     html += '<div class="prod-card">'
       + imgHtml
       + '<div class="prod-card-body">'
       + '<p class="prod-nombre">' + esc(p.nombre) + '</p>'
       + '<p class="prod-activo">' + (p.principio_activo || '') + '</p>'
-      + (p.unidades_caja ? '<p class="prod-activo" style="font-size:.74rem;color:#9CA3AF">Caja x' + p.unidades_caja + ' unidades</p>' : '')
+      + (presPrincipal.unidades > 1 ? '<p class="prod-activo" style="font-size:.74rem;color:#9CA3AF">' + tipoPresLabel(presPrincipal.tipo) + ' x' + presPrincipal.unidades + ' unidades</p>' : '')
       + '<div class="prod-badges">'
       + (catNombre ? '<span class="badge-cat">' + catNombre + '</span>' : '')
       + '</div>'
-      + '<div class="prod-precios">'
-      + '<p class="precio-normal">Farmacia: $' + (p.precio_farmacia || 0).toFixed(2) + '</p>'
-      + '<p class="precio-sub">$' + (p.precio_costo || 0).toFixed(2) + '</p>'
-      + '</div>'
+      + precioBlock
       + '<div class="prod-actions">'
       + '<button class="btn-ver" onclick="openModal(\'' + p.id + '\')">Ver mas</button>'
       + '<button class="' + addBtnClass + '" id="add-' + p.id + '" onclick="addToCart(\'' + p.id + '\')">' + addBtnText + '</button>'
@@ -570,6 +626,44 @@ function renderGrid() {
       + '</div>';
   }
   grid.innerHTML = html;
+}
+
+function renderFormasModal() {
+  var wrap = document.getElementById('modal-formas');
+  var list = document.getElementById('formas-list');
+  if (_modalPres.length <= 1) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  var html = '';
+  for (var i = 0; i < _modalPres.length; i++) {
+    var pr = _modalPres[i];
+    var isActive = _modalPresSel && pr.id === _modalPresSel.id;
+    html += '<button type="button" class="forma-pill' + (isActive ? ' active' : '') + '" onclick="seleccionarFormaModal(' + i + ')">'
+      + '<span class="forma-pill-tipo">' + tipoPresLabel(pr.tipo) + (pr.unidades > 1 ? ' (' + pr.unidades + 'u)' : '') + '</span>'
+      + '<span class="forma-pill-precio">$' + pr.precio_costo.toFixed(2) + '</span>'
+      + '</button>';
+  }
+  list.innerHTML = html;
+}
+
+function seleccionarFormaModal(idx) {
+  _modalPresSel = _modalPres[idx];
+  renderFormasModal();
+  actualizarPreciosModal();
+}
+
+function actualizarPreciosModal() {
+  var pr = _modalPresSel;
+  if (!pr) return;
+  document.getElementById('m-precio-sub').textContent = '$' + pr.precio_costo.toFixed(2);
+  document.getElementById('m-precio-normal').textContent = 'Precio farmacia: $' + pr.precio.toFixed(2);
+  var ahorro = pr.precio - pr.precio_costo;
+  document.getElementById('m-ahorro').textContent = ahorro > 0 ? 'Ahorras $' + ahorro.toFixed(2) : '';
+  if (pr.unidades > 1) {
+    document.getElementById('m-unidades-wrap').style.display = '';
+    document.getElementById('m-unidades').textContent = tipoPresLabel(pr.tipo) + ': ' + pr.unidades + ' unidades';
+  } else {
+    document.getElementById('m-unidades-wrap').style.display = 'none';
+  }
 }
 
 function openModal(id) {
@@ -585,16 +679,12 @@ function openModal(id) {
   document.getElementById('m-nombre').textContent = p.nombre;
   document.getElementById('m-activo').textContent = p.principio_activo || '';
   document.getElementById('m-laboratorio').textContent = p.laboratorio ? 'Laboratorio: ' + p.laboratorio : '';
-  document.getElementById('m-precio-sub').textContent = '$' + (p.precio_costo || 0).toFixed(2);
-  document.getElementById('m-precio-normal').textContent = 'Precio farmacia: $' + (p.precio_farmacia || 0).toFixed(2);
-  var ahorro = (p.precio_farmacia || 0) - (p.precio_costo || 0);
-  document.getElementById('m-ahorro').textContent = ahorro > 0 ? 'Ahorras $' + ahorro.toFixed(2) : '';
-  if (p.unidades_caja) {
-    document.getElementById('m-unidades-wrap').style.display = '';
-    document.getElementById('m-unidades').textContent = p.unidades_caja + ' unidades';
-  } else {
-    document.getElementById('m-unidades-wrap').style.display = 'none';
-  }
+
+  _modalPres = getPresActivas(p);
+  _modalPresSel = presDefault(_modalPres);
+  renderFormasModal();
+  actualizarPreciosModal();
+
   document.getElementById('m-indicaciones').textContent = p.indicaciones || '-';
   document.getElementById('m-dosis').textContent = p.dosis || '-';
   document.getElementById('m-contraindicaciones').textContent = p.contraindicaciones || '-';
@@ -713,27 +803,30 @@ function closeModal(e) { if (e.target === document.getElementById('modal-overlay
 function closeModalBtn() { document.getElementById('modal-overlay').classList.remove('open'); }
 
 function addFromModal() {
-  if (_modalProd) addToCart(_modalProd.id);
+  if (_modalProd) addToCart(_modalProd.id, _modalPresSel);
   document.getElementById('btn-add-modal').textContent = 'Ya esta en tu pedido';
 }
 
-function addToCart(id) {
+function addToCart(id, presElegida) {
   var p = null;
   for (var i = 0; i < _productos.length; i++) {
     if (_productos[i].id === id) { p = _productos[i]; break; }
   }
   if (!p) return;
+  var pr = presElegida || presDefault(getPresActivas(p));
   var cart = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
   var alreadyIn = false;
   for (var ci2 = 0; ci2 < cart.length; ci2++) { if (cart[ci2].id === id) { alreadyIn = true; break; } }
   if (!alreadyIn) {
     cart.push({
       id: p.id, nombre: p.nombre, principio_activo: p.principio_activo,
-      precio_costo: p.precio_costo, precio_farmacia: p.precio_farmacia,
-      unidades_caja: p.unidades_caja || 30, cantidad: 1
+      precio_costo: pr.precio_costo, precio_farmacia: pr.precio,
+      unidades_caja: pr.unidades || 1,
+      presentacion_id: pr.id, tipo_presentacion: pr.tipo, unidades_presentacion: pr.unidades || 1,
+      cantidad: 1
     });
     localStorage.setItem('farmasub_cart', JSON.stringify(cart));
-    showToast(p.nombre + ' agregado al pedido');
+    showToast(p.nombre + ' (' + tipoPresLabel(pr.tipo) + ') agregado al pedido');
   }
   updateCartBadge();
   var btn = document.getElementById('add-' + id);
