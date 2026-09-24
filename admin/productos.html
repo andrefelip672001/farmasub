@@ -154,6 +154,20 @@ tr:hover td{background:var(--naranja-light);}
 .rel-manual-del{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1rem;padding:0 4px;line-height:1;}
 .rel-manual-del:hover{color:var(--danger);}
 .rel-limit-msg{font-size:.72rem;color:var(--ink-60);}
+.presentaciones-section{margin-top:20px;padding-top:16px;border-top:1px solid #F3F4F6;}
+.presentaciones-hint{font-size:.78rem;color:var(--ink-60);margin-bottom:12px;}
+.presentacion-row{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr .9fr auto;gap:10px;align-items:end;background:var(--bg);border:1.5px solid var(--ink-30);border-radius:10px;padding:10px 12px;margin-bottom:8px;}
+.pres-field{display:flex;flex-direction:column;gap:4px;}
+.pres-field label{font-size:.68rem;font-weight:700;color:var(--ink-60);text-transform:uppercase;letter-spacing:.03em;}
+.pres-field select,.pres-field input[type=number]{background:var(--white);border:1.5px solid var(--ink-30);border-radius:8px;padding:8px 10px;font-family:'Inter',sans-serif;font-size:.82rem;color:var(--ink);outline:none;}
+.pres-field select:focus,.pres-field input:focus{border-color:var(--naranja);}
+.pres-activo{flex-direction:row;align-items:center;gap:6px;}
+.pres-activo label{display:flex;align-items:center;gap:5px;font-size:.78rem;color:var(--ink);text-transform:none;font-weight:500;cursor:pointer;}
+.pres-activo input[type=checkbox]{accent-color:var(--naranja);width:15px;height:15px;cursor:pointer;}
+.pres-remove{background:none;border:none;color:var(--ink-30);cursor:pointer;font-size:1rem;padding:6px;line-height:1;}
+.pres-remove:hover{color:var(--danger);}
+.btn-add-presentacion{background:none;border:1.5px dashed var(--naranja-d);border-radius:10px;padding:9px 14px;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;width:100%;transition:all .2s;}
+.btn-add-presentacion:hover{background:var(--naranja-light);}
 .hamburger-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-right:8px;flex-shrink:0;}
 .hamburger-btn svg{width:24px;height:24px;color:var(--ink);}
 .sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;}
@@ -169,6 +183,8 @@ tr:hover td{background:var(--naranja-light);}
   #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .top-nav{padding:0 14px;}
   .btn-logout{padding:6px 10px;font-size:.75rem;}
+  .presentacion-row{grid-template-columns:1fr 1fr;}
+  .pres-remove{grid-column:1/-1;justify-self:end;}
 }
 </style>
 </head>
@@ -302,20 +318,13 @@ tr:hover td{background:var(--naranja-light);}
           <span class="err-msg" id="err-categoria">Selecciona una categoria</span>
         </div>
         <div class="field">
-          <label>Unidades por caja</label>
-          <input type="number" id="f-unidades" min="1" placeholder="30"/>
-        </div>
-        <div class="field">
           <label>Fecha de caducidad</label>
           <input type="date" id="f-caducidad"/>
         </div>
-        <div class="field">
-          <label>Precio farmacia ($)</label>
-          <input type="number" id="f-pfarmacia" step="0.01" min="0" placeholder="0.00"/>
-        </div>
-        <div class="field">
-          <label>Precio costo ($)</label>
-          <input type="number" id="f-pcosto" step="0.01" min="0" placeholder="0.00"/>
+        <div style="display:none">
+          <input type="number" id="f-unidades"/>
+          <input type="number" id="f-pfarmacia"/>
+          <input type="number" id="f-pcosto"/>
         </div>
         <div class="field fg-full">
           <label>Presentación</label>
@@ -333,6 +342,14 @@ tr:hover td{background:var(--naranja-light);}
           <label>Efectos secundarios</label>
           <textarea id="f-efectos" placeholder="Puede producir nauseas, mareos..."></textarea>
         </div>
+      </div>
+
+      <div class="presentaciones-section">
+        <div class="section-label">Formas de venta</div>
+        <p class="presentaciones-hint">Agrega c&oacute;mo se puede comprar este producto: por unidad, por bl&iacute;ster, por caja, o varias a la vez. Cada una con su propio precio.</p>
+        <div id="presentaciones-list"></div>
+        <button type="button" class="btn-add-presentacion" id="btn-add-presentacion" onclick="agregarPresentacion()">+ Agregar forma de venta</button>
+        <span class="err-msg" id="err-presentaciones">Agrega al menos una forma de venta activa, con unidades y precio v&aacute;lidos</span>
       </div>
 
       <div class="photo-section">
@@ -492,6 +509,12 @@ var _categorias = [];
 var _editId = null;
 var _fotoItems = [];
 var _relacionadosManuales = [];
+var _presentaciones = [];
+var TIPOS_PRESENTACION = [
+  { value: 'unidad', label: 'Unidad' },
+  { value: 'blister', label: 'Blister' },
+  { value: 'caja', label: 'Caja' }
+];
 
 async function init() {
   var session = await sb.auth.getSession();
@@ -705,6 +728,8 @@ function openModal(modo) {
   _editId = null;
   _fotoItems = [];
   _relacionadosManuales = [];
+  _presentaciones = [{ id: null, tipo: 'caja', unidades: 1, precio: 0, precio_costo: null, activo: true }];
+  renderPresentaciones();
   document.getElementById('modal-title').textContent = modo === 'editar' ? 'Editar producto' : 'Agregar producto';
   document.getElementById('f-nombre').value = '';
   document.getElementById('f-laboratorio').value = '';
@@ -761,6 +786,17 @@ async function editProducto(id) {
       _fotoItems.push({ existing: true, id: fotosRes.data[j].id, url: fotosRes.data[j].url, orden: fotosRes.data[j].orden });
     }
   }
+  var presRes = await sb.from('producto_presentaciones').select('id, tipo, unidades, precio, precio_costo, activo').eq('producto_id', id).order('orden');
+  if (!presRes.error && presRes.data && presRes.data.length) {
+    _presentaciones = [];
+    for (var pIdx = 0; pIdx < presRes.data.length; pIdx++) {
+      var pr = presRes.data[pIdx];
+      _presentaciones.push({ id: pr.id, tipo: pr.tipo, unidades: pr.unidades, precio: pr.precio, precio_costo: pr.precio_costo, activo: pr.activo });
+    }
+  } else {
+    _presentaciones = [{ id: null, tipo: 'caja', unidades: p.unidades_caja || 1, precio: p.precio_farmacia || 0, precio_costo: p.precio_costo || null, activo: true }];
+  }
+  renderPresentaciones();
   var relRes = await sb.from('productos_relacionados').select('relacionado_id').eq('producto_id', id).eq('tipo', 'manual');
   if (!relRes.error && relRes.data) {
     for (var k = 0; k < relRes.data.length; k++) {
@@ -918,15 +954,97 @@ async function buscarRelacionado() {
   dd.classList.add('open');
 }
 
+function tiposPresentacionDisponibles(idxActual) {
+  var usados = {};
+  for (var i = 0; i < _presentaciones.length; i++) {
+    if (i === idxActual) continue;
+    usados[_presentaciones[i].tipo] = true;
+  }
+  var out = [];
+  for (var j = 0; j < TIPOS_PRESENTACION.length; j++) {
+    if (!usados[TIPOS_PRESENTACION[j].value]) out.push(TIPOS_PRESENTACION[j]);
+  }
+  return out;
+}
+
+function renderPresentaciones() {
+  var wrap = document.getElementById('presentaciones-list');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  for (var i = 0; i < _presentaciones.length; i++) {
+    var pres = _presentaciones[i];
+    var disponibles = tiposPresentacionDisponibles(i);
+    var selectHtml = '<select onchange="onPresentacionChange(' + i + ',\'tipo\',this.value)">';
+    for (var t = 0; t < disponibles.length; t++) {
+      selectHtml += '<option value="' + disponibles[t].value + '"' + (disponibles[t].value === pres.tipo ? ' selected' : '') + '>' + disponibles[t].label + '</option>';
+    }
+    selectHtml += '</select>';
+    var row = document.createElement('div');
+    row.className = 'presentacion-row';
+    row.innerHTML =
+      '<div class="pres-field"><label>Tipo</label>' + selectHtml + '</div>' +
+      '<div class="pres-field"><label>Unidades sueltas</label><input type="number" min="1" step="1" value="' + esc(pres.unidades == null ? '' : pres.unidades) + '" onchange="onPresentacionChange(' + i + ',\'unidades\',this.value)"/></div>' +
+      '<div class="pres-field"><label>Precio venta ($)</label><input type="number" min="0" step="0.01" value="' + esc(pres.precio == null ? '' : pres.precio) + '" onchange="onPresentacionChange(' + i + ',\'precio\',this.value)"/></div>' +
+      '<div class="pres-field"><label>Costo ($)</label><input type="number" min="0" step="0.01" value="' + esc(pres.precio_costo == null ? '' : pres.precio_costo) + '" onchange="onPresentacionChange(' + i + ',\'precio_costo\',this.value)"/></div>' +
+      '<div class="pres-field pres-activo"><label><input type="checkbox" ' + (pres.activo ? 'checked' : '') + ' onchange="onPresentacionChange(' + i + ',\'activo\',this.checked)"/> Activa</label></div>' +
+      '<button type="button" class="pres-remove" onclick="quitarPresentacion(' + i + ')" title="Quitar">&#x2715;</button>';
+    wrap.appendChild(row);
+  }
+  var btnAdd = document.getElementById('btn-add-presentacion');
+  if (btnAdd) btnAdd.style.display = (_presentaciones.length >= TIPOS_PRESENTACION.length) ? 'none' : '';
+}
+
+function onPresentacionChange(idx, field, value) {
+  if (!_presentaciones[idx]) return;
+  if (field === 'unidades' || field === 'precio' || field === 'precio_costo') {
+    _presentaciones[idx][field] = (value === '' || value === null) ? null : parseFloat(value);
+  } else if (field === 'activo') {
+    _presentaciones[idx][field] = !!value;
+  } else {
+    _presentaciones[idx][field] = value;
+  }
+  if (field === 'tipo') { renderPresentaciones(); }
+}
+
+function agregarPresentacion() {
+  if (_presentaciones.length >= TIPOS_PRESENTACION.length) return;
+  var disponibles = tiposPresentacionDisponibles(-1);
+  if (!disponibles.length) return;
+  _presentaciones.push({ id: null, tipo: disponibles[0].value, unidades: 1, precio: 0, precio_costo: null, activo: true });
+  renderPresentaciones();
+}
+
+function quitarPresentacion(idx) {
+  _presentaciones.splice(idx, 1);
+  renderPresentaciones();
+}
+
+// Mientras el catalogo publico (Fase 3) no muestre todas las presentaciones,
+// se sincroniza precio_farmacia / precio_costo / unidades_caja con la presentacion
+// de "caja" (o la primera activa si no hay caja) para que el catalogo actual
+// siga mostrando el precio correcto sin que Andres tenga que llenar dos veces.
+function sincronizarCamposLegacy() {
+  var elegida = null;
+  for (var i = 0; i < _presentaciones.length; i++) {
+    if (_presentaciones[i].tipo === 'caja' && _presentaciones[i].activo) { elegida = _presentaciones[i]; break; }
+  }
+  if (!elegida) {
+    for (var j = 0; j < _presentaciones.length; j++) {
+      if (_presentaciones[j].activo) { elegida = _presentaciones[j]; break; }
+    }
+  }
+  if (!elegida && _presentaciones.length) { elegida = _presentaciones[0]; }
+  document.getElementById('f-unidades').value = elegida ? elegida.unidades : '';
+  document.getElementById('f-pfarmacia').value = elegida ? elegida.precio : '';
+  document.getElementById('f-pcosto').value = (elegida && elegida.precio_costo != null) ? elegida.precio_costo : '';
+}
+
 async function guardarProducto() {
   var nombre = document.getElementById('f-nombre').value.trim();
   var principio = document.getElementById('f-activo').value.trim();
   var laboratorio = document.getElementById('f-laboratorio').value.trim();
   var categoriaId = document.getElementById('f-categoria').value;
-  var unidades = parseInt(document.getElementById('f-unidades').value) || 0;
   var caducidad = document.getElementById('f-caducidad').value || null;
-  var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
-  var pcosto = parseFloat(document.getElementById('f-pcosto').value) || 0;
   var indicaciones = document.getElementById('f-indicaciones').value.trim();
   var dosis = document.getElementById('f-dosis').value.trim();
   var contraindicaciones = document.getElementById('f-contraindicaciones').value.trim();
@@ -935,6 +1053,23 @@ async function guardarProducto() {
   if (!nombre) { showModalError('El nombre es obligatorio'); return; }
   if (!categoriaId) { showModalError('Selecciona una categoria'); return; }
   if (_fotoItems.length === 0) { showModalError('Agrega al menos una foto del producto'); return; }
+
+  var presActivasCount = 0;
+  for (var pv = 0; pv < _presentaciones.length; pv++) {
+    var prv = _presentaciones[pv];
+    if (!prv.tipo || prv.unidades === null || prv.unidades === undefined || prv.unidades <= 0 ||
+        prv.precio === null || prv.precio === undefined || isNaN(prv.precio) || prv.precio < 0) {
+      showModalError('Revisa las formas de venta: falta el tipo, las unidades o el precio');
+      return;
+    }
+    if (prv.activo) presActivasCount++;
+  }
+  if (presActivasCount === 0) { showModalError('Agrega al menos una forma de venta activa'); return; }
+
+  sincronizarCamposLegacy();
+  var unidades = parseInt(document.getElementById('f-unidades').value) || 0;
+  var pfarmacia = parseFloat(document.getElementById('f-pfarmacia').value) || 0;
+  var pcosto = parseFloat(document.getElementById('f-pcosto').value) || 0;
 
   var payload = {
     nombre: nombre,
@@ -986,6 +1121,25 @@ async function guardarProducto() {
       relacionado_id: _relacionadosManuales[j].relacionado_id,
       tipo: 'manual'
     });
+  }
+
+  await sb.from('producto_presentaciones').delete().eq('producto_id', productoId);
+  var presPayload = [];
+  for (var pk = 0; pk < _presentaciones.length; pk++) {
+    var prk = _presentaciones[pk];
+    presPayload.push({
+      producto_id: productoId,
+      tipo: prk.tipo,
+      unidades: prk.unidades,
+      precio: prk.precio,
+      precio_costo: (prk.precio_costo === '' || prk.precio_costo === undefined) ? null : prk.precio_costo,
+      activo: !!prk.activo,
+      orden: pk + 1
+    });
+  }
+  if (presPayload.length) {
+    var presInsRes = await sb.from('producto_presentaciones').insert(presPayload);
+    if (presInsRes.error) { console.error('Error guardando formas de venta:', presInsRes.error); }
   }
 
   closeModal();
@@ -1172,7 +1326,7 @@ async function confirmarCargaMasiva() {
   btn.disabled = true;
   btn.textContent = 'Cargando...';
 
-  var res = await sb.from('productos').insert(_bulkValidRows);
+  var res = await sb.from('productos').insert(_bulkValidRows).select('id, unidades_caja, precio_farmacia, precio_costo');
 
   btn.disabled = false;
   btn.textContent = 'Confirmar carga';
@@ -1181,6 +1335,24 @@ async function confirmarCargaMasiva() {
     errMsg.textContent = 'Error al cargar: ' + res.error.message;
     errBox.style.display = 'block';
     return;
+  }
+
+  var bulkPres = [];
+  for (var bi = 0; bi < res.data.length; bi++) {
+    var br = res.data[bi];
+    bulkPres.push({
+      producto_id: br.id,
+      tipo: 'caja',
+      unidades: br.unidades_caja || 1,
+      precio: br.precio_farmacia || 0,
+      precio_costo: br.precio_costo || null,
+      activo: true,
+      orden: 1
+    });
+  }
+  if (bulkPres.length) {
+    var bulkPresRes = await sb.from('producto_presentaciones').insert(bulkPres);
+    if (bulkPresRes.error) { console.error('Error creando formas de venta de carga masiva:', bulkPresRes.error); }
   }
 
   document.getElementById('bulk-step-preview').style.display = 'none';
