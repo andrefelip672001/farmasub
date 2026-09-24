@@ -239,7 +239,7 @@ var _facturas = [];
   var rol = null;
   if (user.user_metadata && user.user_metadata.rol) rol = user.user_metadata.rol;
   else if (user.app_metadata && user.app_metadata.rol) rol = user.app_metadata.rol;
-  if (!rol) {
+  if (rol !== 'admin') {
     var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
     rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
   }

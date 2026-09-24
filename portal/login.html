@@ -382,16 +382,8 @@ async function verificarMfaLogin() {
 // Rol y redireccion
 async function redirectByRole(user) {
   var rol = null;
-  if (user.user_metadata && user.user_metadata.rol) {
-    rol = user.user_metadata.rol;
-  } else if (user.app_metadata && user.app_metadata.rol) {
-    rol = user.app_metadata.rol;
-  }
-
-  if (!rol) {
-    var perfilRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
-    rol = (perfilRes.data && perfilRes.data.rol) ? perfilRes.data.rol : 'suscriptor';
-  }
+  var perfilRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+  rol = (perfilRes.data && perfilRes.data.rol) ? perfilRes.data.rol : 'suscriptor';
 
   if (rol === 'admin') {
     window.location.href = '../admin/dashboard.html';

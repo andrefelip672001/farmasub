@@ -261,7 +261,7 @@ var _adminUserId = null;
   } else if (user.app_metadata && user.app_metadata.rol) {
     rol = user.app_metadata.rol;
   }
-  if (!rol) {
+  if (rol !== 'admin') {
     var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
     rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : 'suscriptor';
   }

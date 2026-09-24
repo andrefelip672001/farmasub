@@ -499,8 +499,9 @@ async function init() {
     window.location.href = '../portal/login.html';
     return;
   }
-  var meta = session.data.session.user.user_metadata || {};
-  var rol = meta.rol || '';
+  var rol = '';
+  var pRes = await sb.from('usuarios').select('rol').eq('id', session.data.session.user.id).single();
+  rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : '';
   if (rol !== 'admin') {
     window.location.href = '../portal/login.html';
     return;
