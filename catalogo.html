@@ -208,8 +208,11 @@ function addToCart(btn) {
   var card = btn.closest('[data-id]');
   var id   = card.dataset.id;
   var nome = card.dataset.nombre;
-  var farm = parseFloat(card.dataset.farmacia);
-  var cost = parseFloat(card.dataset.costo);
+  var entry = _presMap[id];
+  var pr = entry ? entry.list[entry.selIdx] : null;
+  var farm = pr ? (parseFloat(pr.precio) || 0) : 0;
+  var cost = pr ? (parseFloat(pr.precio_costo) || 0) : 0;
+  var tipoLabel = pr ? tipoPresLabelCat(pr.tipo) : 'Caja';
 
   var found = false;
   for (var i = 0; i < cart.length; i++) {
@@ -220,7 +223,7 @@ function addToCart(btn) {
     }
   }
   if (!found) {
-    cart.push({ id: id, nombre: nome, farmacia: farm, costo: cost, qty: 1 });
+    cart.push({ id: id, nombre: nome, farmacia: farm, costo: cost, tipoLabel: tipoLabel, qty: 1 });
   }
   updateCartUI();
   showToast();
@@ -281,7 +284,7 @@ function updateCartUI() {
       div.style.cssText = 'padding:12px 0;border-bottom:1px solid #F3F4F6;display:flex;gap:10px;align-items:flex-start';
 
       var html = '<div style="flex:1;min-width:0">';
-      html += '<div style="font-size:.88rem;font-weight:600;color:#1A1A2E;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + item.nombre + '</div>';
+      html += '<div style="font-size:.88rem;font-weight:600;color:#1A1A2E;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + item.nombre + (item.tipoLabel ? ' <span style="font-weight:400;color:#9CA3AF;font-size:.76rem">(' + item.tipoLabel + ')</span>' : '') + '</div>';
       html += '<div style="display:flex;align-items:center;gap:8px">';
       html += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + (item.farmacia * item.qty).toFixed(2) + '</span>';
       html += '<span style="font-size:.88rem;font-weight:600;color:#EF6830">$' + (item.costo * item.qty).toFixed(2) + '</span>';
@@ -394,7 +397,7 @@ async function cargarPaginaCatalogo(reset) {
     var hasta = desde + PAGE_SIZE - 1;
 
     var q = _dbPublic.from('productos')
-      .select('id,nombre,principio_activo,categoria_id,precio_farmacia,precio_costo,unidades_caja,producto_fotos(url,orden)')
+      .select('id,nombre,principio_activo,categoria_id,precio_farmacia,precio_costo,unidades_caja,producto_fotos(url,orden),producto_presentaciones(id,tipo,unidades,precio,precio_costo,activo,orden)')
       .eq('activo', true);
 
     if (_catCategoriaActiva !== 'todos') {
@@ -433,6 +436,28 @@ async function cargarPaginaCatalogo(reset) {
   }
 }
 
+var _presMap = {};
+
+function getPresActivasCat(p) {
+  var list = p.producto_presentaciones || [];
+  var out = [];
+  for (var i = 0; i < list.length; i++) { if (list[i].activo) out.push(list[i]); }
+  out.sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
+  if (!out.length) {
+    out.push({ id: null, tipo: 'caja', unidades: p.unidades_caja || 1, precio: p.precio_farmacia || 0, precio_costo: p.precio_costo || 0, activo: true });
+  }
+  return out;
+}
+function presDefaultCat(pres) {
+  for (var i = 0; i < pres.length; i++) { if (pres[i].tipo === 'caja') return pres[i]; }
+  return pres[0];
+}
+function tipoPresLabelCat(tipo) {
+  if (tipo === 'unidad') return 'Unidad';
+  if (tipo === 'blister') return 'Blister';
+  return 'Caja';
+}
+
 function renderCatalogoCompletoItems(lista) {
   var grid = document.getElementById('cat-grid');
   var catMap = {};
@@ -443,10 +468,13 @@ function renderCatalogoCompletoItems(lista) {
     var fotos = (p.producto_fotos || []).slice().sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
     var fotoUrl = fotos.length ? fotos[0].url : null;
     var catNombre = catMap[p.categoria_id] || '';
-    var pf = parseFloat(p.precio_farmacia) || 0;
-    var pc = parseFloat(p.precio_costo) || 0;
+    var pres = getPresActivasCat(p);
+    var presPrincipal = presDefaultCat(pres);
+    _presMap[p.id] = { list: pres, selIdx: pres.indexOf(presPrincipal) };
+    var pf = parseFloat(presPrincipal.precio) || 0;
+    var pc = parseFloat(presPrincipal.precio_costo) || 0;
 
-    html += '<div class="product-card" data-id="' + p.id + '" data-nombre="' + escapeHtmlCat(p.nombre) + '" data-farmacia="' + pf + '" data-costo="' + pc + '" data-categoria="' + p.categoria_id + '">';
+    html += '<div class="product-card" data-id="' + p.id + '" data-nombre="' + escapeHtmlCat(p.nombre) + '" data-categoria="' + p.categoria_id + '">';
     html += '<div style="background:#FFF2EC;height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden">';
     html += fotoUrl
       ? '<img src="' + fotoUrl + '" alt="" style="width:100%;height:100%;object-fit:contain;padding:12px;box-sizing:border-box">'
@@ -458,10 +486,18 @@ function renderCatalogoCompletoItems(lista) {
     }
     html += '<div style="font-weight:700;font-size:.9rem;color:#1A1A2E;margin:8px 0 1px">' + escapeHtmlCat(p.nombre) + '</div>';
     html += '<div style="font-size:.75rem;color:#6B7280">' + escapeHtmlCat(p.principio_activo) + '</div>';
-    html += p.unidades_caja
-      ? '<div style="font-size:.7rem;color:#9CA3AF;margin-bottom:10px">Caja x' + p.unidades_caja + ' unidades</div>'
-      : '<div style="margin-bottom:10px"></div>';
-    html += '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px">';
+    html += (presPrincipal.unidades > 1)
+      ? '<div style="font-size:.7rem;color:#9CA3AF;margin-bottom:6px" id="pres-unidades-' + p.id + '">' + tipoPresLabelCat(presPrincipal.tipo) + ' x' + presPrincipal.unidades + ' unidades</div>'
+      : '<div style="margin-bottom:6px" id="pres-unidades-' + p.id + '"></div>';
+    if (pres.length > 1) {
+      html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px" id="pres-pills-' + p.id + '">';
+      pres.forEach(function(pr, idx) {
+        var activo = idx === _presMap[p.id].selIdx;
+        html += '<button type="button" onclick="seleccionarPresCard(\'' + p.id + '\',' + idx + ')" data-idx="' + idx + '" style="font-size:.68rem;font-weight:600;padding:3px 9px;border-radius:99px;cursor:pointer;border:1px solid ' + (activo ? '#EF6830' : '#E5E7EB') + ';background:' + (activo ? '#FFF2EC' : '#fff') + ';color:' + (activo ? '#EF6830' : '#6B7280') + '">' + tipoPresLabelCat(pr.tipo) + '</button>';
+      });
+      html += '</div>';
+    }
+    html += '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:12px" id="pres-precio-' + p.id + '">';
     if (pf > pc) {
       html += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + pf.toFixed(2) + '</span>';
     }
@@ -471,6 +507,39 @@ function renderCatalogoCompletoItems(lista) {
     html += '</div></div>';
   });
   grid.insertAdjacentHTML('beforeend', html);
+}
+
+function seleccionarPresCard(id, idx) {
+  var entry = _presMap[id];
+  if (!entry) return;
+  entry.selIdx = idx;
+  var pr = entry.list[idx];
+
+  var pillsWrap = document.getElementById('pres-pills-' + id);
+  if (pillsWrap) {
+    var btns = pillsWrap.querySelectorAll('button');
+    for (var i = 0; i < btns.length; i++) {
+      var activo = parseInt(btns[i].dataset.idx) === idx;
+      btns[i].style.border = '1px solid ' + (activo ? '#EF6830' : '#E5E7EB');
+      btns[i].style.background = activo ? '#FFF2EC' : '#fff';
+      btns[i].style.color = activo ? '#EF6830' : '#6B7280';
+    }
+  }
+
+  var unidadesEl = document.getElementById('pres-unidades-' + id);
+  if (unidadesEl) {
+    unidadesEl.textContent = pr.unidades > 1 ? (tipoPresLabelCat(pr.tipo) + ' x' + pr.unidades + ' unidades') : '';
+  }
+
+  var pf = parseFloat(pr.precio) || 0;
+  var pc = parseFloat(pr.precio_costo) || 0;
+  var precioEl = document.getElementById('pres-precio-' + id);
+  if (precioEl) {
+    var h = '';
+    if (pf > pc) { h += '<span style="font-size:.78rem;color:#EF4444;text-decoration:line-through">$' + pf.toFixed(2) + '</span>'; }
+    h += '<span style="font-size:1.3rem;font-weight:700;color:#EF6830">$' + pc.toFixed(2) + '</span>';
+    precioEl.innerHTML = h;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initCatalogoCompleto);
