@@ -263,7 +263,7 @@ tr:hover td{background:var(--naranja-light);}
     <div class="toolbar">
       <div class="search-wrap">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="search-input" type="text" id="search" placeholder="Buscar producto..." oninput="filterTable()"/>
+        <input class="search-input" type="text" id="search" name="buscar-producto" placeholder="Buscar producto..." oninput="filterTable()" autocomplete="off"/>
       </div>
     </div>
     <div class="table-wrap">
@@ -512,10 +512,16 @@ tr:hover td{background:var(--naranja-light);}
       <p style="font-size:.85rem;color:#6B7280;margin-bottom:14px;line-height:1.5">
         Vas a eliminar <strong id="delete-modal-nombre"></strong> definitivamente. Esta accion no se puede deshacer. Para confirmar, escribe tu clave de acceso (la misma con la que inicias sesion).
       </p>
-      <div style="margin-bottom:10px">
-        <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Tu clave</label>
-        <input type="password" id="delete-modal-clave" style="width:100%;padding:9px 12px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:.85rem;box-sizing:border-box" autocomplete="current-password"/>
-      </div>
+      <form id="delete-form" autocomplete="on" onsubmit="return false;">
+        <div style="margin-bottom:10px">
+          <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Cuenta</label>
+          <input type="email" id="delete-modal-email" readonly style="width:100%;padding:9px 12px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:.85rem;box-sizing:border-box;background:#F9FAFB;color:#6B7280" autocomplete="username"/>
+        </div>
+        <div style="margin-bottom:10px">
+          <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Tu clave</label>
+          <input type="password" id="delete-modal-clave" style="width:100%;padding:9px 12px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:.85rem;box-sizing:border-box" autocomplete="current-password"/>
+        </div>
+      </form>
       <div class="modal-error" id="delete-modal-error" style="display:none">
         <span id="delete-modal-error-msg"></span>
       </div>
@@ -713,9 +719,11 @@ function abrirEliminarModal(id, nombre) {
   _pendingDeleteId = id;
   _pendingDeleteNombre = nombre;
   document.getElementById('delete-modal-nombre').textContent = nombre;
+  document.getElementById('delete-modal-email').value = _adminEmail;
   document.getElementById('delete-modal-clave').value = '';
   document.getElementById('delete-modal-error').style.display = 'none';
   document.getElementById('delete-modal-overlay').classList.add('open');
+  setTimeout(function() { document.getElementById('delete-modal-clave').focus(); }, 50);
 }
 
 function closeDeleteModal() {
@@ -747,7 +755,12 @@ async function confirmarEliminarProducto() {
   try {
     var authRes = await sb.auth.signInWithPassword({ email: _adminEmail, password: clave });
     if (authRes.error) {
-      showDeleteModalError('Clave incorrecta, intenta de nuevo.');
+      console.error('Error de reautenticacion:', authRes.error.message, authRes.error.status);
+      if (authRes.error.status === 429 || /rate limit/i.test(authRes.error.message || '')) {
+        showDeleteModalError('Demasiados intentos, espera un minuto y vuelve a intentar.');
+      } else {
+        showDeleteModalError('Clave incorrecta, intenta de nuevo. (' + authRes.error.message + ')');
+      }
       return;
     }
 
