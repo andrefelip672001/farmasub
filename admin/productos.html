@@ -631,7 +631,8 @@ function renderTabla(lista) {
     html += '<td>' + estadoBadge + '</td>';
     html += '<td><button class="btn-edit" onclick="editProducto(\'' + p.id + '\')">Editar</button> ';
     html += '<button class="btn-edit" onclick="abrirStockModal(\'' + p.id + '\',\'' + (p.nombre || '').replace(/'/g, '') + '\')" style="margin-left:4px">+ Stock</button> ';
-    html += '<button class="' + toggleCls + '" onclick="toggleActivo(\'' + p.id + '\',' + p.activo + ')">' + toggleLabel + '</button></td>';
+    html += '<button class="' + toggleCls + '" onclick="toggleActivo(\'' + p.id + '\',' + p.activo + ')">' + toggleLabel + '</button> ';
+    html += '<button class="btn-desactivar" onclick="eliminarProducto(\'' + p.id + '\',\'' + esc(p.nombre || '').replace(/'/g, "\\'") + '\')" style="margin-left:4px" title="Elimina el producto por completo (solo si nunca tuvo pedidos)">Eliminar</button></td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
@@ -653,6 +654,34 @@ function filterTable() {
 async function toggleActivo(id, activo) {
   var res = await sb.from('productos').update({ activo: !activo }).eq('id', id);
   if (res.error) { alert('Error: ' + res.error.message); return; }
+  await loadProductos();
+}
+
+async function eliminarProducto(id, nombre) {
+  if (!confirm('¿Eliminar "' + nombre + '" definitivamente? Esta accion no se puede deshacer.')) return;
+
+  // No permitir borrar productos que ya tienen historial real (pedidos o movimientos de stock)
+  var pedidosRes = await sb.from('pedido_items').select('id', { count: 'exact', head: true }).eq('producto_id', id);
+  if (pedidosRes.count && pedidosRes.count > 0) {
+    alert('Este producto ya tiene pedidos registrados, no se puede eliminar (se perderia el historial). Usa "Desactivar" en su lugar.');
+    return;
+  }
+  var movRes = await sb.from('movimientos_inventario').select('id', { count: 'exact', head: true }).eq('producto_id', id);
+  if (movRes.count && movRes.count > 0) {
+    alert('Este producto ya tiene movimientos de stock registrados, no se puede eliminar (se perderia el historial). Usa "Desactivar" en su lugar.');
+    return;
+  }
+
+  await sb.from('producto_fotos').delete().eq('producto_id', id);
+  await sb.from('producto_presentaciones').delete().eq('producto_id', id);
+  await sb.from('productos_relacionados').delete().eq('producto_id', id);
+  await sb.from('productos_relacionados').delete().eq('relacionado_id', id);
+
+  var delRes = await sb.from('productos').delete().eq('id', id);
+  if (delRes.error) {
+    alert('Error al eliminar: ' + delRes.error.message);
+    return;
+  }
   await loadProductos();
 }
 
