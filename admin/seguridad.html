@@ -225,7 +225,17 @@ async function iniciarEnroll() {
   var area = document.getElementById('mfa-action-area');
   area.innerHTML = '<p style="font-size:.85rem;color:var(--ink-60)">Generando codigo...</p>';
 
-  var res = await _db.auth.mfa.enroll({ factorType: 'totp' });
+  // Si quedo un intento anterior sin terminar (a medias, sin escanear o sin confirmar),
+  // Supabase no deja crear uno nuevo hasta borrar el pendiente. Lo limpiamos primero.
+  var listRes = await _db.auth.mfa.listFactors();
+  if (!listRes.error) {
+    var pendientes = ((listRes.data && listRes.data.totp) ? listRes.data.totp : []).filter(function(f) { return f.status !== 'verified'; });
+    for (var i = 0; i < pendientes.length; i++) {
+      await _db.auth.mfa.unenroll({ factorId: pendientes[i].id });
+    }
+  }
+
+  var res = await _db.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'Panel admin TuCosto' });
   if (res.error) {
     area.innerHTML = '<p class="msg-err" style="display:block">Error: ' + res.error.message + '</p><button class="btn-primary" onclick="refreshMfaStatus()" style="margin-top:10px">Reintentar</button>';
     return;
