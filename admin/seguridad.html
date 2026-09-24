@@ -256,7 +256,7 @@ async function iniciarEnroll() {
     + '<p class="msg-err" id="enroll-err"></p>'
     + '</div>';
 
-  document.getElementById('qr-container').innerHTML = qrSvg;
+  document.getElementById('qr-container').innerHTML = '<img src="' + qrSvg + '" width="180" height="180" alt="Codigo QR para verificacion en dos pasos"/>';
   document.getElementById('btn-verify').onclick = confirmarEnroll;
 }
 
