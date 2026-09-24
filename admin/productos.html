@@ -510,18 +510,13 @@ tr:hover td{background:var(--naranja-light);}
     </div>
     <div class="modal-body">
       <p style="font-size:.85rem;color:#6B7280;margin-bottom:14px;line-height:1.5">
-        Vas a eliminar <strong id="delete-modal-nombre"></strong> definitivamente. Esta accion no se puede deshacer. Para confirmar, escribe tu clave de acceso (la misma con la que inicias sesion).
+        Vas a eliminar el producto definitivamente. Esta accion no se puede deshacer. Para confirmar, escribe el nombre exacto del producto:
       </p>
-      <form id="delete-form" autocomplete="on" onsubmit="return false;">
-        <div style="margin-bottom:10px">
-          <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Cuenta</label>
-          <input type="email" id="delete-modal-email" readonly style="width:100%;padding:9px 12px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:.85rem;box-sizing:border-box;background:#F9FAFB;color:#6B7280" autocomplete="username"/>
-        </div>
-        <div style="margin-bottom:10px">
-          <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Tu clave</label>
-          <input type="password" id="delete-modal-clave" style="width:100%;padding:9px 12px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:.85rem;box-sizing:border-box" autocomplete="current-password"/>
-        </div>
-      </form>
+      <p style="font-size:.88rem;font-weight:700;color:#1A1A2E;margin-bottom:10px;background:#F9FAFB;padding:8px 12px;border-radius:8px" id="delete-modal-nombre"></p>
+      <div style="margin-bottom:10px">
+        <label style="font-size:.8rem;font-weight:600;color:#6B7280;display:block;margin-bottom:6px">Nombre del producto</label>
+        <input type="text" id="delete-modal-confirm-nombre" autocomplete="off" style="width:100%;padding:9px 12px;border:1.5px solid #E5E7EB;border-radius:8px;font-size:.85rem;box-sizing:border-box"/>
+      </div>
       <div class="modal-error" id="delete-modal-error" style="display:none">
         <span id="delete-modal-error-msg"></span>
       </div>
@@ -719,11 +714,10 @@ function abrirEliminarModal(id, nombre) {
   _pendingDeleteId = id;
   _pendingDeleteNombre = nombre;
   document.getElementById('delete-modal-nombre').textContent = nombre;
-  document.getElementById('delete-modal-email').value = _adminEmail;
-  document.getElementById('delete-modal-clave').value = '';
+  document.getElementById('delete-modal-confirm-nombre').value = '';
   document.getElementById('delete-modal-error').style.display = 'none';
   document.getElementById('delete-modal-overlay').classList.add('open');
-  setTimeout(function() { document.getElementById('delete-modal-clave').focus(); }, 50);
+  setTimeout(function() { document.getElementById('delete-modal-confirm-nombre').focus(); }, 50);
 }
 
 function closeDeleteModal() {
@@ -742,28 +736,20 @@ function showDeleteModalError(msg) {
 }
 
 async function confirmarEliminarProducto() {
-  var clave = document.getElementById('delete-modal-clave').value;
-  if (!clave) { showDeleteModalError('Escribe tu clave para confirmar'); return; }
+  var escrito = document.getElementById('delete-modal-confirm-nombre').value.trim();
+  if (!escrito) { showDeleteModalError('Escribe el nombre del producto para confirmar'); return; }
   if (!_pendingDeleteId) { closeDeleteModal(); return; }
+  if (escrito.toLowerCase() !== (_pendingDeleteNombre || '').trim().toLowerCase()) {
+    showDeleteModalError('El nombre no coincide. Escribelo exactamente igual para confirmar.');
+    return;
+  }
 
   var id = _pendingDeleteId;
   var btn = document.getElementById('btn-confirmar-delete');
   btn.disabled = true;
   document.getElementById('delete-modal-error').style.display = 'none';
-  showLoading('Verificando clave...');
 
   try {
-    var authRes = await sb.auth.signInWithPassword({ email: _adminEmail, password: clave });
-    if (authRes.error) {
-      console.error('Error de reautenticacion:', authRes.error.message, authRes.error.status);
-      if (authRes.error.status === 429 || /rate limit/i.test(authRes.error.message || '')) {
-        showDeleteModalError('Demasiados intentos, espera un minuto y vuelve a intentar.');
-      } else {
-        showDeleteModalError('Clave incorrecta, intenta de nuevo. (' + authRes.error.message + ')');
-      }
-      return;
-    }
-
     showLoading('Eliminando producto...');
 
     // No permitir borrar productos que ya tienen historial real (pedidos o movimientos de stock)
