@@ -979,6 +979,34 @@ function removeFoto(idx) {
   renderFotos();
 }
 
+function comprimirImagenWebp(file, maxDim, calidad) {
+  return new Promise(function(resolve) {
+    try {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) {
+          if (!blob) { resolve(file); return; }
+          var nuevoNombre = file.name.replace(/\.[^.]+$/, '') + '.webp';
+          resolve(new File([blob], nuevoNombre, { type: 'image/webp' }));
+        }, 'image/webp', calidad || 0.82);
+      };
+      img.onerror = function() { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    } catch (e) { resolve(file); }
+  });
+}
+
 function fotoFileChange(input) { handleFotoSelect(input); }
 
 function handleFotoSelect(input) {
@@ -1243,9 +1271,10 @@ async function guardarProducto() {
       var item = _fotoItems[i];
       var fotoUrl = item.url || '';
       if (!item.existing && item.file) {
-        var ext = item.file.name.split('.').pop();
+        var archivoSubir = await comprimirImagenWebp(item.file, 1000, 0.82);
+        var ext = archivoSubir.name.split('.').pop();
         var fpath = productoId + '/' + (i + 1) + '.' + ext;
-        var upFoto = await sb.storage.from('producto-fotos').upload(fpath, item.file, { upsert: true });
+        var upFoto = await sb.storage.from('producto-fotos').upload(fpath, archivoSubir, { upsert: true, contentType: archivoSubir.type || 'image/webp' });
         if (upFoto.error) { console.error('Error foto:', upFoto.error); continue; }
         var pub = sb.storage.from('producto-fotos').getPublicUrl(fpath);
         fotoUrl = pub.data.publicUrl + '?v=' + Date.now();

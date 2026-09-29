@@ -88,6 +88,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 .search-input:focus{border-color:var(--naranja);box-shadow:0 0 0 3px rgba(232,82,26,.08);}
 .search-input::placeholder{color:var(--ink-30);}
 
+.btn-cargar-mas-portal{background:#fff;color:var(--naranja);border:1.5px solid var(--naranja);font-weight:600;font-size:.9rem;padding:12px 28px;border-radius:12px;cursor:pointer;}
+.btn-cargar-mas-portal:hover{background:var(--naranja-light);}
+
 /* CATEGORY PILLS */
 .cats-scroll{padding-bottom:4px;}
 .cats-wrap{display:flex;gap:8px;flex-wrap:wrap;}
@@ -378,6 +381,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
     <div class="products-grid" id="products-grid">
       <div style="grid-column:1/-1;text-align:center;padding:40px;color:#6B7280">Cargando catalogo...</div>
     </div>
+    <div style="text-align:center;margin-top:28px">
+      <button id="btn-cargar-mas-portal" class="btn-cargar-mas-portal" style="display:none" onclick="cargarPaginaPortal(false)">Cargar mas productos</button>
+    </div>
 
   </main>
 </div>
@@ -474,9 +480,11 @@ function getSortedFotos(p) {
   return p.producto_fotos.slice().sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
 }
 
-var _productos = [], _filtrados = [], _categorias = [], _catActiva = null, _modalProd = null;
+var _productos = [], _categorias = [], _catActiva = null, _modalProd = null;
 var _galleryFotos = [], _galleryIdx = 0;
 var _modalPres = [], _modalPresSel = null;
+var PAGE_SIZE = 24, _catPagina = 0, _catHayMas = true, _catCargando = false;
+var _buscarTimeout = null;
 
 (function() {
   _db.auth.getSession().then(function(sessRes) {
@@ -488,7 +496,7 @@ var _modalPres = [], _modalPresSel = null;
         document.getElementById('nav-nombre').textContent = sRes.data.nombre;
         document.getElementById('nav-avatar').textContent = sRes.data.nombre.charAt(0).toUpperCase();
       }
-      loadCats().then(function() { loadProducts(); });
+      loadCats().then(function() { cargarPaginaPortal(true); });
       updateCartBadge();
     });
   });
@@ -511,16 +519,63 @@ function loadCats() {
   });
 }
 
-function loadProducts() {
-  return _db.from('productos')
-    .select('id, nombre, principio_activo, laboratorio, categoria_id, precio_farmacia, precio_costo, indicaciones, dosis, contraindicaciones, efectos_secundarios, unidades_caja, categorias(nombre), producto_fotos(url, orden), producto_presentaciones(id,tipo,unidades,precio,precio_costo,activo,orden)')
-    .eq('activo', true)
-    .order('nombre')
-    .then(function(prodRes) {
-      _productos = prodRes.data || [];
-      _filtrados = _productos.slice();
-      renderGrid();
-    });
+async function cargarPaginaPortal(reset) {
+  if (_catCargando) return;
+  _catCargando = true;
+
+  var grid = document.getElementById('products-grid');
+  var btnMas = document.getElementById('btn-cargar-mas-portal');
+  var counter = document.getElementById('result-count');
+
+  if (reset) {
+    _catPagina = 0;
+    _catHayMas = true;
+    _productos = [];
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#6B7280">Buscando...</div>';
+    if (btnMas) btnMas.style.display = 'none';
+  }
+
+  try {
+    var desde = _catPagina * PAGE_SIZE;
+    var hasta = desde + PAGE_SIZE - 1;
+
+    var q = _db.from('productos')
+      .select('id, nombre, principio_activo, laboratorio, categoria_id, precio_farmacia, precio_costo, indicaciones, dosis, contraindicaciones, efectos_secundarios, unidades_caja, categorias(nombre), producto_fotos(url, orden), producto_presentaciones(id,tipo,unidades,precio,precio_costo,activo,orden)')
+      .eq('activo', true);
+
+    if (_catActiva) { q = q.eq('categoria_id', _catActiva); }
+    var busq = document.getElementById('search').value.trim();
+    if (busq) {
+      var term = busq.replace(/[%,]/g, '');
+      q = q.or('nombre.ilike.%' + term + '%,principio_activo.ilike.%' + term + '%');
+    }
+
+    q = q.order('nombre').range(desde, hasta);
+
+    var res = await q;
+    if (res.error) throw res.error;
+
+    var items = res.data || [];
+    if (items.length < PAGE_SIZE) { _catHayMas = false; }
+    _productos = _productos.concat(items);
+
+    if (_catPagina === 0 && items.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#9CA3AF">Sin resultados para esta busqueda</div>';
+    } else {
+      if (reset) { grid.innerHTML = ''; }
+      renderGrid(items, !reset);
+    }
+
+    if (counter) counter.textContent = _productos.length + (_catHayMas ? '+' : '') + ' productos encontrados';
+    if (btnMas) btnMas.style.display = _catHayMas ? 'inline-block' : 'none';
+    _catPagina++;
+  } catch (e) {
+    console.error('Error cargando catalogo:', e);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:#EF4444">No pudimos cargar el catalogo. Intenta de nuevo.</div>';
+    if (btnMas) btnMas.style.display = 'none';
+  } finally {
+    _catCargando = false;
+  }
 }
 
 // ===== FORMAS DE COMPRA (unidad / blister / caja) =====
@@ -549,34 +604,22 @@ function selectCat(id, btn) {
   var catBtns = document.querySelectorAll('.cat-btn');
   for (var bi = 0; bi < catBtns.length; bi++) { catBtns[bi].classList.remove('active'); }
   btn.classList.add('active');
-  filterProducts();
+  cargarPaginaPortal(true);
 }
 
 function filterProducts() {
-  var q = document.getElementById('search').value.toLowerCase();
-  _filtrados = [];
-  for (var fi = 0; fi < _productos.length; fi++) {
-    var p = _productos[fi];
-    var matchCat = _catActiva === null || (p.categoria_id === _catActiva);
-    var matchQ = !q || p.nombre.toLowerCase().indexOf(q) !== -1 || (p.principio_activo || '').toLowerCase().indexOf(q) !== -1;
-    if (matchCat && matchQ) _filtrados.push(p);
-  }
-  renderGrid();
+  clearTimeout(_buscarTimeout);
+  _buscarTimeout = setTimeout(function() {
+    cargarPaginaPortal(true);
+  }, 350);
 }
 
-function renderGrid() {
+function renderGrid(items, append) {
   var grid = document.getElementById('products-grid');
-  var counter = document.getElementById('result-count');
-  if (!_filtrados.length) {
-    grid.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Sin resultados para esta busqueda</p></div>';
-    if (counter) counter.textContent = '0 productos encontrados';
-    return;
-  }
-  if (counter) counter.textContent = _filtrados.length + ' productos encontrados';
 
   var html = '';
-  for (var i = 0; i < _filtrados.length; i++) {
-    var p = _filtrados[i];
+  for (var i = 0; i < items.length; i++) {
+    var p = items[i];
     var inCart = cartHas(p.id);
     var fotos = getSortedFotos(p);
     var f1 = fotos[0] ? fotos[0].url : null;
@@ -625,7 +668,8 @@ function renderGrid() {
       + '</div>'
       + '</div>';
   }
-  grid.innerHTML = html;
+  if (append) { grid.insertAdjacentHTML('beforeend', html); }
+  else { grid.innerHTML = html; }
 }
 
 function renderFormasModal() {
