@@ -268,7 +268,14 @@ async function iniciarEnroll() {
     + '<p class="msg-err" id="enroll-err"></p>'
     + '</div>';
 
-  document.getElementById('qr-container').innerHTML = '<img src="' + qrSvg + '" width="180" height="180" alt="Codigo QR para verificacion en dos pasos"/>';
+  var qrContainer = document.getElementById('qr-container');
+  qrContainer.innerHTML = '';
+  var qrImg = document.createElement('img');
+  qrImg.src = qrSvg;
+  qrImg.width = 180;
+  qrImg.height = 180;
+  qrImg.alt = 'Codigo QR para verificacion en dos pasos';
+  qrContainer.appendChild(qrImg);
   document.getElementById('btn-verify').onclick = confirmarEnroll;
 }
 
