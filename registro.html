@@ -773,6 +773,34 @@ function retryRegistro() {
   renderUI();
 }
 
+function comprimirCedulaWebp(file, maxDim, calidad) {
+  return new Promise(function(resolve) {
+    try {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) {
+          if (!blob) { resolve(file); return; }
+          var nuevoNombre = file.name.replace(/\.[^.]+$/, '') + '.webp';
+          resolve(new File([blob], nuevoNombre, { type: 'image/webp' }));
+        }, 'image/webp', calidad || 0.88);
+      };
+      img.onerror = function() { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    } catch (e) { resolve(file); }
+  });
+}
+
 async function submitRegistro() {
   document.getElementById('conf-loading').style.display = '';
   document.getElementById('conf-success-block').style.display = 'none';
@@ -794,15 +822,17 @@ async function submitRegistro() {
     let kycFrontalPath = null;
     let kycPosteriorPath = null;
     if (S.payment.cedula_frontal) {
-      const ext = S.payment.cedula_frontal.name.split('.').pop();
+      const archivoFrontal = await comprimirCedulaWebp(S.payment.cedula_frontal, 1600, 0.88);
+      const ext = archivoFrontal.name.split('.').pop();
       const path = `${S.titular.cedula}/cedula_frontal.${ext}`;
-      const { error: kycFErr } = await _db.storage.from('kyc-documentos').upload(path, S.payment.cedula_frontal, { upsert: true });
+      const { error: kycFErr } = await _db.storage.from('kyc-documentos').upload(path, archivoFrontal, { upsert: true, contentType: archivoFrontal.type || 'image/webp' });
       if (!kycFErr) kycFrontalPath = path;
     }
     if (S.payment.cedula_posterior) {
-      const ext = S.payment.cedula_posterior.name.split('.').pop();
+      const archivoPosterior = await comprimirCedulaWebp(S.payment.cedula_posterior, 1600, 0.88);
+      const ext = archivoPosterior.name.split('.').pop();
       const path = `${S.titular.cedula}/cedula_posterior.${ext}`;
-      const { error: kycBErr } = await _db.storage.from('kyc-documentos').upload(path, S.payment.cedula_posterior, { upsert: true });
+      const { error: kycBErr } = await _db.storage.from('kyc-documentos').upload(path, archivoPosterior, { upsert: true, contentType: archivoPosterior.type || 'image/webp' });
       if (!kycBErr) kycPosteriorPath = path;
     }
 
