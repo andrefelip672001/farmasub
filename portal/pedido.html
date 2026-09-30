@@ -741,10 +741,10 @@ async function loadCartPhotos() {
   if (!_cart.length) return;
   var ids = [];
   for (var ci = 0; ci < _cart.length; ci++) { ids.push(_cart[ci].id); }
-  var fpRes = await _db.from('producto_fotos').select('producto_id,path').in('producto_id', ids).order('orden');
+  var fpRes = await _db.from('producto_fotos').select('producto_id,url').in('producto_id', ids).order('orden');
   var fotoMap = {};
   (fpRes.data || []).forEach(function(f) {
-    if (!fotoMap[f.producto_id]) fotoMap[f.producto_id] = f.path;
+    if (!fotoMap[f.producto_id]) fotoMap[f.producto_id] = f.url;
   });
   for (var fi = 0; fi < _cart.length; fi++) {
     _cart[fi].foto_path = fotoMap[_cart[fi].id] || null;
@@ -775,7 +775,7 @@ function renderCart() {
   for (var i = 0; i < _cart.length; i++) {
     var item = _cart[i];
     var imgHtml = item.foto_path
-      ? '<img class="item-img" src="' + FOTO_URL_BASE + item.foto_path + '" alt="' + esc(item.nombre) + '"/>'
+      ? '<img class="item-img" src="' + item.foto_path + '" alt="' + esc(item.nombre) + '"/>'
       : '<div class="item-img-ph">&#128138;</div>';
     var selectedMiembro = item.miembro || 'titular';
     var mopts = '<option value="titular"' + (selectedMiembro === 'titular' ? ' selected' : '') + '>' + esc((_susc && _susc.nombre) ? _susc.nombre : 'Titular') + '</option>';

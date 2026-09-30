@@ -484,6 +484,8 @@ var FIELDS = [
 
   var estadoBadge = document.getElementById('badge-estado');
   var estado = (_suscRow && _suscRow.estado) ? _suscRow.estado : 'pendiente';
+  var vencida = _suscRow && estado === 'activa' && _suscRow.fecha_vencimiento && new Date(_suscRow.fecha_vencimiento) < new Date();
+  if (vencida) { estado = 'vencida'; }
   var estadoCls = {activa: 'badge-activa', pendiente: 'badge-pend', vencida: 'badge-venc'};
   var estadoLbl = {activa: 'Activa', pendiente: 'Pendiente', vencida: 'Vencida'};
   estadoBadge.className = 'badge-estado ' + (estadoCls[estado] || 'badge-pend');
