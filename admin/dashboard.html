@@ -421,23 +421,27 @@ async function loadMetrics() {
   var firstOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
   var firstOfNextMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString();
   var results = await Promise.all([
-    _db.from('suscripciones').select('plan, fecha_vencimiento', {count: 'exact'}).eq('estado', 'activa'),
+    // Solo suscriptores reales (rol 'suscriptor'): las cuentas admin/domiciliario no cuentan
+    _db.from('usuarios').select('id, suscripciones(estado, plan, fecha_vencimiento)').eq('rol', 'suscriptor'),
     _db.from('pagos').select('*', {count: 'exact', head: true}).eq('estado', 'pendiente'),
     _db.from('pedidos').select('*', {count: 'exact', head: true}).gte('fecha_pedido', firstOfMonth),
-    _db.from('suscripciones').select('*', {count: 'exact', head: true}).eq('estado', 'sin_plan'),
     _db.from('usuarios').select('id, suscripciones(estado)').eq('rol', 'suscriptor').gte('created_at', firstOfMonth),
     _db.from('pagos').select('monto').eq('estado', 'aprobado').gte('fecha_pago', firstOfMonth).lt('fecha_pago', firstOfNextMonth)
   ]);
-  var activasRowsRaw = results[0].data || [];
   var hoy = new Date();
-  var activasRows = activasRowsRaw.filter(function(r) { return !(r.fecha_vencimiento && new Date(r.fecha_vencimiento) < hoy); });
-  var activos = activasRows.length;
+  var activos = 0, sinPlan = 0;
+  var suscriptores = results[0].data || [];
+  for (var k = 0; k < suscriptores.length; k++) {
+    var sus = (suscriptores[k].suscripciones && suscriptores[k].suscripciones.length) ? suscriptores[k].suscripciones[0] : null;
+    if (!sus) continue;
+    if (sus.estado === 'activa' && !(sus.fecha_vencimiento && new Date(sus.fecha_vencimiento) < hoy)) { activos++; }
+    else if (sus.estado === 'sin_plan') { sinPlan++; }
+  }
   var pendientes = results[1].count || 0;
   var pedidosMes = results[2].count || 0;
-  var sinPlan = results[3].count || 0;
-  var registradosMes = results[4].data || [];
+  var registradosMes = results[3].data || [];
   // Ingresos reales: pagos de membresia aprobados este mes (igual que Finanzas)
-  var pagosMes = results[5].data || [];
+  var pagosMes = results[4].data || [];
   var ingresos = 0;
   for (var i = 0; i < pagosMes.length; i++) { ingresos += (pagosMes[i].monto || 0); }
   document.getElementById('m-activos').textContent = activos;
