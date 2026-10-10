@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Anuncios Admin — TuCosto</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;margin-right:-2px;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.hamburger-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-right:8px;flex-shrink:0;}
+.hamburger-btn svg{width:24px;height:24px;color:var(--ink);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;}
+.sidebar-backdrop.open{display:block;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;min-width:0;}
+.head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+.page-title{font-size:1.5rem;font-weight:700;margin-bottom:4px;}
+.page-sub{color:var(--ink-60);font-size:.9rem;max-width:620px;}
+.hint-box{background:var(--azul-light);color:#1D4ED8;font-size:.8rem;padding:12px 14px;border-radius:10px;max-width:760px;line-height:1.5;margin-bottom:20px;}
+
+.btn-primary{background:var(--naranja);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;}
+.btn-primary:hover{background:var(--naranja-d);}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+.btn-ghost{background:var(--white);border:1.5px solid var(--ink-30);color:var(--ink);border-radius:10px;padding:10px 16px;font-weight:600;font-size:.84rem;cursor:pointer;font-family:inherit;}
+.btn-ghost:hover{border-color:var(--naranja);color:var(--naranja);}
+.btn-danger{background:var(--danger);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;}
+.btn-sm{background:var(--white);border:1.5px solid var(--ink-30);color:var(--ink);border-radius:8px;padding:6px 11px;font-weight:600;font-size:.78rem;cursor:pointer;font-family:inherit;}
+.btn-sm:hover{border-color:var(--naranja);color:var(--naranja);}
+.btn-sm.del{color:var(--danger);}
+.btn-sm.del:hover{border-color:var(--danger);background:var(--danger-light);color:var(--danger);}
+.btn-sm:disabled{opacity:.4;cursor:not-allowed;}
+
+.lista{display:flex;flex-direction:column;gap:12px;max-width:900px;}
+.item{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;display:flex;gap:16px;align-items:center;}
+.thumb{width:200px;aspect-ratio:16/5;border-radius:8px;object-fit:cover;background:#F3F4F6;flex-shrink:0;}
+.item-body{flex:1;min-width:0;}
+.item-title{font-weight:700;font-size:.95rem;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.item-meta{font-size:.78rem;color:var(--ink-60);line-height:1.6;}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-right:6px;}
+.badge.pub{background:var(--verde-light);color:var(--verde);}
+.badge.oculto{background:#F3F4F6;color:var(--ink-60);}
+.badge.prog{background:var(--warning-light);color:var(--warning);}
+.item-actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:210px;}
+.vacio{background:var(--white);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--ink-60);font-size:.9rem;box-shadow:var(--shadow);max-width:900px;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;padding:24px;box-shadow:0 10px 40px rgba(0,0,0,.2);}
+.modal h2{font-size:1.15rem;margin-bottom:16px;}
+.fld{margin-bottom:14px;}
+.fld label{display:block;font-size:.8rem;font-weight:600;margin-bottom:5px;}
+.fld input[type=text],.fld input[type=url],.fld input[type=date],.fld select,.fld textarea{width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.88rem;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--naranja);}
+.fld textarea{resize:vertical;min-height:62px;}
+.fld small{display:block;color:var(--ink-60);font-size:.74rem;margin-top:4px;line-height:1.4;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.preview{width:100%;aspect-ratio:16/5;border-radius:10px;object-fit:cover;background:#F3F4F6;border:1.5px dashed var(--ink-30);display:block;margin-bottom:8px;}
+.chk{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:500;}
+.chk input{width:17px;height:17px;accent-color:var(--naranja);}
+.modal-err{color:var(--danger);font-size:.82rem;margin-bottom:10px;display:none;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+
+@media(max-width:700px){
+  .hamburger-btn{display:flex;align-items:center;justify-content:center;}
+  .sidebar{position:fixed;top:64px;left:0;bottom:0;width:240px;transform:translateX(-100%);transition:transform .25s ease;z-index:100;box-shadow:2px 0 12px rgba(0,0,0,.1);}
+  .sidebar.open{transform:translateX(0);}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .main{padding:20px 16px;}
+  .item{flex-direction:column;align-items:stretch;}
+  .thumb{width:100%;}
+  .item-actions{max-width:none;justify-content:flex-start;}
+  .row2{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-nav">
+    <div class="nav-left">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <a href="../admin/dashboard.html" class="nav-logo">
+        <span class="nav-tag">Panel Admin</span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+      <button class="btn-logout" onclick="logout()">Cerrar sesion</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+    <aside class="sidebar" id="sidebar">
+      <a href="../admin/dashboard.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        Inicio
+      </a>
+      <a href="../admin/suscriptores.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Suscriptores
+      </a>
+      <a href="../admin/pedidos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Pedidos
+      </a>
+      <a href="../admin/productos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Catalogo
+      </a>
+      <a href="../admin/compras.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M9 11a3 3 0 0 0 6 0"/></svg>
+        Compras
+      </a>
+      <a href="../admin/domiciliarios.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 0 1 1 1v5h-6l3-6z"/><path d="M9 17.5H5.5l-2-6h5.5"/><path d="M9 6h6l3 6"/></svg>
+        Domiciliarios
+      </a>
+      <a href="../admin/anuncios.html" class="sb-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        Anuncios
+      </a>
+      <hr class="sb-divider"/>
+      <a href="../admin/pagos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Pagos
+      </a>
+      <a href="../admin/finanzas.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Finanzas
+      </a>
+      <a href="../admin/seguridad.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Seguridad
+      </a>
+    </aside>
+
+    <main class="main">
+      <div class="head-row">
+        <div>
+          <h1 class="page-title">Anuncios</h1>
+          <p class="page-sub">Banners que aparecen en el carrusel del catalogo y del inicio de tus suscriptores: ofertas, bajas de precio, avisos.</p>
+        </div>
+        <button class="btn-primary" id="btn-nuevo">+ Nuevo anuncio</button>
+      </div>
+      <div class="hint-box">
+        Tamano recomendado de la imagen: <strong>1600 x 500 px</strong> (horizontal). Pon el texto grande y centrado para que se lea bien en el celular. La imagen se convierte sola a WebP para que cargue rapido.
+      </div>
+      <div class="lista" id="lista"><div class="vacio">Cargando...</div></div>
+    </main>
+  </div>
+</div>
+
+<!-- Modal crear/editar -->
+<div class="overlay" id="ov-form">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <h2 id="m-title">Nuevo anuncio</h2>
+
+    <div class="fld">
+      <label>Imagen del anuncio</label>
+      <img class="preview" id="m-preview" alt="" style="display:none"/>
+      <input type="file" id="m-file" accept="image/png,image/jpeg,image/webp"/>
+    </div>
+
+    <div class="fld">
+      <label for="m-titulo">Titulo (solo para identificarlo, y para lectores de pantalla)</label>
+      <input type="text" id="m-titulo" maxlength="80" placeholder="Ej: Baja de precio en vitaminas"/>
+    </div>
+
+    <div class="fld">
+      <label for="m-tipo">Al hacer clic en el anuncio</label>
+      <select id="m-tipo">
+        <option value="ninguno">No hace nada (solo informa)</option>
+        <option value="whatsapp">Abre WhatsApp con un mensaje</option>
+        <option value="url">Abre un enlace web</option>
+      </select>
+    </div>
+    <div class="fld" id="f-wa" style="display:none">
+      <label for="m-wamsg">Mensaje que llega a tu WhatsApp</label>
+      <textarea id="m-wamsg" maxlength="300" placeholder="Hola TuCosto, quiero aprovechar la oferta de..."></textarea>
+      <small>Se abre el chat con tu numero y este mensaje ya escrito.</small>
+    </div>
+    <div class="fld" id="f-url" style="display:none">
+      <label for="m-url">Enlace (debe empezar con https://)</label>
+      <input type="url" id="m-url" placeholder="https://..."/>
+    </div>
+
+    <div class="row2">
+      <div class="fld">
+        <label for="m-ini">Mostrar desde (opcional)</label>
+        <input type="date" id="m-ini"/>
+      </div>
+      <div class="fld">
+        <label for="m-fin">Mostrar hasta (opcional)</label>
+        <input type="date" id="m-fin"/>
+      </div>
+    </div>
+
+    <div class="fld">
+      <label class="chk"><input type="checkbox" id="m-activo" checked/> Publicado (visible para los suscriptores)</label>
+    </div>
+
+    <div class="modal-err" id="m-err"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="m-cancel">Cancelar</button>
+      <button class="btn-primary" id="m-save">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmar eliminar -->
+<div class="overlay" id="ov-del">
+  <div class="modal" role="dialog" aria-modal="true" style="max-width:420px">
+    <h2>Eliminar anuncio</h2>
+    <p style="font-size:.9rem;color:var(--ink-60);margin-bottom:18px" id="del-txt"></p>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="del-cancel">Cancelar</button>
+      <button class="btn-danger" id="del-ok">Si, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var WA_NUM = '593987373549';
+var BUCKET = 'anuncios';
+var _items = [];
+var _editId = null;
+var _editImgUrl = null;
+var _delId = null;
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function $(id) { return document.getElementById(id); }
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = (user.user_metadata && user.user_metadata.rol) ? user.user_metadata.rol : null;
+  if (rol !== 'admin') {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : null;
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+
+  $('nav-nombre').textContent = user.email;
+  $('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+
+  $('btn-nuevo').addEventListener('click', function() { abrirForm(null); });
+  $('m-cancel').addEventListener('click', cerrarForm);
+  $('m-save').addEventListener('click', guardar);
+  $('m-tipo').addEventListener('change', actualizarTipo);
+  $('m-file').addEventListener('change', previsualizar);
+  $('del-cancel').addEventListener('click', function() { $('ov-del').classList.remove('open'); });
+  $('del-ok').addEventListener('click', confirmarEliminar);
+  $('lista').addEventListener('click', onListaClick);
+
+  await cargar();
+})();
+
+function toggleSidebar() {
+  $('sidebar').classList.toggle('open');
+  $('sidebar-backdrop').classList.toggle('open');
+}
+function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
+
+function hoyLocal() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+async function cargar() {
+  var res = await _db.from('anuncios').select('*').order('orden', { ascending: true }).order('created_at', { ascending: false });
+  if (res.error) {
+    $('lista').innerHTML = '<div class="vacio" style="color:var(--danger)">No se pudieron cargar los anuncios. ' + esc(res.error.message) + '<br>Si es la primera vez, corre el SQL de anuncios en Supabase.</div>';
+    return;
+  }
+  _items = res.data || [];
+  pintar();
+}
+
+function estadoDe(a) {
+  var hoy = hoyLocal();
+  if (!a.activo) return { cls: 'oculto', txt: 'Oculto' };
+  if (a.fecha_inicio && a.fecha_inicio > hoy) return { cls: 'prog', txt: 'Programado' };
+  if (a.fecha_fin && a.fecha_fin < hoy) return { cls: 'prog', txt: 'Vencido' };
+  return { cls: 'pub', txt: 'Publicado' };
+}
+
+function fmtFecha(f) {
+  if (!f) return '';
+  var p = f.split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+
+function tipoEnlace(a) {
+  if (!a.enlace) return 'Sin enlace';
+  if (a.enlace.indexOf('https://wa.me/') === 0) return 'Abre WhatsApp';
+  return 'Abre enlace web';
+}
+
+function pintar() {
+  var cont = $('lista');
+  if (!_items.length) {
+    cont.innerHTML = '<div class="vacio">Aun no tienes anuncios. Crea el primero con el boton "+ Nuevo anuncio".</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < _items.length; i++) {
+    var a = _items[i];
+    var est = estadoDe(a);
+    var vig = '';
+    if (a.fecha_inicio || a.fecha_fin) {
+      vig = '<br>Vigencia: ' + (a.fecha_inicio ? fmtFecha(a.fecha_inicio) : 'siempre') + ' al ' + (a.fecha_fin ? fmtFecha(a.fecha_fin) : 'sin fin');
+    }
+    html += '<div class="item">'
+      + '<img class="thumb" src="' + esc(a.imagen_url) + '" alt=""/>'
+      + '<div class="item-body">'
+      +   '<div class="item-title">' + esc(a.titulo) + '</div>'
+      +   '<div class="item-meta"><span class="badge ' + est.cls + '">' + est.txt + '</span>' + esc(tipoEnlace(a)) + vig + '</div>'
+      + '</div>'
+      + '<div class="item-actions">'
+      +   '<button class="btn-sm" data-act="up" data-id="' + esc(a.id) + '"' + (i === 0 ? ' disabled' : '') + ' title="Subir">&uarr;</button>'
+      +   '<button class="btn-sm" data-act="down" data-id="' + esc(a.id) + '"' + (i === _items.length - 1 ? ' disabled' : '') + ' title="Bajar">&darr;</button>'
+      +   '<button class="btn-sm" data-act="toggle" data-id="' + esc(a.id) + '">' + (a.activo ? 'Ocultar' : 'Publicar') + '</button>'
+      +   '<button class="btn-sm" data-act="edit" data-id="' + esc(a.id) + '">Editar</button>'
+      +   '<button class="btn-sm del" data-act="del" data-id="' + esc(a.id) + '">Eliminar</button>'
+      + '</div>'
+      + '</div>';
+  }
+  cont.innerHTML = html;
+}
+
+function buscar(id) {
+  for (var i = 0; i < _items.length; i++) { if (_items[i].id === id) return _items[i]; }
+  return null;
+}
+
+async function onListaClick(e) {
+  var btn = e.target.closest('button[data-act]');
+  if (!btn || btn.disabled) return;
+  var id = btn.getAttribute('data-id');
+  var act = btn.getAttribute('data-act');
+  var a = buscar(id);
+  if (!a) return;
+  if (act === 'edit') { abrirForm(a); }
+  else if (act === 'del') { _delId = id; $('del-txt').textContent = 'Se eliminara "' + a.titulo + '" y su imagen. Esto no se puede deshacer.'; $('ov-del').classList.add('open'); }
+  else if (act === 'toggle') {
+    var r = await _db.from('anuncios').update({ activo: !a.activo }).eq('id', id);
+    if (r.error) { alert('No se pudo actualizar: ' + r.error.message); return; }
+    await cargar();
+  }
+  else if (act === 'up' || act === 'down') { await mover(id, act === 'up' ? -1 : 1); }
+}
+
+async function mover(id, dir) {
+  var idx = -1;
+  for (var i = 0; i < _items.length; i++) { if (_items[i].id === id) idx = i; }
+  var otro = idx + dir;
+  if (idx < 0 || otro < 0 || otro >= _items.length) return;
+  var arr = _items.slice();
+  var tmp = arr[idx]; arr[idx] = arr[otro]; arr[otro] = tmp;
+  var ops = [];
+  for (var k = 0; k < arr.length; k++) {
+    if (arr[k].orden !== k) { ops.push(_db.from('anuncios').update({ orden: k }).eq('id', arr[k].id)); }
+  }
+  var results = await Promise.all(ops);
+  for (var r = 0; r < results.length; r++) {
+    if (results[r].error) { alert('No se pudo reordenar: ' + results[r].error.message); break; }
+  }
+  await cargar();
+}
+
+function actualizarTipo() {
+  var t = $('m-tipo').value;
+  $('f-wa').style.display = t === 'whatsapp' ? 'block' : 'none';
+  $('f-url').style.display = t === 'url' ? 'block' : 'none';
+}
+
+function previsualizar() {
+  var f = $('m-file').files[0];
+  var img = $('m-preview');
+  if (!f) { return; }
+  img.src = URL.createObjectURL(f);
+  img.style.display = 'block';
+}
+
+function mostrarErr(msg) {
+  var el = $('m-err');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+function abrirForm(a) {
+  _editId = a ? a.id : null;
+  _editImgUrl = a ? a.imagen_url : null;
+  $('m-title').textContent = a ? 'Editar anuncio' : 'Nuevo anuncio';
+  $('m-titulo').value = a ? a.titulo : '';
+  $('m-file').value = '';
+  $('m-ini').value = a && a.fecha_inicio ? a.fecha_inicio : '';
+  $('m-fin').value = a && a.fecha_fin ? a.fecha_fin : '';
+  $('m-activo').checked = a ? !!a.activo : true;
+  $('m-url').value = '';
+  $('m-wamsg').value = '';
+  var tipo = 'ninguno';
+  if (a && a.enlace) {
+    if (a.enlace.indexOf('https://wa.me/') === 0) {
+      tipo = 'whatsapp';
+      var q = a.enlace.split('?text=')[1];
+      try { $('m-wamsg').value = q ? decodeURIComponent(q) : ''; } catch (err) { $('m-wamsg').value = ''; }
+    } else { tipo = 'url'; $('m-url').value = a.enlace; }
+  }
+  $('m-tipo').value = tipo;
+  actualizarTipo();
+  var img = $('m-preview');
+  if (_editImgUrl) { img.src = _editImgUrl; img.style.display = 'block'; } else { img.removeAttribute('src'); img.style.display = 'none'; }
+  mostrarErr('');
+  $('m-save').disabled = false;
+  $('m-save').textContent = 'Guardar';
+  $('ov-form').classList.add('open');
+}
+
+function cerrarForm() { $('ov-form').classList.remove('open'); }
+
+function comprimirImagenWebp(file, maxDim, calidad) {
+  return new Promise(function(resolve) {
+    try {
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function() {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        canvas.toBlob(function(blob) {
+          if (!blob) { resolve(file); return; }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' }));
+        }, 'image/webp', calidad || 0.85);
+      };
+      img.onerror = function() { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    } catch (e) { resolve(file); }
+  });
+}
+
+function rutaDeUrl(url) {
+  var marca = '/object/public/' + BUCKET + '/';
+  var i = url ? url.indexOf(marca) : -1;
+  return i >= 0 ? decodeURIComponent(url.slice(i + marca.length)) : null;
+}
+
+async function guardar() {
+  mostrarErr('');
+  var titulo = $('m-titulo').value.trim();
+  var tipo = $('m-tipo').value;
+  var ini = $('m-ini').value || null;
+  var fin = $('m-fin').value || null;
+  var file = $('m-file').files[0] || null;
+
+  if (!titulo) { mostrarErr('Escribe un titulo para identificar el anuncio.'); return; }
+  if (!file && !_editImgUrl) { mostrarErr('Sube la imagen del anuncio.'); return; }
+  if (ini && fin && fin < ini) { mostrarErr('La fecha final no puede ser anterior a la inicial.'); return; }
+
+  var enlace = null;
+  if (tipo === 'whatsapp') {
+    var msg = $('m-wamsg').value.trim();
+    if (!msg) { mostrarErr('Escribe el mensaje de WhatsApp.'); return; }
+    enlace = 'https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg);
+  } else if (tipo === 'url') {
+    var u = $('m-url').value.trim();
+    if (!/^https:\/\//i.test(u)) { mostrarErr('El enlace debe empezar con https://'); return; }
+    enlace = u;
+  }
+
+  var btn = $('m-save');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  var imagenUrl = _editImgUrl;
+  var subioNueva = false;
+  if (file) {
+    var comp = await comprimirImagenWebp(file, 1600, 0.85);
+    var ext = (comp.name.split('.').pop() || 'webp').toLowerCase();
+    var path = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    var up = await _db.storage.from(BUCKET).upload(path, comp, { contentType: comp.type || 'image/webp', upsert: false });
+    if (up.error) { mostrarErr('No se pudo subir la imagen: ' + up.error.message); btn.disabled = false; btn.textContent = 'Guardar'; return; }
+    imagenUrl = _db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+    subioNueva = true;
+  }
+
+  var datos = {
+    titulo: titulo,
+    imagen_url: imagenUrl,
+    enlace: enlace,
+    fecha_inicio: ini,
+    fecha_fin: fin,
+    activo: $('m-activo').checked
+  };
+
+  var r;
+  if (_editId) {
+    r = await _db.from('anuncios').update(datos).eq('id', _editId);
+  } else {
+    datos.orden = _items.length;
+    r = await _db.from('anuncios').insert(datos);
+  }
+  if (r.error) {
+    mostrarErr('No se pudo guardar: ' + r.error.message);
+    if (subioNueva) { var rp = rutaDeUrl(imagenUrl); if (rp) { await _db.storage.from(BUCKET).remove([rp]); } }
+    btn.disabled = false; btn.textContent = 'Guardar';
+    return;
+  }
+
+  if (subioNueva && _editId && _editImgUrl) {
+    var vieja = rutaDeUrl(_editImgUrl);
+    if (vieja) { await _db.storage.from(BUCKET).remove([vieja]); }
+  }
+  cerrarForm();
+  await cargar();
+}
+
+async function confirmarEliminar() {
+  var a = buscar(_delId);
+  if (!a) { $('ov-del').classList.remove('open'); return; }
+  var r = await _db.from('anuncios').delete().eq('id', _delId);
+  if (r.error) { alert('No se pudo eliminar: ' + r.error.message); return; }
+  var ruta = rutaDeUrl(a.imagen_url);
+  if (ruta) { await _db.storage.from(BUCKET).remove([ruta]); }
+  $('ov-del').classList.remove('open');
+  _delId = null;
+  await cargar();
+}
+</script>
+</body>
+</html>

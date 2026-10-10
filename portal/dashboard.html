@@ -307,6 +307,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       </div>
     </div>
 
+    <div id="anuncios-slot"></div>
+
     <!-- CARDS GRID -->
     <div class="cards-grid">
 
@@ -420,8 +422,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script src="anuncios.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+TCAnuncios.montarCarrusel(_db, 'anuncios-slot');
 var _user, _susc;
 
 (async function() {
