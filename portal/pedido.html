@@ -506,6 +506,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script src="carrito.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAme0Mg5cZyTp2giqmEzFl2gLERayYDYn4&callback=initMap" async defer></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
@@ -726,7 +727,7 @@ var _vencidaPorFecha = false;
     for (var gi = 0; gi < pedidosMes.length; gi++) { _yaGastado += (pedidosMes[gi].total_costo || 0); }
   }
 
-  _cart = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  _cart = TCCart.get();
 
   var months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
   var now = new Date();
@@ -834,7 +835,7 @@ function changeQty(i, delta) {
   if (display) display.textContent = val;
   _cart[i].cantidad = val;
   if (priceEl) priceEl.textContent = '$' + (_cart[i].precio_costo * val).toFixed(2);
-  localStorage.setItem('farmasub_cart', JSON.stringify(_cart));
+  TCCart.set(_cart);
   renderSummary();
 }
 
@@ -845,13 +846,13 @@ function updateItem(i) {
   var miembro = mEl ? mEl.value : 'titular';
   _cart[i].cantidad = qty;
   _cart[i].miembro = miembro;
-  localStorage.setItem('farmasub_cart', JSON.stringify(_cart));
+  TCCart.set(_cart);
   renderSummary();
 }
 
 function removeItem(i) {
   _cart.splice(i, 1);
-  localStorage.setItem('farmasub_cart', JSON.stringify(_cart));
+  TCCart.set(_cart);
   renderCart();
   updateCartBadge();
 }
@@ -997,7 +998,7 @@ async function confirmarPedido() {
       });
     }
 
-    localStorage.removeItem('farmasub_cart');
+    TCCart.clear();
     var entrega = primerDiaHabilSiguienteMes();
     document.getElementById('success-text').textContent = 'Pedido ' + num + ' recibido. Entrega el ' + entrega + '.';
     document.getElementById('success-overlay').classList.add('show');
@@ -1031,7 +1032,7 @@ function primerDiaHabilSiguienteMes() {
 }
 
 function updateCartBadge() {
-  var c = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var c = TCCart.get();
   var b = document.getElementById('cart-badge');
   if (b) { if (c.length) { b.style.display = 'flex'; b.textContent = c.length; } else { b.style.display = 'none'; } }
   var mb = document.getElementById('cart-badge-mobile');

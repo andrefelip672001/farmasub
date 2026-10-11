@@ -472,6 +472,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script src="carrito.js"></script>
 <script src="anuncios.js"></script>
 <script>
 var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
@@ -865,7 +866,7 @@ function addToCart(id, presElegida) {
   }
   if (!p) return;
   var pr = presElegida || presDefault(getPresActivas(p));
-  var cart = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var cart = TCCart.get();
   var alreadyIn = false;
   for (var ci2 = 0; ci2 < cart.length; ci2++) { if (cart[ci2].id === id) { alreadyIn = true; break; } }
   if (!alreadyIn) {
@@ -876,7 +877,7 @@ function addToCart(id, presElegida) {
       presentacion_id: pr.id, tipo_presentacion: pr.tipo, unidades_presentacion: pr.unidades || 1,
       cantidad: 1
     });
-    localStorage.setItem('farmasub_cart', JSON.stringify(cart));
+    TCCart.set(cart);
     showToast(p.nombre + ' (' + tipoPresLabel(pr.tipo) + ') agregado al pedido');
   }
   updateCartBadge();
@@ -885,13 +886,13 @@ function addToCart(id, presElegida) {
 }
 
 function cartHas(id) {
-  var cart = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var cart = TCCart.get();
   for (var i = 0; i < cart.length; i++) { if (cart[i].id === id) return true; }
   return false;
 }
 
 function updateCartBadge() {
-  var c = JSON.parse(localStorage.getItem('farmasub_cart') || '[]');
+  var c = TCCart.get();
   var b = document.getElementById('cart-badge');
   if (b) { if (c.length) { b.style.display = 'flex'; b.textContent = c.length; } else { b.style.display = 'none'; } }
   var mb = document.getElementById('cart-badge-mobile');
