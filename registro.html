@@ -323,8 +323,18 @@ input.cedula-valid{border-color:var(--verde)!important;box-shadow:0 0 0 3px rgba
           <input type="email" id="s1-email" placeholder="ejemplo@correo.com" autocomplete="email"/>
           <span class="field-error" id="err-s1-email"></span>
         </div>
+        <div class="form-group">
+          <label for="s1-provincia">Provincia<span class="req">*</span></label>
+          <select id="s1-provincia" autocomplete="address-level1"><option value="">Selecciona tu provincia</option><option value="Azuay">Azuay</option><option value="Bolivar">Bolivar</option><option value="Canar">Canar</option><option value="Carchi">Carchi</option><option value="Chimborazo">Chimborazo</option><option value="Cotopaxi">Cotopaxi</option><option value="El Oro">El Oro</option><option value="Esmeraldas">Esmeraldas</option><option value="Galapagos">Galapagos</option><option value="Guayas">Guayas</option><option value="Imbabura">Imbabura</option><option value="Loja">Loja</option><option value="Los Rios">Los Rios</option><option value="Manabi">Manabi</option><option value="Morona Santiago">Morona Santiago</option><option value="Napo">Napo</option><option value="Orellana">Orellana</option><option value="Pastaza">Pastaza</option><option value="Pichincha">Pichincha</option><option value="Santa Elena">Santa Elena</option><option value="Santo Domingo de los Tsachilas">Santo Domingo de los Tsachilas</option><option value="Sucumbios">Sucumbios</option><option value="Tungurahua">Tungurahua</option><option value="Zamora Chinchipe">Zamora Chinchipe</option></select>
+          <span class="field-error" id="err-s1-provincia"></span>
+        </div>
+        <div class="form-group">
+          <label for="s1-ciudad">Ciudad<span class="req">*</span></label>
+          <input type="text" id="s1-ciudad" placeholder="Ej: Santo Domingo" autocomplete="address-level2"/>
+          <span class="field-error" id="err-s1-ciudad"></span>
+        </div>
         <div class="form-group full">
-          <label for="s1-direccion">Direccion completa de entrega en Santo Domingo<span class="req">*</span></label>
+          <label for="s1-direccion">Direccion completa de entrega<span class="req">*</span></label>
           <input type="text" id="s1-direccion" placeholder="Calle, numero, interseccion, referencia..." autocomplete="street-address"/>
           <span class="field-error" id="err-s1-direccion"></span>
         </div>
@@ -515,7 +525,7 @@ function onTurnstileExpired() {
 // ESTADO GLOBAL
 const S = {
   step: 1,
-  titular: { nombre:'', cedula:'', fechaNac:'', telefono:'', email:'', direccion:'', barrio:'' },
+  titular: { nombre:'', cedula:'', fechaNac:'', telefono:'', email:'', provincia:'', ciudad:'', direccion:'', barrio:'' },
   payment: { cedula_frontal: null, cedula_posterior: null }
 };
 
@@ -696,6 +706,8 @@ function validateStep1() {
     ['s1-fechaNac', 'Ingrese su fecha de nacimiento'],
     ['s1-telefono', 'Ingrese su telefono celular'],
     ['s1-email', 'Ingrese su correo electronico'],
+    ['s1-provincia', 'Seleccione su provincia'],
+    ['s1-ciudad', 'Ingrese su ciudad'],
     ['s1-direccion', 'Ingrese su direccion de entrega'],
     ['s1-barrio', 'Ingrese su barrio o sector']
   ];
@@ -743,6 +755,8 @@ function saveTitular() {
     fechaNac: document.getElementById('s1-fechaNac').value,
     telefono: document.getElementById('s1-telefono').value.trim(),
     email: document.getElementById('s1-email').value.trim(),
+    provincia: document.getElementById('s1-provincia').value.trim(),
+    ciudad: document.getElementById('s1-ciudad').value.trim(),
     direccion: document.getElementById('s1-direccion').value.trim(),
     barrio: document.getElementById('s1-barrio').value.trim()
   };
@@ -842,6 +856,8 @@ async function submitRegistro() {
       cedula: S.titular.cedula,
       telefono: S.titular.telefono,
       email: S.titular.email,
+      provincia: S.titular.provincia,
+      ciudad: S.titular.ciudad,
       direccion: S.titular.direccion,
       barrio: S.titular.barrio,
       fecha_nacimiento: S.titular.fechaNac,

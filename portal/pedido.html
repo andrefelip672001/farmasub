@@ -515,6 +515,7 @@ var GMAPS_KEY = 'AIzaSyAme0Mg5cZyTp2giqmEzFl2gLERayYDYn4';
 var _map = null, _marker = null, _mapLat = null, _mapLng = null;
 var _sectoresCache = [];
 var _sectorEncontradoId = null;
+var _ciudadUsuario = '';
 
 function initMap() {
   var centroSantoDomingo = { lat: -0.2532, lng: -79.1750 };
@@ -595,7 +596,7 @@ function handleMapPosition(lat, lng) {
     statusEl.style.color = '#059669';
     _sectorEncontradoId = sector.id;
   } else {
-    statusEl.textContent = 'Esta ubicacion parece estar fuera de nuestra zona de cobertura actual. Puedes continuar y te contactamos para confirmar.';
+    statusEl.textContent = 'Esta ubicacion esta fuera de nuestra zona de reparto local. Puedes continuar y te contactamos para coordinar el envio.';
     statusEl.style.color = '#D97706';
     _sectorEncontradoId = null;
   }
@@ -612,7 +613,8 @@ async function buscarDireccionMapa() {
   statusEl.textContent = 'Buscando...';
   statusEl.style.color = '#6B7280';
   try {
-    var query = encodeURIComponent(addr + ', Santo Domingo, Ecuador');
+    // Si el suscriptor ya registro ciudad y provincia, la direccion las incluye; si no (cuentas antiguas) se asume Santo Domingo
+    var query = encodeURIComponent(addr + (_ciudadUsuario ? ', Ecuador' : ', Santo Domingo, Ecuador'));
     var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + query + '&key=' + GMAPS_KEY;
     var res = await fetch(url);
     var data = await res.json();
@@ -693,7 +695,7 @@ var _vencidaPorFecha = false;
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('id, nombre, cedula, direccion, barrio, suscripciones(plan, estado, fecha_vencimiento)').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('id, nombre, cedula, direccion, barrio, ciudad, provincia, suscripciones(plan, estado, fecha_vencimiento)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
 
@@ -701,7 +703,9 @@ var _vencidaPorFecha = false;
   document.getElementById('nav-avatar').textContent = ((s && s.nombre) ? s.nombre : _user.email).charAt(0).toUpperCase();
 
   if (s) {
-    document.getElementById('addr-input').value = (s.direccion || '') + (s.barrio ? ', ' + s.barrio : '');
+    _ciudadUsuario = (s.ciudad || '').trim();
+    var _partesDir = [s.direccion, s.barrio, s.ciudad, s.provincia].filter(function(x) { return x && String(x).trim(); });
+    document.getElementById('addr-input').value = _partesDir.join(', ');
     var mRes = await _db.from('miembros').select('id, nombre, cedula').eq('titular_id', s.id);
     _miembros = mRes.data || [];
 

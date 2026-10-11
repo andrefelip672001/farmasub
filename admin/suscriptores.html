@@ -356,7 +356,7 @@ async function verComprobanteAdmin(event, storedUrl) {
 async function loadSuscriptores() {
   var res = await _db
     .from('usuarios')
-    .select('id, nombre, cedula, email, telefono, direccion, barrio, what3words, created_at, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
+    .select('id, nombre, cedula, email, telefono, provincia, ciudad, direccion, barrio, what3words, created_at, suscripciones(id, estado, plan, fecha_inicio, fecha_vencimiento, kyc_estado, kyc_motivo_rechazo, comprobante_url, cedula_frontal_url, cedula_posterior_url, created_at)')
     .eq('rol', 'suscriptor')
     .order('created_at', {ascending: false});
   if (res.error) {
@@ -489,6 +489,8 @@ async function openPanel(idx) {
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Cedula</span><span style="font-weight:500">' + esc(s.cedula || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Email</span><span style="font-weight:500">' + esc(s.email || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Telefono</span><span style="font-weight:500">' + esc(s.telefono || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Provincia</span><span style="font-weight:500">' + esc(s.provincia || '-') + '</span></div>';
+  datosHtml += '<div class="pfield"><span class="pfield-lbl">Ciudad</span><span style="font-weight:500">' + esc(s.ciudad || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Direccion</span><span style="font-weight:500">' + esc(s.direccion || '-') + '</span></div>';
   datosHtml += '<div class="pfield"><span class="pfield-lbl">Barrio</span><span style="font-weight:500">' + esc(s.barrio || '-') + '</span></div>';
   datosHtml += '<div class="pfield" style="grid-column:1/-1"><span class="pfield-lbl">What3words (privado, solo admin/domiciliario)</span>'

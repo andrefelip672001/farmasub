@@ -457,6 +457,8 @@ var FIELDS = [
   {k: 'cedula',    l: 'Cedula'},
   {k: 'email',     l: 'Correo electronico'},
   {k: 'telefono',  l: 'Telefono'},
+  {k: 'provincia', l: 'Provincia'},
+  {k: 'ciudad',    l: 'Ciudad'},
   {k: 'direccion', l: 'Direccion'},
   {k: 'barrio',    l: 'Barrio/Sector'}
 ];
@@ -467,7 +469,7 @@ var FIELDS = [
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('id, nombre, cedula, email, telefono, direccion, barrio, suscripciones(estado, plan, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('id, nombre, cedula, email, telefono, provincia, ciudad, direccion, barrio, suscripciones(estado, plan, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
   var _suscRow = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
