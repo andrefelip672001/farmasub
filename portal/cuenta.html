@@ -583,7 +583,7 @@ async function loadMembers() {
       + '<p class="member-rel">' + esc(mb.relacion || 'Familiar') + ' - C.I. ' + esc(mb.cedula || '') + '</p>'
       + '</div>'
       + '</div>'
-      + '<button class="btn-salud" onclick="verSalud(\'' + mb.id + '\',\'' + nomSafe + '\')">Ver cuestionario de salud</button>'
+      + '<button class="btn-salud" onclick="verSalud(\'' + cedSafe + '\',\'' + nomSafe + '\')">Ver cuestionario de salud</button>'
       + '</div>';
   }
   list.innerHTML = html;
@@ -696,23 +696,32 @@ async function loadPagos() {
   list.innerHTML = html;
 }
 
-async function verSalud(miembroId, nombre) {
-  var sRes = await _db.from('cuestionarios').select('condiciones, medicamentos, medico_tratante, tiempo_tratamiento, recetas_vigentes, alergias, observaciones').eq('miembro_id', miembroId).single();
-  var s = sRes.data;
+async function verSalud(cedula, nombre) {
+  var sRes = await _db.from('salud')
+    .select('condiciones, condicion_otra, no_toma_medicamentos, medicamentos, medico_tratante, tiempo_tratamiento, tiene_receta, alergico, alergia_detalle, observaciones_qf')
+    .eq('persona_cedula', cedula)
+    .order('created_at', {ascending: false})
+    .limit(1);
+  if (sRes.error) { alert('No se pudo cargar el cuestionario de salud. Intenta de nuevo.'); return; }
+  var s = (sRes.data && sRes.data[0]) || null;
   if (!s) { alert('No hay cuestionario de salud registrado para: ' + nombre); return; }
-  var conds = Array.isArray(s.condiciones) ? s.condiciones.join(', ') : (s.condiciones || '-');
-  var medsTxt = '-';
-  if (s.medicamentos) {
-    medsTxt = (typeof s.medicamentos === 'string') ? s.medicamentos : JSON.stringify(s.medicamentos);
+  var conds = Array.isArray(s.condiciones) ? s.condiciones.slice() : [];
+  if (s.condicion_otra) conds.push('Otra: ' + s.condicion_otra);
+  var condsTxt = conds.length ? conds.join(', ') : 'Ninguna';
+  var medsTxt = 'No toma medicamentos';
+  if (!s.no_toma_medicamentos && Array.isArray(s.medicamentos) && s.medicamentos.length) {
+    medsTxt = s.medicamentos.map(function (m) {
+      return (m.nombre || '') + (m.dosis ? ' ' + m.dosis : '') + (m.frecuencia ? ' (' + m.frecuencia + ')' : '');
+    }).join('; ');
   }
   alert('Cuestionario de salud - ' + nombre
-    + '\n\nCondiciones: ' + conds
+    + '\n\nCondiciones: ' + condsTxt
     + '\nMedicamentos: ' + medsTxt
     + '\nMedico tratante: ' + (s.medico_tratante || '-')
     + '\nTiempo de tratamiento: ' + (s.tiempo_tratamiento || '-')
-    + '\nRecetas vigentes: ' + (s.recetas_vigentes ? 'Si' : 'No')
-    + '\nAlergias: ' + (s.alergias || 'No reporta')
-    + '\nObservaciones: ' + (s.observaciones || '-'));
+    + '\nReceta vigente: ' + (s.tiene_receta || '-')
+    + '\nAlergias: ' + (s.alergico === 'si' ? (s.alergia_detalle || 'Si') : 'No reporta')
+    + '\nObservaciones: ' + (s.observaciones_qf || '-'));
 }
 
 function togglePassForm() {
