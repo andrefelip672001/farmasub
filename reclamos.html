@@ -162,7 +162,8 @@ body{font-family:'Inter',sans-serif;background:#F9FAFB;color:#1A1A2E;line-height
             <label for="descripcion">Descripción del reclamo o sugerencia *</label>
             <textarea id="descripcion" name="descripcion" required placeholder="Describe con detalle tu reclamo o sugerencia. Entre más información proporciones, más rápido podremos ayudarte."></textarea>
           </div>
-          <button type="submit" class="btn-submit">Enviar solicitud</button>
+          <p id="reclamo-error" style="display:none;margin-bottom:12px;padding:11px 14px;background:#FEF2F2;color:#B91C1C;border-radius:10px;font-size:.84rem;line-height:1.5"></p>
+          <button type="submit" class="btn-submit" id="btn-enviar-reclamo">Enviar solicitud</button>
         </form>
 
         <div id="success-msg" class="success-card">
@@ -264,8 +265,6 @@ function handleSubmit(e) {
     }
   }
   if (!valid) return;
-  form.style.display = 'none';
-  document.getElementById('success-msg').style.display = 'block';
   var nombre = document.getElementById('nombre').value.trim();
   var cedula = document.getElementById('cedula').value.trim();
   var email = document.getElementById('email').value.trim();
@@ -274,6 +273,11 @@ function handleSubmit(e) {
   var descripcion = document.getElementById('descripcion').value.trim();
   var pedidoVal = document.getElementById('pedido').value.trim();
   var numeroPedido = pedidoVal ? pedidoVal : null;
+  var btn = document.getElementById('btn-enviar-reclamo');
+  var errEl = document.getElementById('reclamo-error');
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
   _db.from('reclamos').insert({
     nombre: nombre,
     cedula: cedula,
@@ -286,7 +290,14 @@ function handleSubmit(e) {
   }).then(function(res) {
     if (res.error) {
       console.error('[TuCosto] Error al enviar reclamo:', res.error);
+      errEl.textContent = 'No pudimos registrar tu solicitud. Intenta de nuevo en unos minutos o escribenos por WhatsApp al 0987373549.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Enviar solicitud';
+      return;
     }
+    form.style.display = 'none';
+    document.getElementById('success-msg').style.display = 'block';
   });
 }
 </script>

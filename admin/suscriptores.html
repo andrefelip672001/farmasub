@@ -205,6 +205,10 @@ tr.selected td{background:var(--naranja-light);}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
       Anuncios
     </a>
+    <a href="../admin/reclamos.html" class="sb-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Reclamos
+    </a>
     <hr class="sb-divider"/>
     <a href="../admin/pagos.html" class="sb-link">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Pagos
@@ -267,6 +271,7 @@ tr.selected td{background:var(--naranja-light);}
   <div class="panel-tabs">
     <button class="panel-tab active" data-tab="datos" onclick="switchTab('datos',this)">Datos</button>
     <button class="panel-tab" data-tab="miembros" onclick="switchTab('miembros',this)">Miembros</button>
+    <button class="panel-tab" data-tab="salud" onclick="switchTab('salud',this)">Salud</button>
     <button class="panel-tab" data-tab="pedidos" onclick="switchTab('pedidos',this)">Pedidos</button>
     <button class="panel-tab" data-tab="pagos" onclick="switchTab('pagos',this)">Pagos</button>
     <button class="panel-tab" data-tab="kyc" onclick="switchTab('kyc',this)">KYC</button>
@@ -274,6 +279,7 @@ tr.selected td{background:var(--naranja-light);}
   <div class="panel-body">
     <div class="tab-content active" id="tab-datos"><p style="color:var(--ink-60);font-size:.875rem">Selecciona un suscriptor.</p></div>
     <div class="tab-content" id="tab-miembros"></div>
+    <div class="tab-content" id="tab-salud"></div>
     <div class="tab-content" id="tab-pedidos"></div>
     <div class="tab-content" id="tab-pagos"></div>
     <div class="tab-content" id="tab-kyc"></div>
@@ -462,6 +468,7 @@ async function openPanel(idx) {
   switchTab('datos', document.querySelector('.panel-tab[data-tab="datos"]'));
   document.getElementById('tab-datos').innerHTML = '<p style="color:var(--ink-60);font-size:.875rem">Cargando...</p>';
   document.getElementById('tab-miembros').innerHTML = '';
+  document.getElementById('tab-salud').innerHTML = '';
   document.getElementById('tab-pedidos').innerHTML = '';
   document.getElementById('tab-pagos').innerHTML = '';
   document.getElementById('tab-kyc').innerHTML = '';
@@ -469,11 +476,13 @@ async function openPanel(idx) {
   var panelResults = await Promise.all([
     _db.from('miembros').select('nombre, cedula, relacion').eq('titular_id', s.id),
     _db.from('pedidos').select('id,fecha_pedido,estado,total_costo').eq('titular_id', s.id).order('fecha_pedido', {ascending: false}).limit(5),
-    _db.from('pagos').select('tipo, estado, monto, fecha_pago, comprobante_url, motivo_rechazo').eq('titular_id', s.id).order('fecha_pago', {ascending: false}).limit(10)
+    _db.from('pagos').select('tipo, estado, monto, fecha_pago, comprobante_url, motivo_rechazo').eq('titular_id', s.id).order('fecha_pago', {ascending: false}).limit(10),
+    s.cedula ? _db.from('salud').select('*').eq('suscriptor_cedula', s.cedula).order('created_at', {ascending: false}) : Promise.resolve({data: []})
   ]);
   var miembros = panelResults[0].data || [];
   var pedidos = panelResults[1].data || [];
   var pagos = panelResults[2].data || [];
+  var saludRes = panelResults[3];
 
   // TAB DATOS
   var sus = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0] : null;
@@ -540,6 +549,39 @@ async function openPanel(idx) {
     membHtml = '<p style="color:var(--ink-60);font-size:.875rem">Sin miembros adicionales.</p>';
   }
   document.getElementById('tab-miembros').innerHTML = membHtml;
+
+  // TAB SALUD (cuestionario de salud declarado al activar la membresia)
+  var saludHtml = '';
+  if (saludRes.error) {
+    saludHtml = '<p style="color:var(--danger);font-size:.85rem">No se pudo cargar la informacion de salud: ' + esc(saludRes.error.message) + '</p>';
+  } else if (!saludRes.data || !saludRes.data.length) {
+    saludHtml = '<p style="color:var(--ink-60);font-size:.875rem">Este suscriptor aun no ha llenado el cuestionario de salud.</p>';
+  } else {
+    for (var sli = 0; sli < saludRes.data.length; sli++) {
+      var sl = saludRes.data[sli];
+      var slFecha = sl.created_at ? new Date(sl.created_at).toLocaleDateString('es-EC') : '';
+      var conds = Array.isArray(sl.condiciones) ? sl.condiciones.slice() : [];
+      if (sl.condicion_otra) { conds.push('Otra: ' + sl.condicion_otra); }
+      var meds = '';
+      if (sl.no_toma_medicamentos) { meds = 'No toma medicamentos'; }
+      else if (Array.isArray(sl.medicamentos) && sl.medicamentos.length) {
+        meds = sl.medicamentos.map(function(m) { return esc(m.nombre || '') + (m.dosis ? ' ' + esc(m.dosis) : '') + (m.frecuencia ? ' (' + esc(m.frecuencia) + ')' : ''); }).join('<br>');
+      } else { meds = '-'; }
+      var fila = function(lbl, val) { return '<div class="pfield" style="flex-direction:column;align-items:flex-start;gap:2px"><span class="pfield-lbl">' + lbl + '</span><span style="font-size:.84rem;font-weight:500">' + val + '</span></div>'; };
+      saludHtml += '<div style="border:1.5px solid #F3F4F6;border-radius:12px;padding:14px;margin-bottom:12px">';
+      saludHtml += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><strong style="font-size:.9rem">' + esc(sl.persona_nombre || '-') + '</strong><span class="badge ' + (sl.es_titular ? 'badge-activa' : 'badge-pend') + '">' + (sl.es_titular ? 'Titular' : 'Familiar') + '</span></div>';
+      saludHtml += fila('Condiciones', conds.length ? conds.map(esc).join(', ') : 'Ninguna declarada');
+      saludHtml += fila('Medicamentos', meds);
+      saludHtml += fila('Medico tratante', esc(sl.medico_tratante || '-'));
+      saludHtml += fila('Tiempo de tratamiento', esc(sl.tiempo_tratamiento || '-'));
+      saludHtml += fila('Receta vigente', esc(sl.tiene_receta || '-'));
+      saludHtml += fila('Alergias', sl.alergico === 'si' || sl.alergico === 'Si' ? esc(sl.alergia_detalle || 'Si (sin detalle)') : esc(sl.alergico || '-'));
+      if (sl.observaciones_qf) { saludHtml += fila('Observaciones para el QF', esc(sl.observaciones_qf)); }
+      if (slFecha) { saludHtml += '<p style="color:var(--ink-60);font-size:.72rem;margin-top:6px">Registrado el ' + slFecha + '</p>'; }
+      saludHtml += '</div>';
+    }
+  }
+  document.getElementById('tab-salud').innerHTML = saludHtml;
 
   // TAB PEDIDOS
   var pedHtml = '';

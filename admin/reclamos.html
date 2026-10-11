@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reclamos Admin — TuCosto</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --naranja:#EF6830;--naranja-d:#C95220;--naranja-light:#FFF2EC;
+  --amarillo:#F5A623;--amarillo-light:#FFF8ED;
+  --verde:#059669;--verde-light:#ECFDF5;
+  --azul:#3B82F6;--azul-light:#EFF6FF;
+  --ink:#1A1A2E;--ink-60:#6B7280;--ink-30:#D1D5DB;
+  --white:#FFFFFF;--bg:#F9FAFB;
+  --danger:#EF4444;--danger-light:#FEF2F2;
+  --warning:#D97706;--warning-light:#FFFBEB;
+  --r:12px;--shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height:100vh;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;}
+
+.top-nav{height:64px;background:var(--white);border-bottom:1px solid #F3F4F6;display:flex;align-items:center;justify-content:space-between;padding:0 24px;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.05);position:relative;z-index:10;}
+.nav-left{display:flex;align-items:center;gap:14px;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-tag{font-size:.68rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:white;background:var(--naranja);border-radius:20px;padding:5px 12px;}
+.nav-right{display:flex;align-items:center;gap:14px;}
+.nav-user{display:flex;align-items:center;gap:9px;font-size:.875rem;font-weight:500;color:var(--ink);}
+.nav-avatar{width:34px;height:34px;background:var(--naranja);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.btn-logout{background:transparent;border:1.5px solid var(--naranja);border-radius:8px;padding:6px 14px;font-size:.82rem;font-weight:600;color:var(--naranja);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;}
+.btn-logout:hover{background:var(--naranja-light);}
+
+.layout{display:flex;flex:1;overflow:hidden;}
+.sidebar{width:220px;background:var(--white);border-right:1px solid #F3F4F6;flex-shrink:0;overflow-y:auto;padding:20px 12px;display:flex;flex-direction:column;gap:2px;}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);text-decoration:none;font-size:.875rem;font-weight:500;color:var(--ink-60);transition:all .15s;border-left:3px solid transparent;}
+.sb-link:hover{background:#FFF8F5;color:var(--naranja);}
+.sb-link.active{background:var(--naranja-light);color:var(--naranja);border-left-color:var(--naranja);font-weight:600;}
+.sb-link svg{width:18px;height:18px;flex-shrink:0;stroke-width:1.8;margin-right:-2px;}
+.sb-divider{border:none;border-top:1px solid #F3F4F6;margin:8px 0;}
+
+.hamburger-btn{display:none;background:none;border:none;cursor:pointer;padding:6px;margin-right:8px;flex-shrink:0;}
+.hamburger-btn svg{width:24px;height:24px;color:var(--ink);}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99;}
+.sidebar-backdrop.open{display:block;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;min-width:0;}
+.head-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap;}
+.page-title{font-size:1.5rem;font-weight:700;margin-bottom:4px;}
+.page-sub{color:var(--ink-60);font-size:.9rem;max-width:620px;}
+.hint-box{background:var(--azul-light);color:#1D4ED8;font-size:.8rem;padding:12px 14px;border-radius:10px;max-width:760px;line-height:1.5;margin-bottom:20px;}
+
+.btn-primary{background:var(--naranja);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;}
+.btn-primary:hover{background:var(--naranja-d);}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;}
+.btn-ghost{background:var(--white);border:1.5px solid var(--ink-30);color:var(--ink);border-radius:10px;padding:10px 16px;font-weight:600;font-size:.84rem;cursor:pointer;font-family:inherit;}
+.btn-ghost:hover{border-color:var(--naranja);color:var(--naranja);}
+.btn-danger{background:var(--danger);color:#fff;border:none;border-radius:10px;padding:11px 20px;font-weight:600;font-size:.875rem;cursor:pointer;font-family:inherit;}
+.btn-sm{background:var(--white);border:1.5px solid var(--ink-30);color:var(--ink);border-radius:8px;padding:6px 11px;font-weight:600;font-size:.78rem;cursor:pointer;font-family:inherit;}
+.btn-sm:hover{border-color:var(--naranja);color:var(--naranja);}
+.btn-sm.del{color:var(--danger);}
+.btn-sm.del:hover{border-color:var(--danger);background:var(--danger-light);color:var(--danger);}
+.btn-sm:disabled{opacity:.4;cursor:not-allowed;}
+
+.lista{display:flex;flex-direction:column;gap:12px;max-width:900px;}
+.item{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;display:flex;gap:16px;align-items:center;}
+.thumb{width:200px;aspect-ratio:16/5;border-radius:8px;object-fit:cover;background:#F3F4F6;flex-shrink:0;}
+.item-body{flex:1;min-width:0;}
+.item-title{font-weight:700;font-size:.95rem;margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.item-meta{font-size:.78rem;color:var(--ink-60);line-height:1.6;}
+.badge{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:99px;margin-right:6px;}
+.badge.pub{background:var(--verde-light);color:var(--verde);}
+.badge.oculto{background:#F3F4F6;color:var(--ink-60);}
+.badge.prog{background:var(--warning-light);color:var(--warning);}
+.item-actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:210px;}
+.vacio{background:var(--white);border-radius:var(--r);padding:40px 20px;text-align:center;color:var(--ink-60);font-size:.9rem;box-shadow:var(--shadow);max-width:900px;}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;padding:24px;box-shadow:0 10px 40px rgba(0,0,0,.2);}
+.modal h2{font-size:1.15rem;margin-bottom:16px;}
+.fld{margin-bottom:14px;}
+.fld label{display:block;font-size:.8rem;font-weight:600;margin-bottom:5px;}
+.fld input[type=text],.fld input[type=url],.fld input[type=date],.fld select,.fld textarea{width:100%;padding:10px 12px;border:1.5px solid var(--ink-30);border-radius:10px;font-family:inherit;font-size:.88rem;}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--naranja);}
+.fld textarea{resize:vertical;min-height:62px;}
+.fld small{display:block;color:var(--ink-60);font-size:.74rem;margin-top:4px;line-height:1.4;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.preview{width:100%;aspect-ratio:16/5;border-radius:10px;object-fit:cover;background:#F3F4F6;border:1.5px dashed var(--ink-30);display:block;margin-bottom:8px;}
+.chk{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:500;}
+.chk input{width:17px;height:17px;accent-color:var(--naranja);}
+.modal-err{color:var(--danger);font-size:.82rem;margin-bottom:10px;display:none;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+
+@media(max-width:700px){
+  .hamburger-btn{display:flex;align-items:center;justify-content:center;}
+  .sidebar{position:fixed;top:64px;left:0;bottom:0;width:240px;transform:translateX(-100%);transition:transform .25s ease;z-index:100;box-shadow:2px 0 12px rgba(0,0,0,.1);}
+  .sidebar.open{transform:translateX(0);}
+  #nav-nombre{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .top-nav{padding:0 14px;}
+  .main{padding:20px 16px;}
+  .item{flex-direction:column;align-items:stretch;}
+  .thumb{width:100%;}
+  .item-actions{max-width:none;justify-content:flex-start;}
+  .row2{grid-template-columns:1fr;}
+}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.chip{background:var(--white);border:1.5px solid var(--ink-30);border-radius:20px;padding:6px 14px;font-size:.8rem;font-weight:600;color:var(--ink-60);cursor:pointer;font-family:inherit;}
+.chip.on{background:var(--naranja);border-color:var(--naranja);color:#fff;}
+.rc{background:var(--white);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;max-width:900px;}
+.rc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px;flex-wrap:wrap;}
+.rc-name{font-weight:700;font-size:.95rem;}
+.rc-meta{font-size:.78rem;color:var(--ink-60);line-height:1.6;}
+.rc-desc{background:var(--bg);border-radius:10px;padding:12px 14px;font-size:.86rem;line-height:1.55;margin:10px 0 12px;white-space:pre-wrap;word-break:break-word;}
+.rc-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.rc-actions select{padding:7px 10px;border:1.5px solid var(--ink-30);border-radius:8px;font-family:inherit;font-size:.8rem;font-weight:600;background:var(--white);}
+.rc-actions a{text-decoration:none;display:inline-block;}
+.badge.proc{background:var(--azul-light);color:#1D4ED8;}
+.badge.tipo{background:#F3F4F6;color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top-nav">
+    <div class="nav-left">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <a href="../admin/dashboard.html" class="nav-logo">
+        <span class="nav-tag">Panel Admin</span>
+      </a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-user"><div class="nav-avatar" id="nav-avatar">A</div><span id="nav-nombre">Admin</span></div>
+      <button class="btn-logout" onclick="logout()">Cerrar sesion</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+    <aside class="sidebar" id="sidebar">
+      <a href="../admin/dashboard.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        Inicio
+      </a>
+      <a href="../admin/suscriptores.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Suscriptores
+      </a>
+      <a href="../admin/pedidos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        Pedidos
+      </a>
+      <a href="../admin/productos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        Catalogo
+      </a>
+      <a href="../admin/compras.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M9 11a3 3 0 0 0 6 0"/></svg>
+        Compras
+      </a>
+      <a href="../admin/domiciliarios.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 0 1 1 1v5h-6l3-6z"/><path d="M9 17.5H5.5l-2-6h5.5"/><path d="M9 6h6l3 6"/></svg>
+        Domiciliarios
+      </a>
+      <a href="../admin/anuncios.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        Anuncios
+      </a>
+      <a href="../admin/reclamos.html" class="sb-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Reclamos
+      </a>
+      <hr class="sb-divider"/>
+      <a href="../admin/pagos.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Pagos
+      </a>
+      <a href="../admin/finanzas.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Finanzas
+      </a>
+      <a href="../admin/seguridad.html" class="sb-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Seguridad
+      </a>
+    </aside>
+
+    <main class="main">
+      <div class="head-row">
+        <div>
+          <h1 class="page-title">Reclamos y sugerencias</h1>
+          <p class="page-sub">Lo que tus clientes envian desde el formulario de la pagina. Marca cada uno como en proceso o resuelto, y contactalos por WhatsApp o correo.</p>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="lista" id="lista"><div class="vacio">Cargando...</div></div>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.4/dist/umd/supabase.min.js"></script>
+<script>
+var _db = supabase.createClient('https://cjimcldhoglgqachcimm.supabase.co','sb_publishable_ltkndWUiaaiQaszDKnU3sA_Hl0Ty7kC');
+var _todos = [];
+var _filtro = 'todos';
+var ESTADOS = { pendiente: 'Pendiente', en_proceso: 'En proceso', resuelto: 'Resuelto' };
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function $(id) { return document.getElementById(id); }
+
+(async function() {
+  var sessRes = await _db.auth.getSession();
+  var session = sessRes.data.session;
+  if (!session) { window.location.href = '../portal/login.html'; return; }
+  var user = session.user;
+  var rol = (user.user_metadata && user.user_metadata.rol) ? user.user_metadata.rol : null;
+  if (rol !== 'admin') {
+    var pRes = await _db.from('usuarios').select('rol').eq('id', user.id).single();
+    rol = (pRes.data && pRes.data.rol) ? pRes.data.rol : null;
+  }
+  if (rol !== 'admin') { window.location.href = '../portal/login.html'; return; }
+  $('nav-nombre').textContent = user.email;
+  $('nav-avatar').textContent = user.email.charAt(0).toUpperCase();
+  $('lista').addEventListener('change', onCambio);
+  $('chips').addEventListener('click', onChip);
+  await cargar();
+})();
+
+function toggleSidebar() {
+  $('sidebar').classList.toggle('open');
+  $('sidebar-backdrop').classList.toggle('open');
+}
+function logout() { _db.auth.signOut().then(function() { window.location.href = '../portal/login.html'; }); }
+
+async function cargar() {
+  var res = await _db.from('reclamos').select('*').order('created_at', { ascending: false });
+  if (res.error) {
+    $('lista').innerHTML = '<div class="vacio" style="color:var(--danger)">No se pudieron cargar los reclamos. ' + esc(res.error.message) + '</div>';
+    return;
+  }
+  _todos = res.data || [];
+  pintarChips();
+  pintar();
+}
+
+function contar(est) {
+  if (est === 'todos') return _todos.length;
+  var n = 0;
+  for (var i = 0; i < _todos.length; i++) { if (_todos[i].estado === est) n++; }
+  return n;
+}
+
+function pintarChips() {
+  var defs = [['todos', 'Todos'], ['pendiente', 'Pendientes'], ['en_proceso', 'En proceso'], ['resuelto', 'Resueltos']];
+  var html = '';
+  for (var i = 0; i < defs.length; i++) {
+    html += '<button class="chip' + (_filtro === defs[i][0] ? ' on' : '') + '" data-f="' + defs[i][0] + '">' + defs[i][1] + ' (' + contar(defs[i][0]) + ')</button>';
+  }
+  $('chips').innerHTML = html;
+}
+
+function onChip(e) {
+  var b = e.target.closest('button[data-f]');
+  if (!b) return;
+  _filtro = b.getAttribute('data-f');
+  pintarChips();
+  pintar();
+}
+
+function telWa(t) {
+  var d = String(t || '').replace(/\D/g, '');
+  if (!d) return null;
+  if (d.indexOf('593') === 0) return d;
+  if (d.charAt(0) === '0') d = d.slice(1);
+  return '593' + d;
+}
+
+function pintar() {
+  var lista = _todos.filter(function(r) { return _filtro === 'todos' || r.estado === _filtro; });
+  if (!lista.length) {
+    $('lista').innerHTML = '<div class="vacio">' + (_todos.length ? 'No hay reclamos en esta categoria.' : 'Aun no has recibido reclamos ni sugerencias.') + '</div>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < lista.length; i++) {
+    var r = lista[i];
+    var cls = r.estado === 'resuelto' ? 'pub' : (r.estado === 'en_proceso' ? 'proc' : 'prog');
+    var fecha = r.created_at ? new Date(r.created_at).toLocaleString('es-EC', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+    var wa = telWa(r.telefono);
+    var msg = 'Hola ' + (r.nombre || '') + ', te escribimos de TuCosto sobre tu ' + (r.tipo || 'solicitud') + '.';
+    html += '<div class="rc">'
+      + '<div class="rc-top"><div>'
+      +   '<div class="rc-name">' + esc(r.nombre) + '</div>'
+      +   '<div class="rc-meta">' + esc(fecha) + (r.cedula ? ' &middot; CI ' + esc(r.cedula) : '') + '<br>' + esc(r.email || '') + (r.telefono ? ' &middot; ' + esc(r.telefono) : '') + (r.numero_pedido ? '<br>Pedido: ' + esc(r.numero_pedido) : '') + '</div>'
+      + '</div><div>'
+      +   (r.tipo ? '<span class="badge tipo">' + esc(r.tipo) + '</span>' : '')
+      +   '<span class="badge ' + cls + '">' + esc(ESTADOS[r.estado] || r.estado) + '</span>'
+      + '</div></div>'
+      + '<div class="rc-desc">' + esc(r.descripcion) + '</div>'
+      + '<div class="rc-actions">'
+      +   '<select data-id="' + esc(r.id) + '" aria-label="Estado del reclamo">'
+      +     ['pendiente', 'en_proceso', 'resuelto'].map(function(e) { return '<option value="' + e + '"' + (r.estado === e ? ' selected' : '') + '>' + ESTADOS[e] + '</option>'; }).join('')
+      +   '</select>'
+      +   (wa ? '<a class="btn-sm" target="_blank" rel="noopener noreferrer" href="https://wa.me/' + wa + '?text=' + encodeURIComponent(msg) + '">WhatsApp</a>' : '')
+      +   (r.email ? '<a class="btn-sm" href="mailto:' + encodeURIComponent(r.email) + '?subject=' + encodeURIComponent('Tu ' + (r.tipo || 'solicitud') + ' en TuCosto') + '">Correo</a>' : '')
+      + '</div>'
+      + '</div>';
+  }
+  $('lista').innerHTML = '<div style="display:flex;flex-direction:column;gap:12px">' + html + '</div>';
+}
+
+async function onCambio(e) {
+  var sel = e.target.closest('select[data-id]');
+  if (!sel) return;
+  var id = sel.getAttribute('data-id');
+  var nuevo = sel.value;
+  var res = await _db.from('reclamos').update({ estado: nuevo }).eq('id', id);
+  if (res.error) { alert('No se pudo actualizar: ' + res.error.message); await cargar(); return; }
+  for (var i = 0; i < _todos.length; i++) { if (_todos[i].id === id) { _todos[i].estado = nuevo; } }
+  pintarChips();
+  pintar();
+}
+</script>
+</body>
+</html>
