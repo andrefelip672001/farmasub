@@ -676,7 +676,17 @@ async function guardarWhat3words(susId) {
 
 async function cambiarEstado(susId, estado) {
   if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
-  await _db.from('suscripciones').update({estado: estado}).eq('id', susId);
+  if (estado === 'activa') {
+    var sc = _todos[_selIdx];
+    var susC = (sc && sc.suscripciones && sc.suscripciones.length) ? sc.suscripciones[0] : null;
+    if (!susC || !susC.plan) {
+      alert('Esta persona no tiene plan. La membresia se activa al aprobar su pago en la seccion Pagos.');
+      return;
+    }
+    if (!confirm('Activar la membresia SIN registrar un pago. Continuar?')) return;
+  }
+  var upd = await _db.from('suscripciones').update({estado: estado}).eq('id', susId);
+  if (upd.error) { alert('No se pudo cambiar el estado: ' + upd.error.message); return; }
   await loadSuscriptores();
   closePanel();
 }
@@ -766,11 +776,12 @@ async function aprobarKYC() {
   var s = _todos[_selIdx];
   var susId = (s.suscripciones && s.suscripciones.length > 0) ? s.suscripciones[0].id : null;
   if (!susId) { alert('No se encontro suscripcion para este usuario.'); return; }
-  await _db.from('suscripciones').update({
+  // Aprobar la cedula SOLO verifica la identidad. La membresia se activa unicamente al aprobar un pago.
+  var upd = await _db.from('suscripciones').update({
     kyc_estado: 'verificado',
-    kyc_fecha: new Date().toISOString(),
-    estado: 'activa'
+    kyc_fecha: new Date().toISOString()
   }).eq('id', susId);
+  if (upd.error) { alert('No se pudo aprobar la cedula: ' + upd.error.message); return; }
   await loadSuscriptores();
   closeKycModal();
   openPanel(_selIdx);
