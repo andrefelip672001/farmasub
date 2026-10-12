@@ -284,6 +284,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
     <h1 class="greeting" id="greeting">Hola...</h1>
     <p class="greeting-sub" id="greeting-sub">Cargando tu informacion...</p>
 
+    <!-- Alerta sin membresia -->
+    <div id="alert-sinplan" class="alert alert-warning" style="display:none">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+      </svg>
+      <div>
+        <p class="alert-title">Aun no tienes una membresia activa</p>
+        <p class="alert-sub">Elige tu plan y realiza el pago para empezar a pedir tus medicamentos al costo.</p>
+        <a href="../portal/activar-membresia.html" class="btn-renew" style="background:#EF6830">Activar mi membresia</a>
+      </div>
+    </div>
+
     <!-- Alerta pago pendiente -->
     <div id="alert-pendiente" class="alert alert-warning" style="display:none">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.8">
@@ -455,7 +467,7 @@ async function loadDashboard() {
   document.getElementById('greeting').textContent = sal + ', ' + nombre.split(' ')[0] + '!';
 
   var sus = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
-  var estado = sus ? sus.estado : 'pendiente';
+  var estado = sus ? sus.estado : 'sin_plan';
   var vencida = sus && estado === 'activa' && sus.fecha_vencimiento && new Date(sus.fecha_vencimiento) < new Date();
   if (vencida) { estado = 'vencida'; }
 
@@ -467,11 +479,15 @@ async function loadDashboard() {
   } else if (estado === 'vencida') {
     document.getElementById('greeting-sub').textContent = 'Tu membresia ha vencido. Renuevala para continuar.';
     document.getElementById('alert-vencida').style.display = 'flex';
+  } else {
+    estado = 'sin_plan';
+    document.getElementById('greeting-sub').textContent = 'Activa tu membresia para empezar a pedir tus medicamentos.';
+    document.getElementById('alert-sinplan').style.display = 'flex';
   }
 
-  var clsMap = { activa: 'badge-activa', pendiente: 'badge-pendiente', vencida: 'badge-vencida' };
+  var clsMap = { activa: 'badge-activa', pendiente: 'badge-pendiente', vencida: 'badge-vencida', sin_plan: 'badge-pendiente' };
   var cls = clsMap[estado] || 'badge-pendiente';
-  var lblMap = { activa: 'Activa', pendiente: 'Pendiente', vencida: 'Vencida' };
+  var lblMap = { activa: 'Activa', pendiente: 'Pendiente', vencida: 'Vencida', sin_plan: 'Sin plan' };
   var lbl = lblMap[estado] || estado;
   document.getElementById('card-estado').innerHTML = '<span class="badge ' + cls + '"><span class="badge-dot"></span>' + lbl + '</span>';
 
