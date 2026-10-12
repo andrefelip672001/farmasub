@@ -339,6 +339,27 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);height
       </div>
     </div>
 
+    <!-- VERIFICACION DE IDENTIDAD -->
+    <div class="section-block" id="kyc-block" style="display:none">
+      <div class="section-header">
+        <h2 class="section-title">Verificaci&oacute;n de identidad</h2>
+      </div>
+      <div id="kyc-estado-txt" style="font-size:.88rem;color:var(--ink-60);line-height:1.5;margin-bottom:12px"></div>
+      <div id="kyc-form" style="display:none">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:12px">
+          <label style="font-size:.84rem;font-weight:500">C&eacute;dula - parte frontal
+            <input type="file" id="kyc-f" accept=".jpg,.jpeg,.png,.pdf" style="display:block;margin-top:6px;width:100%;font-size:.82rem"/>
+          </label>
+          <label style="font-size:.84rem;font-weight:500">C&eacute;dula - parte posterior
+            <input type="file" id="kyc-p" accept=".jpg,.jpeg,.png,.pdf" style="display:block;margin-top:6px;width:100%;font-size:.82rem"/>
+          </label>
+        </div>
+        <p id="kyc-err" style="display:none;color:#B91C1C;font-size:.83rem;margin-bottom:10px"></p>
+        <button class="btn-save" id="kyc-btn" onclick="subirKyc()">Enviar c&eacute;dula</button>
+        <p style="font-size:.74rem;color:var(--ink-60);margin-top:8px">JPG, PNG o PDF, m&aacute;ximo 5 MB cada una. Solo el equipo de TuCosto puede verlas.</p>
+      </div>
+    </div>
+
     <!-- GRUPO FAMILIAR -->
     <div class="section-block">
       <div class="section-header">
@@ -470,7 +491,7 @@ var FIELDS = [
   if (!session) { window.location.href = '../portal/login.html'; return; }
   _user = session.user;
 
-  var sRes = await _db.from('usuarios').select('id, nombre, cedula, email, telefono, provincia, ciudad, direccion, barrio, suscripciones(estado, plan, kyc_estado, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
+  var sRes = await _db.from('usuarios').select('id, nombre, cedula, email, telefono, provincia, ciudad, direccion, barrio, suscripciones(estado, plan, kyc_estado, kyc_motivo_rechazo, cedula_frontal_url, cedula_posterior_url, fecha_inicio, fecha_vencimiento)').eq('email', _user.email).single();
   var s = sRes.data;
   _susc = s;
   var _suscRow = (s && s.suscripciones && s.suscripciones[0]) ? s.suscripciones[0] : null;
@@ -495,6 +516,7 @@ var FIELDS = [
   estadoBadge.textContent = estadoLbl[estado] || 'Pendiente';
 
   renderFields();
+  renderKyc(_suscRow);
   await loadMembers();
   await loadPagos();
   updateCartBadge();
@@ -694,6 +716,85 @@ async function loadPagos() {
       + '</div>';
   }
   list.innerHTML = html;
+}
+
+function renderKyc(row) {
+  var blk = document.getElementById('kyc-block');
+  if (!row) { blk.style.display = 'none'; return; }
+  var est = row.kyc_estado || 'pendiente';
+  var tieneDocs = !!(row.cedula_frontal_url && row.cedula_posterior_url);
+  var txt = document.getElementById('kyc-estado-txt');
+  var form = document.getElementById('kyc-form');
+  blk.style.display = '';
+  form.style.display = 'none';
+  if (est === 'verificado') {
+    txt.innerHTML = '<span style="color:#047857;font-weight:600">Identidad verificada.</span>';
+  } else if (est === 'rechazado') {
+    txt.innerHTML = '<span style="color:#B91C1C;font-weight:600">Tu c&eacute;dula fue rechazada.</span>' + (row.kyc_motivo_rechazo ? ' Motivo: ' + esc(row.kyc_motivo_rechazo) + '.' : '') + ' Sube nuevas fotos para que las revisemos.';
+    form.style.display = '';
+  } else if (!tieneDocs) {
+    txt.innerHTML = '<span style="color:#B45309;font-weight:600">Falta tu c&eacute;dula.</span> No recibimos las fotos de tu c&eacute;dula. S&uacute;belas aqu&iacute; para poder activar tu membres&iacute;a.';
+    form.style.display = '';
+  } else {
+    txt.innerHTML = '<span style="color:#B45309;font-weight:600">En revisi&oacute;n.</span> Ya recibimos tu c&eacute;dula y la estamos revisando.';
+  }
+}
+
+function comprimirCedulaWebp(file, maxDim, calidad) {
+  return new Promise(function (resolve) {
+    try {
+      if (file.type === 'application/pdf') { resolve(file); return; }
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function () {
+        URL.revokeObjectURL(url);
+        var w = img.naturalWidth, h = img.naturalHeight;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * (maxDim / w)); w = maxDim; }
+          else { w = Math.round(w * (maxDim / h)); h = maxDim; }
+        }
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        c.toBlob(function (b) { resolve(b ? new File([b], 'c.webp', { type: 'image/webp' }) : file); }, 'image/webp', calidad);
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); resolve(file); };
+      img.src = url;
+    } catch (e) { resolve(file); }
+  });
+}
+
+async function subirKyc() {
+  var errEl = document.getElementById('kyc-err');
+  var btn = document.getElementById('kyc-btn');
+  function fail(m) { errEl.textContent = m; errEl.style.display = 'block'; btn.disabled = false; btn.textContent = 'Enviar cédula'; }
+  errEl.style.display = 'none';
+  var f = document.getElementById('kyc-f').files[0];
+  var p = document.getElementById('kyc-p').files[0];
+  if (!f || !p) { fail('Selecciona las dos fotos: frontal y posterior.'); return; }
+  var okTipos = ['image/jpeg', 'image/png', 'application/pdf'];
+  if (okTipos.indexOf(f.type) < 0 || okTipos.indexOf(p.type) < 0) { fail('Los archivos deben ser JPG, PNG o PDF.'); return; }
+  if (f.size > 5 * 1024 * 1024 || p.size > 5 * 1024 * 1024) { fail('Cada archivo debe pesar menos de 5 MB.'); return; }
+  var ced = _susc && _susc.cedula;
+  if (!ced || !/^[0-9]+$/.test(ced)) { fail('No encontramos tu cédula en el perfil. Escríbenos por WhatsApp.'); return; }
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try {
+    var arr = [{ k: 'frontal', file: f }, { k: 'posterior', file: p }];
+    var paths = {};
+    for (var i = 0; i < arr.length; i++) {
+      var comp = await comprimirCedulaWebp(arr[i].file, 1600, 0.88);
+      var ext = comp.type === 'application/pdf' ? 'pdf' : (comp.type === 'image/webp' ? 'webp' : (comp.type === 'image/png' ? 'png' : 'jpg'));
+      var path = ced + '/cedula_' + arr[i].k + '_' + Date.now() + '.' + ext;
+      var up = await _db.storage.from('kyc-documentos').upload(path, comp, { contentType: comp.type || 'image/webp' });
+      if (up.error) { console.error('[TuCosto] KYC upload:', up.error); fail('No se pudo subir la foto ' + arr[i].k + '. Intenta de nuevo o escríbenos por WhatsApp al 0987373549.'); return; }
+      paths[arr[i].k] = path;
+    }
+    var rpc = await _db.rpc('guardar_cedula_kyc', { p_frontal: paths.frontal, p_posterior: paths.posterior });
+    if (rpc.error) { console.error('[TuCosto] KYC rpc:', rpc.error); fail('Subimos las fotos pero no pudimos registrarlas. Escríbenos por WhatsApp al 0987373549.'); return; }
+    renderKyc({ kyc_estado: 'pendiente', cedula_frontal_url: paths.frontal, cedula_posterior_url: paths.posterior });
+  } catch (e) {
+    console.error('[TuCosto] KYC:', e);
+    fail('Ocurrió un error. Intenta de nuevo.');
+  }
 }
 
 async function verSalud(cedula, nombre) {

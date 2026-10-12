@@ -835,19 +835,22 @@ async function submitRegistro() {
 
     let kycFrontalPath = null;
     let kycPosteriorPath = null;
+    let kycFalloSubida = false;
     if (S.payment.cedula_frontal) {
       const archivoFrontal = await comprimirCedulaWebp(S.payment.cedula_frontal, 1600, 0.88);
       const ext = archivoFrontal.name.split('.').pop();
       const path = `${S.titular.cedula}/cedula_frontal.${ext}`;
-      const { error: kycFErr } = await _db.storage.from('kyc-documentos').upload(path, archivoFrontal, { upsert: true, contentType: archivoFrontal.type || 'image/webp' });
-      if (!kycFErr) kycFrontalPath = path;
+      let { error: kycFErr } = await _db.storage.from('kyc-documentos').upload(path, archivoFrontal, { upsert: true, contentType: archivoFrontal.type || 'image/webp' });
+      if (kycFErr) { await new Promise(function(r){ setTimeout(r, 800); }); ({ error: kycFErr } = await _db.storage.from('kyc-documentos').upload(path, archivoFrontal, { upsert: true, contentType: archivoFrontal.type || 'image/webp' })); }
+      if (!kycFErr) kycFrontalPath = path; else { console.error('[TuCosto] KYC frontal:', kycFErr); kycFalloSubida = true; }
     }
     if (S.payment.cedula_posterior) {
       const archivoPosterior = await comprimirCedulaWebp(S.payment.cedula_posterior, 1600, 0.88);
       const ext = archivoPosterior.name.split('.').pop();
       const path = `${S.titular.cedula}/cedula_posterior.${ext}`;
-      const { error: kycBErr } = await _db.storage.from('kyc-documentos').upload(path, archivoPosterior, { upsert: true, contentType: archivoPosterior.type || 'image/webp' });
-      if (!kycBErr) kycPosteriorPath = path;
+      let { error: kycBErr } = await _db.storage.from('kyc-documentos').upload(path, archivoPosterior, { upsert: true, contentType: archivoPosterior.type || 'image/webp' });
+      if (kycBErr) { await new Promise(function(r){ setTimeout(r, 800); }); ({ error: kycBErr } = await _db.storage.from('kyc-documentos').upload(path, archivoPosterior, { upsert: true, contentType: archivoPosterior.type || 'image/webp' })); }
+      if (!kycBErr) kycPosteriorPath = path; else { console.error('[TuCosto] KYC posterior:', kycBErr); kycFalloSubida = true; }
     }
 
     var { error: userErr } = await _db.from('usuarios').upsert({
@@ -886,6 +889,9 @@ async function submitRegistro() {
     buildConfirmation();
     document.getElementById('conf-loading').style.display = 'none';
     document.getElementById('conf-success-block').style.display = '';
+    if (kycFalloSubida) {
+      _showSubmitError('Tu cuenta se creo, pero no pudimos subir las fotos de tu cedula. Ingresa a Mi cuenta (usuario: tu correo, clave: tu numero de cedula) y subelas ahi, o escribenos por WhatsApp al 0987373549.');
+    }
   } catch (err) {
     console.error('[TuCosto] submitRegistro error:', err);
     if (_userCreatedOk) {
